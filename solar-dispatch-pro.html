@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SolarDispatch Pro | Mini-Office</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fafaf8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+#pin-gate{position:fixed;inset:0;z-index:9999;background:rgba(10,14,20,0.95);display:flex;align-items:center;justify-content:center;}
+#pin-gate-inner{background:#fff;border-radius:20px;width:90%;max-width:360px;text-align:center;padding:36px 28px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.pg-logo{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#f97316,#dc2626);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;}
+.pg-title{color:#f97316;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:2px;}
+.pg-sub{font-size:10px;color:#94a3b8;margin-bottom:16px;}
+.pg-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:10px;}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:12px;}
+.pd{width:12px;height:12px;border-radius:50%;border:2px solid #cbd5e1;background:transparent;transition:all .15s;}
+.pd.on{background:#f97316;border-color:#f97316;}
+#g-err{color:#ef4444;font-size:11px;min-height:14px;margin-bottom:8px;}
+.pg-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;width:260px;margin:0 auto 14px;}
+.nb{padding:14px 0;background:#F8F9FB;border:1px solid #E2E8F0;border-radius:9px;font-size:19px;font-weight:600;color:#1A202C;cursor:pointer;text-align:center;transition:all .1s;user-select:none;touch-action:manipulation;}
+.nb:active{background:#f97316;color:#fff;transform:scale(0.96);}
+.nb.del{background:#fff5f5;border-color:#fed7d7;color:#c53030;font-size:12px;}
+.pg-enter{width:100%;padding:14px;background:linear-gradient(135deg,#f97316,#dc2626);color:#fff;border:none;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;margin-bottom:10px;}
+.pg-foot{font-size:9px;color:#94a3b8;letter-spacing:1px;}
+#topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;border-bottom:2px solid #f97316;display:none;align-items:center;justify-content:space-between;padding:0 20px;height:54px;}
+.tb-left{display:flex;align-items:center;gap:10px;}
+.tb-logo{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f97316,#dc2626);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.tb-name{font-size:11px;font-weight:700;color:#1a1f2e;letter-spacing:1px;}
+.tb-badge{padding:3px 10px;background:#fff7ed;border:1px solid #f97316;border-radius:99px;font-size:9px;font-weight:700;color:#f97316;letter-spacing:1px;}
+.tb-clock{padding:3px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:99px;font-size:9px;font-weight:700;color:#64748b;}
+.tb-out{padding:5px 14px;background:transparent;border:1px solid #e2dfd8;border-radius:99px;font-size:10px;color:#94a3b8;cursor:pointer;font-weight:700;}
+#tabs-bar{position:fixed;top:54px;left:0;right:0;z-index:99;background:#fff;border-bottom:1px solid #e2e8f0;display:none;overflow-x:auto;white-space:nowrap;padding:0 12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.tab-btn{display:inline-block;padding:13px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;font-family:inherit;}
+.tab-btn.on{color:#f97316;border-bottom-color:#f97316;}
+#app{display:none;padding:88px 20px 40px;max-width:1200px;margin:0 auto;}
+.section{display:none;}.section.on{display:block;}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.card-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:14px;}
+.sec-head{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#f97316,#dc2626);border-radius:10px;padding:14px 18px;margin-bottom:16px;}
+.sec-head-icon{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sec-head-title{font-size:12px;font-weight:700;color:#fff;letter-spacing:1px;}
+.sec-head-sub{font-size:10px;color:rgba(255,255,255,0.7);margin-top:2px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fr4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+label{font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:4px;}
+input,textarea,select{width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;color:#1a1f2e;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#f97316;}
+textarea{min-height:90px;resize:vertical;}
+.btn-primary{padding:10px 20px;background:linear-gradient(135deg,#f97316,#dc2626);color:#fff;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-green{padding:10px 20px;background:#22c55e;color:#fff;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;}
+.btn-outline{padding:9px 18px;background:transparent;border:1px solid #e2e8f0;border-radius:6px;font-size:10px;font-weight:700;color:#94a3b8;cursor:pointer;}
+.btn-block{width:100%;}
+.btn-sm{padding:6px 12px;font-size:9px;}
+.btn-red{padding:9px 18px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:8px;font-weight:700;letter-spacing:1px;}
+.badge-new{background:#dbeafe;color:#1e40af;}
+.badge-scheduled{background:#d1fae5;color:#065f46;}
+.badge-urgent{background:#fee2e2;color:#991b1b;}
+.badge-pending{background:#fef3c7;color:#92400e;}
+.badge-done{background:#f3f4f6;color:#6b7280;}
+.job-card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:8px;border-left:3px solid #f97316;cursor:pointer;transition:box-shadow .15s;}
+.job-card:hover{box-shadow:0 4px 12px rgba(249,115,22,0.1);}
+.job-card.urgent{border-left-color:#ef4444;}
+.job-card.done{border-left-color:#22c55e;opacity:0.7;}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1f2e;color:#fff;padding:12px 24px;border-radius:8px;font-size:12px;font-weight:700;z-index:9999;display:none;white-space:nowrap;}
+.stat-card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;text-align:center;}
+.stat-num{font-size:24px;font-weight:700;color:#f97316;}
+.stat-lbl{font-size:8px;font-weight:700;letter-spacing:1.5px;color:#94a3b8;text-transform:uppercase;margin-top:4px;}
+.call-log-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #e2e8f0;}
+.call-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.call-in{background:#d1fae5;}
+.call-out{background:#dbeafe;}
+.call-missed{background:#fee2e2;}
+@media(max-width:700px){.fr,.fr3,.fr4{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div id="pin-gate">
+  <div id="pin-gate-inner">
+    <div class="pg-logo">&#9728;</div>
+    <div class="pg-title">SolarDispatch Pro</div>
+    <div class="pg-sub">Solar & Roofing Operations Center</div>
+    <div class="pg-label">Enter PIN</div>
+    <div class="pin-dots"><div class="pd" id="d0"></div><div class="pd" id="d1"></div><div class="pd" id="d2"></div><div class="pd" id="d3"></div></div>
+    <div id="g-err"></div>
+    <div class="pg-numpad">
+      <div class="nb" onclick="np('1')">1</div><div class="nb" onclick="np('2')">2</div><div class="nb" onclick="np('3')">3</div>
+      <div class="nb" onclick="np('4')">4</div><div class="nb" onclick="np('5')">5</div><div class="nb" onclick="np('6')">6</div>
+      <div class="nb" onclick="np('7')">7</div><div class="nb" onclick="np('8')">8</div><div class="nb" onclick="np('9')">9</div>
+      <div class="nb del" onclick="nc()">CLR</div><div class="nb" onclick="np('0')">0</div><div class="nb del" onclick="nd()">DEL</div>
+    </div>
+    <button class="pg-enter" onclick="chk()">ENTER</button>
+    <div class="pg-foot">SolarDispatch Pro &mdash; Powered by AuditDNA &copy; 2026</div>
+  </div>
+</div>
+
+<div id="topbar" style="display:none">
+  <div class="tb-left">
+    <div class="tb-logo">&#9728;</div>
+    <span class="tb-name">SOLARDISPATCH PRO</span>
+    <span class="tb-badge">SOLAR &amp; ROOFING</span>
+    <span class="tb-clock" id="tb-clock">--:--</span>
+  </div>
+  <button class="tb-out" onclick="location.reload()">&#8592; EXIT</button>
+</div>
+
+<div id="tabs-bar" style="display:none">
+  <button class="tab-btn on"  onclick="showTab('dashboard',this)">Dashboard</button>
+  <button class="tab-btn"     onclick="showTab('dispatch',this)">Dispatch</button>
+  <button class="tab-btn"     onclick="showTab('schedule',this)">Schedule</button>
+  <button class="tab-btn"     onclick="showTab('calls',this)">Call Log</button>
+  <button class="tab-btn"     onclick="showTab('customers',this)">Customers</button>
+  <button class="tab-btn"     onclick="showTab('followup',this)">Follow-Up</button>
+  <button class="tab-btn"     onclick="showTab('jobs',this)">Job Tracker</button>
+  <button class="tab-btn"     onclick="showTab('techs',this)">Technicians</button>
+  <button class="tab-btn"     onclick="showTab('integrations',this)">Integrations</button>
+</div>
+
+<div id="app">
+<div id="toast"></div>
+
+<!-- DASHBOARD -->
+<div class="section on" id="section-dashboard">
+  <div class="sec-head"><div class="sec-head-icon">&#128200;</div><div><div class="sec-head-title">OPERATIONS DASHBOARD</div><div class="sec-head-sub">Solar &amp; Roofing Dispatch Command Center</div></div></div>
+  <div class="fr4" style="margin-bottom:16px;">
+    <div class="stat-card"><div class="stat-num" id="dash-jobs">0</div><div class="stat-lbl">Jobs Today</div></div>
+    <div class="stat-card"><div class="stat-num" id="dash-pending" style="color:#f59e0b;">0</div><div class="stat-lbl">Pending</div></div>
+    <div class="stat-card"><div class="stat-num" id="dash-calls" style="color:#3b82f6;">0</div><div class="stat-lbl">Calls Today</div></div>
+    <div class="stat-card"><div class="stat-num" id="dash-techs" style="color:#22c55e;">0</div><div class="stat-lbl">Techs Active</div></div>
+  </div>
+  <div class="fr">
+    <div class="card">
+      <div class="card-title">Urgent Queue</div>
+      <div id="urgent-queue">
+        <div class="job-card urgent"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Martinez Residence</span><span class="badge badge-urgent">URGENT</span></div><div style="font-size:10px;color:#94a3b8;">Solar panel outage &mdash; 8 panels offline &mdash; Chula Vista</div><div style="font-size:9px;color:#ef4444;margin-top:4px;">Waiting 47 min</div></div>
+        <div class="job-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Greenfield HOA</span><span class="badge badge-scheduled">SCHEDULED</span></div><div style="font-size:10px;color:#94a3b8;">Roof inspection &mdash; 24 units &mdash; El Cajon</div><div style="font-size:9px;color:#94a3b8;margin-top:4px;">10:30 AM &mdash; Tech: Rodriguez</div></div>
+        <div class="job-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Johnson Solar Install</span><span class="badge badge-pending">PENDING</span></div><div style="font-size:10px;color:#94a3b8;">New 12-panel install &mdash; Santee &mdash; Awaiting permit</div><div style="font-size:9px;color:#94a3b8;margin-top:4px;">2:00 PM &mdash; Tech: Unassigned</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Quick Actions</div>
+      <div style="display:grid;gap:8px;">
+        <button class="btn-primary btn-block" onclick="showTab('dispatch',document.querySelectorAll('.tab-btn')[1])">+ New Dispatch</button>
+        <button class="btn-green btn-block" onclick="showTab('schedule',document.querySelectorAll('.tab-btn')[2])">Schedule Appointment</button>
+        <button class="btn-outline btn-block" onclick="showTab('calls',document.querySelectorAll('.tab-btn')[3])">Log Call</button>
+        <button class="btn-outline btn-block" onclick="showTab('followup',document.querySelectorAll('.tab-btn')[5])">View Follow-Ups</button>
+        <button class="btn-outline btn-block" onclick="showTab('techs',document.querySelectorAll('.tab-btn')[7])">Tech Status Board</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISPATCH -->
+<div class="section" id="section-dispatch">
+  <div class="sec-head"><div class="sec-head-icon">&#128225;</div><div><div class="sec-head-title">DISPATCH CENTER</div><div class="sec-head-sub">Create and assign service jobs</div></div></div>
+  <div class="fr">
+    <div class="card">
+      <div class="card-title">New Dispatch</div>
+      <div style="display:grid;gap:11px;">
+        <div class="fr"><div><label>Customer Name</label><input type="text" id="d-name" placeholder="Full name"></div><div><label>Phone</label><input type="tel" id="d-phone" placeholder="+1 (XXX) XXX-XXXX"></div></div>
+        <div><label>Service Address</label><input type="text" id="d-addr" placeholder="Street, City, ZIP"></div>
+        <div class="fr">
+          <div><label>Service Type</label>
+            <select id="d-type">
+              <option>Solar &mdash; Panel Outage</option>
+              <option>Solar &mdash; Inverter Issue</option>
+              <option>Solar &mdash; New Installation</option>
+              <option>Solar &mdash; System Check</option>
+              <option>Solar &mdash; Monitoring Alert</option>
+              <option>Solar &mdash; Permit Inspection</option>
+              <option>Roofing &mdash; Leak / Damage</option>
+              <option>Roofing &mdash; Inspection</option>
+              <option>Roofing &mdash; New Install</option>
+              <option>Roofing &mdash; Storm Damage</option>
+              <option>Roofing &mdash; Maintenance</option>
+              <option>Combo &mdash; Solar + Roof</option>
+            </select>
+          </div>
+          <div><label>Priority</label>
+            <select id="d-priority">
+              <option value="urgent">URGENT &mdash; Same Day</option>
+              <option value="high" selected>HIGH &mdash; Within 24hrs</option>
+              <option value="normal">NORMAL &mdash; Scheduled</option>
+              <option value="low">LOW &mdash; Flexible</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr"><div><label>Preferred Date</label><input type="date" id="d-date"></div><div><label>Preferred Time</label><input type="time" id="d-time"></div></div>
+        <div><label>Assign Technician</label>
+          <select id="d-tech">
+            <option>Rodriguez, M. &mdash; Solar Specialist</option>
+            <option>Chen, K. &mdash; Solar + Roofing</option>
+            <option>Williams, D. &mdash; Roofing Lead</option>
+            <option>Garcia, A. &mdash; Installer</option>
+            <option>UNASSIGNED &mdash; Pending</option>
+          </select>
+        </div>
+        <div><label>Customer Notes / Issue Description</label><textarea id="d-notes" placeholder="Describe the issue, system details, access instructions, HOA restrictions..."></textarea></div>
+        <div class="fr">
+          <div><label>System Brand</label>
+            <select id="d-brand">
+              <option>SunPower</option><option>Enphase</option><option>SolarEdge</option>
+              <option>Tesla / SolarCity</option><option>LG Solar</option><option>Panasonic</option>
+              <option>Q Cells</option><option>GAF Roofing</option><option>CertainTeed</option>
+              <option>Owens Corning</option><option>Other / Unknown</option>
+            </select>
+          </div>
+          <div><label>Property Type</label>
+            <select id="d-proptype">
+              <option>Residential</option><option>Commercial</option>
+              <option>Multi-Family</option><option>HOA / Community</option><option>Industrial</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-primary" onclick="saveDispatch()" style="flex:1;">CREATE DISPATCH</button>
+          <button class="btn-outline" onclick="clearDispatch()">CLEAR</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Active Dispatches</div>
+      <div id="dispatch-list">
+        <div class="job-card urgent"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Martinez &mdash; Chula Vista</span><span class="badge badge-urgent">URGENT</span></div><div style="font-size:10px;color:#94a3b8;">Solar Panel Outage &mdash; SunPower &mdash; Residential</div><div style="font-size:9px;color:#94a3b8;margin-top:4px;">&#128100; Rodriguez, M. &mdash; 10:00 AM</div><div style="margin-top:8px;display:flex;gap:6px;"><button class="btn-sm btn-green" onclick="toast('Dispatch confirmed!')">CONFIRM</button><button class="btn-sm btn-outline" onclick="toast('Opening map...')">MAP</button><button class="btn-sm btn-outline" onclick="toast('Calling customer...')">CALL</button></div></div>
+        <div class="job-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Greenfield HOA &mdash; El Cajon</span><span class="badge badge-scheduled">SCHEDULED</span></div><div style="font-size:10px;color:#94a3b8;">Roof Inspection &mdash; GAF &mdash; HOA / Community</div><div style="font-size:9px;color:#94a3b8;margin-top:4px;">&#128100; Chen, K. &mdash; 10:30 AM</div><div style="margin-top:8px;display:flex;gap:6px;"><button class="btn-sm btn-green" onclick="toast('Confirmed!')">CONFIRM</button><button class="btn-sm btn-outline" onclick="toast('Map opening...')">MAP</button><button class="btn-sm btn-outline" onclick="toast('Calling...')">CALL</button></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="section" id="section-schedule">
+  <div class="sec-head"><div class="sec-head-icon">&#128197;</div><div><div class="sec-head-title">APPOINTMENT SCHEDULING</div><div class="sec-head-sub">Book, confirm, and manage service appointments</div></div></div>
+  <div class="fr">
+    <div class="card">
+      <div class="card-title">Book Appointment</div>
+      <div style="display:grid;gap:11px;">
+        <div class="fr"><div><label>Customer Name</label><input type="text" id="sc-name" placeholder="Full name"></div><div><label>Phone</label><input type="tel" id="sc-phone" placeholder="+1 (XXX) XXX-XXXX"></div></div>
+        <div><label>Email</label><input type="email" id="sc-email" placeholder="customer@email.com"></div>
+        <div><label>Service Address</label><input type="text" id="sc-addr" placeholder="Street, City, ZIP"></div>
+        <div class="fr">
+          <div><label>Appointment Type</label>
+            <select id="sc-type">
+              <option>Solar Consultation &mdash; New Lead</option>
+              <option>Solar Site Survey</option>
+              <option>Solar Installation &mdash; Day 1</option>
+              <option>Solar Inspection / PTO</option>
+              <option>Solar Service / Repair</option>
+              <option>Roof Inspection &mdash; Free Estimate</option>
+              <option>Roof Repair</option>
+              <option>Roof Replacement &mdash; Start</option>
+              <option>Storm Damage Assessment</option>
+              <option>Insurance Adjuster Meeting</option>
+              <option>Follow-Up Visit</option>
+            </select>
+          </div>
+          <div><label>Duration</label>
+            <select id="sc-dur">
+              <option>30 minutes</option><option>1 hour</option>
+              <option>2 hours</option><option>Half day (4hrs)</option><option>Full day</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr"><div><label>Date</label><input type="date" id="sc-date"></div><div><label>Time</label><input type="time" id="sc-time"></div></div>
+        <div><label>Assign Tech / Sales Rep</label>
+          <select id="sc-tech">
+            <option>Rodriguez, M. &mdash; Solar</option><option>Chen, K. &mdash; Solar + Roofing</option>
+            <option>Williams, D. &mdash; Roofing</option><option>Garcia, A. &mdash; Installer</option>
+            <option>Sales Rep &mdash; TBD</option>
+          </select>
+        </div>
+        <div><label>Confirmation Method</label>
+          <select id="sc-confirm">
+            <option>Call + Text</option><option>Text only</option>
+            <option>Email + Text</option><option>Call only</option>
+          </select>
+        </div>
+        <div><label>Notes</label><textarea id="sc-notes" style="min-height:70px;" placeholder="Access instructions, gate code, dogs, HOA restrictions..."></textarea></div>
+        <button class="btn-primary btn-block" onclick="saveAppt()">BOOK APPOINTMENT</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Today's Schedule</div>
+      <div id="schedule-list">
+        <div style="border-left:3px solid #f97316;background:#fff7ed;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;"><div style="font-size:9px;font-weight:700;color:#f97316;">9:00 AM &mdash; 10:00 AM</div><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Solar Site Survey</div><div style="font-size:10px;color:#94a3b8;">Thompson Residence &mdash; La Mesa</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">&#128100; Rodriguez, M.</div></div>
+        <div style="border-left:3px solid #22c55e;background:#f0fdf4;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;"><div style="font-size:9px;font-weight:700;color:#22c55e;">10:30 AM &mdash; 2:30 PM</div><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Roof Inspection</div><div style="font-size:10px;color:#94a3b8;">Greenfield HOA &mdash; El Cajon (24 units)</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">&#128100; Chen, K.</div></div>
+        <div style="border-left:3px solid #3b82f6;background:#eff6ff;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;"><div style="font-size:9px;font-weight:700;color:#3b82f6;">2:00 PM &mdash; 6:00 PM</div><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Solar Install &mdash; Day 1</div><div style="font-size:10px;color:#94a3b8;">Johnson Residence &mdash; Santee (12 panels)</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">&#128100; Garcia, A. + Williams, D.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CALL LOG -->
+<div class="section" id="section-calls">
+  <div class="sec-head"><div class="sec-head-icon">&#128222;</div><div><div class="sec-head-title">CALL LOG &amp; OUTBOUND DIALER</div><div class="sec-head-sub">Track inbound / outbound calls &mdash; Confirm appointments &mdash; Generate leads</div></div></div>
+  <div class="fr" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Log a Call</div>
+      <div style="display:grid;gap:10px;">
+        <div class="fr"><div><label>Customer Name</label><input type="text" id="cl-name" placeholder="Full name"></div><div><label>Phone</label><input type="tel" id="cl-phone" placeholder="+1 (XXX) XXX-XXXX"></div></div>
+        <div class="fr">
+          <div><label>Call Type</label>
+            <select id="cl-type">
+              <option>Inbound &mdash; Service Request</option>
+              <option>Inbound &mdash; Appointment Inquiry</option>
+              <option>Inbound &mdash; Complaint</option>
+              <option>Inbound &mdash; Quote Request</option>
+              <option>Outbound &mdash; Appointment Confirmation</option>
+              <option>Outbound &mdash; Follow-Up</option>
+              <option>Outbound &mdash; Lead Generation</option>
+              <option>Outbound &mdash; Reschedule</option>
+              <option>Missed &mdash; Left Voicemail</option>
+              <option>Missed &mdash; No Answer</option>
+            </select>
+          </div>
+          <div><label>Outcome</label>
+            <select id="cl-outcome">
+              <option>Appointment Booked</option>
+              <option>Callback Requested</option>
+              <option>Follow-Up Needed</option>
+              <option>Issue Resolved</option>
+              <option>Transferred to Tech</option>
+              <option>Left Voicemail</option>
+              <option>No Answer</option>
+              <option>Not Interested</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr"><div><label>Duration (min)</label><input type="number" id="cl-dur" placeholder="0" min="0"></div><div><label>Date &amp; Time</label><input type="datetime-local" id="cl-datetime"></div></div>
+        <div><label>Call Notes</label><textarea id="cl-notes" style="min-height:70px;" placeholder="Summary of conversation, customer concerns, next steps..."></textarea></div>
+        <button class="btn-primary btn-block" onclick="logCall()">LOG CALL</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Call Scripts</div>
+      <div style="display:grid;gap:8px;">
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px;">
+          <div style="font-size:9px;font-weight:700;color:#f97316;margin-bottom:6px;">APPOINTMENT CONFIRMATION</div>
+          <div style="font-size:11px;color:#1a1f2e;line-height:1.7;">"Hi, this is [Name] calling from [Company]. I'm calling to confirm your appointment on [DATE] at [TIME] for [SERVICE TYPE]. Will that still work for you?" <br><br>"Great! Our technician [NAME] will be there. Is there anything you'd like us to know before we arrive?"</div>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;">
+          <div style="font-size:9px;font-weight:700;color:#22c55e;margin-bottom:6px;">OUTBOUND LEAD GENERATION</div>
+          <div style="font-size:11px;color:#1a1f2e;line-height:1.7;">"Hi, is this [NAME]? My name is [REP NAME] calling from [COMPANY]. We recently completed work in your neighborhood and I wanted to reach out about a complimentary solar/roofing assessment. Do you have 2 minutes?"</div>
+        </div>
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;">
+          <div style="font-size:9px;font-weight:700;color:#3b82f6;margin-bottom:6px;">INBOUND SERVICE REQUEST</div>
+          <div style="font-size:11px;color:#1a1f2e;line-height:1.7;">"Thank you for calling [COMPANY], this is [NAME]. How can I help you today?" <br><br>"I understand. Let me get you scheduled right away. Can I get your name and service address?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Call History</div>
+    <div id="call-history">
+      <div class="call-log-row"><div class="call-icon call-in">&#128222;</div><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Martinez, R. &mdash; (619) 555-0192</div><div style="font-size:10px;color:#94a3b8;">Inbound &mdash; Solar Panel Outage &mdash; 8 min &mdash; Appointment Booked</div></div><div style="font-size:9px;color:#94a3b8;white-space:nowrap;">9:14 AM</div></div>
+      <div class="call-log-row"><div class="call-icon call-out">&#128222;</div><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Greenfield HOA &mdash; (619) 555-0244</div><div style="font-size:10px;color:#94a3b8;">Outbound &mdash; Confirmation &mdash; 4 min &mdash; Confirmed</div></div><div style="font-size:9px;color:#94a3b8;white-space:nowrap;">9:31 AM</div></div>
+      <div class="call-log-row"><div class="call-icon call-missed">&#128222;</div><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Johnson, T. &mdash; (619) 555-0317</div><div style="font-size:10px;color:#94a3b8;">Outbound &mdash; Follow-Up &mdash; Missed &mdash; Left Voicemail</div></div><div style="font-size:9px;color:#94a3b8;white-space:nowrap;">10:02 AM</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOMERS -->
+<div class="section" id="section-customers">
+  <div class="sec-head"><div class="sec-head-icon">&#128101;</div><div><div class="sec-head-title">CUSTOMER RECORDS</div><div class="sec-head-sub">Maintain accurate customer information and job history</div></div></div>
+  <div class="fr" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Add / Update Customer</div>
+      <div style="display:grid;gap:10px;">
+        <div class="fr"><div><label>First Name</label><input type="text" id="cu-first" placeholder="First"></div><div><label>Last Name</label><input type="text" id="cu-last" placeholder="Last"></div></div>
+        <div class="fr"><div><label>Phone (Primary)</label><input type="tel" id="cu-phone" placeholder="+1 (XXX) XXX-XXXX"></div><div><label>Email</label><input type="email" id="cu-email" placeholder="email@domain.com"></div></div>
+        <div><label>Service Address</label><input type="text" id="cu-addr" placeholder="Street, City, State, ZIP"></div>
+        <div class="fr">
+          <div><label>System Type</label>
+            <select id="cu-system">
+              <option>Solar Only</option><option>Roofing Only</option>
+              <option>Solar + Roofing</option><option>Roofing + Solar (future)</option>
+            </select>
+          </div>
+          <div><label>System Brand</label>
+            <select id="cu-brand">
+              <option>SunPower</option><option>Enphase</option><option>SolarEdge</option>
+              <option>Tesla/SolarCity</option><option>GAF</option><option>CertainTeed</option>
+              <option>Owens Corning</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr"><div><label>Install Date</label><input type="date" id="cu-install"></div><div><label>Warranty Expiry</label><input type="date" id="cu-warranty"></div></div>
+        <div><label>Customer Notes</label><textarea id="cu-notes" style="min-height:70px;" placeholder="System details, HOA, access notes, payment history, preferences..."></textarea></div>
+        <button class="btn-primary btn-block" onclick="saveCustomer()">SAVE CUSTOMER</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Customer Directory</div>
+      <div style="margin-bottom:10px;"><input type="text" id="cu-search" placeholder="Search by name, phone, or address..." oninput="filterCustomers()"></div>
+      <div id="customer-list">
+        <div style="padding:10px 0;border-bottom:1px solid #e2e8f0;"><div style="display:flex;justify-content:space-between;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Martinez, Roberto</span><span class="badge badge-urgent">SERVICE NEEDED</span></div><div style="font-size:10px;color:#94a3b8;">Solar &mdash; SunPower &mdash; Chula Vista &mdash; (619) 555-0192</div><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn-sm btn-outline" onclick="toast('Dispatching...')">DISPATCH</button><button class="btn-sm btn-outline" onclick="toast('Calling...')">CALL</button></div></div>
+        <div style="padding:10px 0;border-bottom:1px solid #e2e8f0;"><div style="display:flex;justify-content:space-between;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Johnson, Thomas</span><span class="badge badge-scheduled">SCHEDULED</span></div><div style="font-size:10px;color:#94a3b8;">Solar Install &mdash; SolarEdge &mdash; Santee &mdash; (619) 555-0317</div><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn-sm btn-outline" onclick="toast('Dispatching...')">DISPATCH</button><button class="btn-sm btn-outline" onclick="toast('Calling...')">CALL</button></div></div>
+        <div style="padding:10px 0;"><div style="display:flex;justify-content:space-between;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Greenfield HOA</span><span class="badge badge-scheduled">IN PROGRESS</span></div><div style="font-size:10px;color:#94a3b8;">Roofing &mdash; GAF &mdash; El Cajon &mdash; (619) 555-0244</div><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn-sm btn-outline" onclick="toast('Dispatching...')">DISPATCH</button><button class="btn-sm btn-outline" onclick="toast('Calling...')">CALL</button></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOLLOW-UP -->
+<div class="section" id="section-followup">
+  <div class="sec-head"><div class="sec-head-icon">&#128276;</div><div><div class="sec-head-title">FOLLOW-UP MANAGER</div><div class="sec-head-sub">Proactive outreach &mdash; Never miss a callback or lead</div></div></div>
+  <div class="fr" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Schedule Follow-Up</div>
+      <div style="display:grid;gap:10px;">
+        <div class="fr"><div><label>Customer</label><input type="text" id="fu-name" placeholder="Customer name"></div><div><label>Phone</label><input type="tel" id="fu-phone" placeholder="+1 (XXX) XXX-XXXX"></div></div>
+        <div><label>Reason</label>
+          <select id="fu-reason">
+            <option>Missed Call &mdash; Voicemail Left</option>
+            <option>Quote Sent &mdash; Awaiting Decision</option>
+            <option>Service Complete &mdash; Satisfaction Check</option>
+            <option>Permit Pending &mdash; Status Update</option>
+            <option>HOA Approval Pending</option>
+            <option>Financing Application &mdash; Follow-Up</option>
+            <option>Storm Lead &mdash; Roof Assessment</option>
+            <option>Referral Follow-Up</option>
+            <option>Lapsed Customer &mdash; Re-Engage</option>
+          </select>
+        </div>
+        <div class="fr"><div><label>Follow-Up Date</label><input type="date" id="fu-date"></div><div><label>Time</label><input type="time" id="fu-time"></div></div>
+        <div><label>Priority</label>
+          <select id="fu-priority">
+            <option>HIGH &mdash; Call today</option>
+            <option>NORMAL &mdash; Within 48hrs</option>
+            <option>LOW &mdash; This week</option>
+          </select>
+        </div>
+        <div><label>Notes</label><textarea id="fu-notes" style="min-height:60px;" placeholder="Context, what was discussed, what to say on callback..."></textarea></div>
+        <button class="btn-primary btn-block" onclick="saveFollowUp()">ADD FOLLOW-UP</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Follow-Up Queue</div>
+      <div id="followup-list">
+        <div class="job-card urgent"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Johnson, T. &mdash; (619) 555-0317</span><span class="badge badge-urgent">TODAY</span></div><div style="font-size:10px;color:#94a3b8;">Missed Call &mdash; Left voicemail re: 2pm install appointment</div><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn-sm btn-green" onclick="toast('Calling...')">CALL NOW</button><button class="btn-sm btn-outline" onclick="toast('Rescheduled!')">RESCHEDULE</button><button class="btn-sm btn-outline" onclick="toast('Marked done!')">DONE</button></div></div>
+        <div class="job-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">Williams, S. &mdash; (858) 555-0198</span><span class="badge badge-pending">TOMORROW</span></div><div style="font-size:10px;color:#94a3b8;">Quote sent 3 days ago &mdash; 16-panel solar system &mdash; $28,400</div><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn-sm btn-green" onclick="toast('Calling...')">CALL</button><button class="btn-sm btn-outline" onclick="toast('Done!')">DONE</button></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JOB TRACKER -->
+<div class="section" id="section-jobs">
+  <div class="sec-head"><div class="sec-head-icon">&#128295;</div><div><div class="sec-head-title">JOB TRACKER</div><div class="sec-head-sub">Monitor all active, pending, and completed jobs</div></div></div>
+  <div class="card" style="margin-bottom:12px;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+      <button class="btn-sm btn-primary" onclick="filterJobs('all')">All Jobs</button>
+      <button class="btn-sm btn-outline" onclick="filterJobs('solar')">Solar</button>
+      <button class="btn-sm btn-outline" onclick="filterJobs('roofing')">Roofing</button>
+      <button class="btn-sm btn-outline" onclick="filterJobs('urgent')">Urgent</button>
+      <button class="btn-sm btn-outline" onclick="filterJobs('pending')">Pending Permit</button>
+      <button class="btn-sm btn-outline" onclick="filterJobs('complete')">Completed</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr style="background:#fff7ed;"><th style="padding:8px;text-align:left;font-size:9px;color:#f97316;font-weight:700;border-bottom:1px solid #fed7aa;">JOB #</th><th style="padding:8px;text-align:left;font-size:9px;color:#f97316;font-weight:700;border-bottom:1px solid #fed7aa;">CUSTOMER</th><th style="padding:8px;text-align:left;font-size:9px;color:#f97316;font-weight:700;border-bottom:1px solid #fed7aa;">TYPE</th><th style="padding:8px;text-align:left;font-size:9px;color:#f97316;font-weight:700;border-bottom:1px solid #fed7aa;">TECH</th><th style="padding:8px;text-align:left;font-size:9px;color:#f97316;font-weight:700;border-bottom:1px solid #fed7aa;">DATE</th><th style="padding:8px;text-align:left;font-size:9px;color:#f97316;font-weight:700;border-bottom:1px solid #fed7aa;">STATUS</th><th style="padding:8px;text-align:left;font-size:9px;color:#f97316;font-weight:700;border-bottom:1px solid #fed7aa;">ACTION</th></tr></thead>
+        <tbody id="job-tbody">
+          <tr><td style="padding:8px;border-bottom:1px solid #e2e8f0;">J-2026-041</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;font-weight:700;">Martinez, R.</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Solar Repair</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Rodriguez</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Today</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;"><span class="badge badge-urgent">URGENT</span></td><td style="padding:8px;border-bottom:1px solid #e2e8f0;"><button class="btn-sm btn-outline" onclick="toast('Opening job...')">VIEW</button></td></tr>
+          <tr style="background:#f8faff;"><td style="padding:8px;border-bottom:1px solid #e2e8f0;">J-2026-040</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;font-weight:700;">Greenfield HOA</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Roof Inspection</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Chen</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Today</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;"><span class="badge badge-scheduled">IN PROGRESS</span></td><td style="padding:8px;border-bottom:1px solid #e2e8f0;"><button class="btn-sm btn-outline" onclick="toast('Opening job...')">VIEW</button></td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid #e2e8f0;">J-2026-039</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;font-weight:700;">Johnson, T.</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Solar Install</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Garcia + Williams</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">Today 2PM</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;"><span class="badge badge-pending">PERMIT PENDING</span></td><td style="padding:8px;border-bottom:1px solid #e2e8f0;"><button class="btn-sm btn-outline" onclick="toast('Opening job...')">VIEW</button></td></tr>
+          <tr style="background:#f8faff;"><td style="padding:8px;">J-2026-038</td><td style="padding:8px;font-weight:700;">Thompson, L.</td><td style="padding:8px;">Solar Survey</td><td style="padding:8px;">Rodriguez</td><td style="padding:8px;">Yesterday</td><td style="padding:8px;"><span class="badge badge-done">COMPLETE</span></td><td style="padding:8px;"><button class="btn-sm btn-outline" onclick="toast('Opening job...')">VIEW</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TECHNICIANS -->
+<div class="section" id="section-techs">
+  <div class="sec-head"><div class="sec-head-icon">&#128736;</div><div><div class="sec-head-title">TECHNICIAN STATUS BOARD</div><div class="sec-head-sub">Real-time field team visibility</div></div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:16px;">
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;border-top:3px solid #22c55e;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#22c55e99);display:flex;align-items:center;justify-content:center;font-size:16px;">&#128100;</div><div><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Rodriguez, M.</div><div style="font-size:9px;color:#94a3b8;">Solar Specialist</div></div></div><div style="font-size:9px;font-weight:700;color:#22c55e;letter-spacing:1px;margin-bottom:6px;">ON JOB</div><div style="font-size:10px;color:#64748b;">Martinez Residence</div><div style="font-size:9px;color:#94a3b8;">Chula Vista</div><div style="margin-top:10px;display:flex;gap:6px;"><button class="btn-sm btn-outline" onclick="toast('Calling Rodriguez, M....')">CALL</button><button class="btn-sm btn-outline" onclick="toast('Assigning job...')">ASSIGN JOB</button></div></div><div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;border-top:3px solid #22c55e;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#22c55e99);display:flex;align-items:center;justify-content:center;font-size:16px;">&#128100;</div><div><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Chen, K.</div><div style="font-size:9px;color:#94a3b8;">Solar + Roofing</div></div></div><div style="font-size:9px;font-weight:700;color:#22c55e;letter-spacing:1px;margin-bottom:6px;">ON JOB</div><div style="font-size:10px;color:#64748b;">Greenfield HOA</div><div style="font-size:9px;color:#94a3b8;">El Cajon</div><div style="margin-top:10px;display:flex;gap:6px;"><button class="btn-sm btn-outline" onclick="toast('Calling Chen, K....')">CALL</button><button class="btn-sm btn-outline" onclick="toast('Assigning job...')">ASSIGN JOB</button></div></div><div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;border-top:3px solid #3b82f6;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#3b82f699);display:flex;align-items:center;justify-content:center;font-size:16px;">&#128100;</div><div><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Williams, D.</div><div style="font-size:9px;color:#94a3b8;">Roofing Lead</div></div></div><div style="font-size:9px;font-weight:700;color:#3b82f6;letter-spacing:1px;margin-bottom:6px;">AVAILABLE</div><div style="margin-top:10px;display:flex;gap:6px;"><button class="btn-sm btn-outline" onclick="toast('Calling Williams, D....')">CALL</button><button class="btn-sm btn-outline" onclick="toast('Assigning job...')">ASSIGN JOB</button></div></div><div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;border-top:3px solid #f59e0b;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#f59e0b99);display:flex;align-items:center;justify-content:center;font-size:16px;">&#128100;</div><div><div style="font-size:11px;font-weight:700;color:#1a1f2e;">Garcia, A.</div><div style="font-size:9px;color:#94a3b8;">Installer</div></div></div><div style="font-size:9px;font-weight:700;color:#f59e0b;letter-spacing:1px;margin-bottom:6px;">DRIVING</div><div style="font-size:10px;color:#64748b;">En route to Johnson</div><div style="font-size:9px;color:#94a3b8;">Santee</div><div style="margin-top:10px;display:flex;gap:6px;"><button class="btn-sm btn-outline" onclick="toast('Calling Garcia, A....')">CALL</button><button class="btn-sm btn-outline" onclick="toast('Assigning job...')">ASSIGN JOB</button></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Add / Update Technician</div>
+    <div class="fr3">
+      <div><label>Name</label><input type="text" id="tech-name" placeholder="Full name"></div>
+      <div><label>Specialty</label><select id="tech-spec"><option>Solar Specialist</option><option>Roofing Lead</option><option>Solar + Roofing</option><option>Installer</option><option>Sales Rep</option></select></div>
+      <div><label>Phone</label><input type="tel" id="tech-phone" placeholder="+1 (XXX) XXX-XXXX"></div>
+    </div>
+    <div style="margin-top:10px;"><button class="btn-primary" onclick="saveTech()">ADD TECHNICIAN</button></div>
+  </div>
+</div>
+
+<!-- INTEGRATIONS -->
+<div class="section" id="section-integrations">
+  <div class="sec-head"><div class="sec-head-icon">&#128279;</div><div><div class="sec-head-title">INTEGRATIONS &amp; TOOLS</div><div class="sec-head-sub">ServiceTitan, NetSuite, and field tools</div></div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:16px;">
+    <a href="https://go.servicetitan.com" target="_blank" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-decoration:none;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'"><div style="font-size:22px;margin-bottom:8px;">&#9881;</div><div style="font-size:11px;font-weight:700;color:#e65c00;margin-bottom:4px;">ServiceTitan</div><div style="font-size:9px;color:#94a3b8;line-height:1.5;">Job management, scheduling, invoicing, customer records. Primary field service platform.</div></a><a href="https://system.netsuite.com" target="_blank" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-decoration:none;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'"><div style="font-size:22px;margin-bottom:8px;">&#128202;</div><div style="font-size:11px;font-weight:700;color:#1f6feb;margin-bottom:4px;">NetSuite</div><div style="font-size:9px;color:#94a3b8;line-height:1.5;">ERP, accounting, inventory, CRM. Back-office operations and financial reporting.</div></a><a href="https://maps.google.com" target="_blank" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-decoration:none;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'"><div style="font-size:22px;margin-bottom:8px;">&#128205;</div><div style="font-size:11px;font-weight:700;color:#22c55e;margin-bottom:4px;">Google Maps</div><div style="font-size:9px;color:#94a3b8;line-height:1.5;">Technician routing, address verification, territory planning.</div></a><a href="https://companycam.com" target="_blank" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-decoration:none;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'"><div style="font-size:22px;margin-bottom:8px;">&#128247;</div><div style="font-size:11px;font-weight:700;color:#f97316;margin-bottom:4px;">CompanyCam</div><div style="font-size:9px;color:#94a3b8;line-height:1.5;">Job site photo documentation. Before/after solar and roofing photos.</div></a><a href="https://aurorasolar.com" target="_blank" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-decoration:none;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'"><div style="font-size:22px;margin-bottom:8px;">&#9728;</div><div style="font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:4px;">Aurora Solar</div><div style="font-size:9px;color:#94a3b8;line-height:1.5;">Solar design, shading analysis, proposal generation.</div></a><a href="https://eagleview.com" target="_blank" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-decoration:none;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'"><div style="font-size:22px;margin-bottom:8px;">&#128313;</div><div style="font-size:11px;font-weight:700;color:#3b82f6;margin-bottom:4px;">EagleView</div><div style="font-size:9px;color:#94a3b8;line-height:1.5;">Aerial roof measurement, storm damage assessment, insurance claims.</div></a><a href="https://docusign.com" target="_blank" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-decoration:none;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'"><div style="font-size:22px;margin-bottom:8px;">&#128196;</div><div style="font-size:11px;font-weight:700;color:#1a1f2e;margin-bottom:4px;">DocuSign</div><div style="font-size:9px;color:#94a3b8;line-height:1.5;">Digital contracts, permit applications, customer agreements.</div></a><a href="https://cliqsolar.com" target="_blank" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-decoration:none;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'"><div style="font-size:22px;margin-bottom:8px;">&#128181;</div><div style="font-size:11px;font-weight:700;color:#8b5cf6;margin-bottom:4px;">CLIQ Solar Finance</div><div style="font-size:9px;color:#94a3b8;line-height:1.5;">Customer financing. 0% APR solar loan programs.</div></a>
+  </div>
+  <div class="card">
+    <div class="card-title">Quick Links</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <a href="https://solarapp.org" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a1f2e;">&#128279; CPUC Solar Permit Portal</a><a href="https://www.californiasolarstatistics.ca.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a1f2e;">&#128279; California Solar Initiative</a><a href="https://www.nfpa.org/codes-and-standards/nfpa-70" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a1f2e;">&#128279; NEC Solar Code (2023)</a><a href="https://www.osha.gov/roofing" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a1f2e;">&#128279; OSHA Roofing Safety</a><a href="https://www.cslb.ca.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a1f2e;">&#128279; Contractor License Board CA</a><a href="https://www.aaa.com/claims" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a1f2e;">&#128279; Insurance Claim Portal (AAA)</a><a href="https://sunroof.withgoogle.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a1f2e;">&#128279; Google Sunroof</a><a href="https://www.weather.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a1f2e;">&#128279; Weather.gov</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- end app -->
+
+<script>
+var pin=''; var PIN_OK='7744';
+function np(v){if(pin.length<4){pin+=v;upd();if(pin.length===4)setTimeout(chk,80);}}
+function nd(){if(pin.length){pin=pin.slice(0,-1);upd();}}
+function nc(){pin='';upd();}
+function upd(){for(var i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('on',i<pin.length);}
+function chk(){
+  if(pin===PIN_OK){
+    var g=document.getElementById('pin-gate');
+    var t=document.getElementById('topbar');
+    var tb=document.getElementById('tabs-bar');
+    var a=document.getElementById('app');
+    if(g)g.style.cssText='display:none!important';
+    if(t){t.style.cssText='display:flex!important;visibility:visible!important;opacity:1!important;';}
+    if(tb){tb.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;';}
+    if(a){a.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;';}
+    startClock();
+    document.getElementById('dash-jobs').textContent='4';
+    document.getElementById('dash-pending').textContent='2';
+    document.getElementById('dash-calls').textContent='3';
+    document.getElementById('dash-techs').textContent='3';
+  } else {
+    document.getElementById('g-err').textContent='Incorrect PIN.';
+    pin='';upd();
+    setTimeout(function(){document.getElementById('g-err').textContent='';},2000);
+  }
+}
+function startClock(){
+  setInterval(function(){
+    var now=new Date();
+    var el=document.getElementById('tb-clock');
+    if(el)el.textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  },1000);
+}
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('section-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
+
+var dispatches=[], appts=[], calls=[], customers=[], followups=[];
+
+function saveDispatch(){
+  var n=document.getElementById('d-name').value;
+  if(!n){alert('Enter customer name');return;}
+  dispatches.push({name:n,phone:document.getElementById('d-phone').value,type:document.getElementById('d-type').value,priority:document.getElementById('d-priority').value,tech:document.getElementById('d-tech').value});
+  var list=document.getElementById('dispatch-list');
+  var div=document.createElement('div');
+  div.className='job-card';
+  div.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">'+n+'</span><span class="badge badge-new">NEW</span></div><div style="font-size:10px;color:#94a3b8;">'+document.getElementById('d-type').value+'</div><div style="font-size:9px;color:#94a3b8;margin-top:4px;">&#128100; '+document.getElementById('d-tech').value+'</div><div style="margin-top:8px;display:flex;gap:6px;"><button class="btn-sm btn-green" onclick="toast('Confirmed!')">CONFIRM</button><button class="btn-sm btn-outline" onclick="toast('Map...')">MAP</button><button class="btn-sm btn-outline" onclick="toast('Calling...')">CALL</button></div>';
+  list.insertBefore(div, list.firstChild);
+  toast('Dispatch created: '+n);
+  document.getElementById('d-name').value='';
+  document.getElementById('d-phone').value='';
+  document.getElementById('d-notes').value='';
+}
+function clearDispatch(){['d-name','d-phone','d-addr','d-notes'].forEach(function(id){document.getElementById(id).value='';});}
+function saveAppt(){
+  var n=document.getElementById('sc-name').value;var d=document.getElementById('sc-date').value;
+  if(!n||!d){alert('Enter name and date');return;}
+  var list=document.getElementById('schedule-list');
+  var div=document.createElement('div');
+  div.style.cssText='border-left:3px solid #f97316;background:#fff7ed;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;';
+  div.innerHTML='<div style="font-size:9px;font-weight:700;color:#f97316;">'+d+' '+document.getElementById('sc-time').value+'</div><div style="font-size:11px;font-weight:700;color:#1a1f2e;">'+document.getElementById('sc-type').value+'</div><div style="font-size:10px;color:#94a3b8;">'+n+'</div>';
+  list.insertBefore(div, list.firstChild);
+  toast('Appointment booked: '+n);
+}
+function logCall(){
+  var n=document.getElementById('cl-name').value;
+  if(!n){alert('Enter customer name');return;}
+  calls.push({name:n,type:document.getElementById('cl-type').value,outcome:document.getElementById('cl-outcome').value});
+  var hist=document.getElementById('call-history');
+  var isOut=document.getElementById('cl-type').value.indexOf('Outbound')>-1;
+  var isMissed=document.getElementById('cl-type').value.indexOf('Missed')>-1;
+  var div=document.createElement('div');
+  div.className='call-log-row';
+  div.innerHTML='<div class="call-icon '+(isMissed?'call-missed':isOut?'call-out':'call-in')+'">&#128222;</div><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#1a1f2e;">'+n+' &mdash; '+document.getElementById('cl-phone').value+'</div><div style="font-size:10px;color:#94a3b8;">'+document.getElementById('cl-type').value+' &mdash; '+document.getElementById('cl-outcome').value+'</div></div><div style="font-size:9px;color:#94a3b8;white-space:nowrap;">'+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</div>';
+  hist.insertBefore(div, hist.firstChild);
+  document.getElementById('dash-calls').textContent=parseInt(document.getElementById('dash-calls').textContent)+1;
+  toast('Call logged: '+n);
+  document.getElementById('cl-name').value='';document.getElementById('cl-notes').value='';
+}
+function saveCustomer(){
+  var f=document.getElementById('cu-first').value;var l=document.getElementById('cu-last').value;
+  if(!f||!l){alert('Enter customer name');return;}
+  toast('Customer saved: '+f+' '+l);
+  ['cu-first','cu-last','cu-phone','cu-email','cu-addr','cu-notes'].forEach(function(id){document.getElementById(id).value='';});
+}
+function filterCustomers(){var q=document.getElementById('cu-search').value.toLowerCase();document.querySelectorAll('#customer-list > div').forEach(function(r){r.style.display=r.textContent.toLowerCase().indexOf(q)>-1?'':'none';});}
+function saveFollowUp(){
+  var n=document.getElementById('fu-name').value;var d=document.getElementById('fu-date').value;
+  if(!n){alert('Enter customer name');return;}
+  var list=document.getElementById('followup-list');
+  var div=document.createElement('div');
+  div.className='job-card';
+  div.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;">'+n+'</span><span class="badge badge-new">'+d+'</span></div><div style="font-size:10px;color:#94a3b8;">'+document.getElementById('fu-reason').value+'</div><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn-sm btn-green" onclick="toast('Calling...')">CALL</button><button class="btn-sm btn-outline" onclick="this.closest('.job-card').remove();toast('Done!')">DONE</button></div>';
+  list.insertBefore(div, list.firstChild);
+  toast('Follow-up added: '+n);
+  document.getElementById('fu-name').value='';document.getElementById('fu-notes').value='';
+}
+function filterJobs(type){toast('Filtering: '+type);}
+function saveTech(){var n=document.getElementById('tech-name').value;if(!n){alert('Enter name');return;}toast('Technician added: '+n);document.getElementById('tech-name').value='';}
+</script>
+</body>
+</html>

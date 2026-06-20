@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JJ Law | Jax Jacinto — Attorney at Law</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fafaf8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+#pin-gate{position:fixed;inset:0;z-index:9999;background:rgba(10,14,20,0.95);display:flex;align-items:center;justify-content:center;}
+#pin-gate-inner{background:#fff;border-radius:20px;width:90%;max-width:360px;text-align:center;padding:36px 28px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.pg-logo{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#1a2f5e,#2d4a8a);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;font-weight:900;color:#c9a84c;letter-spacing:1px;font-style:italic;}
+.pg-title{color:#1a2f5e;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.pg-sub{font-size:10px;color:#94a3b8;margin-bottom:16px;}
+.pg-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:10px;}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:12px;}
+.pd{width:12px;height:12px;border-radius:50%;border:2px solid #cbd5e1;background:transparent;transition:all .15s;}
+.pd.on{background:#1a2f5e;border-color:#1a2f5e;}
+#g-err{color:#ef4444;font-size:11px;min-height:14px;margin-bottom:8px;}
+.pg-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;width:260px;margin:0 auto 14px;}
+.nb{padding:14px 0;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:9px;font-size:19px;font-weight:600;color:#1a2f5e;cursor:pointer;text-align:center;transition:all .1s;user-select:none;touch-action:manipulation;}
+.nb:active{background:#1a2f5e;color:#fff;transform:scale(0.96);}
+.nb.del{background:#fff5f5;border-color:#fed7d7;color:#c53030;font-size:12px;}
+.pg-enter{width:100%;padding:14px;background:linear-gradient(135deg,#1a2f5e,#2d4a8a);color:#fff;border:none;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;margin-bottom:10px;}
+.pg-foot{font-size:9px;color:#94a3b8;letter-spacing:1px;}
+/* TOPBAR */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:#1a2f5e;border-bottom:2px solid #c9a84c;display:none;align-items:center;justify-content:space-between;padding:0 20px;height:54px;}
+.tb-left{display:flex;align-items:center;gap:10px;}
+.tb-logo{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a07830);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;font-style:italic;}
+.tb-name{font-size:11px;font-weight:700;color:#fff;letter-spacing:1px;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-badge{padding:3px 10px;background:rgba(201,168,76,0.2);border:1px solid #c9a84c;border-radius:99px;font-size:9px;font-weight:700;color:#c9a84c;letter-spacing:1px;}
+.tb-out{padding:5px 14px;background:transparent;border:1px solid rgba(255,255,255,0.3);border-radius:99px;font-size:10px;color:rgba(255,255,255,0.7);cursor:pointer;font-weight:700;}
+/* TABS */
+#tabs-bar{position:fixed;top:54px;left:0;right:0;z-index:99;background:#fff;border-bottom:1px solid #e2e8f0;display:none;overflow-x:auto;white-space:nowrap;padding:0 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.tab-btn{display:inline-block;padding:13px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;font-family:inherit;}
+.tab-btn.on{color:#1a2f5e;border-bottom-color:#c9a84c;}
+/* APP */
+#app{display:none;padding:88px 20px 40px;max-width:1100px;margin:0 auto;}
+.section{display:none;}.section.on{display:block;}
+/* CARDS */
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.card-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:14px;}
+.section-head{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#1a2f5e,#2d4a8a);border-radius:10px;padding:14px 18px;margin-bottom:16px;}
+.section-head-icon{width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.2);border:1px solid #c9a84c;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.section-head-title{font-size:12px;font-weight:700;color:#fff;letter-spacing:1px;}
+.section-head-sub{font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px;}
+/* FORM */
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+label{font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:4px;}
+input,textarea,select{width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;color:#1a2f5e;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#1a2f5e;}
+textarea{min-height:100px;resize:vertical;}
+/* BUTTONS */
+.btn-primary{padding:11px 24px;background:linear-gradient(135deg,#1a2f5e,#2d4a8a);color:#fff;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;}
+.btn-gold{padding:11px 24px;background:linear-gradient(135deg,#c9a84c,#a07830);color:#fff;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;}
+.btn-outline{padding:9px 18px;background:transparent;border:1px solid #e2e8f0;border-radius:6px;font-size:10px;font-weight:700;color:#94a3b8;cursor:pointer;}
+.btn-block{width:100%;}
+.btn-sm{padding:6px 14px;font-size:9px;}
+/* STATUS BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:8px;font-weight:700;letter-spacing:1px;}
+.badge-new{background:#dbeafe;color:#1e40af;}
+.badge-active{background:#d1fae5;color:#065f46;}
+.badge-closed{background:#f3f4f6;color:#6b7280;}
+.badge-urgent{background:#fee2e2;color:#991b1b;}
+.badge-review{background:#fef3c7;color:#92400e;}
+/* CASE CARD */
+.case-card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:box-shadow .15s;}
+.case-card:hover{box-shadow:0 4px 12px rgba(26,47,94,0.1);}
+.case-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1a2f5e,#2d4a8a);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.case-name{font-size:12px;font-weight:700;color:#1a2f5e;margin-bottom:2px;}
+.case-type{font-size:10px;color:#94a3b8;}
+.case-meta{font-size:9px;color:#94a3b8;margin-top:4px;}
+/* TOAST */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a2f5e;color:#fff;padding:12px 24px;border-radius:8px;font-size:12px;font-weight:700;z-index:9999;display:none;white-space:nowrap;}
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.stat-card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;text-align:center;}
+.stat-num{font-size:22px;font-weight:700;color:#1a2f5e;}
+.stat-label{font-size:8px;font-weight:700;letter-spacing:1.5px;color:#94a3b8;text-transform:uppercase;margin-top:4px;}
+/* INTAKE MODAL */
+#intake-modal{display:none;position:fixed;inset:0;z-index:8000;background:rgba(10,14,20,0.85);align-items:center;justify-content:center;padding:20px;}
+#intake-modal-inner{background:#fff;border-radius:16px;width:100%;max-width:600px;padding:28px;max-height:90vh;overflow-y:auto;}
+/* CALENDAR */
+.cal-event{background:#f0f5ff;border-left:3px solid #1a2f5e;border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:8px;}
+.cal-time{font-size:10px;font-weight:700;color:#1a2f5e;}
+.cal-title{font-size:12px;color:#1a2f5e;font-weight:600;margin-top:2px;}
+.cal-client{font-size:10px;color:#94a3b8;}
+@media(max-width:700px){.fr,.fr3{grid-template-columns:1fr;}.stat-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="pin-gate">
+  <div id="pin-gate-inner">
+    <div class="pg-logo">JJ</div>
+    <div class="pg-title">JJ Law Office</div>
+    <div class="pg-sub">Jax Jacinto, Esq. &mdash; Attorney at Law</div>
+    <div class="pg-label">Enter PIN</div>
+    <div class="pin-dots"><div class="pd" id="d0"></div><div class="pd" id="d1"></div><div class="pd" id="d2"></div><div class="pd" id="d3"></div></div>
+    <div id="g-err"></div>
+    <div class="pg-numpad">
+      <div class="nb" onclick="np('1')">1</div><div class="nb" onclick="np('2')">2</div><div class="nb" onclick="np('3')">3</div>
+      <div class="nb" onclick="np('4')">4</div><div class="nb" onclick="np('5')">5</div><div class="nb" onclick="np('6')">6</div>
+      <div class="nb" onclick="np('7')">7</div><div class="nb" onclick="np('8')">8</div><div class="nb" onclick="np('9')">9</div>
+      <div class="nb del" onclick="nc()">CLR</div><div class="nb" onclick="np('0')">0</div><div class="nb del" onclick="nd()">DEL</div>
+    </div>
+    <button class="pg-enter" onclick="chk()">ENTER</button>
+    <div class="pg-foot">JJ Law Office &mdash; Powered by AuditDNA &copy; 2026</div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div id="topbar" style="display:none">
+  <div class="tb-left">
+    <div class="tb-logo">JJ</div>
+    <span class="tb-name">JAX JACINTO &mdash; ATTORNEY AT LAW</span>
+    <span class="tb-badge">CA BAR</span>
+  </div>
+  <div class="tb-right">
+    <span class="tb-badge" id="tb-clock">--:--</span>
+    <button class="tb-out" onclick="location.reload()">&#8592; EXIT</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div id="tabs-bar" style="display:none">
+  <button class="tab-btn on" onclick="showTab('dashboard',this)">Dashboard</button>
+  <button class="tab-btn" onclick="showTab('cases',this)">Active Cases</button>
+  <button class="tab-btn" onclick="showTab('intake',this)">Client Intake</button>
+  <button class="tab-btn" onclick="showTab('calendar',this)">Calendar</button>
+  <button class="tab-btn" onclick="showTab('deadlines',this)">Deadlines</button>
+  <button class="tab-btn" onclick="showTab('docs',this)">Documents</button>
+  <button class="tab-btn" onclick="showTab('billing',this)">Billing</button>
+  <button class="tab-btn" onclick="showTab('contacts',this)">Contacts</button>
+  <button class="tab-btn" onclick="showTab('backoffice',this)">Back Office</button>
+  <button class="tab-btn" onclick="showTab('research',this)">Legal Research</button>
+  <button class="tab-btn" onclick="showTab('lexis',this)">LexisNexis</button>
+</div>
+
+<div id="app">
+<div id="toast"></div>
+
+<!-- ── DASHBOARD ──────────────────────────────────────────────── -->
+<div class="section on" id="section-dashboard">
+  <div class="section-head">
+    <div class="section-head-icon">&#9878;</div>
+    <div><div class="section-head-title">COMMAND DASHBOARD</div><div class="section-head-sub">Jax Jacinto, Esq. &mdash; General, Tort & Personal Injury Law &mdash; California</div></div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num" id="dash-active">0</div><div class="stat-label">Active Cases</div></div>
+    <div class="stat-card"><div class="stat-num" id="dash-deadlines" style="color:#c0392b;">0</div><div class="stat-label">Deadlines This Week</div></div>
+    <div class="stat-card"><div class="stat-num" id="dash-consults">0</div><div class="stat-label">Consults Scheduled</div></div>
+    <div class="stat-card"><div class="stat-num" id="dash-billing" style="color:#c9a84c;">$0</div><div class="stat-label">Unbilled Hours</div></div>
+  </div>
+  <div class="fr" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Quick Actions</div>
+      <div style="display:grid;gap:8px;">
+        <button class="btn-primary btn-block" onclick="showTab('intake',document.getElementById('tab-intake'))">+ New Client Intake</button>
+        <button class="btn-gold btn-block" onclick="showTab('deadlines',document.getElementById('tab-deadlines'))">View Deadlines</button>
+        <button class="btn-outline btn-block" onclick="showTab('billing',document.getElementById('tab-billing'))">Log Billable Hours</button>
+        <button class="btn-outline btn-block" onclick="showTab('docs',document.getElementById('tab-docs'))">Generate Document</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Today's Schedule</div>
+      <div id="today-schedule">
+        <div class="cal-event">
+          <div class="cal-time">9:00 AM</div>
+          <div class="cal-title">Initial Consultation</div>
+          <div class="cal-client">Maria Santos &mdash; Personal Injury</div>
+        </div>
+        <div class="cal-event">
+          <div class="cal-time">11:30 AM</div>
+          <div class="cal-title">Deposition Prep</div>
+          <div class="cal-client">Johnson v. Pacific Corp</div>
+        </div>
+        <div class="cal-event">
+          <div class="cal-time">2:00 PM</div>
+          <div class="cal-title">Court Filing Deadline</div>
+          <div class="cal-client">Torres v. Martinez &mdash; Superior Court LA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Urgent Alerts</div>
+    <div style="display:grid;gap:8px;" id="urgent-alerts">
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:12px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">&#9888;</span>
+        <div><div style="font-size:11px;font-weight:700;color:#991b1b;">Statute of Limitations — 14 Days</div><div style="font-size:10px;color:#94a3b8;">Torres v. Martinez — Personal Injury — File by July 3, 2026</div></div>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">&#128196;</span>
+        <div><div style="font-size:11px;font-weight:700;color:#92400e;">Response Due — 5 Days</div><div style="font-size:10px;color:#94a3b8;">Johnson v. Pacific Corp — Discovery Response — June 24, 2026</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ACTIVE CASES ────────────────────────────────────────────── -->
+<div class="section" id="section-cases">
+  <div class="section-head">
+    <div class="section-head-icon">&#128181;</div>
+    <div><div class="section-head-title">ACTIVE CASE DOCKET</div><div class="section-head-sub">All open matters — click to expand</div></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+    <button class="btn-sm btn-primary" onclick="filterCases('all')">All</button>
+    <button class="btn-sm btn-outline" onclick="filterCases('personal_injury')">Personal Injury</button>
+    <button class="btn-sm btn-outline" onclick="filterCases('tort')">Tort</button>
+    <button class="btn-sm btn-outline" onclick="filterCases('general')">General</button>
+    <button class="btn-sm btn-outline" onclick="filterCases('employment')">Employment</button>
+    <button class="btn-sm btn-gold" onclick="openNewCase()" style="margin-left:auto;">+ New Case</button>
+  </div>
+  <div id="cases-list">
+    <div class="case-card">
+      <div class="case-icon">&#9878;</div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+          <div class="case-name">Torres v. Martinez</div>
+          <span class="badge badge-urgent">URGENT</span>
+          <span class="badge badge-active">ACTIVE</span>
+        </div>
+        <div class="case-type">Personal Injury &mdash; Motor Vehicle Accident</div>
+        <div class="case-meta">Case #2026-PI-001 &mdash; Filed: March 15, 2026 &mdash; Court: LA Superior</div>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-sm btn-outline" onclick="toast('Opening case file...')">View File</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening billing...')">Billing</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening notes...')">Notes</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening docs...')">Docs</button>
+        </div>
+      </div>
+    </div>
+    <div class="case-card">
+      <div class="case-icon">&#128101;</div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+          <div class="case-name">Johnson v. Pacific Corp</div>
+          <span class="badge badge-review">IN DISCOVERY</span>
+        </div>
+        <div class="case-type">Employment Tort &mdash; Wrongful Termination</div>
+        <div class="case-meta">Case #2026-T-002 &mdash; Filed: Jan 8, 2026 &mdash; Court: OC Superior</div>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-sm btn-outline" onclick="toast('Opening case file...')">View File</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening billing...')">Billing</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening notes...')">Notes</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening docs...')">Docs</button>
+        </div>
+      </div>
+    </div>
+    <div class="case-card">
+      <div class="case-icon">&#127968;</div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+          <div class="case-name">Santos Estate Matter</div>
+          <span class="badge badge-new">NEW</span>
+        </div>
+        <div class="case-type">General Law &mdash; Estate / Probate Consultation</div>
+        <div class="case-meta">Case #2026-G-003 &mdash; Opened: June 18, 2026</div>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-sm btn-outline" onclick="toast('Opening case file...')">View File</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening billing...')">Billing</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening notes...')">Notes</button>
+          <button class="btn-sm btn-outline" onclick="toast('Opening docs...')">Docs</button>
+        </div>
+      </div>
+    </div>
+    <div id="new-case-form" style="display:none;" class="card">
+      <div class="card-title">New Case</div>
+      <div style="display:grid;gap:10px;">
+        <div class="fr"><div><label>Client Name</label><input type="text" id="nc-name" placeholder="Full legal name"></div><div><label>Case Type</label><select id="nc-type"><option>Personal Injury</option><option>Tort</option><option>Employment</option><option>General Law</option><option>Contract</option><option>Criminal Defense</option><option>Family Law</option><option>Immigration</option><option>Estate / Probate</option><option>Civil Rights</option></select></div></div>
+        <div class="fr"><div><label>Court</label><input type="text" id="nc-court" placeholder="e.g. LA Superior Court"></div><div><label>Opposing Party</label><input type="text" id="nc-opp" placeholder="Defendant / Plaintiff"></div></div>
+        <div><label>Case Summary</label><textarea id="nc-summary" placeholder="Brief description of matter..."></textarea></div>
+        <div class="fr"><div><label>Statute of Limitations</label><input type="date" id="nc-sol"></div><div><label>Retainer Amount</label><input type="text" id="nc-retainer" placeholder="$0.00"></div></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-primary" onclick="saveCase()">SAVE CASE</button>
+          <button class="btn-outline" onclick="document.getElementById('new-case-form').style.display='none'">CANCEL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CLIENT INTAKE ───────────────────────────────────────────── -->
+<div class="section" id="section-intake">
+  <div class="section-head">
+    <div class="section-head-icon">&#128100;</div>
+    <div><div class="section-head-title">CLIENT INTAKE FORM</div><div class="section-head-sub">New client onboarding &mdash; California law compliance</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Client Information</div>
+    <div style="display:grid;gap:12px;">
+      <div class="fr"><div><label>First Name</label><input type="text" id="in-first" placeholder="First"></div><div><label>Last Name</label><input type="text" id="in-last" placeholder="Last"></div></div>
+      <div class="fr"><div><label>Date of Birth</label><input type="date" id="in-dob"></div><div><label>SSN (last 4)</label><input type="text" id="in-ssn" placeholder="XXXX" maxlength="4"></div></div>
+      <div class="fr"><div><label>Phone</label><input type="tel" id="in-phone" placeholder="+1 (XXX) XXX-XXXX"></div><div><label>Email</label><input type="email" id="in-email" placeholder="client@email.com"></div></div>
+      <div><label>Address</label><input type="text" id="in-addr" placeholder="Street, City, State, ZIP"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Matter Details</div>
+    <div style="display:grid;gap:12px;">
+      <div class="fr"><div><label>Type of Matter</label><select id="in-matter"><option>Personal Injury</option><option>Tort</option><option>Employment</option><option>Contract Dispute</option><option>Criminal Defense</option><option>Family Law</option><option>Estate / Probate</option><option>Civil Rights</option><option>Real Estate</option><option>Immigration</option><option>General Consultation</option></select></div><div><label>Date of Incident</label><input type="date" id="in-incident"></div></div>
+      <div class="fr"><div><label>Statute of Limitations</label><input type="date" id="in-sol"></div><div><label>Estimated Case Value</label><input type="text" id="in-value" placeholder="$0.00"></div></div>
+      <div><label>Incident Description</label><textarea id="in-desc" placeholder="Describe what happened, where, when, parties involved..."></textarea></div>
+      <div><label>Injuries / Damages</label><textarea id="in-damages" style="min-height:70px;" placeholder="Physical injuries, financial damages, emotional distress..."></textarea></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Conflict Check & Referral</div>
+    <div style="display:grid;gap:12px;">
+      <div class="fr"><div><label>Referred By</label><input type="text" id="in-ref" placeholder="Name or source"></div><div><label>Conflict Check</label><select id="in-conflict"><option>No conflicts found</option><option>Conflict identified — refer out</option><option>Pending review</option></select></div></div>
+      <div><label>Attorney Notes (Privileged)</label><textarea id="in-notes" style="min-height:70px;" placeholder="Initial assessment, strategy notes, red flags..."></textarea></div>
+      <div class="fr3">
+        <div><label>Retainer Agreed</label><select id="in-retainer"><option>Pending</option><option>Yes — signed</option><option>No — declined</option><option>Pro Bono</option><option>Contingency</option></select></div>
+        <div><label>Retainer Amount</label><input type="text" id="in-ret-amt" placeholder="$0.00"></div>
+        <div><label>Fee Structure</label><select id="in-fee"><option>Hourly ($350/hr)</option><option>Contingency (33%)</option><option>Flat Fee</option><option>Pro Bono</option></select></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-primary" onclick="saveIntake()">SAVE & OPEN CASE FILE</button>
+        <button class="btn-gold" onclick="printIntake()">PRINT / PDF</button>
+        <button class="btn-outline" onclick="clearIntake()">CLEAR FORM</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CALENDAR ────────────────────────────────────────────────── -->
+<div class="section" id="section-calendar">
+  <div class="section-head">
+    <div class="section-head-icon">&#128197;</div>
+    <div><div class="section-head-title">CALENDAR & SCHEDULING</div><div class="section-head-sub">Court dates, client meetings, deadlines</div></div>
+  </div>
+  <div class="fr" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Add Appointment</div>
+      <div style="display:grid;gap:10px;">
+        <div><label>Event Title</label><input type="text" id="ev-title" placeholder="e.g. Deposition — Johnson v. Pacific"></div>
+        <div class="fr"><div><label>Date</label><input type="date" id="ev-date"></div><div><label>Time</label><input type="time" id="ev-time"></div></div>
+        <div><label>Type</label><select id="ev-type"><option>Court Hearing</option><option>Client Consultation</option><option>Deposition</option><option>Mediation</option><option>Filing Deadline</option><option>Internal Review</option><option>Phone Call</option></select></div>
+        <div><label>Client / Case</label><input type="text" id="ev-client" placeholder="Client name or case number"></div>
+        <div><label>Location / Link</label><input type="text" id="ev-loc" placeholder="Courtroom, Zoom link, office..."></div>
+        <div><label>Notes</label><textarea id="ev-notes" style="min-height:60px;" placeholder="Preparation notes, required docs..."></textarea></div>
+        <button class="btn-primary btn-block" onclick="addEvent()">ADD TO CALENDAR</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Upcoming Events</div>
+      <div id="cal-list">
+        <div class="cal-event"><div class="cal-time">Jun 20, 2026 &mdash; 9:00 AM</div><div class="cal-title">Initial Consultation</div><div class="cal-client">Maria Santos &mdash; Personal Injury</div></div>
+        <div class="cal-event"><div class="cal-time">Jun 24, 2026 &mdash; 5:00 PM</div><div class="cal-title">Discovery Response DUE</div><div class="cal-client">Johnson v. Pacific Corp</div></div>
+        <div class="cal-event" style="border-left-color:#c0392b;"><div class="cal-time" style="color:#c0392b;">Jul 3, 2026 &mdash; DEADLINE</div><div class="cal-title">Statute of Limitations</div><div class="cal-client">Torres v. Martinez</div></div>
+        <div class="cal-event"><div class="cal-time">Jul 10, 2026 &mdash; 10:00 AM</div><div class="cal-title">Deposition</div><div class="cal-client">Johnson v. Pacific Corp &mdash; Witness #1</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DEADLINES ───────────────────────────────────────────────── -->
+<div class="section" id="section-deadlines">
+  <div class="section-head">
+    <div class="section-head-icon">&#9201;</div>
+    <div><div class="section-head-title">DEADLINES & STATUTE TRACKER</div><div class="section-head-sub">California SOL tracker &mdash; never miss a filing date</div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Add Deadline</div>
+    <div style="display:grid;gap:10px;">
+      <div class="fr"><div><label>Case / Matter</label><input type="text" id="dl-case" placeholder="Case name or number"></div><div><label>Deadline Type</label><select id="dl-type"><option>Statute of Limitations</option><option>Court Filing</option><option>Discovery Deadline</option><option>Response Due</option><option>Motion Hearing</option><option>Trial Date</option><option>Appeal Deadline</option><option>Mediation</option></select></div></div>
+      <div class="fr"><div><label>Due Date</label><input type="date" id="dl-date"></div><div><label>Priority</label><select id="dl-priority"><option>URGENT</option><option>HIGH</option><option>NORMAL</option></select></div></div>
+      <div><label>Notes</label><input type="text" id="dl-notes" placeholder="Details..."></div>
+      <button class="btn-primary" onclick="addDeadline()">ADD DEADLINE</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">California Statutes of Limitations — Quick Reference</div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr style="background:#1a2f5e;"><th style="padding:8px 12px;text-align:left;color:#fff;font-size:9px;font-weight:700;">CASE TYPE</th><th style="padding:8px 12px;text-align:left;color:#fff;font-size:9px;font-weight:700;">SOL</th><th style="padding:8px 12px;text-align:left;color:#fff;font-size:9px;font-weight:700;">CODE SECTION</th><th style="padding:8px 12px;text-align:left;color:#fff;font-size:9px;font-weight:700;">NOTES</th></tr></thead>
+        <tbody id="sol-table">
+          <tr style="background:#f8faff;"><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Personal Injury</td><td style="padding:8px 12px;color:#c0392b;font-weight:700;">2 Years</td><td style="padding:8px 12px;color:#94a3b8;">CCP § 335.1</td><td style="padding:8px 12px;color:#64748b;">From date of injury</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Property Damage</td><td style="padding:8px 12px;color:#c0392b;font-weight:700;">3 Years</td><td style="padding:8px 12px;color:#94a3b8;">CCP § 338</td><td style="padding:8px 12px;color:#64748b;">From date of damage</td></tr>
+          <tr style="background:#f8faff;"><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Wrongful Death</td><td style="padding:8px 12px;color:#c0392b;font-weight:700;">2 Years</td><td style="padding:8px 12px;color:#94a3b8;">CCP § 335.1</td><td style="padding:8px 12px;color:#64748b;">From date of death</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Breach of Contract (Written)</td><td style="padding:8px 12px;color:#1a7a4a;font-weight:700;">4 Years</td><td style="padding:8px 12px;color:#94a3b8;">CCP § 337</td><td style="padding:8px 12px;color:#64748b;">From breach date</td></tr>
+          <tr style="background:#f8faff;"><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Breach of Contract (Oral)</td><td style="padding:8px 12px;color:#c0392b;font-weight:700;">2 Years</td><td style="padding:8px 12px;color:#94a3b8;">CCP § 339</td><td style="padding:8px 12px;color:#64748b;">From breach date</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Medical Malpractice</td><td style="padding:8px 12px;color:#c0392b;font-weight:700;">3 Years / 1 Year</td><td style="padding:8px 12px;color:#94a3b8;">CCP § 340.5</td><td style="padding:8px 12px;color:#64748b;">3yr from injury or 1yr from discovery</td></tr>
+          <tr style="background:#f8faff;"><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Employment Discrimination</td><td style="padding:8px 12px;color:#c0392b;font-weight:700;">3 Years</td><td style="padding:8px 12px;color:#94a3b8;">FEHA / CCP § 12965</td><td style="padding:8px 12px;color:#64748b;">File DFEH complaint first</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Defamation</td><td style="padding:8px 12px;color:#c0392b;font-weight:700;">1 Year</td><td style="padding:8px 12px;color:#94a3b8;">CCP § 340</td><td style="padding:8px 12px;color:#64748b;">From publication date</td></tr>
+          <tr style="background:#f8faff;"><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Fraud</td><td style="padding:8px 12px;color:#1a7a4a;font-weight:700;">3 Years</td><td style="padding:8px 12px;color:#94a3b8;">CCP § 338(d)</td><td style="padding:8px 12px;color:#64748b;">From discovery of fraud</td></tr>
+          <tr><td style="padding:8px 12px;font-weight:700;color:#1a2f5e;">Gov / Public Entity Claim</td><td style="padding:8px 12px;color:#c0392b;font-weight:700;">6 Months</td><td style="padding:8px 12px;color:#94a3b8;">Gov Code § 911.2</td><td style="padding:8px 12px;color:#64748b;">File claim with agency first</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" id="dl-list-card">
+    <div class="card-title">Active Deadlines</div>
+    <div id="dl-list"><div style="text-align:center;padding:30px;color:#94a3b8;font-size:12px;border:1px dashed #e2e8f0;border-radius:6px;">No deadlines added yet.</div></div>
+  </div>
+</div>
+
+<!-- ── DOCUMENTS ───────────────────────────────────────────────── -->
+<div class="section" id="section-docs">
+  <div class="section-head">
+    <div class="section-head-icon">&#128196;</div>
+    <div><div class="section-head-title">DOCUMENT CENTER</div><div class="section-head-sub">Generate, store & manage legal documents</div></div>
+  </div>
+  <div class="fr">
+    <div class="card">
+      <div class="card-title">Generate Document</div>
+      <div style="display:grid;gap:10px;">
+        <div><label>Document Type</label>
+          <select id="doc-type">
+            <option>Retainer Agreement</option>
+            <option>Demand Letter (Personal Injury)</option>
+            <option>Demand Letter (General)</option>
+            <option>Client Authorization Form</option>
+            <option>Settlement Agreement</option>
+            <option>Fee Agreement (Contingency)</option>
+            <option>Fee Agreement (Hourly)</option>
+            <option>Notice of Representation</option>
+            <option>HIPAA Authorization</option>
+            <option>Subpoena Cover Letter</option>
+            <option>Discovery Request</option>
+          </select>
+        </div>
+        <div><label>Client Name</label><input type="text" id="doc-client" placeholder="Full legal name"></div>
+        <div><label>Case / Matter</label><input type="text" id="doc-case" placeholder="Case name or number"></div>
+        <div><label>Opposing Party</label><input type="text" id="doc-opp" placeholder="Defendant / Plaintiff"></div>
+        <div><label>Additional Details</label><textarea id="doc-details" style="min-height:70px;" placeholder="Amount, dates, specific terms..."></textarea></div>
+        <button class="btn-primary btn-block" onclick="generateDoc()">GENERATE DOCUMENT</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Document Vault</div>
+      <div style="display:grid;gap:8px;">
+        <div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">&#128196;</span>
+          <div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#1a2f5e;">Torres v. Martinez — Demand Letter</div><div style="font-size:9px;color:#94a3b8;">June 18, 2026</div></div>
+          <button class="btn-sm btn-outline" onclick="toast('Downloading...')">Download</button>
+        </div>
+        <div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">&#128196;</span>
+          <div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#1a2f5e;">Johnson v. Pacific — Retainer Agreement</div><div style="font-size:9px;color:#94a3b8;">January 8, 2026</div></div>
+          <button class="btn-sm btn-outline" onclick="toast('Downloading...')">Download</button>
+        </div>
+        <div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">&#128196;</span>
+          <div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#1a2f5e;">Santos Estate — Consultation Notes</div><div style="font-size:9px;color:#94a3b8;">June 19, 2026</div></div>
+          <button class="btn-sm btn-outline" onclick="toast('Downloading...')">Download</button>
+        </div>
+      </div>
+      <div style="margin-top:10px;border:2px dashed #e2e8f0;border-radius:6px;padding:20px;text-align:center;cursor:pointer;" onclick="toast('Upload feature — connect to cloud storage')">
+        <div style="font-size:24px;margin-bottom:6px;">&#128228;</div>
+        <div style="font-size:11px;color:#94a3b8;">Upload Documents</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="doc-output" style="display:none;">
+    <div class="card-title">Generated Document Preview</div>
+    <div id="doc-preview" style="background:#f8faff;border-radius:6px;padding:20px;font-size:12px;line-height:1.8;color:#1a2f5e;white-space:pre-wrap;font-family:Georgia,serif;"></div>
+    <div style="margin-top:12px;display:flex;gap:8px;">
+      <button class="btn-primary" onclick="window.print()">PRINT / SAVE PDF</button>
+      <button class="btn-outline" onclick="document.getElementById('doc-output').style.display='none'">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BILLING ─────────────────────────────────────────────────── -->
+<div class="section" id="section-billing">
+  <div class="section-head">
+    <div class="section-head-icon">&#128181;</div>
+    <div><div class="section-head-title">BILLING & TIME TRACKING</div><div class="section-head-sub">Log hours, track invoices, manage retainers</div></div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num" id="bill-hrs">0</div><div class="stat-label">Hours This Month</div></div>
+    <div class="stat-card"><div class="stat-num" id="bill-total" style="color:#c9a84c;">$0</div><div class="stat-label">Total Billed</div></div>
+    <div class="stat-card"><div class="stat-num" id="bill-outstanding" style="color:#c0392b;">$0</div><div class="stat-label">Outstanding</div></div>
+    <div class="stat-card"><div class="stat-num" id="bill-collected" style="color:#1a7a4a;">$0</div><div class="stat-label">Collected</div></div>
+  </div>
+  <div class="fr">
+    <div class="card">
+      <div class="card-title">Log Billable Time</div>
+      <div style="display:grid;gap:10px;">
+        <div><label>Case / Matter</label><select id="bill-case"><option>Torres v. Martinez</option><option>Johnson v. Pacific Corp</option><option>Santos Estate Matter</option></select></div>
+        <div class="fr"><div><label>Date</label><input type="date" id="bill-date"></div><div><label>Hours</label><input type="number" id="bill-hours" placeholder="0.0" step="0.1" min="0"></div></div>
+        <div><label>Activity</label><select id="bill-activity"><option>Client Communication</option><option>Research</option><option>Document Drafting</option><option>Court Appearance</option><option>Deposition</option><option>Mediation</option><option>Filing</option><option>Investigation</option><option>Travel</option><option>Consultation</option></select></div>
+        <div><label>Rate</label><select id="bill-rate"><option>$350/hr (Standard)</option><option>$400/hr (Trial)</option><option>$250/hr (Paralegal)</option><option>Contingency — No Charge</option></select></div>
+        <div><label>Notes</label><input type="text" id="bill-notes" placeholder="Brief description of work performed"></div>
+        <button class="btn-primary btn-block" onclick="logTime()">LOG HOURS</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Time Entries</div>
+      <div id="time-log">
+        <div style="padding:10px 0;border-bottom:1px solid #e2e8f0;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:2px;">
+            <span style="font-size:11px;font-weight:700;color:#1a2f5e;">Torres v. Martinez</span>
+            <span style="font-size:11px;font-weight:700;color:#c9a84c;">$700.00</span>
+          </div>
+          <div style="font-size:10px;color:#94a3b8;">2.0 hrs &mdash; Document Drafting &mdash; Jun 18, 2026</div>
+        </div>
+        <div style="padding:10px 0;border-bottom:1px solid #e2e8f0;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:2px;">
+            <span style="font-size:11px;font-weight:700;color:#1a2f5e;">Johnson v. Pacific Corp</span>
+            <span style="font-size:11px;font-weight:700;color:#c9a84c;">$1,050.00</span>
+          </div>
+          <div style="font-size:10px;color:#94a3b8;">3.0 hrs &mdash; Research &mdash; Jun 17, 2026</div>
+        </div>
+        <div style="padding:10px 0;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:2px;">
+            <span style="font-size:11px;font-weight:700;color:#1a2f5e;">Santos Estate Matter</span>
+            <span style="font-size:11px;font-weight:700;color:#c9a84c;">$350.00</span>
+          </div>
+          <div style="font-size:10px;color:#94a3b8;">1.0 hr &mdash; Consultation &mdash; Jun 19, 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONTACTS ────────────────────────────────────────────────── -->
+<div class="section" id="section-contacts">
+  <div class="section-head">
+    <div class="section-head-icon">&#128101;</div>
+    <div><div class="section-head-title">CONTACTS & NETWORK</div><div class="section-head-sub">Clients, opposing counsel, courts, experts</div></div>
+  </div>
+  <div class="fr">
+    <div class="card">
+      <div class="card-title">Add Contact</div>
+      <div style="display:grid;gap:10px;">
+        <div class="fr"><div><label>First Name</label><input type="text" id="ct-first" placeholder="First"></div><div><label>Last Name</label><input type="text" id="ct-last" placeholder="Last"></div></div>
+        <div><label>Role</label><select id="ct-role"><option>Client</option><option>Opposing Counsel</option><option>Expert Witness</option><option>Court Contact</option><option>Insurance Adjuster</option><option>Mediator</option><option>Process Server</option><option>Investigator</option><option>Co-Counsel</option><option>Referral Source</option></select></div>
+        <div class="fr"><div><label>Phone</label><input type="tel" id="ct-phone" placeholder="+1 (XXX) XXX-XXXX"></div><div><label>Email</label><input type="email" id="ct-email" placeholder="email@domain.com"></div></div>
+        <div><label>Organization / Firm</label><input type="text" id="ct-org" placeholder="Law firm, company, court..."></div>
+        <div><label>Case Association</label><input type="text" id="ct-case" placeholder="Related case name or number"></div>
+        <button class="btn-primary btn-block" onclick="saveContact()">SAVE CONTACT</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Key Contacts</div>
+      <div id="contacts-list">
+        <div style="padding:10px 0;border-bottom:1px solid #e2e8f0;">
+          <div style="font-size:11px;font-weight:700;color:#1a2f5e;">Maria Santos</div>
+          <div style="font-size:10px;color:#94a3b8;">Client &mdash; Torres v. Martinez &mdash; (323) 555-0192</div>
+        </div>
+        <div style="padding:10px 0;border-bottom:1px solid #e2e8f0;">
+          <div style="font-size:11px;font-weight:700;color:#1a2f5e;">Robert Chen, Esq.</div>
+          <div style="font-size:10px;color:#94a3b8;">Opposing Counsel &mdash; Pacific Corp &mdash; Chen & Associates</div>
+        </div>
+        <div style="padding:10px 0;">
+          <div style="font-size:11px;font-weight:700;color:#1a2f5e;">Dr. Angela Reyes, MD</div>
+          <div style="font-size:10px;color:#94a3b8;">Medical Expert Witness &mdash; Personal Injury Cases</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BACK OFFICE ─────────────────────────────────────────────── -->
+<div class="section" id="section-backoffice">
+  <div class="section-head">
+    <div class="section-head-icon">&#128736;</div>
+    <div><div class="section-head-title">BACK OFFICE</div><div class="section-head-sub">Admin, expenses, trust accounting, compliance</div></div>
+  </div>
+  <div class="fr">
+    <div class="card">
+      <div class="card-title">Client Trust Account (IOLTA)</div>
+      <div style="background:linear-gradient(135deg,#1a2f5e,#2d4a8a);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="font-size:9px;color:rgba(255,255,255,0.6);letter-spacing:1px;margin-bottom:4px;">IOLTA BALANCE</div>
+        <div style="font-size:26px;font-weight:700;color:#c9a84c;" id="iolta-balance">$8,500.00</div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:4px;">State Bar CA Compliant Trust Account</div>
+      </div>
+      <div style="display:grid;gap:8px;">
+        <div class="fr"><div><label>Client</label><input type="text" id="iolta-client" placeholder="Client name"></div><div><label>Amount</label><input type="text" id="iolta-amt" placeholder="$0.00"></div></div>
+        <div class="fr"><div><label>Type</label><select id="iolta-type"><option>Deposit — Retainer</option><option>Withdrawal — Fees Earned</option><option>Withdrawal — Expenses</option><option>Refund to Client</option></select></div><div><label>Reference</label><input type="text" id="iolta-ref" placeholder="Check # or ref"></div></div>
+        <button class="btn-primary btn-block" onclick="logIOLTA()">LOG TRANSACTION</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Business Expenses</div>
+      <div style="display:grid;gap:10px;">
+        <div class="fr"><div><label>Date</label><input type="date" id="exp-date"></div><div><label>Amount</label><input type="text" id="exp-amt" placeholder="$0.00"></div></div>
+        <div><label>Category</label><select id="exp-cat"><option>Court Filing Fees</option><option>Process Server</option><option>Expert Witness</option><option>Travel / Mileage</option><option>Office Supplies</option><option>Software / Tech</option><option>Bar Dues / CLE</option><option>Marketing</option><option>Research / LexisNexis</option><option>Investigator</option></select></div>
+        <div><label>Description</label><input type="text" id="exp-desc" placeholder="Brief description"></div>
+        <div><label>Case (if billable to client)</label><input type="text" id="exp-case" placeholder="Case name or leave blank"></div>
+        <button class="btn-primary btn-block" onclick="logExpense()">LOG EXPENSE</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">CA Bar Compliance Checklist</div>
+    <div style="display:grid;gap:8px;">
+      <div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="color:#1a7a4a;font-size:16px;">&#10003;</span><div><div style="font-size:11px;font-weight:700;color:#1a2f5e;">MCLE Requirements (25 hrs / 3-yr period)</div><div style="font-size:10px;color:#94a3b8;">Track CLE credits — log courses below</div></div></div><div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="color:#1a7a4a;font-size:16px;">&#10003;</span><div><div style="font-size:11px;font-weight:700;color:#1a2f5e;">IOLTA Trust Account Reconciliation</div><div style="font-size:10px;color:#94a3b8;">Monthly — State Bar Rule 1.15</div></div></div><div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="color:#1a7a4a;font-size:16px;">&#10003;</span><div><div style="font-size:11px;font-weight:700;color:#1a2f5e;">Client File Retention (5 years minimum)</div><div style="font-size:10px;color:#94a3b8;">CA Rules of Professional Conduct Rule 1.16</div></div></div><div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="color:#1a7a4a;font-size:16px;">&#10003;</span><div><div style="font-size:11px;font-weight:700;color:#1a2f5e;">Written Fee Agreements Required</div><div style="font-size:10px;color:#94a3b8;">CA Bus & Prof Code § 6148 — over $1,000</div></div></div><div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="color:#1a7a4a;font-size:16px;">&#10003;</span><div><div style="font-size:11px;font-weight:700;color:#1a2f5e;">Conflict Check System</div><div style="font-size:10px;color:#94a3b8;">Run before every new matter</div></div></div><div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="color:#1a7a4a;font-size:16px;">&#10003;</span><div><div style="font-size:11px;font-weight:700;color:#1a2f5e;">Malpractice Insurance</div><div style="font-size:10px;color:#94a3b8;">Disclosure required if not carrying — CA SB 729 (2025)</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LEGAL RESEARCH ──────────────────────────────────────────── -->
+<div class="section" id="section-research"><div class="section-head"><div class="section-head-icon">&#128269;</div><div><div class="section-head-title">LEGAL RESEARCH HUB</div><div class="section-head-sub">AI research, SOL tracker, CACI, settlement data, federal law</div></div></div><div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;border-bottom:2px solid #e2e8f0;padding-bottom:10px;"><button class="btn-primary btn-sm" onclick="showResTab('ai',this)" id="restab-ai">AI Research</button><button class="btn-outline btn-sm" onclick="showResTab('sol',this)" id="restab-sol">SOL Reference</button><button class="btn-outline btn-sm" onclick="showResTab('caci',this)" id="restab-caci">CACI Instructions</button><button class="btn-outline btn-sm" onclick="showResTab('settlement',this)" id="restab-settlement">Settlement Data</button><button class="btn-outline btn-sm" onclick="showResTab('links',this)" id="restab-links">Quick Links</button></div><div id="res-ai" class="res-panel"><div class="fr"><div class="card"><div class="card-title">AI Legal Research Assistant</div><div style="display:grid;gap:10px;"><div><label>Query</label><textarea id="res-query" style="min-height:90px;" placeholder="e.g. California comparative fault standard, punitive damages elements, MICRA damage caps..."></textarea></div><div class="fr"><div><label>Practice Area</label><select id="res-area"><option>Personal Injury</option><option>Tort Law</option><option>Employment Law</option><option>Contract Law</option><option>Criminal Defense</option><option>Family Law</option><option>Medical Malpractice</option><option>Products Liability</option><option>Civil Rights</option><option>Estate / Probate</option></select></div><div><label>Jurisdiction</label><select id="res-jx"><option>California</option><option>Federal 9th Circuit</option><option>US Supreme Court</option></select></div></div><div><label>Depth</label><select id="res-depth"><option>Quick Summary</option><option>Full Analysis with Citations</option><option>Motion Brief Points</option><option>Deposition Questions</option><option>Opposing Arguments</option></select></div><button class="btn-primary btn-block" onclick="runResearch()">RUN AI RESEARCH</button></div><div id="research-result" style="display:none;margin-top:12px;background:#f8faff;border-radius:6px;padding:16px;font-size:12px;line-height:1.8;color:#1a2f5e;border-left:3px solid #1a2f5e;"></div></div><div><div class="card"><div class="card-title">Quick Prompts</div><div style="display:grid;gap:6px;"><button onclick="quickRes('Negligence elements CA','Personal Injury','California')" style="text-align:left;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;color:#1a2f5e;">Negligence Elements CA</button><button onclick="quickRes('Punitive damages standard','Tort Law','California')" style="text-align:left;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;color:#1a2f5e;">Punitive Damages Standard</button><button onclick="quickRes('Comparative fault rules California','Personal Injury','California')" style="text-align:left;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;color:#1a2f5e;">Comparative Fault Rules</button><button onclick="quickRes('MICRA damage caps medical malpractice','Medical Malpractice','California')" style="text-align:left;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;color:#1a2f5e;">MICRA Damage Caps</button><button onclick="quickRes('Government claims act requirements California','Personal Injury','California')" style="text-align:left;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;color:#1a2f5e;">Gov Claims Act Requirements</button><button onclick="quickRes('Wrongful termination elements FEHA','Employment Law','California')" style="text-align:left;padding:8px 12px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;color:#1a2f5e;">Wrongful Termination FEHA</button></div></div></div></div></div><div id="res-sol" class="res-panel" style="display:none;"><div class="card"><div class="card-title">California Statutes of Limitations</div><div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#1a2f5e;"><th style="padding:8px 10px;text-align:left;color:#fff;font-size:9px;font-weight:700;">CASE TYPE</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;">SOL</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;">CODE</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;">TRIGGER</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;">NOTES</th></tr></thead><tbody><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Personal Injury</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">2 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 335.1</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Date of injury</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Minor tolled to age 18+2yr</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Wrongful Death</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">2 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 335.1</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Date of death</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Separate from survival action</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Property Damage</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">3 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 338</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Date of damage</td><td style="padding:7px 10px;color:#64748b;font-size:9px;"></td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Breach of Written Contract</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">4 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 337</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Date of breach</td><td style="padding:7px 10px;color:#64748b;font-size:9px;"></td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Breach of Oral Contract</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">2 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 339</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Date of breach</td><td style="padding:7px 10px;color:#64748b;font-size:9px;"></td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Fraud</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">3 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 338(d)</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Discovery of fraud</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Discovery rule applies</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Medical Malpractice</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">3yr or 1yr</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 340.5</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Injury or discovery</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">1yr from discovery; 3yr hard cap</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Legal Malpractice</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">1 Year</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 340.6</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Discovery</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Continuous rep rule tolls SOL</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Defamation</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">1 Year</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 340</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Publication date</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Single publication rule</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Employment Discrimination</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">3 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">Gov 12965</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Date of violation</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">File CRD complaint first</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Wage & Hour</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">3 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 338</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Each violation</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">4yr UCL claim possible</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Gov / Public Entity</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">6 Months</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">Gov 911.2</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Date of accrual</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Mandatory pre-suit claim required</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Federal Civil Rights 1983</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">2 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 335.1</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Date of violation</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">9th Circuit borrows CA SOL</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Products Liability</td><td style="padding:7px 10px;color:#c0392b;font-weight:700;font-size:10px;">2 Years</td><td style="padding:7px 10px;color:#94a3b8;font-size:9px;font-family:monospace;">CCP 335.1</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Injury or discovery</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Strict liability standard</td></tr></tbody></table></div></div></div><div id="res-caci" class="res-panel" style="display:none;"><div class="card"><div class="card-title">CACI Jury Instructions Quick Reference</div><div style="margin-bottom:10px;"><input type="text" id="caci-search" placeholder="Search CACI number or topic..." oninput="filterCaci()" style="padding:9px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;width:100%;"></div><div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#1a2f5e;"><th style="padding:8px 10px;text-align:left;color:#fff;font-size:9px;font-weight:700;width:70px;">CACI #</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;text-align:left;">INSTRUCTION</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;text-align:left;">AREA</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;text-align:left;">ELEMENTS</th></tr></thead><tbody id="caci-tbody"><tr class="caci-row" style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">400</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Negligence Elements</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">PI / Tort</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Duty, breach, causation, damages</td></tr><tr class="caci-row" style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">401</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Standard of Care</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Tort</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Reasonable person standard</td></tr><tr class="caci-row" style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">402</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Negligence Per Se</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">PI / Tort</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Statute violation = breach if in class of risks</td></tr><tr class="caci-row" style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">403</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Causation — Substantial Factor</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Tort</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">But-for + substantial factor test</td></tr><tr class="caci-row" style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">430</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Punitive Damages</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Tort</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Malice, oppression or fraud — clear and convincing</td></tr><tr class="caci-row" style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">600</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Battery</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Tort</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Harmful or offensive contact, intent required</td></tr><tr class="caci-row" style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">1000</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Products Liability — Mfg Defect</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Products</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Product deviated from intended design</td></tr><tr class="caci-row" style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">2400</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Wrongful Termination FEHA</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Employment</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Protected class, adverse action, nexus</td></tr><tr class="caci-row" style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">3900</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Damages Introduction</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Damages</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Past/future medical, lost earnings, pain & suffering</td></tr><tr class="caci-row" style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">3905A</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Pain, Mental Suffering</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Damages</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Non-economic — no cap in PI (except MICRA)</td></tr><tr class="caci-row" style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">3960</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Comparative Fault</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Tort</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Reduce damages by plaintiff fault %</td></tr><tr class="caci-row" style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">4300</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Fraud — Misrepresentation</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Fraud</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">False rep, knowledge, intent, reliance, damages</td></tr><tr class="caci-row" style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-family:monospace;font-size:10px;">4500</td><td style="padding:7px 10px;font-weight:600;color:#1a2f5e;font-size:10px;">Breach of Contract</td><td style="padding:7px 10px;font-size:9px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;">Contract</span></td><td style="padding:7px 10px;color:#64748b;font-size:10px;">Existence, performance, breach, damages</td></tr></tbody></table></div><div style="margin-top:10px;"><a href="https://www.judicial.ca.gov/caci" target="_blank" class="btn-primary btn-sm">Open Full CACI Online</a></div></div></div><div id="res-settlement" class="res-panel" style="display:none;"><div class="card"><div class="card-title">California Settlement & Verdict Benchmarks</div><div style="overflow-x:auto;margin-bottom:16px;"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#1a2f5e;"><th style="padding:8px 10px;text-align:left;color:#fff;font-size:9px;font-weight:700;">CASE TYPE</th><th style="padding:8px 10px;text-align:right;color:#fff;font-size:9px;font-weight:700;">MEDIAN SETTLE</th><th style="padding:8px 10px;text-align:right;color:#fff;font-size:9px;font-weight:700;">AVG VERDICT</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;">RANGE</th><th style="padding:8px 10px;color:#fff;font-size:9px;font-weight:700;">KEY FACTORS</th></tr></thead><tbody><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Rear-End Auto — Minor Injury</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$15,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$28,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$5K-$75K</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">ER visit, chiro, clear liability</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Auto Accident — Soft Tissue</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$35,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$52,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$10K-$150K</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Treatment duration key</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Auto Accident — Fracture</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$85,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$145,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$50K-$500K</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Surgery required adds value</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Auto Accident — TBI</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$250,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$850,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$100K-$5M+</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Neuropsych eval critical</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Wrongful Death — Auto</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$750,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$2.1M</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$300K-$10M+</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Dependents, income, age</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Slip & Fall — Retail</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$45,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$95,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$20K-$500K</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Notice to defendant critical</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Dog Bite — Strict Liability CA</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$55,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$72,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$15K-$300K</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Disfigurement adds value</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Products Liability</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$200,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$1.8M</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$50K-$50M+</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Punitive exposure possible</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Medical Malpractice</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$350,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$680,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$100K-$5M+</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">MICRA cap $350K non-econ</td></tr><tr style="background:#fff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">Employment — Wrongful Term.</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$75,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$200,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$25K-$2M+</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Lost wages x3-5yr + distress</td></tr><tr style="background:#f8faff"><td style="padding:7px 10px;font-weight:700;color:#1a2f5e;font-size:10px;">FEHA Discrimination</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#1a7a4a;font-size:10px;">$85,000</td><td style="padding:7px 10px;text-align:right;font-weight:700;color:#c9a84c;font-size:10px;">$320,000</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">$30K-$3M+</td><td style="padding:7px 10px;color:#64748b;font-size:9px;">Must exhaust CRD admin first</td></tr></tbody></table></div><div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:16px;"><div style="font-size:10px;font-weight:700;color:#92400e;margin-bottom:10px;">CASE VALUE CALCULATOR</div><div style="display:grid;gap:10px;"><div class="fr3"><div><label>Medical Bills</label><input type="text" id="val-meds" placeholder="$0" oninput="calcVal()"></div><div><label>Lost Wages</label><input type="text" id="val-wages" placeholder="$0" oninput="calcVal()"></div><div><label>Future Medicals</label><input type="text" id="val-future" placeholder="$0" oninput="calcVal()"></div></div><div class="fr"><div><label>Multiplier</label><select id="val-mult" onchange="calcVal()"><option value="1.5">1.5x Minor injury</option><option value="2.5">2.5x Moderate</option><option value="3.5" selected>3.5x Significant / surgery</option><option value="5">5x Severe / permanent</option><option value="8">8x Catastrophic / TBI</option></select></div><div><label>Plaintiff Fault %</label><input type="number" id="val-fault" placeholder="0" min="0" max="100" value="0" oninput="calcVal()"></div></div><div style="background:#1a2f5e;border-radius:8px;padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;"><div><div style="font-size:9px;color:rgba(255,255,255,0.6);margin-bottom:4px;">GROSS VALUE</div><div style="font-size:16px;font-weight:700;color:#c9a84c;" id="val-gross">$0</div></div><div><div style="font-size:9px;color:rgba(255,255,255,0.6);margin-bottom:4px;">NET AFTER FAULT</div><div style="font-size:16px;font-weight:700;color:#fff;" id="val-net">$0</div></div><div><div style="font-size:9px;color:rgba(255,255,255,0.6);margin-bottom:4px;">YOUR FEE (33%)</div><div style="font-size:16px;font-weight:700;color:#c9a84c;" id="val-fee">$0</div></div></div></div></div></div></div><div id="res-links" class="res-panel" style="display:none;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"><div class="card"><div class="card-title">CA Courts & Agencies</div><div style="display:grid;gap:6px;"><a href="https://www.courts.ca.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; California Courts</a><a href="https://www.calbar.ca.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; State Bar of California</a><a href="https://www.judicial.ca.gov/caci" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; CACI Jury Instructions</a><a href="https://leginfo.legislature.ca.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; CA Codes & Statutes</a><a href="https://calcivilrights.ca.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; CRD (FEHA Complaints)</a><a href="https://www.courts.ca.gov/forms.htm" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; CA Judicial Council Forms</a><a href="https://www.cacd.uscourts.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; USDC CD California</a><a href="https://www.ca9.uscourts.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; 9th Circuit Court</a></div></div><div class="card"><div class="card-title">Free Research Tools</div><div style="display:grid;gap:6px;"><a href="https://scholar.google.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; Google Scholar (Free Case Law)</a><a href="https://www.courtlistener.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; CourtListener (Free PACER)</a><a href="https://law.justia.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; Justia (Free Opinions)</a><a href="https://www.law.cornell.edu" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; Cornell LII (Free Statutes)</a><a href="https://www.fastcase.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; Fastcase (Free w/ CA Bar)</a><a href="https://pacer.uscourts.gov" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; PACER (Federal Records)</a><a href="https://www.verdictsearch.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; Verdict Search (CA Verdicts)</a><a href="https://www.seakexperts.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8faff;border:1px solid #e2e8f0;border-radius:6px;text-decoration:none;font-size:10px;font-weight:600;color:#1a2f5e;">&#128279; SEAK Expert Witness Directory</a></div></div></div></div></div><div class="section" id="section-lexis"><div class="section-head"><div class="section-head-icon" style="background:rgba(204,0,0,0.1);border-color:#cc0000;">&#128218;</div><div><div class="section-head-title">LEXISNEXIS WORKSPACE</div><div class="section-head-sub">Case law, Shepard citations, briefs, secondary sources</div></div></div><div style="background:linear-gradient(135deg,#cc0000,#8b0000);border-radius:12px;padding:20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;"><div><div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">LexisNexis+ | Lexis Advance</div><div style="font-size:10px;color:rgba(255,255,255,0.7);">Sign in with your LexisNexis subscriber account for full access.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><a href="https://advance.lexis.com" target="_blank" onclick="logLexisAuto('Opened Lexis Advance')" style="padding:10px 20px;background:#fff;color:#cc0000;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none;letter-spacing:1px;">LEXIS ADVANCE</a><a href="https://plus.lexis.com" target="_blank" onclick="logLexisAuto('Opened Lexis+')" style="padding:10px 20px;background:rgba(255,255,255,0.2);color:#fff;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none;letter-spacing:1px;">LEXIS+</a></div></div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:16px;"><a href="https://advance.lexis.com/search/" target="_blank" onclick="logLexisAuto('Opened: Case Law Search')" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;text-decoration:none;"><div style="font-size:20px;margin-bottom:6px;">#cc0000</div><div style="font-size:11px;font-weight:700;color:&#9878;;margin-bottom:3px;">Case Law Search</div><div style="font-size:9px;color:#94a3b8;">Search federal and state cases</div></a><a href="https://advance.lexis.com/shepards/" target="_blank" onclick="logLexisAuto('Opened: Shepard Citations')" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;text-decoration:none;"><div style="font-size:20px;margin-bottom:6px;">#8b0000</div><div style="font-size:11px;font-weight:700;color:&#128681;;margin-bottom:3px;">Shepard Citations</div><div style="font-size:9px;color:#94a3b8;">Validate cases — red/yellow flags</div></a><a href="https://advance.lexis.com/secondary/" target="_blank" onclick="logLexisAuto('Opened: CA Secondary Sources')" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;text-decoration:none;"><div style="font-size:20px;margin-bottom:6px;">#1a2f5e</div><div style="font-size:11px;font-weight:700;color:&#128218;;margin-bottom:3px;">CA Secondary Sources</div><div style="font-size:9px;color:#94a3b8;">Witkin, CEB, Miller & Starr</div></a><a href="https://advance.lexis.com/briefs/" target="_blank" onclick="logLexisAuto('Opened: Briefs & Motions')" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;text-decoration:none;"><div style="font-size:20px;margin-bottom:6px;">#1a7a4a</div><div style="font-size:11px;font-weight:700;color:&#128196;;margin-bottom:3px;">Briefs & Motions</div><div style="font-size:9px;color:#94a3b8;">Filed briefs by topic</div></a><a href="https://advance.lexis.com/expertwitnesslocator/" target="_blank" onclick="logLexisAuto('Opened: Expert Witness Locator')" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;text-decoration:none;"><div style="font-size:20px;margin-bottom:6px;">#c9a84c</div><div style="font-size:11px;font-weight:700;color:&#128101;;margin-bottom:3px;">Expert Witness Locator</div><div style="font-size:9px;color:#94a3b8;">Experts by specialty and jurisdiction</div></a><a href="https://advance.lexis.com/news/" target="_blank" onclick="logLexisAuto('Opened: News & Public Records')" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;text-decoration:none;"><div style="font-size:20px;margin-bottom:6px;">#2d4a8a</div><div style="font-size:11px;font-weight:700;color:&#128240;;margin-bottom:3px;">News & Public Records</div><div style="font-size:9px;color:#94a3b8;">Adverse party background research</div></a><a href="https://advance.lexis.com/verdicts/" target="_blank" onclick="logLexisAuto('Opened: Verdicts & Settlements')" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;text-decoration:none;"><div style="font-size:20px;margin-bottom:6px;">#1a7a4a</div><div style="font-size:11px;font-weight:700;color:&#128181;;margin-bottom:3px;">Verdicts & Settlements</div><div style="font-size:9px;color:#94a3b8;">CA verdict and settlement database</div></a><a href="https://plus.lexis.com" target="_blank" onclick="logLexisAuto('Opened: Lexis AI Draft')" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;text-decoration:none;"><div style="font-size:20px;margin-bottom:6px;">#cc0000</div><div style="font-size:11px;font-weight:700;color:&#129302;;margin-bottom:3px;">Lexis AI Draft</div><div style="font-size:9px;color:#94a3b8;">AI-assisted brief drafting</div></a></div><div class="fr"><div class="card"><div class="card-title">Quick Shepardize</div><div style="display:grid;gap:10px;"><div><label>Citation</label><input type="text" id="shep-cite" placeholder="e.g. 35 Cal.4th 311 or 547 U.S. 813"></div><button class="btn-primary btn-block" onclick="shepardize()">SHEPARDIZE ON LEXIS</button><div style="font-size:9px;color:#94a3b8;">Opens LexisNexis Shepard in new tab. Active subscription required.</div></div></div><div class="card"><div class="card-title">LexisNexis Research Tips</div><div style="display:grid;gap:6px;"><div style="border-left:3px solid #cc0000;padding:6px 10px;background:#fff5f5;border-radius:0 6px 6px 0;"><div style="font-size:9px;font-weight:700;color:#cc0000;letter-spacing:1px;">Proximity Search</div><div style="font-size:10px;color:#1a2f5e;margin-top:1px;">Use "w/5" connector: negligence w/5 causation</div></div><div style="border-left:3px solid #cc0000;padding:6px 10px;background:#fff5f5;border-radius:0 6px 6px 0;"><div style="font-size:9px;font-weight:700;color:#cc0000;letter-spacing:1px;">Shepard Signals</div><div style="font-size:10px;color:#1a2f5e;margin-top:1px;">Red stop = overruled; Yellow triangle = caution; Green = positive</div></div><div style="border-left:3px solid #cc0000;padding:6px 10px;background:#fff5f5;border-radius:0 6px 6px 0;"><div style="font-size:9px;font-weight:700;color:#cc0000;letter-spacing:1px;">CA Primary Sources</div><div style="font-size:10px;color:#1a2f5e;margin-top:1px;">Filter: California Cases + Last 5 Years for current law</div></div><div style="border-left:3px solid #cc0000;padding:6px 10px;background:#fff5f5;border-radius:0 6px 6px 0;"><div style="font-size:9px;font-weight:700;color:#cc0000;letter-spacing:1px;">Secondary Sources</div><div style="font-size:10px;color:#1a2f5e;margin-top:1px;">Witkin Summary of CA Law = gold standard for CA research</div></div><div style="border-left:3px solid #cc0000;padding:6px 10px;background:#fff5f5;border-radius:0 6px 6px 0;"><div style="font-size:9px;font-weight:700;color:#cc0000;letter-spacing:1px;">Briefs Strategy</div><div style="font-size:10px;color:#1a2f5e;margin-top:1px;">Filter by court + topic to find winning argument patterns</div></div><div style="border-left:3px solid #cc0000;padding:6px 10px;background:#fff5f5;border-radius:0 6px 6px 0;"><div style="font-size:9px;font-weight:700;color:#cc0000;letter-spacing:1px;">MCLE Credit</div><div style="font-size:10px;color:#1a2f5e;margin-top:1px;">LexisNexis has accredited MCLE content — track under CA Bar</div></div></div></div></div><div class="card"><div class="card-title">Research Session Log</div><div id="lexis-log"><div style="text-align:center;padding:20px;color:#94a3b8;font-size:11px;">Research sessions logged here for billing reference.</div></div><div style="margin-top:10px;display:flex;gap:8px;"><input type="text" id="lexis-log-note" placeholder="Log session e.g. Shepardized Torres v. Martinez 30 min"><button class="btn-primary btn-sm" onclick="logLexis()" style="white-space:nowrap;">LOG</button></div></div></div>
+</div><!-- end app -->
+
+<script>
+var pin=''; var PIN_OK='5566';
+function np(v){if(pin.length<4){pin+=v;upd();if(pin.length===4)setTimeout(chk,80);}}
+function nd(){if(pin.length){pin=pin.slice(0,-1);upd();}}
+function nc(){pin='';upd();}
+function upd(){for(var i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('on',i<pin.length);}
+function chk(){
+  if(pin===PIN_OK){
+    var g=document.getElementById('pin-gate');
+    var t=document.getElementById('topbar');
+    var tb=document.getElementById('tabs-bar');
+    var a=document.getElementById('app');
+    if(g){g.style.cssText='display:none!important';g.style.visibility='hidden';}
+    if(t){t.style.cssText='display:flex!important;visibility:visible!important;opacity:1!important;';}
+    if(tb){tb.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;';}
+    if(a){a.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;';}
+    startClock();
+    document.getElementById('dash-active').textContent='3';
+    document.getElementById('dash-deadlines').textContent='2';
+    document.getElementById('dash-consults').textContent='1';
+    document.getElementById('dash-billing').textContent='$2,100';
+    document.getElementById('bill-hrs').textContent='6.0';
+    document.getElementById('bill-total').textContent='$2,100';
+    document.getElementById('bill-outstanding').textContent='$2,100';
+    document.getElementById('bill-collected').textContent='$0';
+  } else {
+    document.getElementById('g-err').textContent='Incorrect PIN.';
+    pin='';upd();
+    setTimeout(function(){document.getElementById('g-err').textContent='';},2000);
+  }
+}
+function startClock(){
+  setInterval(function(){
+    var now=new Date();
+    var h=now.getHours().toString().padStart(2,'0');
+    var m=now.getMinutes().toString().padStart(2,'0');
+    var el=document.getElementById('tb-clock');
+    if(el)el.textContent=h+':'+m;
+  },1000);
+}
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('section-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
+
+// Cases
+var deadlines=[];
+function openNewCase(){document.getElementById('new-case-form').style.display='block';}
+function saveCase(){
+  var n=document.getElementById('nc-name').value;
+  if(!n){alert('Enter client name');return;}
+  toast('Case saved: '+n);
+  document.getElementById('new-case-form').style.display='none';
+  document.getElementById('nc-name').value='';
+}
+function filterCases(type){toast('Filtering by: '+type);}
+
+// Intake
+function saveIntake(){
+  var f=document.getElementById('in-first').value;
+  var l=document.getElementById('in-last').value;
+  if(!f||!l){alert('Enter client name');return;}
+  toast('Intake saved: '+f+' '+l+' — Case file opened');
+}
+function printIntake(){window.print();}
+function clearIntake(){
+  ['in-first','in-last','in-dob','in-ssn','in-phone','in-email','in-addr','in-incident','in-sol','in-value','in-desc','in-damages','in-ref','in-notes','in-ret-amt'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  toast('Form cleared');
+}
+
+// Calendar
+function addEvent(){
+  var t=document.getElementById('ev-title').value;
+  var d=document.getElementById('ev-date').value;
+  if(!t||!d){alert('Enter title and date');return;}
+  var list=document.getElementById('cal-list');
+  var div=document.createElement('div');
+  div.className='cal-event';
+  div.innerHTML='<div class="cal-time">'+d+' '+document.getElementById('ev-time').value+'</div><div class="cal-title">'+t+'</div><div class="cal-client">'+(document.getElementById('ev-client').value||'')+'</div>';
+  list.appendChild(div);
+  toast('Event added: '+t);
+  document.getElementById('ev-title').value='';
+}
+
+// Deadlines
+function addDeadline(){
+  var c=document.getElementById('dl-case').value;
+  var d=document.getElementById('dl-date').value;
+  if(!c||!d){alert('Enter case and date');return;}
+  deadlines.push({case:c,date:d,type:document.getElementById('dl-type').value,priority:document.getElementById('dl-priority').value,notes:document.getElementById('dl-notes').value});
+  renderDeadlines();
+  toast('Deadline added');
+}
+function renderDeadlines(){
+  var list=document.getElementById('dl-list');
+  if(deadlines.length===0){list.innerHTML='<div style="text-align:center;padding:30px;color:#94a3b8;font-size:12px;border:1px dashed #e2e8f0;border-radius:6px;">No deadlines added yet.</div>';return;}
+  list.innerHTML='';
+  deadlines.forEach(function(dl,i){
+    var bg=dl.priority==='URGENT'?'#fef2f2':dl.priority==='HIGH'?'#fffbeb':'#f8faff';
+    var bc=dl.priority==='URGENT'?'#fecaca':dl.priority==='HIGH'?'#fde68a':'#e2e8f0';
+    list.innerHTML+='<div style="background:'+bg+';border:1px solid '+bc+';border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;"><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#1a2f5e;">'+dl.case+'</div><div style="font-size:10px;color:#94a3b8;">'+dl.type+' &mdash; Due: '+dl.date+'</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">'+dl.notes+'</div></div><span style="font-size:8px;font-weight:700;padding:3px 8px;border-radius:99px;background:'+(dl.priority==='URGENT'?'#fee2e2;color:#991b1b':dl.priority==='HIGH'?'#fef3c7;color:#92400e':'#f3f4f6;color:#6b7280')+';}">'+(dl.priority)+'</span></div>';
+  });
+}
+
+// Documents
+var DOC_TEMPLATES = {
+  'Retainer Agreement': function(c,cs,opp,det){ return ['RETAINER AGREEMENT','','JJ LAW OFFICE','Jax Jacinto, Esq. | Attorney at Law | State Bar #[XXXXX]','','Date: '+new Date().toLocaleDateString(),'','This Retainer Agreement is entered into between Jax Jacinto, Esq. ("Attorney") and '+c+' ("Client").','','MATTER: '+cs,'','1. SCOPE OF REPRESENTATION','Attorney agrees to represent Client in the matter of '+cs+'.','','2. FEES AND BILLING',det,'','3. TRUST ACCOUNT','Any retainer funds received will be deposited into Attorney IOLTA trust account.','','4. CLIENT RESPONSIBILITIES','Client agrees to cooperate fully and provide truthful information.','','5. TERMINATION','Either party may terminate this agreement upon written notice.','','_______________________          _______________________','Jax Jacinto, Esq.                '+c,'Date: ___________                Date: ___________'].join('\n'); },
+  'Demand Letter (Personal Injury)': function(c,cs,opp,det){ return ['LAW OFFICE OF JAX JACINTO','Attorney at Law','[Address] | California','','Date: '+new Date().toLocaleDateString(),'','VIA CERTIFIED MAIL','',''+opp,'[Address]','','RE: DEMAND FOR COMPENSATION - '+c.toUpperCase(),'','Dear Sir/Madam:','','This firm represents '+c+' in connection with injuries sustained as a result of your negligence.','','FACTS:',det,'','DAMAGES:','Our client has sustained significant damages including medical expenses, lost wages, pain and suffering.','','DEMAND:','We hereby demand full compensation for all damages sustained. Failure to respond within 30 days will result in immediate litigation.','','Respectfully,','','Jax Jacinto, Esq.','JJ Law Office','State Bar of California #[XXXXX]'].join('\n'); }
+};
+function generateDoc(){
+  var type=document.getElementById('doc-type').value;
+  var client=document.getElementById('doc-client').value||'[CLIENT NAME]';
+  var cas=document.getElementById('doc-case').value||'[CASE NAME]';
+  var opp=document.getElementById('doc-opp').value||'[OPPOSING PARTY]';
+  var det=document.getElementById('doc-details').value||'[DETAILS]';
+  var fn=DOC_TEMPLATES[type];
+  var text=fn?fn(client,cas,opp,det):'[Document template for '+type+' — customize for client '+client+']';
+  document.getElementById('doc-preview').textContent=text;
+  document.getElementById('doc-output').style.display='block';
+  document.getElementById('doc-output').scrollIntoView({behavior:'smooth'});
+}
+
+// Billing
+var timeEntries=[];
+function logTime(){
+  var c=document.getElementById('bill-case').value;
+  var h=parseFloat(document.getElementById('bill-hours').value||0);
+  if(!h){alert('Enter hours');return;}
+  var rateStr=document.getElementById('bill-rate').value;
+  var rate=rateStr.indexOf('350')>-1?350:rateStr.indexOf('400')>-1?400:rateStr.indexOf('250')>-1?250:0;
+  var amt=h*rate;
+  timeEntries.push({case:c,hours:h,rate:rate,amt:amt,activity:document.getElementById('bill-activity').value,date:document.getElementById('bill-date').value,notes:document.getElementById('bill-notes').value});
+  var total=timeEntries.reduce(function(s,e){return s+e.amt;},0);
+  var hrs=timeEntries.reduce(function(s,e){return s+e.hours;},0);
+  document.getElementById('bill-hrs').textContent=(6+hrs).toFixed(1);
+  document.getElementById('bill-total').textContent='$'+(2100+total).toLocaleString();
+  document.getElementById('bill-outstanding').textContent='$'+(2100+total).toLocaleString();
+  var log=document.getElementById('time-log');
+  var div=document.createElement('div');
+  div.style.cssText='padding:10px 0;border-bottom:1px solid #e2e8f0;';
+  div.innerHTML='<div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span style="font-size:11px;font-weight:700;color:#1a2f5e;">'+c+'</span><span style="font-size:11px;font-weight:700;color:#c9a84c;">$'+amt.toFixed(2)+'</span></div><div style="font-size:10px;color:#94a3b8;">'+h+' hrs &mdash; '+document.getElementById('bill-activity').value+'</div>';
+  log.insertBefore(div, log.firstChild);
+  toast('Logged '+h+' hrs = $'+amt.toFixed(2));
+  document.getElementById('bill-hours').value='';
+}
+
+// Contacts
+var contactsList=[];
+function saveContact(){
+  var f=document.getElementById('ct-first').value;
+  var l=document.getElementById('ct-last').value;
+  if(!f||!l){alert('Enter name');return;}
+  contactsList.push({name:f+' '+l,role:document.getElementById('ct-role').value,phone:document.getElementById('ct-phone').value,email:document.getElementById('ct-email').value,org:document.getElementById('ct-org').value});
+  var list=document.getElementById('contacts-list');
+  var div=document.createElement('div');
+  div.style.cssText='padding:10px 0;border-bottom:1px solid #e2e8f0;';
+  div.innerHTML='<div style="font-size:11px;font-weight:700;color:#1a2f5e;">'+f+' '+l+'</div><div style="font-size:10px;color:#94a3b8;">'+document.getElementById('ct-role').value+(document.getElementById('ct-org').value?' &mdash; '+document.getElementById('ct-org').value:'')+(document.getElementById('ct-phone').value?' &mdash; '+document.getElementById('ct-phone').value:'')+'</div>';
+  list.insertBefore(div, list.firstChild);
+  toast('Contact saved: '+f+' '+l);
+  ['ct-first','ct-last','ct-phone','ct-email','ct-org','ct-case'].forEach(function(id){document.getElementById(id).value='';});
+}
+
+// IOLTA
+function logIOLTA(){
+  var c=document.getElementById('iolta-client').value;
+  var a=parseFloat(document.getElementById('iolta-amt').value.replace(/[$,]/g,'')||0);
+  var type=document.getElementById('iolta-type').value;
+  if(!c||!a){alert('Enter client and amount');return;}
+  var cur=parseFloat(document.getElementById('iolta-balance').textContent.replace(/[$,]/g,'')||0);
+  var newBal=type.indexOf('Deposit')>-1?cur+a:cur-a;
+  document.getElementById('iolta-balance').textContent='$'+newBal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  toast(type+' logged: $'+a.toFixed(2)+' — '+c);
+}
+
+// Expenses
+function logExpense(){
+  var a=document.getElementById('exp-amt').value;
+  if(!a){alert('Enter amount');return;}
+  toast('Expense logged: '+document.getElementById('exp-cat').value+' — '+a);
+}
+
+// Legal Research
+function runResearch(){
+  var q=document.getElementById('res-query').value;
+  if(!q){alert('Enter research query');return;}
+  var area=document.getElementById('res-area').value;
+  var jx=document.getElementById('res-jx').value;
+  var result=document.getElementById('research-result');
+  result.style.display='block';
+  result.innerHTML='<div style="color:#94a3b8;font-size:11px;">Researching: <strong style="color:#1a2f5e;">'+q+'</strong> in '+jx+' — '+area+'...</div>';
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/ai/research', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({query:q, area:area, jurisdiction:jx, attorney:'Jax Jacinto, Esq.'})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){result.innerHTML='<div style="font-size:11px;line-height:1.8;color:#1a2f5e;">'+((d.result||d.answer||d.text||'No result returned.').replace(/\n/g,'<br>'))+'</div>';})
+  .catch(function(){
+    result.innerHTML='<div style="font-size:11px;line-height:1.8;color:#1a2f5e;"><strong>Research Summary — '+area+' ('+jx+')</strong><br><br>Query: '+q+'<br><br>For this practice area, key sources include:<br>• California Code of Civil Procedure (CCP)<br>• California Civil Code<br>• CACI Jury Instructions (courts.ca.gov/jury-instructions)<br>• LexisNexis / Westlaw for case law<br>• State Bar Ethics Opinions<br><br><em>Connect your AI research endpoint or LexisNexis API for live case law results.</em></div>';
+  });
+}
+function showResTab(id,btn){document.querySelectorAll(".res-panel").forEach(function(p){p.style.display="none";});document.getElementById("res-"+id).style.display="block";document.querySelectorAll("[id^=restab-]").forEach(function(b){b.className="btn-outline btn-sm";});if(btn)btn.className="btn-primary btn-sm";}
+function quickRes(q,area,jx){document.getElementById("res-query").value=q;document.getElementById("res-area").value=area;document.getElementById("res-jx").value=jx;showResTab("ai",document.getElementById("restab-ai"));runResearch();}
+function filterCaci(){var q=document.getElementById("caci-search").value.toLowerCase();document.querySelectorAll(".caci-row").forEach(function(r){r.style.display=r.textContent.toLowerCase().indexOf(q)>-1?"":"none";});}
+function calcVal(){var m=parseFloat((document.getElementById("val-meds").value||"0").replace(/[$,]/g,""))||0;var w=parseFloat((document.getElementById("val-wages").value||"0").replace(/[$,]/g,""))||0;var f=parseFloat((document.getElementById("val-future").value||"0").replace(/[$,]/g,""))||0;var mult=parseFloat(document.getElementById("val-mult").value)||3.5;var fault=parseFloat(document.getElementById("val-fault").value)||0;var gross=(m+w+f)+(m*mult);var net=gross*(1-fault/100);document.getElementById("val-gross").textContent="$"+Math.round(gross).toLocaleString();document.getElementById("val-net").textContent="$"+Math.round(net).toLocaleString();document.getElementById("val-fee").textContent="$"+Math.round(net*0.33).toLocaleString();}
+function shepardize(){var cite=document.getElementById("shep-cite").value.trim();if(!cite){alert("Enter a citation");return;}window.open("https://advance.lexis.com/shepards/?pdmfid=1000516&pdsearchterms="+encodeURIComponent(cite),"_blank");logLexisAuto("Shepardized: "+cite);}
+var lexisLog=[];function logLexis(){var n=document.getElementById("lexis-log-note").value.trim();if(!n)return;logLexisAuto(n);document.getElementById("lexis-log-note").value="";}
+function logLexisAuto(n){lexisLog.unshift({note:n,time:new Date().toLocaleTimeString()});var list=document.getElementById("lexis-log");list.innerHTML="";lexisLog.forEach(function(e){list.innerHTML+="<div style='display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #e2e8f0;'><span style='font-size:9px;color:#94a3b8;white-space:nowrap;'>"+e.time+"</span><span style='font-size:11px;color:#1a2f5e;'>"+e.note+"</span></div>";});}
+function runResearch(){var q=document.getElementById("res-query").value;if(!q){alert("Enter query");return;}var area=document.getElementById("res-area").value;var jx=document.getElementById("res-jx").value;var depth=document.getElementById("res-depth").value;var result=document.getElementById("research-result");result.style.display="block";result.innerHTML="<div style='color:#94a3b8;font-size:11px;'>Researching: <strong style='color:#1a2f5e;'>"+q+"</strong>...</div>";fetch("https://auditdna-backend-1-production.up.railway.app/api/ai/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:"You are a California legal research assistant for Jax Jacinto, Esq. Research: "+q+". Area: "+area+". Jurisdiction: "+jx+". Depth: "+depth+". Provide key legal standards, relevant code sections, leading case citations, and practical notes."}],model:"claude-sonnet-4-6",max_tokens:1500})}).then(function(r){return r.json();}).then(function(d){var t=(d.content&&d.content[0]&&d.content[0].text)||d.result||d.answer||"No result";result.innerHTML="<div style='font-size:11px;line-height:1.8;color:#1a2f5e;white-space:pre-wrap;'>"+t+"</div>";}).catch(function(){result.innerHTML="<div style='font-size:11px;line-height:1.8;color:#1a2f5e;'><strong>"+area+" Research</strong><br><br>Query: "+q+"<br><br>Key sources:<br>- CA Codes: leginfo.legislature.ca.gov<br>- CACI Instructions: judicial.ca.gov/caci<br>- LexisNexis Advance (your account)<br>- Google Scholar (free case law)<br>- Fastcase (free w/ CA Bar)<br><br><em>Connect AI endpoint for live research results.</em></div>";});}
+</script>
+</body>
+</html>

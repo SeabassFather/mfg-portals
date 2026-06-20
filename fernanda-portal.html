@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fernanda — Portal de Ventas | Meyenberg Amenidades</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fafaf8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+#pin-gate{position:fixed;inset:0;z-index:9999;background:rgba(10,14,20,0.92);display:flex;align-items:center;justify-content:center;}
+#pin-gate-inner{background:#ffffff;border-radius:20px;width:90%;max-width:360px;text-align:center;padding:36px 28px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.pg-logo{width:80px;margin-bottom:10px;filter:brightness(0);}
+.pg-title{color:#b8944d;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
+.pg-sub{font-size:10px;color:#94a3b8;letter-spacing:1px;margin-bottom:16px;}
+.pg-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:10px;}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:12px;}
+.pd{width:12px;height:12px;border-radius:50%;border:2px solid #cbd5e1;background:transparent;transition:all .15s;}
+.pd.on{background:#1e293b;border-color:#1e293b;}
+#g-err{color:#ef4444;font-size:11px;min-height:14px;margin-bottom:8px;}
+.pg-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;width:260px;margin:0 auto 12px;}
+.nb{padding:14px 0;background:#F8F9FB;border:1px solid #E2E8F0;border-radius:9px;font-size:19px;font-weight:600;color:#1A202C;cursor:pointer;text-align:center;transition:all .1s;user-select:none;touch-action:manipulation;}
+.nb:active{background:#C9A55C;border-color:#C9A55C;color:#fff;transform:scale(0.96);}
+.nb.del{background:#FFF5F5;border-color:#FED7D7;color:#C53030;}
+.pg-foot{font-size:9px;color:#94a3b8;letter-spacing:1px;}
+#topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;border-bottom:1px solid #e2dfd8;display:none;align-items:center;justify-content:space-between;padding:0 16px;height:54px;}
+.tb-name{font-size:11px;font-weight:700;color:#b8944d;letter-spacing:1px;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.lang-btn{padding:4px 12px;border:1px solid #e2dfd8;border-radius:99px;font-size:10px;font-weight:700;cursor:pointer;background:#fff;color:#94a3b8;}
+.lang-btn.active{background:#1a1f2e;color:#fff;border-color:#1a1f2e;}
+.tb-out{padding:5px 14px;background:transparent;border:1px solid #e2dfd8;border-radius:99px;font-size:10px;color:#94a3b8;cursor:pointer;font-weight:700;}
+#tabs-bar{position:fixed;top:54px;left:0;right:0;z-index:99;background:#fff;border-bottom:1px solid #e2dfd8;display:none;overflow-x:auto;white-space:nowrap;padding:0 12px;}
+.tab-btn{display:inline-block;padding:14px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;font-family:inherit;}
+.tab-btn.on{color:#1a1f2e;border-bottom-color:#b8944d;}
+#app{display:none;padding:90px 220px 40px 20px;max-width:1400px;margin:0 auto;opacity:1;visibility:visible;}
+.section{display:none;}.section.on{display:block;}
+.card{background:#fff;border:1px solid #e2dfd8;border-radius:8px;padding:20px;margin-bottom:16px;}
+.ct{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:14px;}
+.rs{display:flex;align-items:center;gap:12px;background:rgba(184,148,77,0.06);border:1px solid rgba(184,148,77,0.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;}
+.rs img{width:36px;height:36px;border-radius:50%;object-fit:cover;object-position:top;}
+.rsn{font-size:11px;font-weight:700;color:#b8944d;}
+.rss{font-size:10px;color:#8a90a8;margin-top:2px;}
+.db{padding:9px 16px;background:#b8944d;border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
+.bg{padding:12px 28px;background:linear-gradient(135deg,#b8944d,#8a6930);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+label{font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:4px;}
+input,textarea,select{width:100%;padding:9px 12px;border:1px solid #e2dfd8;border-radius:6px;font-size:12px;font-family:inherit;color:#1a1f2e;}
+textarea{min-height:120px;resize:vertical;}
+.flb{padding:6px 12px;border:1px solid #e2dfd8;border-radius:99px;font-size:9px;font-weight:700;cursor:pointer;background:#fff;color:#94a3b8;}
+.flb.active{background:#1a1f2e;color:#fff;border-color:#1a1f2e;}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1f2e;color:#fff;padding:12px 24px;border-radius:8px;font-size:12px;font-weight:700;z-index:9999;display:none;white-space:nowrap;}
+.uz{border:2px dashed #e2dfd8;border-radius:8px;padding:28px;text-align:center;cursor:pointer;}
+.uz:hover{border-color:#b8944d;}
+#lightbox{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;padding:20px;}
+#lightbox img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:8px;}
+#lightbox-close{position:absolute;top:16px;right:20px;color:#fff;font-size:32px;cursor:pointer;font-weight:300;line-height:1;}
+#lightbox-caption{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;background:rgba(0,0,0,0.5);padding:6px 16px;border-radius:99px;}
+#flyer-sidebar{display:none;position:fixed;top:100px;right:16px;width:190px;z-index:50;}
+#flyer-sidebar img{width:100%;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.12);display:block;}
+#flyer-sidebar-btns{display:flex;gap:6px;margin-top:8px;}
+@media(max-width:900px){#app{padding:90px 16px 40px !important;}#flyer-sidebar{display:none !important;}.fr{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div id="pin-gate">
+  <div id="pin-gate-inner">
+    <img src="data:image/png;base64,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" class="pg-logo" alt="Meyenberg">
+    <div class="pg-title">Meyenberg Amenidades</div>
+    <div class="pg-sub">Fernanda &mdash; Portal de Ventas</div>
+    <div class="pg-label" id="str-ingresePIN">Ingrese su PIN</div>
+    <div class="pin-dots"><div class="pd" id="d0"></div><div class="pd" id="d1"></div><div class="pd" id="d2"></div><div class="pd" id="d3"></div></div>
+    <div id="g-err"></div>
+    <div class="pg-numpad">
+      <div class="nb" onclick="np('1')">1</div><div class="nb" onclick="np('2')">2</div><div class="nb" onclick="np('3')">3</div>
+      <div class="nb" onclick="np('4')">4</div><div class="nb" onclick="np('5')">5</div><div class="nb" onclick="np('6')">6</div>
+      <div class="nb" onclick="np('7')">7</div><div class="nb" onclick="np('8')">8</div><div class="nb" onclick="np('9')">9</div>
+      <div class="nb del" onclick="nc()">CLR</div><div class="nb" onclick="np('0')">0</div><div class="nb del" onclick="nd()">DEL</div>
+    </div>
+    <div class="pg-foot">Meyenberg Amenidades&reg; &middot; Mexausa Food Group, Inc.</div>
+  </div>
+</div>
+
+<div id="topbar" style="display:none">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" style="width:32px;height:32px;border-radius:50%;object-fit:cover;object-position:top;" alt="Fernanda">
+    <span class="tb-name">FERNANDA &mdash; <span id="str-title">Portal de Ventas</span></span>
+  </div>
+  <div class="tb-right">
+    <button class="lang-btn active" onclick="setLang('es',this)">ES</button>
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    <button class="tb-out" onclick="location.reload()" id="str-salir">SALIR</button>
+  </div>
+</div>
+
+<div id="tabs-bar" style="display:none">
+  <button class="tab-btn on" onclick="showTab('clientes',this)" id="tab-clientes">Mis Clientes</button>
+  <button class="tab-btn" onclick="showTab('catalogo',this)" id="tab-catalogo">Catalogo</button>
+  <button class="tab-btn" onclick="showTab('email',this)" id="tab-email">Enviar Email</button>
+  <button class="tab-btn" onclick="showTab('demo',this)" id="tab-demo">Demo Link</button>
+  <button class="tab-btn" onclick="showTab('upload',this)" id="tab-upload">Fotos / Docs</button>
+  <button class="tab-btn" onclick="showTab('flyers',this)" id="tab-flyers">Mis Flyers</button>
+  <button class="tab-btn" onclick="showTab('comisiones',this);loadCommissions();" id="tab-comisiones">Comisiones</button>
+</div>
+
+<div id="flyer-sidebar">
+  <img id="flyer-sidebar-img" src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" alt="Flyer">
+  <div id="flyer-sidebar-btns">
+    <button style="flex:1;padding:7px 0;background:#b8944d;border:none;border-radius:6px;color:#fff;font-size:9px;font-weight:700;cursor:pointer;width:50%;" onclick="emailFlyerRep()">EMAIL</button>
+    <button style="flex:1;padding:7px 0;background:#25D366;border:none;border-radius:6px;color:#fff;font-size:9px;font-weight:700;cursor:pointer;width:50%;" onclick="waFlyerRep()">WA</button>
+  </div>
+</div>
+
+<div id="app">
+  <div id="toast"></div>
+  <div id="lightbox" onclick="closeLightbox()"><span id="lightbox-close" onclick="closeLightbox()">&#10005;</span><img id="lightbox-img" src="" alt=""><div id="lightbox-caption"></div></div>
+
+  <!-- MIS CLIENTES -->
+  <div class="section on" id="section-clientes">
+    <div class="rs"><img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" alt="Fernanda"><div><div class="rsn" id="str-panelVentas">PANEL DE VENTAS &mdash; FERNANDA</div><div class="rss" id="str-consultas">Consultas de hoteles recibidas</div></div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+      <div class="card" style="text-align:center;padding:16px;"><div style="font-size:24px;font-weight:700;color:#1a1f2e;" id="stat-new">0</div><div style="font-size:9px;color:#94a3b8;letter-spacing:1.5px;font-weight:700;margin-top:4px;" id="str-nuevas">NUEVAS</div></div>
+      <div class="card" style="text-align:center;padding:16px;"><div style="font-size:24px;font-weight:700;color:#4a8fd4;" id="stat-contacted">0</div><div style="font-size:9px;color:#94a3b8;letter-spacing:1.5px;font-weight:700;margin-top:4px;" id="str-contactadas">CONTACTADAS</div></div>
+      <div class="card" style="text-align:center;padding:16px;"><div style="font-size:24px;font-weight:700;color:#2d6a4f;" id="stat-closed">0</div><div style="font-size:9px;color:#94a3b8;letter-spacing:1.5px;font-weight:700;margin-top:4px;" id="str-cerradas">CERRADAS</div></div>
+    </div>
+    <div class="card"><div class="ct" id="str-consultasClientes">CONSULTAS DE CLIENTES</div><div id="inquiries-box"><div style="text-align:center;padding:40px;color:#94a3b8;font-size:13px;border:1px dashed #e2dfd8;border-radius:6px;" id="str-sinConsultas">Cuando un hotel llene el formulario, la consulta aparecera aqui.</div></div></div>
+  </div>
+
+  <!-- CATALOGO -->
+  <div class="section" id="section-catalogo">
+    <div class="rs"><img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" alt="Fernanda"><div><div class="rsn" id="str-catalogoTitle">CATALOGO DE PRODUCTOS</div><div class="rss" id="str-catalogoSub">Pantuflas primero &mdash; MOQ varia &mdash; Marca personalizada disponible</div></div></div>
+    <div id="cart-bar" style="display:none;background:linear-gradient(135deg,#0a1a2e,#162235);border-radius:10px;padding:12px 16px;margin-bottom:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div style="color:#fff;font-size:12px;"><span style="color:#b8944d;font-weight:700;" id="cart-count">0</span> <span id="str-ordenPiezas">productos en orden &mdash; Total estimado:</span> <span style="color:#b8944d;font-weight:700;" id="cart-total">$0.00</span></div>
+      <button class="db" onclick="showOrderForm()" style="font-size:9px;" id="str-enviarOrden">ENVIAR ORDEN</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:16px;">
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-black-top.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Slipper Bastilla" onclick="openLightbox(this.src,'Slipper Bastilla')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Pantufla Bastilla</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Slipper Bastilla</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Tela toalla, serigrafiada con logotipo del cliente, a 2 tintas, suela EVA antiderrapante</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Terry cloth, screen printed with client logo, 2 colors, anti-slip EVA sole</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$33.80 MXN / <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p01',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p01" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p01',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 300 <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-all-colors.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Slipper Double Vamp" onclick="openLightbox(this.src,'Slipper Double Vamp')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Pantufla Doble Empeine</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Slipper Double Vamp</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Tela toalla, bordada con logotipo del cliente, suela EVA antiderrapante</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Terry cloth, embroidered with client logo, anti-slip EVA sole</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$36.80 MXN / <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p02',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p02" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p02',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 300 <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-patio-santiago-black.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Slipper Patio Santiago" onclick="openLightbox(this.src,'Slipper Patio Santiago')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Pantufla Patio Santiago</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Slipper Patio Santiago</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Pantufla personalizada con logotipo</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Custom slipper with logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$35.00 MXN / <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p03',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p03" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p03',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 300 <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-viceroy-los-cabos.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Slipper Viceroy Los Cabos" onclick="openLightbox(this.src,'Slipper Viceroy Los Cabos')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Pantufla Viceroy Los Cabos</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Slipper Viceroy Los Cabos</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Pantufla premium personalizada</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Premium custom slipper</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$37.50 MXN / <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p04',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p04" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p04',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 300 <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-hm-central-medica.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Slipper HM Central Medica" onclick="openLightbox(this.src,'Slipper HM Central Medica')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Pantufla HM Central Medica</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Slipper HM Central Medica</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Pantufla hospitalaria personalizada</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Custom hospital slipper</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$32.00 MXN / <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p05',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p05" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p05',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 300 <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-white-top.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Slipper Amomoxtle White" onclick="openLightbox(this.src,'Slipper Amomoxtle White')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Pantufla Amomoxtle Blanca</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Slipper Amomoxtle White</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Pantufla toalla blanca personalizada</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">White terry custom slipper</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$34.00 MXN / <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p06',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p06" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p06',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 300 <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-red-crest-white.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Slipper Red Crest White" onclick="openLightbox(this.src,'Slipper Red Crest White')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Pantufla Red Crest</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Slipper Red Crest White</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Pantufla con cresta roja personalizada</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Red crest custom slipper</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$33.00 MXN / <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p07',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p07" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p07',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 300 <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-white-gold-closeup.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Slipper White Gold" onclick="openLightbox(this.src,'Slipper White Gold')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Pantufla White Gold</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Slipper White Gold</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Pantufla blanca con detalles dorados</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">White slipper with gold details</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$36.00 MXN / <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p08',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p08" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p08',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 300 <span class="prod-unit-es">par</span><span class="prod-unit-en" style="display:none;">pair</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-white-gold-closeup.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Shampoo 30ml" onclick="openLightbox(this.src,'Shampoo 30ml')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Shampoo 30ml</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Shampoo 30ml</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Botella cilindrica, aroma almendras, logo del cliente</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Cylindrical bottle, almond scent, client logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$5.70 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p09',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p09" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p09',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-red-crest-white.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Bar Soap Rectangular 25g" onclick="openLightbox(this.src,'Bar Soap Rectangular 25g')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Jabon Barra Rectangular 25g</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Bar Soap Rectangular 25g</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Sobre transparente, hipoalergenico, logo del cliente</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Transparent wrapper, hypoallergenic, client logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$4.40 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p10',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p10" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p10',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-white-top.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Bar Soap Round 25g" onclick="openLightbox(this.src,'Bar Soap Round 25g')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Jabon Barra Redondo 25g</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Bar Soap Round 25g</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Sobre transparente, logo del cliente</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Transparent wrapper, client logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$4.40 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p11',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p11" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p11',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-viceroy-los-cabos.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Moisturizing Cream 30ml" onclick="openLightbox(this.src,'Moisturizing Cream 30ml')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Crema Humectante 30ml</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Moisturizing Cream 30ml</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Botella cilindrica, aroma almendras, logo cliente</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Cylindrical bottle, almond scent, client logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$5.70 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p12',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p12" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p12',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-production-floor.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Dental Kit" onclick="openLightbox(this.src,'Dental Kit')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Kit Dental</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Dental Kit</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Caja blanca, cepillo y pasta 5g, logo cliente</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">White box, brush and 5g paste, client logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$7.30 MXN / <span class="prod-unit-es">kit</span><span class="prod-unit-en" style="display:none;">kit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p13',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p13" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p13',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">kit</span><span class="prod-unit-en" style="display:none;">kit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-hm-central-medica.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Shower Cap" onclick="openLightbox(this.src,'Shower Cap')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Gorra de Ducha</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Shower Cap</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">En sobre con logotipo del cliente</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">In wrapper with client logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$4.50 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p14',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p14" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p14',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-patio-santiago-black.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Bubble Bath 30ml" onclick="openLightbox(this.src,'Bubble Bath 30ml')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Bano de Burbujas 30ml</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Bubble Bath 30ml</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Botella cilindrica, logo cliente</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Cylindrical bottle, client logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$5.70 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p15',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p15" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p15',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-all-colors.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Bath Sponge & Towel Set" onclick="openLightbox(this.src,'Bath Sponge & Towel Set')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Set Esponja y Toalla</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Bath Sponge & Towel Set</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Esponja de bano con toalla, logo cliente</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Bath sponge with towel, client logo</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$23.00 MXN / <span class="prod-unit-es">set</span><span class="prod-unit-en" style="display:none;">set</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p16',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p16" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p16',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">set</span><span class="prod-unit-en" style="display:none;">set</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-black-top.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Custom Plush Toy" onclick="openLightbox(this.src,'Custom Plush Toy')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Peluche Personalizado</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Custom Plush Toy</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">Varios modelos, logotipo y bolsa de pellon con logo a 3 tintas</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">Various models, logo and bag with 3-color silkscreen</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$150.00 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p17',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p17" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p17',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 50 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-patio-santiago-group.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Eco Bag 250 units" onclick="openLightbox(this.src,'Eco Bag 250 units')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Bolsa Ecologica 250 pzas</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Eco Bag 250 units</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">35x40x12cm, serigrafia 1 tinta, asas con fuelle</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">35x40x12cm, 1-color screen print, gusseted handles</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$19.50 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p18',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p18" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p18',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 250 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-patio-santiago-group.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Eco Bag 500 units" onclick="openLightbox(this.src,'Eco Bag 500 units')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Bolsa Ecologica 500 pzas</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Eco Bag 500 units</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">35x40x12cm, serigrafia 1 tinta, asas con fuelle</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">35x40x12cm, 1-color screen print, gusseted handles</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$16.50 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p19',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p19" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p19',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 500 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-patio-santiago-group.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Eco Bag 1,000 units" onclick="openLightbox(this.src,'Eco Bag 1,000 units')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Bolsa Ecologica 1000 pzas</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Eco Bag 1,000 units</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">35x40x12cm, serigrafia 1 tinta, asas con fuelle</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">35x40x12cm, 1-color screen print, gusseted handles</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$14.00 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p20',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p20" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p20',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 1000 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-black-top.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Manta Bag 50 units" onclick="openLightbox(this.src,'Manta Bag 50 units')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Bolsa de Manta 50 pzas</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Manta Bag 50 units</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">35x40cm, serigrafia 3 tintas</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">35x40cm, 3-color screen print</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$85.00 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p21',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p21" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p21',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 50 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-black-top.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Manta Bag 100-500 units" onclick="openLightbox(this.src,'Manta Bag 100-500 units')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Bolsa de Manta 100-500 pzas</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Manta Bag 100-500 units</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">35x40cm, serigrafia 3 tintas</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">35x40cm, 3-color screen print</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$42.00 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p22',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p22" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p22',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 100 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;overflow:hidden;">
+  <img src="https://mexausafg.com/meyenberg-samples/slipper-amomoxtle-black-top.jpg" style="width:100%;height:160px;object-fit:contain;background:#f8f8f8;display:block;cursor:pointer;" alt="Manta Bag 1,000+ units" onclick="openLightbox(this.src,'Manta Bag 1,000+ units')" onerror="this.style.background='#f0f0f0'">
+  <div style="padding:10px;">
+    <div class="prod-name-es" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;">Bolsa de Manta 1000+ pzas</div>
+    <div class="prod-name-en" style="font-size:10px;font-weight:700;color:#1a1f2e;margin-bottom:1px;display:none;">Manta Bag 1,000+ units</div>
+    <div class="prod-des-es" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;">35x40cm, serigrafia 3 tintas</div>
+    <div class="prod-des-en" style="font-size:8px;color:#64748b;margin-bottom:4px;line-height:1.3;display:none;">35x40cm, 3-color screen print</div>
+    <div style="font-size:11px;color:#b8944d;font-weight:700;margin-bottom:6px;">$35.50 MXN / <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <button onclick="adjQty('p23',-1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">-</button>
+      <span id="qty-p23" style="font-size:12px;font-weight:700;color:#1a1f2e;min-width:20px;text-align:center;">0</span>
+      <button onclick="adjQty('p23',1)" style="width:26px;height:26px;border:1px solid #e2dfd8;border-radius:6px;background:#f8f6f0;cursor:pointer;font-size:15px;font-weight:700;color:#1a1f2e;padding:0;">+</button>
+    </div>
+    <div style="font-size:8px;color:#94a3b8;"><span class="str-moq">Min.</span> 1000 <span class="prod-unit-es">pieza</span><span class="prod-unit-en" style="display:none;">unit</span></div>
+  </div>
+</div></div>
+    <button class="bg" onclick="showOrderForm()" id="str-procesarOrden">PROCESAR ORDEN</button>
+    <div id="order-modal" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(10,14,20,0.85);align-items:center;justify-content:center;padding:20px;">
+      <div style="background:#fff;border-radius:16px;width:100%;max-width:540px;padding:28px;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#b8944d;margin-bottom:14px;" id="str-datosOrden">DATOS DEL PEDIDO</div>
+        <div id="order-summary" style="background:#f8f6f0;border-radius:8px;padding:14px;margin-bottom:14px;font-size:12px;color:#1a1f2e;line-height:1.6;"></div>
+        <div style="display:grid;gap:10px;">
+          <div class="fr">
+            <div><label id="str-nombre">NOMBRE</label><input type="text" id="ord-name" placeholder="Nombre completo"></div>
+            <div><label id="str-hotel">HOTEL</label><input type="text" id="ord-hotel" placeholder="Nombre del hotel"></div>
+          </div>
+          <div class="fr">
+            <div><label id="str-email">EMAIL</label><input type="email" id="ord-email" placeholder="email@hotel.com"></div>
+            <div><label id="str-telefono">TELEFONO</label><input type="text" id="ord-phone" placeholder="+1 555-000-0000"></div>
+          </div>
+          <div><label id="str-notas">NOTAS</label><textarea id="ord-notes"></textarea></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button onclick="submitOrder()" class="bg" style="flex:1;" id="str-enviarPedido">ENVIAR PEDIDO</button>
+          <button onclick="document.getElementById('order-modal').style.display='none'" style="padding:12px 20px;border:1px solid #e2dfd8;border-radius:6px;background:#fff;cursor:pointer;font-size:11px;font-weight:700;color:#94a3b8;" id="str-cancelar">CANCELAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENVIAR EMAIL -->
+  <div class="section" id="section-email">
+    <div class="rs"><img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" alt="Fernanda"><div><div class="rsn" id="str-redactarEmail">ENVIAR EMAIL</div><div class="rss">Redacta y envia propuestas directamente</div></div></div>
+    <div class="card"><div class="ct">Email</div>
+      <div style="display:grid;gap:12px;">
+        <div class="fr">
+          <div><label id="str-emailHotel">Email del Hotel</label><input type="email" id="hotel-email" placeholder="gm@hotel.com"></div>
+          <div><label id="str-emailContacto">Contacto</label><input type="text" id="hotel-contact" placeholder="John Smith, GM"></div>
+        </div>
+        <div class="fr">
+          <div><label id="str-emailHotelName">Hotel</label><input type="text" id="hotel-name" placeholder="The Ritz-Carlton"></div>
+          <div><label id="str-tipo">Tipo</label>
+            <select id="email-type" onchange="loadTpl()">
+              <option value="intro" id="str-intro">Introduccion</option>
+              <option value="demo" id="str-demo-opt">Demo Link</option>
+              <option value="followup" id="str-followup">Seguimiento</option>
+              <option value="order" id="str-order-opt">Confirmar Pedido</option>
+            </select>
+          </div>
+        </div>
+        <div><label id="str-asunto">Asunto</label><input type="text" id="email-subject" value="Meyenberg Amenidades - Productos Premium para su Hotel"></div>
+        <div><label id="str-mensaje">Mensaje</label><textarea id="email-body">Estimado/a [Nombre],
+
+Mi nombre es Fernanda, Representante de Meyenberg Amenidades.
+
+Vea nuestro catalogo:
+mexausafg.com/meyenberg-wholesale.html
+PIN: 4321
+
+Fernanda
+Tel: +1-831-251-3116</textarea></div>
+        <button class="bg" onclick="sendEmail()" id="str-enviarEmailBtn">ENVIAR EMAIL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO LINK -->
+  <div class="section" id="section-demo">
+    <div class="rs"><img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" alt="Fernanda"><div><div class="rsn" id="str-demoLinkTitle">DEMO LINK PARA CLIENTES</div><div class="rss" id="str-demoLinkSub">Comparte el catalogo con hoteles</div></div></div>
+    <div style="background:linear-gradient(135deg,#0a1a2e,#162235);border-radius:10px;padding:20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#b8944d;margin-bottom:6px;" id="str-portalClientes">PORTAL CLIENTES</div>
+        <div style="font-size:13px;color:#e2e8f0;font-family:monospace;">mexausafg.com/meyenberg-wholesale.html</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;">PIN: <strong style="color:#b8944d;">4321</strong></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="db" onclick="copyDemo()" id="str-copiarLink">COPIAR LINK</button>
+        <button class="db" style="background:#1a1f2e;" onclick="emailDemo()" id="str-enviarPorEmail">EMAIL</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct" id="str-whatsappMsg">Mensaje WhatsApp</div>
+      <div style="background:#f8f6f0;border-radius:6px;padding:14px;font-size:12px;color:#4a5068;line-height:1.7;margin-bottom:12px;white-space:pre-line;" id="wa-msg">Hola [Nombre], soy Fernanda de Meyenberg Amenidades. Le comparto nuestro catalogo de amenidades premium:
+
+mexausafg.com/meyenberg-wholesale.html
+PIN: 4321
+
+Quedo a sus ordenes.</div>
+      <button class="bg" onclick="copyWA()" id="str-copiarWhatsapp">COPIAR WHATSAPP</button>
+    </div>
+  </div>
+
+  <!-- FOTOS / DOCS -->
+  <div class="section" id="section-upload">
+    <div class="rs"><img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" alt="Fernanda"><div><div class="rsn" id="str-subirTitle">SUBIR FOTOS Y DOCS</div><div class="rss" id="str-subirSub">Fotos, propuestas, contratos</div></div></div>
+    <div class="card">
+      <div class="ct" id="str-selecArchivos">Seleccionar Archivos</div>
+      <div class="uz" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.style.borderColor='#b8944d'" ondragleave="this.style.borderColor='#e2dfd8'" ondrop="handleDrop(event)">
+        <input type="file" id="file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" style="display:none" onchange="handleFiles(this.files)">
+        <div style="font-size:32px;margin-bottom:8px;">&#128206;</div>
+        <div style="font-size:13px;color:#94a3b8;margin-bottom:4px;" id="str-arrastra">Arrastra o haz clic</div>
+        <div style="font-size:10px;color:#bbb;" id="str-tiposArchivos">Fotos, PDFs, Word, Excel</div>
+      </div>
+      <div id="file-list" style="margin-top:12px;"></div>
+      <div style="margin-top:12px;"><button class="bg" id="upload-btn" style="display:none" onclick="uploadFiles()" id2="str-subir">SUBIR</button></div>
+      <div id="upload-progress" style="display:none;margin-top:10px;font-size:12px;color:#94a3b8;text-align:center;"></div>
+    </div>
+  </div>
+
+  <!-- MIS FLYERS -->
+  <div class="section" id="section-flyers">
+    <div class="rs"><img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" alt="Fernanda"><div><div class="rsn" id="str-misFlyers2">MIS FLYERS</div><div class="rss" id="str-misFlyers2Sub">Selecciona y comparte con hoteles</div></div></div>
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
+      <button class="flb active" onclick="swF('en-red',this)">&#127482;&#127480; ENG Rojo</button> <button class="flb" onclick="swF('en-green',this)">&#127482;&#127480; ENG Verde</button> <button class="flb" onclick="swF('en-beige',this)">&#127482;&#127480; ENG Beige</button> <button class="flb" onclick="swF('en-black',this)">&#127482;&#127480; ENG Negro</button> <button class="flb" onclick="swF('es-black',this)">&#127474;&#127485; ESP Negro</button>
+      <button class="db" style="margin-left:auto;font-size:9px;" onclick="emailFlyerRep()">EMAIL</button>
+      <button class="db" style="background:#25D366;font-size:9px;" onclick="waFlyerRep()">WA</button>
+      <button class="db" style="background:#555;font-size:9px;" onclick="copyFlyerLink()">LINK</button>
+      <button class="db" style="background:#1a1f2e;font-size:9px;" onclick="window.print()">IMPRIMIR</button>
+    </div>
+    <div id="flyer-en-red" style="display:block;"><img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" style="width:100%;max-width:680px;display:block;border-radius:10px;margin:0 auto;" alt="Fernanda Flyer"></div>
+<div id="flyer-en-green" style="display:none;"><img src="https://mexausafg.com/meyenberg-samples/fern-en-green.png" style="width:100%;max-width:680px;display:block;border-radius:10px;margin:0 auto;" alt="Fernanda Flyer"></div>
+<div id="flyer-en-beige" style="display:none;"><img src="https://mexausafg.com/meyenberg-samples/fern-en-beige.png" style="width:100%;max-width:680px;display:block;border-radius:10px;margin:0 auto;" alt="Fernanda Flyer"></div>
+<div id="flyer-en-black" style="display:none;"><img src="https://mexausafg.com/meyenberg-samples/fern-en-black.png" style="width:100%;max-width:680px;display:block;border-radius:10px;margin:0 auto;" alt="Fernanda Flyer"></div>
+<div id="flyer-es-black" style="display:none;"><img src="https://mexausafg.com/meyenberg-samples/fern-es-black.png" style="width:100%;max-width:680px;display:block;border-radius:10px;margin:0 auto;" alt="Fernanda Flyer"></div>
+  </div>
+
+
+  <!-- COMISIONES -->
+  <div class="section" id="section-comisiones">
+    <div class="rs"><img src="https://mexausafg.com/meyenberg-samples/fern-en-red.png" alt="Fernanda"><div><div class="rsn" id="str-comisionesTitle">COMISIONES — FERNANDA</div><div class="rss" id="str-comisionesSub">5% sobre ventas cerradas generadas por ti</div></div></div>
+
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+      <div class="card" style="text-align:center;padding:16px;">
+        <div style="font-size:9px;color:#94a3b8;font-weight:700;letter-spacing:1.5px;margin-bottom:6px;" id="str-totalVentas">VENTAS TOTALES</div>
+        <div style="font-size:20px;font-weight:700;color:#1a1f2e;" id="comm-total-sales">$0.00</div>
+        <div style="font-size:8px;color:#94a3b8;margin-top:2px;">MXN</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px;">
+        <div style="font-size:9px;color:#b8944d;font-weight:700;letter-spacing:1.5px;margin-bottom:6px;" id="str-comisionGanada">COMISION GANADA (5%)</div>
+        <div style="font-size:20px;font-weight:700;color:#b8944d;" id="comm-earned">$0.00</div>
+        <div style="font-size:8px;color:#94a3b8;margin-top:2px;">MXN</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px;">
+        <div style="font-size:9px;color:#2d6a4f;font-weight:700;letter-spacing:1.5px;margin-bottom:6px;" id="str-comisionPagada">COMISION PAGADA</div>
+        <div style="font-size:20px;font-weight:700;color:#2d6a4f;" id="comm-paid">$0.00</div>
+        <div style="font-size:8px;color:#94a3b8;margin-top:2px;">MXN</div>
+      </div>
+    </div>
+
+    <!-- Commission schedule explanation -->
+    <div class="card" style="padding:16px;margin-bottom:16px;background:linear-gradient(135deg,#0a1a2e,#162235);">
+      <div style="font-size:10px;font-weight:700;color:#b8944d;letter-spacing:2px;margin-bottom:10px;" id="str-scheduleTitle">ESQUEMA DE COMISIONES — MEYENBERG AMENIDADES</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:9px;color:#b8944d;font-weight:700;margin-bottom:6px;">COMO GANAS</div>
+          <div style="font-size:8px;color:#cbd5e1;line-height:1.6;">
+            1. Envias email o WA a un hotel<br>
+            2. El hotel contacta a Saul Garcia<br>
+            3. Saul cierra la venta<br>
+            4. Se confirma el pedido y deposito<br>
+            5. Tu ganas 5% del valor total de la orden
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:9px;color:#b8944d;font-weight:700;margin-bottom:6px;">EJEMPLO DE CALCULO</div>
+          <div style="font-size:8px;color:#cbd5e1;line-height:1.6;">
+            Orden hotel: $50,000 MXN<br>
+            Tu comision (5%): $2,500 MXN<br><br>
+            Orden hotel: $150,000 MXN<br>
+            Tu comision (5%): $7,500 MXN<br><br>
+            Pagos: 15 dias despues de cobro
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commission ledger table -->
+    <div class="card">
+      <div class="ct" id="str-ledgerTitle">REGISTRO DE VENTAS Y COMISIONES</div>
+      <div id="comm-table-wrap" style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;" id="comm-table">
+          <thead>
+            <tr style="background:#0a1a2e;">
+              <th style="padding:8px 10px;text-align:left;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;white-space:nowrap;" id="str-thFecha">FECHA</th>
+              <th style="padding:8px 10px;text-align:left;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;" id="str-thHotel">HOTEL / CUENTA</th>
+              <th style="padding:8px 10px;text-align:left;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;" id="str-thProducto">PRODUCTO</th>
+              <th style="padding:8px 10px;text-align:right;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;" id="str-thCantidad">CANTIDAD</th>
+              <th style="padding:8px 10px;text-align:right;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;" id="str-thVenta">VENTA MXN</th>
+              <th style="padding:8px 10px;text-align:right;color:#b8944d;font-size:9px;font-weight:700;letter-spacing:1px;" id="str-thComision">COMISION 5%</th>
+              <th style="padding:8px 10px;text-align:left;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;" id="str-thEnvio">ENVIO / TRACKING</th>
+              <th style="padding:8px 10px;text-align:center;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;" id="str-thEstatus">ESTATUS</th>
+              <th style="padding:8px 10px;text-align:center;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;" id="str-thPago">PAGO</th>
+            </tr>
+          </thead>
+          <tbody id="comm-tbody">
+            <tr>
+              <td colspan="9" style="padding:40px;text-align:center;color:#94a3b8;font-size:12px;border:1px dashed #e2dfd8;">
+                <span id="str-noComisiones">Cuando Saul registre una venta generada por ti, aparecera aqui.</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<audio id="ping-snd" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+<script>
+var pin='';var PIN_OK='0909';var LANG='es';
+var STRINGS={"en":{"title":"Portal de Ventas","misClientes":"My Clients","catalogo":"Catalog","enviarEmail":"Send Email","demoLink":"Demo Link","fotos":"Photos / Docs","misFlyers":"My Flyers","panelVentas":"SALES PANEL","consultas":"Hotel Inquiries","nuevas":"NEW","contactadas":"CONTACTED","cerradas":"CLOSED","consultasClientes":"CLIENT INQUIRIES","sinConsultas":"When a hotel fills the order form, the inquiry will appear here.","catalogoTitle":"PRODUCT CATALOG","catalogoSub":"Slippers first — MOQ varies — Custom branding available","ordenPiezas":"units in order — Estimated total:","enviarOrden":"SEND ORDER","procesarOrden":"PROCESS ORDER","datosOrden":"ORDER DETAILS","nombre":"NAME","hotel":"HOTEL","email":"EMAIL","telefono":"PHONE","notas":"NOTES","notasPh":"Custom branding, colors, exact quantity...","enviarPedido":"SEND ORDER","cancelar":"CANCEL","moq":"Min.","redactarEmail":"COMPOSE EMAIL","emailHotel":"Hotel Email","emailContacto":"Contact","emailHotelName":"Hotel","tipo":"Type","asunto":"Subject","mensaje":"Message","enviarEmailBtn":"SEND EMAIL","intro":"Introduction","demo":"Demo Link","followup":"Follow Up","order":"Confirm Order","subject_intro":"Meyenberg Amenidades - Premium Products for your Hotel","subject_demo":"Your access to the Meyenberg Amenidades catalog","subject_followup":"Follow Up - Meyenberg Amenidades","subject_order":"Order Confirmation - Meyenberg Amenidades","demoLinkTitle":"CLIENT DEMO LINK","demoLinkSub":"Share the catalog with hotels","portalClientes":"CLIENT PORTAL","copiarLink":"COPY LINK","enviarPorEmail":"EMAIL","whatsappMsg":"WhatsApp Message","copiarWhatsapp":"COPY WHATSAPP","subirTitle":"UPLOAD PHOTOS & DOCS","subirSub":"Photos, proposals, contracts","selecArchivos":"Select Files","arrastra":"Drag or click","tiposArchivos":"Photos, PDFs, Word, Excel","subir":"UPLOAD","misFlyers2":"MY FLYERS","misFlyers2Sub":"Select and share with hotels","salir":"SALIR","ingresePIN":"Enter your PIN","pedidoEnviado":"Order sent. We will contact you soon.","emailEnviado":"Email sent to","linkCopiado":"Link copied","copiado":"Copied","subido":"Uploaded","pinIncorrecto":"Incorrect PIN."},"es":{"title":"Portal de Ventas","misClientes":"Mis Clientes","catalogo":"Catalogo","enviarEmail":"Enviar Email","demoLink":"Demo Link","fotos":"Fotos / Docs","misFlyers":"Mis Flyers","panelVentas":"PANEL DE VENTAS","consultas":"Consultas de hoteles recibidas","nuevas":"NUEVAS","contactadas":"CONTACTADAS","cerradas":"CERRADAS","consultasClientes":"CONSULTAS DE CLIENTES","sinConsultas":"Cuando un hotel llene el formulario, la consulta aparecera aqui.","catalogoTitle":"CATALOGO DE PRODUCTOS","catalogoSub":"Pantuflas primero — MOQ varia — Marca personalizada disponible","ordenPiezas":"productos en orden — Total estimado:","enviarOrden":"ENVIAR ORDEN","procesarOrden":"PROCESAR ORDEN","datosOrden":"DATOS DEL PEDIDO","nombre":"NOMBRE","hotel":"HOTEL","email":"EMAIL","telefono":"TELEFONO","notas":"NOTAS","notasPh":"Branding personalizado, colores, cantidad exacta...","enviarPedido":"ENVIAR PEDIDO","cancelar":"CANCELAR","moq":"Min.","redactarEmail":"REDACTAR EMAIL","emailHotel":"Email del Hotel","emailContacto":"Contacto","emailHotelName":"Hotel","tipo":"Tipo","asunto":"Asunto","mensaje":"Mensaje","enviarEmailBtn":"ENVIAR EMAIL","intro":"Introduccion","demo":"Demo Link","followup":"Seguimiento","order":"Confirmar Pedido","subject_intro":"Meyenberg Amenidades - Productos Premium para su Hotel","subject_demo":"Su acceso al catalogo Meyenberg Amenidades","subject_followup":"Seguimiento - Meyenberg Amenidades","subject_order":"Confirmacion de Pedido - Meyenberg Amenidades","demoLinkTitle":"DEMO LINK PARA CLIENTES","demoLinkSub":"Comparte el catalogo con hoteles","portalClientes":"PORTAL CLIENTES","copiarLink":"COPIAR LINK","enviarPorEmail":"EMAIL","whatsappMsg":"Mensaje WhatsApp","copiarWhatsapp":"COPIAR WHATSAPP","subirTitle":"SUBIR FOTOS Y DOCS","subirSub":"Fotos, propuestas, contratos","selecArchivos":"Seleccionar Archivos","arrastra":"Arrastra o haz clic","tiposArchivos":"Fotos, PDFs, Word, Excel","subir":"SUBIR","misFlyers2":"MIS FLYERS","misFlyers2Sub":"Selecciona y comparte con hoteles","salir":"SALIR","ingresePIN":"Ingrese su PIN","pedidoEnviado":"Pedido enviado. Te contactaremos pronto.","emailEnviado":"Email enviado a","linkCopiado":"Link copiado","copiado":"Copiado","subido":"Subido","pinIncorrecto":"PIN incorrecto."}};
+var FLYER_MAP={"clientes":"fern-en-red.png","catalogo":"fern-en-green.png","email":"fern-en-beige.png","demo":"fern-en-black.png","upload":"fern-es-black.png","flyers":"fern-en-red.png"};
+var BASE_URL='https://mexausafg.com/meyenberg-samples/';
+
+function np(v){if(pin.length<4){pin+=v;upd();if(pin.length===4)setTimeout(chk,80);}}
+function nd(){if(pin.length){pin=pin.slice(0,-1);upd();}}
+function nc(){pin='';upd();}
+function upd(){for(var i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('on',i<pin.length);}
+function chk(){
+  if(pin===PIN_OK){
+    var gate=document.getElementById('pin-gate');
+    var topbar=document.getElementById('topbar');
+    var tabsbar=document.getElementById('tabs-bar');
+    var app=document.getElementById('app');
+    var sidebar=document.getElementById('flyer-sidebar');
+    if(gate)gate.style.cssText='display:none!important';
+    if(topbar){topbar.style.display='flex';topbar.style.visibility='visible';}
+    if(tabsbar){tabsbar.style.display='block';tabsbar.style.visibility='visible';}
+    if(app){app.style.display='block';app.style.visibility='visible';app.style.opacity='1';}
+    if(sidebar)sidebar.style.display='block';
+    setTimeout(function(){startPolling();},100);
+  } else {
+    document.getElementById('g-err').textContent=STRINGS[LANG].pinIncorrecto;
+    pin='';upd();
+    setTimeout(function(){document.getElementById('g-err').textContent='';},2000);
+  }
+}
+
+function setLang(lang, btn) {
+  LANG = lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var S = STRINGS[lang];
+  // Update all string elements
+  var ids = Object.keys(S);
+  ids.forEach(function(k){
+    var el = document.getElementById('str-'+k);
+    if(el) el.textContent = S[k];
+  });
+  // Tabs
+  document.getElementById('tab-clientes').textContent = S.misClientes;
+  document.getElementById('tab-catalogo').textContent = S.catalogo;
+  document.getElementById('tab-email').textContent = S.enviarEmail;
+  document.getElementById('tab-demo').textContent = S.demoLink;
+  document.getElementById('tab-upload').textContent = S.fotos;
+  document.getElementById('tab-flyers').textContent = S.misFlyers;
+  // Product names/descriptions
+  document.querySelectorAll('.prod-name-es').forEach(function(e){e.style.display=lang==='es'?'':'none';});
+  document.querySelectorAll('.prod-name-en').forEach(function(e){e.style.display=lang==='en'?'':'none';});
+  document.querySelectorAll('.prod-des-es').forEach(function(e){e.style.display=lang==='es'?'':'none';});
+  document.querySelectorAll('.prod-des-en').forEach(function(e){e.style.display=lang==='en'?'':'none';});
+  document.querySelectorAll('.prod-unit-es').forEach(function(e){e.style.display=lang==='es'?'':'none';});
+  document.querySelectorAll('.prod-unit-en').forEach(function(e){e.style.display=lang==='en'?'':'none';});
+  // Email select options
+  document.querySelector('#email-type option[value="intro"]').textContent = S.intro;
+  document.querySelector('#email-type option[value="demo"]').textContent = S.demo;
+  document.querySelector('#email-type option[value="followup"]').textContent = S.followup;
+  document.querySelector('#email-type option[value="order"]').textContent = S.order;
+  // Order form notes placeholder
+  document.getElementById('ord-notes').placeholder = S.notasPh;
+  // Upload button
+  document.getElementById('upload-btn').textContent = S.subir;
+}
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('section-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+  var img=document.getElementById('flyer-sidebar-img');
+  if(img&&FLYER_MAP[id])img.src=BASE_URL+FLYER_MAP[id];
+}
+
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
+
+function loadTpl(){
+  var type=document.getElementById('email-type').value;
+  var contact=document.getElementById('hotel-contact').value||'[Nombre]';
+  var S=STRINGS[LANG];
+  var subjects={intro:S.subject_intro,demo:S.subject_demo,followup:S.subject_followup,order:S.subject_order};
+  var b1='Estimado/a '+contact+',\n\nMi nombre es Fernanda, Representante de Meyenberg Amenidades.\n\nVea nuestro catalogo:\nmexausafg.com/meyenberg-wholesale.html\nPIN: 4321\n\nFernanda\nTel: +1-831-251-3116';
+  var b2='Estimado/a '+contact+',\n\nAdjunto su acceso:\nmexausafg.com/meyenberg-wholesale.html\nPIN: 4321\n\nFernanda';
+  var b3='Estimado/a '+contact+',\n\nLe escribo en seguimiento. Quedo a su disposicion.\n\nFernanda';
+  var b4='Estimado/a '+contact+',\n\nConfirmamos su pedido. Le contactaremos en 24 horas.\n\nFernanda';
+  document.getElementById('email-subject').value=subjects[type];
+  document.getElementById('email-body').value={intro:b1,demo:b2,followup:b3,order:b4}[type];
+}
+
+function sendEmail(){
+  var to=document.getElementById('hotel-email').value;
+  if(!to){alert(LANG==='es'?'Ingresa el email del hotel':'Enter hotel email');return;}
+  var subject=document.getElementById('email-subject').value;
+  var body=document.getElementById('email-body').value;
+  var btn=document.getElementById('str-enviarEmailBtn');
+  if(btn){btn.textContent=LANG==='es'?'ENVIANDO...':'SENDING...';btn.disabled=true;}
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/meyenberg/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:to,subject:subject,body:body,rep:'Fernanda'})})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    toast(d.ok?(STRINGS[LANG].emailEnviado+' '+to):'Error: '+(d.error||''));
+    if(btn){btn.textContent=STRINGS[LANG].enviarEmailBtn;btn.disabled=false;}
+  })
+  .catch(function(){
+    window.location.href='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+    if(btn){btn.textContent=STRINGS[LANG].enviarEmailBtn;btn.disabled=false;}
+  });
+}
+
+function copyDemo(){navigator.clipboard.writeText('mexausafg.com/meyenberg-wholesale.html\nPIN: 4321').then(function(){toast(STRINGS[LANG].linkCopiado);});}
+function emailDemo(){window.location.href='mailto:?subject='+encodeURIComponent('Catalogo Meyenberg Amenidades')+'&body='+encodeURIComponent('Portal: mexausafg.com/meyenberg-wholesale.html\nPIN: 4321');}
+function copyWA(){navigator.clipboard.writeText(document.getElementById('wa-msg').innerText).then(function(){toast(STRINGS[LANG].copiado);});}
+
+var selFiles=[];
+function handleFiles(files){for(var i=0;i<files.length;i++)selFiles.push(files[i]);renderFiles();}
+function handleDrop(e){e.preventDefault();handleFiles(e.dataTransfer.files);}
+function icon(n){if(/.(jpg|jpeg|png|gif)/i.test(n))return'&#128444;';if(/.pdf/i.test(n))return'&#128196;';return'&#128206;';}
+function renderFiles(){
+  var fl=document.getElementById('file-list');fl.innerHTML='';
+  selFiles.forEach(function(f,i){fl.innerHTML+='<div style="display:flex;align-items:center;gap:10px;background:#f3f2ee;border-radius:6px;padding:10px 14px;margin-bottom:6px;"><span>'+icon(f.name)+'</span><span style="font-size:12px;flex:1;">'+f.name+'</span><button onclick="rmFile('+i+')" style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px;">&#10005;</button></div>';});
+  document.getElementById('upload-btn').style.display=selFiles.length?'block':'none';
+}
+function rmFile(i){selFiles.splice(i,1);renderFiles();}
+function uploadFiles(){
+  var prog=document.getElementById('upload-progress');prog.style.display='block';prog.textContent=LANG==='es'?'Subiendo...':'Uploading...';
+  var fd=new FormData();selFiles.forEach(function(f){fd.append('files',f);});fd.append('rep','Fernanda');
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/meyenberg/upload',{method:'POST',body:fd})
+  .then(function(r){return r.json();}).then(function(){prog.textContent=STRINGS[LANG].subido;toast(STRINGS[LANG].subido);selFiles=[];renderFiles();setTimeout(function(){prog.style.display='none';},3000);})
+  .catch(function(){prog.textContent='Error.';});
+}
+
+function openLightbox(src,caption){document.getElementById('lightbox-img').src=src;document.getElementById('lightbox-caption').textContent=caption;document.getElementById('lightbox').style.display='flex';}
+function closeLightbox(){document.getElementById('lightbox').style.display='none';}
+
+function swF(v,btn){
+  document.querySelectorAll('[id^="flyer-"]').forEach(function(e){e.style.display='none';});
+  document.getElementById('flyer-'+v).style.display='block';
+  document.querySelectorAll('.flb').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+}
+function emailFlyerRep(){window.location.href='mailto:?subject='+encodeURIComponent('Fernanda - Meyenberg Amenidades')+'&body='+encodeURIComponent('Hola,\n\nSoy Fernanda de Meyenberg Amenidades.\n\nmexausafg.com/meyenberg-wholesale.html\nPIN: 4321\n\nFernanda\nTel: +1-831-251-3116');}
+function waFlyerRep(){window.open('https://wa.me/?text='+encodeURIComponent('Hola! Soy Fernanda de Meyenberg Amenidades.\n\nmexausafg.com/meyenberg-wholesale.html\nPIN: 4321'),'_blank');}
+function copyFlyerLink(){navigator.clipboard.writeText('mexausafg.com/meyenberg-wholesale.html\nPIN: 4321').then(function(){toast(STRINGS[LANG].linkCopiado);});}
+
+var PRODUCTS=[{"id":"p01","es":"Pantufla Bastilla","en":"Slipper Bastilla","des_es":"Tela toalla, serigrafiada con logotipo del cliente, a 2 tintas, suela EVA antiderrapante","des_en":"Terry cloth, screen printed with client logo, 2 colors, anti-slip EVA sole","price_mxn":33.8,"price_usd":1.69,"unit_es":"par","unit_en":"pair","img":"slipper-amomoxtle-black-top.jpg","moq":300},{"id":"p02","es":"Pantufla Doble Empeine","en":"Slipper Double Vamp","des_es":"Tela toalla, bordada con logotipo del cliente, suela EVA antiderrapante","des_en":"Terry cloth, embroidered with client logo, anti-slip EVA sole","price_mxn":36.8,"price_usd":1.84,"unit_es":"par","unit_en":"pair","img":"slipper-amomoxtle-all-colors.jpg","moq":300},{"id":"p03","es":"Pantufla Patio Santiago","en":"Slipper Patio Santiago","des_es":"Pantufla personalizada con logotipo","des_en":"Custom slipper with logo","price_mxn":35,"price_usd":1.75,"unit_es":"par","unit_en":"pair","img":"slipper-patio-santiago-black.jpg","moq":300},{"id":"p04","es":"Pantufla Viceroy Los Cabos","en":"Slipper Viceroy Los Cabos","des_es":"Pantufla premium personalizada","des_en":"Premium custom slipper","price_mxn":37.5,"price_usd":1.88,"unit_es":"par","unit_en":"pair","img":"slipper-viceroy-los-cabos.jpg","moq":300},{"id":"p05","es":"Pantufla HM Central Medica","en":"Slipper HM Central Medica","des_es":"Pantufla hospitalaria personalizada","des_en":"Custom hospital slipper","price_mxn":32,"price_usd":1.6,"unit_es":"par","unit_en":"pair","img":"slipper-hm-central-medica.jpg","moq":300},{"id":"p06","es":"Pantufla Amomoxtle Blanca","en":"Slipper Amomoxtle White","des_es":"Pantufla toalla blanca personalizada","des_en":"White terry custom slipper","price_mxn":34,"price_usd":1.7,"unit_es":"par","unit_en":"pair","img":"slipper-amomoxtle-white-top.jpg","moq":300},{"id":"p07","es":"Pantufla Red Crest","en":"Slipper Red Crest White","des_es":"Pantufla con cresta roja personalizada","des_en":"Red crest custom slipper","price_mxn":33,"price_usd":1.65,"unit_es":"par","unit_en":"pair","img":"slipper-red-crest-white.jpg","moq":300},{"id":"p08","es":"Pantufla White Gold","en":"Slipper White Gold","des_es":"Pantufla blanca con detalles dorados","des_en":"White slipper with gold details","price_mxn":36,"price_usd":1.8,"unit_es":"par","unit_en":"pair","img":"slipper-white-gold-closeup.jpg","moq":300},{"id":"p09","es":"Shampoo 30ml","en":"Shampoo 30ml","des_es":"Botella cilindrica, aroma almendras, logo del cliente","des_en":"Cylindrical bottle, almond scent, client logo","price_mxn":5.7,"price_usd":0.29,"unit_es":"pieza","unit_en":"unit","img":"slipper-white-gold-closeup.jpg","moq":500},{"id":"p10","es":"Jabon Barra Rectangular 25g","en":"Bar Soap Rectangular 25g","des_es":"Sobre transparente, hipoalergenico, logo del cliente","des_en":"Transparent wrapper, hypoallergenic, client logo","price_mxn":4.4,"price_usd":0.22,"unit_es":"pieza","unit_en":"unit","img":"slipper-red-crest-white.jpg","moq":500},{"id":"p11","es":"Jabon Barra Redondo 25g","en":"Bar Soap Round 25g","des_es":"Sobre transparente, logo del cliente","des_en":"Transparent wrapper, client logo","price_mxn":4.4,"price_usd":0.22,"unit_es":"pieza","unit_en":"unit","img":"slipper-amomoxtle-white-top.jpg","moq":500},{"id":"p12","es":"Crema Humectante 30ml","en":"Moisturizing Cream 30ml","des_es":"Botella cilindrica, aroma almendras, logo cliente","des_en":"Cylindrical bottle, almond scent, client logo","price_mxn":5.7,"price_usd":0.29,"unit_es":"pieza","unit_en":"unit","img":"slipper-viceroy-los-cabos.jpg","moq":500},{"id":"p13","es":"Kit Dental","en":"Dental Kit","des_es":"Caja blanca, cepillo y pasta 5g, logo cliente","des_en":"White box, brush and 5g paste, client logo","price_mxn":7.3,"price_usd":0.37,"unit_es":"kit","unit_en":"kit","img":"slipper-production-floor.jpg","moq":500},{"id":"p14","es":"Gorra de Ducha","en":"Shower Cap","des_es":"En sobre con logotipo del cliente","des_en":"In wrapper with client logo","price_mxn":4.5,"price_usd":0.23,"unit_es":"pieza","unit_en":"unit","img":"slipper-hm-central-medica.jpg","moq":500},{"id":"p15","es":"Bano de Burbujas 30ml","en":"Bubble Bath 30ml","des_es":"Botella cilindrica, logo cliente","des_en":"Cylindrical bottle, client logo","price_mxn":5.7,"price_usd":0.29,"unit_es":"pieza","unit_en":"unit","img":"slipper-patio-santiago-black.jpg","moq":500},{"id":"p16","es":"Set Esponja y Toalla","en":"Bath Sponge & Towel Set","des_es":"Esponja de bano con toalla, logo cliente","des_en":"Bath sponge with towel, client logo","price_mxn":23,"price_usd":1.15,"unit_es":"set","unit_en":"set","img":"slipper-amomoxtle-all-colors.jpg","moq":500},{"id":"p17","es":"Peluche Personalizado","en":"Custom Plush Toy","des_es":"Varios modelos, logotipo y bolsa de pellon con logo a 3 tintas","des_en":"Various models, logo and bag with 3-color silkscreen","price_mxn":150,"price_usd":7.5,"unit_es":"pieza","unit_en":"unit","img":"slipper-amomoxtle-black-top.jpg","moq":50},{"id":"p18","es":"Bolsa Ecologica 250 pzas","en":"Eco Bag 250 units","des_es":"35x40x12cm, serigrafia 1 tinta, asas con fuelle","des_en":"35x40x12cm, 1-color screen print, gusseted handles","price_mxn":19.5,"price_usd":0.98,"unit_es":"pieza","unit_en":"unit","img":"slipper-patio-santiago-group.jpg","moq":250},{"id":"p19","es":"Bolsa Ecologica 500 pzas","en":"Eco Bag 500 units","des_es":"35x40x12cm, serigrafia 1 tinta, asas con fuelle","des_en":"35x40x12cm, 1-color screen print, gusseted handles","price_mxn":16.5,"price_usd":0.83,"unit_es":"pieza","unit_en":"unit","img":"slipper-patio-santiago-group.jpg","moq":500},{"id":"p20","es":"Bolsa Ecologica 1000 pzas","en":"Eco Bag 1,000 units","des_es":"35x40x12cm, serigrafia 1 tinta, asas con fuelle","des_en":"35x40x12cm, 1-color screen print, gusseted handles","price_mxn":14,"price_usd":0.7,"unit_es":"pieza","unit_en":"unit","img":"slipper-patio-santiago-group.jpg","moq":1000},{"id":"p21","es":"Bolsa de Manta 50 pzas","en":"Manta Bag 50 units","des_es":"35x40cm, serigrafia 3 tintas","des_en":"35x40cm, 3-color screen print","price_mxn":85,"price_usd":4.25,"unit_es":"pieza","unit_en":"unit","img":"slipper-amomoxtle-black-top.jpg","moq":50},{"id":"p22","es":"Bolsa de Manta 100-500 pzas","en":"Manta Bag 100-500 units","des_es":"35x40cm, serigrafia 3 tintas","des_en":"35x40cm, 3-color screen print","price_mxn":42,"price_usd":2.1,"unit_es":"pieza","unit_en":"unit","img":"slipper-amomoxtle-black-top.jpg","moq":100},{"id":"p23","es":"Bolsa de Manta 1000+ pzas","en":"Manta Bag 1,000+ units","des_es":"35x40cm, serigrafia 3 tintas","des_en":"35x40cm, 3-color screen print","price_mxn":35.5,"price_usd":1.78,"unit_es":"pieza","unit_en":"unit","img":"slipper-amomoxtle-black-top.jpg","moq":1000}];
+var cart={};
+function adjQty(id,delta){
+  cart[id]=Math.max(0,(cart[id]||0)+delta);
+  document.getElementById('qty-'+id).textContent=cart[id];
+  updateCart();
+}
+function updateCart(){
+  var count=0,total=0;
+  PRODUCTS.forEach(function(p){var q=cart[p.id]||0;if(q>0){count++;total+=q*p.price_mxn;}});
+  var bar=document.getElementById('cart-bar');if(bar)bar.style.display=count>0?'flex':'none';
+  var cc=document.getElementById('cart-count');var ct=document.getElementById('cart-total');
+  if(cc)cc.textContent=count;if(ct)ct.textContent='$'+total.toFixed(2)+' MXN';
+}
+function showOrderForm(){
+  var items=PRODUCTS.filter(function(p){return(cart[p.id]||0)>0;});
+  if(items.length===0){alert(LANG==='es'?'Selecciona al menos un producto.':'Select at least one product.');return;}
+  var summary='<strong>'+(LANG==='es'?'Productos:':'Products:')+'</strong><br>';var total_mxn=0;var total_usd=0;
+  items.forEach(function(p){var q=cart[p.id];var sub=q*p.price_mxn;total_mxn+=sub;total_usd+=q*p.price_usd;summary+=(LANG==='es'?p.es:p.en)+' x'+q+' = $'+sub.toFixed(2)+' MXN<br>';});
+  summary+='<br><strong>Total: $'+total_mxn.toFixed(2)+' MXN (~$'+total_usd.toFixed(2)+' USD)</strong>';
+  document.getElementById('order-summary').innerHTML=summary;
+  document.getElementById('order-modal').style.display='flex';
+}
+function submitOrder(){
+  var name=document.getElementById('ord-name').value;
+  var hotel=document.getElementById('ord-hotel').value;
+  var email=document.getElementById('ord-email').value;
+  if(!name||!hotel||!email){alert(LANG==='es'?'Nombre, hotel y email son requeridos.':'Name, hotel and email required.');return;}
+  var items=PRODUCTS.filter(function(p){return(cart[p.id]||0)>0;});
+  var total_mxn=items.reduce(function(s,p){return s+(cart[p.id]||0)*p.price_mxn;},0);
+  var total_usd=items.reduce(function(s,p){return s+(cart[p.id]||0)*p.price_usd;},0);
+  var order={
+    rep:'Fernanda',customer_name:name,hotel:hotel,email:email,
+    phone:document.getElementById('ord-phone').value,
+    notes:document.getElementById('ord-notes').value,
+    items:items.map(function(p){return{product:p.en,qty:cart[p.id],unit_price_mxn:p.price_mxn,unit_price_usd:p.price_usd,subtotal_mxn:(cart[p.id]*p.price_mxn).toFixed(2),subtotal_usd:(cart[p.id]*p.price_usd).toFixed(2)};}),
+    total_mxn:total_mxn.toFixed(2),total_usd:total_usd.toFixed(2),
+    currency:'MXN/USD',submitted_at:new Date().toISOString()
+  };
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/meyenberg/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)})
+  .then(function(r){return r.json();}).then(function(){
+    document.getElementById('order-modal').style.display='none';
+    cart={};PRODUCTS.forEach(function(p){var el=document.getElementById('qty-'+p.id);if(el)el.textContent='0';});updateCart();
+    toast(STRINGS[LANG].pedidoEnviado);
+  }).catch(function(){
+    var body='ORDER REP: Fernanda\nCustomer: '+name+'\nHotel: '+hotel+'\nEmail: '+email+'\n\n';
+    items.forEach(function(p){body+=p.en+' x'+(cart[p.id]||0)+' @ $'+p.price_usd+' USD\n';});
+    body+='\nTotal: $'+total_usd.toFixed(2)+' USD';
+    window.location.href='mailto:sgarcia1911@gmail.com?subject=New+Order+Fernanda+'+encodeURIComponent(hotel)+'&body='+encodeURIComponent(body);
+  });
+}
+
+var _lastId=localStorage.getItem('0909_last')||0;var _polling=false;
+function playPing(){try{document.getElementById('ping-snd').play();}catch(e){}}
+function renderLead(l){
+  var d=new Date(l.created_at||Date.now());
+  var ds=d.toLocaleDateString('es-MX',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  return '<div style="background:#fff;border:1px solid #e2dfd8;border-radius:8px;padding:14px;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:11px;font-weight:700;color:#1a1f2e;flex:1;">'+(l.hotel||l.company||'Hotel')+'</span><span style="font-size:9px;color:#94a3b8;">'+ds+'</span></div><div style="font-size:11px;color:#4a5068;margin-bottom:8px;">&#128100; '+(l.name||'')+(l.email?' &mdash; <a href="mailto:'+l.email+'" style="color:#b8944d;">'+l.email+'</a>':'')+'</div><a href="mailto:'+(l.email||'')+'" class="db" style="font-size:9px;padding:6px 14px;">EMAIL</a></div>';
+}
+async function checkLeads(){
+  if(_polling)return;_polling=true;
+  try{
+    var r=await fetch('https://auditdna-backend-1-production.up.railway.app/api/meyenberg/leads?after='+_lastId,{headers:{'Cache-Control':'no-cache'}});
+    var data=await r.json();var leads=Array.isArray(data)?data:(data.leads||[]);
+    var newOnes=leads.filter(function(l){return(l.id||0)>_lastId;});
+    if(newOnes.length)playPing();
+    if(leads.length){
+      document.getElementById('stat-new').textContent=leads.filter(function(l){return l.status==='new'||!l.status;}).length;
+      document.getElementById('stat-contacted').textContent=leads.filter(function(l){return l.status==='contacted';}).length;
+      document.getElementById('stat-closed').textContent=leads.filter(function(l){return l.status==='closed';}).length;
+      var box=document.getElementById('inquiries-box');box.innerHTML='';
+      leads.forEach(function(l){box.innerHTML+=renderLead(l);});
+      _lastId=Math.max.apply(null,leads.map(function(l){return l.id||0;}));
+      localStorage.setItem('0909_last',_lastId);
+    }
+  }catch(e){}
+  _polling=false;
+}
+function startPolling(){checkLeads();setInterval(checkLeads,30000);}
+
+// Commission tab
+function loadCommissions() {
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/meyenberg/commissions?rep=Fernanda', {headers:{'Cache-Control':'no-cache'}})
+  .then(function(r){return r.json();})
+  .then(function(data) {
+    var orders = Array.isArray(data) ? data : (data.orders || []);
+    var totalSales = 0, totalComm = 0, totalPaid = 0;
+    var tbody = document.getElementById('comm-tbody');
+    if(!tbody) return;
+    if(orders.length === 0) return;
+    tbody.innerHTML = '';
+    orders.forEach(function(o, i) {
+      var sale = parseFloat(o.total_mxn || o.total || 0);
+      var comm = sale * 0.05;
+      var paid = o.commission_paid ? comm : 0;
+      totalSales += sale;
+      totalComm += comm;
+      totalPaid += paid;
+      var statusColor = o.status === 'closed' ? '#2d6a4f' : o.status === 'pending' ? '#b8944d' : '#4a8fd4';
+      var payColor = o.commission_paid ? '#2d6a4f' : '#c0392b';
+      var bg = i % 2 === 0 ? '#fff' : '#f8f6f0';
+      tbody.innerHTML += '<tr style="background:'+bg+';border-bottom:1px solid #e2dfd8;">' +
+        '<td style="padding:8px 10px;font-size:10px;color:#1a1f2e;white-space:nowrap;">' + (o.date || o.submitted_at || '').substring(0,10) + '</td>' +
+        '<td style="padding:8px 10px;font-size:10px;color:#1a1f2e;font-weight:700;">' + (o.hotel || '') + '</td>' +
+        '<td style="padding:8px 10px;font-size:9px;color:#4a5068;">' + (o.product_summary || (o.items ? o.items.map(function(x){return x.product;}).join(', ') : '')) + '</td>' +
+        '<td style="padding:8px 10px;font-size:10px;color:#1a1f2e;text-align:right;">' + (o.total_qty || '') + '</td>' +
+        '<td style="padding:8px 10px;font-size:10px;color:#1a1f2e;text-align:right;font-weight:700;">$' + sale.toFixed(2) + '</td>' +
+        '<td style="padding:8px 10px;font-size:10px;color:#b8944d;text-align:right;font-weight:700;">$' + comm.toFixed(2) + '</td>' +
+        '<td style="padding:8px 10px;font-size:9px;color:#4a5068;">' + (o.shipping_carrier || '') + (o.tracking ? ' — ' + o.tracking : '') + (o.ship_date ? '<br><span style="color:#94a3b8;">'+o.ship_date+'</span>' : '') + '</td>' +
+        '<td style="padding:8px 10px;text-align:center;"><span style="background:'+statusColor+';color:#fff;padding:3px 8px;border-radius:99px;font-size:8px;font-weight:700;">' + (o.status || 'PENDING').toUpperCase() + '</span></td>' +
+        '<td style="padding:8px 10px;text-align:center;"><span style="background:'+payColor+';color:#fff;padding:3px 8px;border-radius:99px;font-size:8px;font-weight:700;">' + (o.commission_paid ? 'PAGADO' : 'PENDIENTE') + '</span></td>' +
+      '</tr>';
+    });
+    var ts = document.getElementById('comm-total-sales');
+    var te = document.getElementById('comm-earned');
+    var tp = document.getElementById('comm-paid');
+    if(ts) ts.textContent = '$' + totalSales.toFixed(2);
+    if(te) te.textContent = '$' + totalComm.toFixed(2);
+    if(tp) tp.textContent = '$' + totalPaid.toFixed(2);
+  })
+  .catch(function(){});
+}
+</script>
+</body>
+</html>

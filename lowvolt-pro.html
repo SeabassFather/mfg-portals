@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>LowVolt Pro -- Low Voltage & Security Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#020912;color:#e2e8f0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+:root{--gold:#22c55e;--dark:#020912;--navy:#0d1117;--card:#161b22;--bord:rgba(255,255,255,0.07);--txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;--green:#22c55e;--red:#ef4444;--blue:#4a8fd4}
+#gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
+.gate-card{background:var(--card);border:1px solid rgba(201,165,92,0.3);border-radius:20px;padding:36px 28px;width:90%;max-width:340px;text-align:center;box-shadow:0 0 60px rgba(201,165,92,0.07)}
+.gate-logo{width:62px;height:62px;background:linear-gradient(135deg,#22c55e,#8a6930);border-radius:15px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:14px;font-weight:900;color:#020912;letter-spacing:.5px}
+.gate-brand{font-size:15px;font-weight:900;color:#e2e8f0;margin-bottom:3px}
+.gate-title{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.gate-sub{font-size:10px;color:var(--muted);margin-bottom:22px;line-height:1.5}
+#dots{font-size:26px;letter-spacing:10px;color:var(--gold);min-height:34px;margin-bottom:8px}
+#g-err{font-size:11px;color:var(--red);min-height:16px;margin-bottom:10px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nb{background:#0d1117;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:15px 0;font-size:20px;font-weight:700;color:var(--txt);cursor:pointer;user-select:none;touch-action:manipulation;transition:background .15s}
+.nb:hover{background:#1e293b}
+.nb:active{background:rgba(201,165,92,0.2)}
+.nb.del{color:var(--red);font-size:14px}
+.powered{font-size:9px;color:#1a2744;margin-top:6px}
+#app{display:none;min-height:100vh}
+.topbar{background:#0d1117;border-bottom:1px solid var(--bord);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
+.logo-row{display:flex;align-items:center;gap:12px}
+.logo-sq{width:36px;height:36px;background:linear-gradient(135deg,#22c55e,#8a6930);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#020912;flex-shrink:0}
+.co-name{font-size:13px;font-weight:900;color:var(--gold)}
+.co-sub{font-size:9px;color:var(--muted);letter-spacing:.8px;margin-top:1px}
+.tabs{display:flex;gap:4px;padding:10px 20px;background:#0d1117;border-bottom:1px solid var(--bord);overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{padding:7px 13px;border-radius:7px;font-size:10px;font-weight:800;letter-spacing:.5px;cursor:pointer;border:1px solid var(--bord);background:transparent;color:var(--muted);white-space:nowrap;transition:all .15s;touch-action:manipulation}
+.tab-btn.active{background:var(--gold);color:#020912;border-color:var(--gold)}
+.tab-btn:hover:not(.active){border-color:rgba(201,165,92,0.4);color:var(--gold)}
+.body{padding:20px;max-width:1200px;margin:0 auto}
+.section{display:none}.section.active{display:block}
+.card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-title{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px}
+.kpi-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.kpi-val{font-size:22px;font-weight:900;color:var(--gold)}
+.kpi-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 10px;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;border-bottom:1px solid var(--bord);text-transform:uppercase;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt)}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.badge-green{background:rgba(34,197,94,0.15);color:#22c55e}
+.badge-red{background:rgba(239,68,68,0.15);color:#ef4444}
+.badge-gold{background:rgba(201,165,92,0.15);color:#C9A55C}
+.badge-blue{background:rgba(74,143,212,0.15);color:#4a8fd4}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+input,select,textarea{background:rgba(255,255,255,0.04);border:1px solid rgba(74,143,212,0.2);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:16px;outline:none;font-family:inherit;transition:border-color .2s;width:100%}
+input:focus,select:focus{border-color:rgba(201,165,92,0.5)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.btn{padding:10px 18px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:none;letter-spacing:.5px;transition:opacity .2s;touch-action:manipulation}
+.btn-gold{background:linear-gradient(135deg,#22c55e,#8a6930);color:#020912}
+.btn-blue{background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.3);color:#4a8fd4}
+.btn-red{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+.btn:hover{opacity:.85}
+.progress-wrap{background:rgba(255,255,255,0.05);border-radius:4px;height:6px;margin-top:5px}
+.progress-bar{height:100%;border-radius:4px}
+.footer-bar{background:#0d1117;border-top:1px solid var(--bord);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:480px){.kpi-val{font-size:18px}.body{padding:12px}}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">LV</div>
+    <div class="gate-brand">LowVolt Pro</div>
+    <div class="gate-title">Low Voltage & Security Pro Portal</div>
+    <div class="gate-sub">Secured by AuditDNA Intelligence &bull; Patent Pending</div>
+    <div id="dots"></div>
+    <div id="g-err"></div>
+    <div class="numpad">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:240px;margin:0 auto 12px;"><div class="nb" onclick="np('1')">1</div><div class="nb" onclick="np('2')">2</div><div class="nb" onclick="np('3')">3</div><div class="nb" onclick="np('4')">4</div><div class="nb" onclick="np('5')">5</div><div class="nb" onclick="np('6')">6</div><div class="nb" onclick="np('7')">7</div><div class="nb" onclick="np('8')">8</div><div class="nb" onclick="np('9')">9</div><div class="nb" onclick="np('del')" style="background:rgba(255,255,255,0.05);color:#94a3b8;font-size:11px;">CLR</div><div class="nb" onclick="np('0')">0</div><div class="nb" onclick="np('del')" style="background:rgba(255,255,255,0.05);color:#94a3b8;font-size:11px;">DEL</div></div><div class="nb" onclick="np('0')">0</div><div class="nb del" onclick="nc()">CLR</div>
+    </div>
+  </div>
+  <div class="powered">Powered by AuditDNA Intelligence &bull; Mexausa Food Group, Inc. &bull; Patent Pending</div>
+</div>
+<div id="app">
+  <div class="topbar">
+    <div class="logo-row">
+      <div class="logo-sq">LV</div>
+      <div>
+        <div class="co-name">LOWVOLT PRO</div>
+        <div class="co-sub">LOW VOLTAGE & SECURITY PRO PORTAL &bull; AUDITDNA INTELLIGENCE &bull; PATENT PENDING</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div id="clock" style="font-size:10px;color:var(--muted)"></div>
+      <button class="btn btn-red" onclick="lock()" style="padding:7px 12px;font-size:10px">LOCK</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="goTab('dashboard')">DASHBOARD</button>
+    <button class="tab-btn" onclick="goTab('inventory')">INVENTORY</button>
+    <button class="tab-btn" onclick="goTab('tasks')">TASKS</button>
+    <button class="tab-btn" onclick="goTab('docs')">DOCUMENTS</button>
+    
+  </div>
+  <div class="body">
+    <div id="tab-dashboard" class="section active">
+  
+<div class="grid4" style="margin-bottom:14px">
+  <div class="kpi"><div class="kpi-lbl">Active Jobs</div><div class="kpi-val">9</div></div>
+  <div class="kpi"><div class="kpi-lbl">Monthly Revenue</div><div class="kpi-val" style="color:var(--green)">$84,400</div></div>
+  <div class="kpi"><div class="kpi-lbl">A/R Outstanding</div><div class="kpi-val" style="color:var(--red)">$28,200</div></div>
+  <div class="kpi"><div class="kpi-lbl">Net Income</div><div class="kpi-val" style="color:var(--green)">$32,400</div></div>
+</div>
+<div class="card"><div class="card-title">Job Tracker</div>
+<div class="tbl-wrap"><table><thead><tr><th>Job</th><th>Type</th><th>Value</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Camera System #441</td><td>Security</td><td style="color:var(--green)">$8,400</td><td><span class="badge badge-green">COMPLETE</span></td></tr>
+<tr><td>Access Control #440</td><td>Access</td><td style="color:var(--gold)">$14,200</td><td><span class="badge badge-blue">IN PROGRESS</span></td></tr>
+<tr><td>Structured Cabling #439</td><td>Network</td><td style="color:var(--green)">$22,800</td><td><span class="badge badge-gold">SCHEDULED</span></td></tr>
+</tbody></table></div></div>
+</div>
+<div id="tab-inventory" class="section">
+  
+<div class="card"><div class="card-title">Parts & Materials</div>
+<div class="tbl-wrap"><table><thead><tr><th>Item</th><th>On Hand</th><th>Unit Cost</th><th>Total Value</th><th>Reorder?</th></tr></thead>
+<tbody>
+<tr><td>IP Cameras</td><td>24</td><td>$180</td><td style="color:var(--green)">$4,320</td><td><span class="badge badge-green">OK</span></td></tr>
+<tr><td>Cat6 Cable (1000ft)</td><td>3</td><td>$280</td><td style="color:var(--gold)">$840</td><td><span class="badge badge-gold">LOW</span></td></tr>
+<tr><td>Access Control Panels</td><td>2</td><td>$420</td><td style="color:var(--red)">$840</td><td><span class="badge badge-red">REORDER</span></td></tr>
+</tbody></table></div></div>
+</div>
+<div id="tab-tasks" class="section">
+  
+<div class="card"><div class="card-title">Task Queue</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+  <div style="font-size:12px;font-weight:700;color:var(--txt)">Invoice Camera System #441 -- $8,400 complete</div>
+  <span class="badge badge-red">URGENT</span>
+</div>
+<div style="padding:12px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+  <div style="font-size:12px;font-weight:700;color:var(--txt)">Reorder Access Control Panels -- 2 units left</div>
+  <span class="badge badge-gold">HIGH</span>
+</div>
+</div></div>
+</div>
+
+  </div>
+  <div class="footer-bar">
+    <div style="font-size:9px;color:var(--muted)">AuditDNA Intelligence &bull; Patent Pending &bull; Mexausa Food Group, Inc. &bull; California, USA</div>
+    <div style="font-size:9px;color:var(--muted)">Saul Garcia &bull; NMLS #337526 &bull; (831) 251-3116 &bull; sgarcia1911@gmail.com</div>
+  </div>
+</div>
+<script>
+var entered='',PIN='2938';
+function updDots(){var d=document.getElementById('dots');d.textContent='';for(var i=0;i<entered.length;i++)d.textContent+=' ';}
+function np(v){if(entered.length>=6)return;entered+=v;updDots();if(entered.length===4)checkPin();}
+function nd(){entered=entered.slice(0,-1);updDots();}
+function nc(){entered='';updDots();}
+function checkPin(){
+  if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';startClock();}
+  else{var e=document.getElementById('g-err');e.textContent='Incorrect PIN. Try again.';entered='';updDots();setTimeout(function(){e.textContent='';},2000);}
+}
+function lock(){entered='';updDots();document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';}
+function goTab(t){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  var sec=document.getElementById('tab-'+t);if(sec)sec.classList.add('active');
+  event.target.classList.add('active');
+}
+function startClock(){
+  function tick(){var n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+  tick();setInterval(tick,1000);
+}
+
+
+<div id="tab-docs" class="section">
+  <div class="card" style="border-color:rgba(74,143,212,0.3)">
+    <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1.5px;margin-bottom:4px">DOCUMENT HUB</div>
+    <div style="font-size:10px;color:var(--muted);line-height:1.6">Upload files directly, link your Google Drive folder, or connect DocuSign for e-signatures. All options below.</div>
+  </div>
+
+  <!-- OPTION A: GOOGLE DRIVE LINK -->
+  <div class="card">
+    <div class="card-title">Option A &mdash; Google Drive Link</div>
+    <div style="font-size:10px;color:var(--dim);margin-bottom:12px;line-height:1.6">Share a Google Drive folder with us. We get instant access to all your documents. No upload limits. Works with files you already have in Drive.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input id="gdrive-url" type="text" placeholder="Paste your Google Drive folder link here..." style="flex:1;min-width:200px"/>
+      <select id="gdrive-cat" style="width:160px">
+        <option value="bank_statements">Bank Statements</option>
+        <option value="invoices">Invoices</option>
+        <option value="tax_docs">Tax Documents</option>
+        <option value="payroll">Payroll Records</option>
+        <option value="contracts">Contracts</option>
+        <option value="general">General</option>
+      </select>
+      <button class="btn btn-gold" onclick="saveGDrive()">SAVE DRIVE LINK</button>
+    </div>
+    <div id="gdrive-status" style="font-size:10px;color:var(--green);margin-top:8px;min-height:16px"></div>
+    <div style="margin-top:10px;padding:10px;background:rgba(74,143,212,0.05);border-radius:8px;font-size:10px;color:var(--dim)">
+      To create a shared folder: Google Drive &rarr; New Folder &rarr; Right-click &rarr; Share &rarr; Anyone with link can view &rarr; Copy link &rarr; Paste above.
+    </div>
+  </div>
+
+  <!-- OPTION B: DIRECT UPLOAD -->
+  <div class="card">
+    <div class="card-title">Option B &mdash; Direct Upload to Secure Server</div>
+    <div style="font-size:10px;color:var(--dim);margin-bottom:12px;line-height:1.6">Upload files directly to our secure Railway server. Max 25MB per file. Accepted: PDF, Word, Excel, CSV, JPG, PNG.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <select id="upload-cat" style="width:180px">
+        <option value="bank_statements">Bank Statements</option>
+        <option value="invoices">Invoices / Bills</option>
+        <option value="tax_docs">Tax Documents</option>
+        <option value="payroll">Payroll Records</option>
+        <option value="contracts">Contracts</option>
+        <option value="receipts">Receipts</option>
+        <option value="financial_reports">Financial Reports</option>
+        <option value="general">General</option>
+      </select>
+      <input id="upload-notes" type="text" placeholder="Notes (optional)..." style="flex:1;min-width:160px"/>
+    </div>
+    <div id="drop-zone" onclick="document.getElementById('file-input').click()"
+      style="border:2px dashed rgba(74,143,212,0.4);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s"
+      ondragover="event.preventDefault();this.style.borderColor='var(--gold)'"
+      ondragleave="this.style.borderColor='rgba(74,143,212,0.4)'"
+      ondrop="handleDrop(event)">
+      <div style="font-size:28px;margin-bottom:8px">&#128196;</div>
+      <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px">Click to browse or drag & drop files here</div>
+      <div style="font-size:10px;color:var(--muted)">PDF &bull; Word &bull; Excel &bull; CSV &bull; JPG &bull; PNG &bull; Max 25MB</div>
+    </div>
+    <input id="file-input" type="file" style="display:none" multiple
+      accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.txt"
+      onchange="handleFiles(this.files)"/>
+    <div id="upload-progress" style="margin-top:10px"></div>
+  </div>
+
+  <!-- OPTION C: DOCUSIGN -->
+  <div class="card" style="border-color:rgba(139,92,246,0.3)">
+    <div class="card-title" style="color:var(--purple)">Option C &mdash; DocuSign Integration (Your Account)</div>
+    <div style="font-size:10px;color:var(--dim);margin-bottom:12px;line-height:1.6">Connect your existing DocuSign account. Send documents for e-signature directly from this portal. You keep your DocuSign account  we just connect to it.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="field"><label>DocuSign Access Token</label><input id="ds-token" type="password" placeholder="Bearer token from DocuSign"/></div>
+      <div class="field"><label>Account ID</label><input id="ds-account" type="text" placeholder="Your DocuSign account ID"/></div>
+      <div class="field"><label>Signer Email</label><input id="ds-email" type="email" placeholder="signer@email.com"/></div>
+      <div class="field"><label>Signer Name</label><input id="ds-name" type="text" placeholder="Full name"/></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-purple" onclick="sendDocuSign()">SEND FOR SIGNATURE</button>
+      <button class="btn btn-blue" onclick="checkDocuSign()">CHECK ENVELOPE STATUS</button>
+    </div>
+    <div id="ds-status" style="font-size:10px;color:var(--muted);margin-top:8px;min-height:16px"></div>
+    <div style="margin-top:10px;padding:10px;background:rgba(139,92,246,0.05);border-radius:8px;font-size:10px;color:var(--dim)">
+      Get your DocuSign access token at: apps.docusign.com &rarr; Settings &rarr; Apps &amp; Keys &rarr; Actions &rarr; Generate Token.
+      Your account ID is also in your DocuSign dashboard.
+    </div>
+  </div>
+
+  <!-- UPLOADED FILES LIST -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin-bottom:0">Uploaded Documents</div>
+      <button class="btn btn-blue" onclick="loadDocs()" style="padding:6px 12px;font-size:10px">REFRESH</button>
+    </div>
+    <div id="docs-list"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">Click REFRESH to load uploaded documents.</div></div>
+  </div>
+</div>
+
+<script>
+var PORTAL_SLUG = window.location.pathname.replace('/','').replace('.html','') || 'portal';
+var BE_URL = 'https://auditdna-backend-1-production.up.railway.app';
+
+function saveGDrive() {
+  var link = document.getElementById('gdrive-url').value.trim();
+  var cat  = document.getElementById('gdrive-cat').value;
+  var st   = document.getElementById('gdrive-status');
+  if (!link) { st.style.color='var(--red)'; st.textContent='Paste a Google Drive link first.'; return; }
+  st.style.color='var(--muted)'; st.textContent='Saving...';
+  fetch(BE_URL+'/api/portal-docs/gdrive', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({portal_slug:PORTAL_SLUG, gdrive_link:link, category:cat})
+  }).then(r=>r.json()).then(d=>{
+    if(d.ok) { st.style.color='var(--green)'; st.textContent='Google Drive folder linked successfully. ID: '+d.id; document.getElementById('gdrive-url').value=''; loadDocs(); }
+    else { st.style.color='var(--red)'; st.textContent='Error: '+d.error; }
+  }).catch(e=>{ st.style.color='var(--red)'; st.textContent='Connection error: '+e.message; });
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').style.borderColor='rgba(74,143,212,0.4)';
+  handleFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files) {
+  for(var i=0;i<files.length;i++) uploadFile(files[i]);
+}
+
+function uploadFile(file) {
+  var cat   = document.getElementById('upload-cat').value;
+  var notes = document.getElementById('upload-notes').value;
+  var prog  = document.getElementById('upload-progress');
+  var id    = 'prog-'+Date.now();
+  prog.innerHTML += '<div id="'+id+'" style="padding:8px;background:rgba(74,143,212,0.05);border-radius:6px;margin-bottom:6px;font-size:11px;color:var(--txt)">Uploading: '+file.name+' <span style=\'color:var(--muted)\'>0%</span></div>';
+  var fd = new FormData();
+  fd.append('file', file);
+  fd.append('portal_slug', PORTAL_SLUG);
+  fd.append('category', cat);
+  fd.append('notes', notes);
+  var xhr = new XMLHttpRequest();
+  xhr.upload.onprogress = function(e) {
+    if(e.lengthComputable) {
+      var pct = Math.round((e.loaded/e.total)*100);
+      var el = document.getElementById(id);
+      if(el) el.innerHTML = 'Uploading: '+file.name+' <span style=\'color:var(--blue)\'>'+pct+'%</span>';
+    }
+  };
+  xhr.onload = function() {
+    var el = document.getElementById(id);
+    try {
+      var resp = JSON.parse(xhr.responseText);
+      if(resp.ok) { if(el) el.innerHTML = file.name+' <span style=\'color:var(--green)\'>UPLOADED</span>'; loadDocs(); }
+      else { if(el) el.innerHTML = file.name+' <span style=\'color:var(--red)\'>ERROR: '+resp.error+'</span>'; }
+    } catch(e) { if(el) el.innerHTML = file.name+' <span style=\'color:var(--red)\'>UPLOAD FAILED</span>'; }
+  };
+  xhr.onerror = function() {
+    var el = document.getElementById(id);
+    if(el) el.innerHTML = file.name+' <span style=\'color:var(--red)\'>CONNECTION ERROR</span>';
+  };
+  xhr.open('POST', BE_URL+'/api/portal-docs/upload');
+  xhr.send(fd);
+}
+
+function loadDocs() {
+  var container = document.getElementById('docs-list');
+  container.innerHTML = '<div style="color:var(--muted);font-size:11px;padding:10px">Loading...</div>';
+  fetch(BE_URL+'/api/portal-docs/list/'+PORTAL_SLUG)
+    .then(r=>r.json()).then(d=>{
+      if(!d.ok||!d.docs.length) { container.innerHTML='<div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">No documents uploaded yet.</div>'; return; }
+      var html='<div class="tbl-wrap"><table><thead><tr><th>File</th><th>Category</th><th>Size</th><th>Uploaded</th><th>Type</th><th>Action</th></tr></thead><tbody>';
+      d.docs.forEach(function(doc) {
+        var size = doc.file_size ? (doc.file_size/1024).toFixed(0)+' KB' : '--';
+        var date = doc.created_at ? new Date(doc.created_at).toLocaleDateString() : '--';
+        var isGdrive = !!doc.gdrive_link;
+        var badge = isGdrive ? '<span class=\"badge badge-blue\">GOOGLE DRIVE</span>' : '<span class=\"badge badge-green\">UPLOADED</span>';
+        var action = isGdrive
+          ? '<a href=\"'+doc.gdrive_link+'\" target=\"_blank\" style=\"color:var(--blue);font-size:10px;font-weight:700;text-decoration:none\">OPEN</a>'
+          : '<a href=\"'+BE_URL+'/api/portal-docs/download/'+doc.id+'\" style=\"color:var(--gold);font-size:10px;font-weight:700;text-decoration:none\">DOWNLOAD</a>';
+        html+='<tr><td style=\"max-width:180px;overflow:hidden;text-overflow:ellipsis\">'+doc.original_name+'</td><td><span class=\"badge badge-gold\">'+doc.category.replace(/_/g,' ').toUpperCase()+'</span></td><td>'+size+'</td><td>'+date+'</td><td>'+badge+'</td><td>'+action+'</td></tr>';
+      });
+      html+='</tbody></table></div>';
+      container.innerHTML=html;
+    }).catch(e=>{ container.innerHTML='<div style="color:var(--red);font-size:11px;padding:10px">Error loading documents: '+e.message+'</div>'; });
+}
+
+function sendDocuSign() {
+  var token   = document.getElementById('ds-token').value.trim();
+  var account = document.getElementById('ds-account').value.trim();
+  var email   = document.getElementById('ds-email').value.trim();
+  var name    = document.getElementById('ds-name').value.trim();
+  var st      = document.getElementById('ds-status');
+  if(!token||!account||!email) { st.style.color='var(--red)'; st.textContent='Token, Account ID, and Signer Email required.'; return; }
+  st.style.color='var(--muted)'; st.textContent='Sending envelope...';
+  fetch(BE_URL+'/api/portal-docs/docusign/send', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({access_token:token, account_id:account, signer_email:email, signer_name:name, subject:'Please sign this document from AuditDNA Portal'})
+  }).then(r=>r.json()).then(d=>{
+    if(d.ok) { st.style.color='var(--green)'; st.textContent='Envelope sent. ID: '+d.envelope_id+' | Status: '+d.status; }
+    else { st.style.color='var(--red)'; st.textContent='DocuSign error: '+(d.error||JSON.stringify(d)); }
+  }).catch(e=>{ st.style.color='var(--red)'; st.textContent='Connection error: '+e.message; });
+}
+
+function checkDocuSign() {
+  var token   = document.getElementById('ds-token').value.trim();
+  var account = document.getElementById('ds-account').value.trim();
+  var st      = document.getElementById('ds-status');
+  var env_id  = prompt('Enter envelope ID to check:');
+  if(!env_id) return;
+  if(!token||!account) { st.style.color='var(--red)'; st.textContent='Token and Account ID required.'; return; }
+  fetch(BE_URL+'/api/portal-docs/docusign/status', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({access_token:token, account_id:account, envelope_id:env_id})
+  }).then(r=>r.json()).then(d=>{
+    if(d.ok) { st.style.color='var(--green)'; st.textContent='Envelope '+env_id+' status: '+d.status; }
+    else { st.style.color='var(--red)'; st.textContent='Error: '+d.error; }
+  }).catch(e=>{ st.style.color='var(--red)'; st.textContent='Error: '+e.message; });
+}
+</script>
+
+</script>
+</body>
+</html>
