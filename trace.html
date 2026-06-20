@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>AuditDNA Trace — Mexausa Food Group</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0F1419;color:#dde1e5;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;padding:0}
+  .hdr{background:linear-gradient(135deg,rgba(15,123,65,0.15),rgba(15,20,25,0.98));border-bottom:1px solid rgba(15,123,65,0.3);padding:14px 16px}
+  .hdr-label{font-size:9px;letter-spacing:4px;color:#0F7B41;font-weight:700;font-family:monospace;margin-bottom:3px}
+  .hdr-title{font-size:20px;font-weight:900}
+  .hdr-sub{font-size:10px;color:rgba(221,225,229,0.45);margin-top:2px}
+  .body{padding:16px}
+  .card{background:#0f1214;border:1px solid rgba(15,123,65,0.2);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  .card-gold{border-color:rgba(201,165,92,0.35);background:rgba(201,165,92,0.03)}
+  .card-green{border-color:rgba(15,123,65,0.4);background:rgba(15,123,65,0.05)}
+  .card-red{border-color:rgba(224,82,82,0.35);background:rgba(224,82,82,0.04)}
+  .label{font-size:9px;color:#C9A55C;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:5px}
+  .val{font-size:12px;color:#dde1e5;line-height:1.5}
+  .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(201,165,92,0.08);flex-wrap:wrap;gap:4px}
+  .row-k{font-size:10px;color:rgba(221,225,229,0.4);min-width:120px}
+  .row-v{font-size:10px;color:#dde1e5;font-weight:600;text-align:right;font-family:monospace}
+  .badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:9px;font-weight:700;margin-right:4px}
+  .badge-green{background:rgba(15,123,65,0.2);color:#0F7B41;border:1px solid rgba(15,123,65,0.3)}
+  .badge-gold{background:rgba(201,165,92,0.15);color:#C9A55C;border:1px solid rgba(201,165,92,0.25)}
+  .badge-red{background:rgba(224,82,82,0.15);color:#e05252}
+  .big{font-size:22px;font-weight:900;font-family:monospace;color:#0F7B41}
+  .search-row{display:flex;gap:8px;margin-bottom:16px}
+  .inp{flex:1;background:#0c0e10;border:1px solid rgba(15,123,65,0.3);border-radius:8px;padding:10px 12px;color:#dde1e5;font-size:13px;outline:none;font-family:monospace;text-transform:uppercase}
+  .btn{background:#C9A55C;color:#0f1419;border:none;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer}
+  .spinner{text-align:center;padding:40px;color:#0F7B41;font-size:11px;letter-spacing:2px}
+  .not-found{text-align:center;padding:40px;color:rgba(221,225,229,0.4);font-size:11px}
+  .ftr{background:rgba(0,0,0,0.4);border-top:1px solid rgba(15,123,65,0.12);padding:12px 16px;margin-top:20px}
+  .ftr-txt{font-size:8px;color:rgba(221,225,229,0.25);line-height:1.7;font-family:monospace}
+  @media(max-width:400px){.hdr-title{font-size:17px}.big{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-label">AUDITDNA AGRICULTURE — MEXAUSA FOOD GROUP, INC.</div>
+  <div class="hdr-title">LOT TRACE</div>
+  <div class="hdr-sub">FSMA 204 Compliance Record · Field-verified · mexausafg.com</div>
+</div>
+<div class="body">
+  <div class="search-row">
+    <input class="inp" id="lotInput" type="text" placeholder="LOT NUMBER" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <button class="btn" onclick="search()">TRACE</button>
+  </div>
+  <div id="result"></div>
+</div>
+<div class="ftr">
+  <div class="ftr-txt">Mexausa Food Group, Inc. · EIN 93-2597001 · mexausafg.com<br/>
+  FSMA Section 204 — Produce Traceability Rule records maintained per 21 CFR Part 1, Subpart S<br/>
+  Lot records retained for 2 years per FDA requirements. Verified by AuditDNA Agriculture platform.<br/>
+  Questions: saul@mexausafg.com · +1-831-251-3116</div>
+</div>
+<script>
+const API='https://auditdna-backend-1-production.up.railway.app';
+
+function esc(s){return (s||'—').toString().replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmt(dt){if(!dt)return'—';try{return new Date(dt).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})}catch(e){return dt}}
+
+async function search(){
+  const lot=(document.getElementById('lotInput').value||'').trim().toUpperCase();
+  if(!lot){document.getElementById('result').innerHTML='<div class="not-found">Enter a lot number to trace.</div>';return;}
+  document.getElementById('result').innerHTML='<div class="spinner">QUERYING AUDITDNA RAILWAY...</div>';
+  try{
+    const r=await fetch(API+'/api/loaf/trace/'+encodeURIComponent(lot));
+    const d=await r.json();
+    render(lot,d);
+  }catch(e){
+    document.getElementById('result').innerHTML='<div class="card card-red"><span class="label">Connection Error</span><div class="val">Could not reach AuditDNA platform. Check your connection and try again.<br/>'+esc(e.message)+'</div></div>';
+  }
+}
+
+function render(lot,d){
+  if(!d.found||!d.trace){
+    document.getElementById('result').innerHTML=`
+      <div class="card card-red">
+        <div class="label">NOT FOUND</div>
+        <div class="val">No FSMA 204 Origin record found for lot number <strong>${esc(lot)}</strong>.<br/><br/>
+        If this shipment is from a registered Mexausa grower, contact:<br/>
+        saul@mexausafg.com · +1-831-251-3116</div>
+      </div>`;
+    return;
+  }
+  const t=d.trace;
+  document.getElementById('result').innerHTML=`
+    <div class="card card-green">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div class="label">VERIFIED LOT</div>
+          <div class="big">${esc(t.lot_number||lot)}</div>
+        </div>
+        <span class="badge badge-green">FSMA 204 COMPLIANT</span>
+      </div>
+      <div class="row"><span class="row-k">Commodity</span><span class="row-v" style="color:#C9A55C;font-size:13px">${esc(t.commodity)}</span></div>
+      <div class="row"><span class="row-k">Quantity</span><span class="row-v">${esc(t.quantity)} ${esc(t.unit)}</span></div>
+      <div class="row"><span class="row-k">Harvest Date</span><span class="row-v">${fmt(t.harvest_date)}</span></div>
+      <div class="row"><span class="row-k">Origin Region</span><span class="row-v">${esc(t.origin_region)}, ${esc(t.origin_country)}</span></div>
+      <div class="row"><span class="row-k">Record Date</span><span class="row-v">${fmt(t.submitted_at)}</span></div>
+    </div>
+    <div class="card">
+      <div class="label">FSMA 204 — KEY DATA ELEMENTS</div>
+      <div class="row"><span class="row-k">Water Source</span><span class="row-v">${esc(t.water_source)||'—'}</span></div>
+      <div class="row"><span class="row-k">Pesticide PHI (days)</span><span class="row-v">${t.phi_days!==null&&t.phi_days!==undefined?esc(t.phi_days)+' days':'—'}</span></div>
+      <div class="row"><span class="row-k">Handler</span><span class="row-v">${esc(t.handler)}</span></div>
+      <div class="row"><span class="row-k">Field ID</span><span class="row-v">${esc(t.field_id)}</span></div>
+      ${t.gps?`<div class="row"><span class="row-k">GPS Coordinates</span><span class="row-v" style="font-size:9px">${esc(t.gps.lat)}, ${esc(t.gps.lng)}</span></div>`:''}
+    </div>
+    <div class="card card-gold">
+      <div class="label">VERIFIED BY</div>
+      <div class="row"><span class="row-k">Platform</span><span class="row-v">AuditDNA Agriculture</span></div>
+      <div class="row"><span class="row-k">Principal</span><span class="row-v">Mexausa Food Group, Inc.</span></div>
+      <div class="row"><span class="row-k">FSMA 204 CTE</span><span class="row-v">Origin — Harvest</span></div>
+      <div class="row"><span class="row-k">2-Year Retention</span><span class="row-v">Active</span></div>
+      <div style="margin-top:10px;font-size:9px;color:rgba(221,225,229,0.4)">
+        FDA 24-hour record access compliant. For regulatory inquiries: saul@mexausafg.com
+      </div>
+    </div>`;
+}
+
+// Auto-search if ?lot= in URL
+(function(){
+  const p=new URLSearchParams(window.location.search);
+  const lot=p.get('lot')||p.get('LOT')||p.get('l');
+  if(lot){document.getElementById('lotInput').value=lot.toUpperCase();search();}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Jose Luis Gonzales MFG</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#080c14;--bg2:#0d1220;--bg3:#060810;--card:rgba(255,255,255,0.04);--border:rgba(160,180,220,0.22);--border2:rgba(160,180,220,0.10);--txt:#e8eef8;--txt2:rgba(232,238,248,0.55);--txt3:rgba(232,238,248,0.28);--silver:#f59e0b;--gold:#C9A55C;--green:#22c55e;--red:#f87171;--blue:#60a5fa}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;overflow-x:hidden}
+@keyframes pls{0%,100%{opacity:.9;transform:scale(1)}50%{opacity:.2;transform:scale(1.8)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:#050810;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px 20px}
+.g-av{width:80px;height:80px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#060810;margin-bottom:14px;border:2px solid rgba(160,180,220,0.35)}
+.g-lang{display:flex;background:rgba(255,255,255,0.04);border:1px solid rgba(160,180,220,0.20);border-radius:99px;overflow:hidden;margin-bottom:20px}
+.g-lang-btn{padding:5px 16px;font-size:10px;font-weight:700;color:var(--txt3);cursor:pointer;letter-spacing:1px;transition:all .15s;background:transparent;border:none;font-family:inherit}
+.g-lang-btn.on{background:var(--silver);color:#060810}
+.pin-dots{display:flex;gap:10px;margin-bottom:20px}
+.pd{width:13px;height:13px;border-radius:50%;border:2px solid rgba(160,180,220,0.30);background:transparent;transition:all .15s}
+.pd.on{background:var(--silver);border-color:var(--silver)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:280px}
+.nb{padding:17px 0;background:var(--card);border:1px solid var(--border2);border-radius:13px;font-size:22px;font-weight:600;color:var(--txt);cursor:pointer;text-align:center;user-select:none;transition:all .1s}
+.nb:active{background:rgba(160,180,220,0.14);border-color:var(--silver);transform:scale(0.96)}
+.nb-sub{font-size:8px;color:var(--txt3);letter-spacing:1px;display:block;margin-top:2px}
+.nb-del{background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.20);color:var(--red)}
+.g-err{font-size:11px;color:var(--red);height:16px;text-align:center;margin-top:8px}
+
+/* APP */
+#app{display:none;min-height:100vh;animation:fadeIn .3s ease}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(6,8,20,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border2);height:52px;display:flex;align-items:center;padding:0 12px;gap:8px}
+.tb-av{width:30px;height:30px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#060810;flex-shrink:0}
+.lang-toggle{display:flex;background:rgba(255,255,255,0.05);border:1px solid var(--border2);border-radius:99px;overflow:hidden;flex-shrink:0}
+.lt-btn{padding:4px 10px;font-size:9px;font-weight:700;color:var(--txt3);cursor:pointer;letter-spacing:.8px;background:transparent;border:none;font-family:inherit;transition:all .15s}
+.lt-btn.on{background:var(--silver);color:#060810}
+.lock-btn{padding:4px 12px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.20);border-radius:99px;font-size:9px;color:var(--red);cursor:pointer;white-space:nowrap}
+
+/* TABS */
+.tabnav{display:flex;background:var(--bg3);border-bottom:1px solid var(--border2);overflow-x:auto;scrollbar-width:none}
+.tabnav::-webkit-scrollbar{display:none}
+.tn{padding:10px 13px;font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.8px;text-transform:uppercase;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s;flex-shrink:0}
+.tn.on{color:var(--silver);border-bottom-color:var(--silver)}
+
+/* CONTENT */
+.sec{padding:12px 14px;animation:fadeIn .3s ease}
+.sec-hdr{padding-left:0!important;border-left:none!important;font-size:9px;color:var(--silver);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.sec-hdr span{display:none}
+.card{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:11px 13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.ac{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:13px 12px;text-decoration:none;color:inherit;cursor:pointer;transition:all .15s;display:block;position:relative}
+.ac:active{transform:scale(0.97);border-color:var(--silver)}
+.ac-icon{font-size:22px;line-height:1;margin-bottom:7px}
+.ac-name{font-size:12px;font-weight:700;color:#fff;margin-bottom:2px;line-height:1.2}
+.ac-desc{font-size:9px;color:var(--txt2);line-height:1.4}
+.ac-wide{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:12px 14px}
+.ac-wide .ac-icon{margin-bottom:0;flex-shrink:0}
+.ac-badge{position:absolute;top:8px;right:8px;padding:2px 7px;border-radius:99px;font-size:7.5px;font-weight:700;border:1px solid}
+.badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:7.5px;font-weight:700;letter-spacing:.5px;border:1px solid}
+
+/* GROWER/BUYER CARDS */
+.gb-card{border-radius:12px;padding:16px;margin-bottom:10px}
+.gb-card.grower{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.25)}
+.gb-card.buyer{background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.25)}
+.gb-title{font-size:17px;font-weight:800;color:#fff;margin-bottom:5px}
+.gb-sub{font-size:11px;color:var(--txt2);line-height:1.7;margin-bottom:12px}
+.gb-pts{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.gb-pt{display:flex;gap:7px;font-size:10.5px;color:var(--txt2)}
+.gb-btn{width:100%;padding:11px;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.3px}
+
+/* LOAF STRIP */
+.loaf-strip{display:grid;grid-template-columns:repeat(4,1fr);border-radius:10px;overflow:hidden;border:1px solid var(--border2);margin-bottom:10px}
+.lc{padding:14px 10px;border-right:1px solid var(--border2);text-decoration:none;color:inherit;display:block;cursor:pointer;transition:background .15s}
+.lc:last-child{border-right:none}
+.lc:active{background:rgba(160,180,220,0.08)}
+.ll{font-size:32px;font-weight:900;line-height:1;letter-spacing:-2px;font-style:italic;opacity:.9;margin-bottom:3px}
+.lw{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.ld{font-size:8px;line-height:1.5}
+.le{font-size:7.5px;letter-spacing:1.5px;font-weight:700;text-transform:uppercase;margin-top:6px}
+
+
+.emb-list{display:flex;flex-direction:column;gap:7px}
+.ec{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:11px 13px}
+.ecb{padding:5px 11px;border-radius:5px;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid;display:inline-block;margin:3px 4px 0 0}
+.ecb:active{transform:scale(0.97)}
+
+/* EMERGENCY */
+.em-row{background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.em-phone{padding:5px 12px;background:rgba(34,197,94,0.10);border:1px solid rgba(34,197,94,0.25);border-radius:5px;font-size:9.5px;font-weight:700;color:var(--green);cursor:pointer;white-space:nowrap;display:inline-block;text-decoration:none}
+.em-email{padding:5px 12px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.22);border-radius:5px;font-size:9.5px;font-weight:600;color:var(--blue);cursor:pointer;white-space:nowrap;display:inline-block;margin-left:6px;text-decoration:none}
+
+/* AI COMPOSER */
+.ai-composer{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:12px}
+.ai-sel,.ai-ta,.ai-inp{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:7px;padding:8px 11px;color:var(--txt);font-size:11px;outline:none;font-family:inherit;margin-bottom:8px}
+.ai-ta{resize:vertical;min-height:90px;line-height:1.6}
+.ai-ta:focus,.ai-sel:focus,.ai-inp:focus{border-color:var(--silver)}
+.ai-btn-row{display:flex;gap:7px}
+.ai-btn{flex:1;padding:10px;border:none;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.gen-output{background:rgba(255,255,255,0.025);border:1px solid var(--border2);border-radius:7px;padding:10px;font-size:10px;color:var(--txt2);line-height:1.65;margin-top:8px;max-height:180px;overflow-y:auto;white-space:pre-wrap;display:none}
+.fbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.fsel{padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--silver);font-size:10px;font-family:inherit;cursor:pointer}
+.fbtn{padding:5px 14px;background:rgba(201,165,92,0.10);border:1px solid rgba(201,165,92,0.28);border-radius:6px;font-size:10px;font-weight:700;color:var(--gold);cursor:pointer;font-family:inherit}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--silver);color:#060810;padding:9px 20px;border-radius:8px;font-size:11px;font-weight:700;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw}
+.toast.show{opacity:1}
+.mic-btn{padding:5px 11px;border:1px solid rgba(239,68,68,0.35);border-radius:99px;background:rgba(239,68,68,0.08);color:rgba(239,68,68,0.8);font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.5px;}.mic-btn.mic-on{background:rgba(239,68,68,0.25);border-color:#ef4444;animation:mic-p .8s infinite;}@keyframes mic-p{0%,100%{opacity:1}50%{opacity:.4}}
+
+.tts-bar{display:flex;align-items:center;gap:6px;padding:8px 12px;background:rgba(201,165,92,0.08);border:1px solid rgba(201,165,92,0.2);border-radius:10px;margin-bottom:12px;}
+.tts-btn{padding:7px 13px;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid;letter-spacing:.5px;transition:all .15s;}
+.tts-play{background:rgba(201,165,92,0.15);border-color:rgba(201,165,92,0.4);color:#C9A55C;}
+.tts-play.speaking{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);color:#ef4444;animation:tts-pulse .8s infinite;}
+.tts-stop{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);}
+@keyframes tts-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.mic-btn{padding:5px 11px;border:1px solid rgba(239,68,68,0.35);border-radius:99px;background:rgba(239,68,68,0.08);color:rgba(239,68,68,0.8);font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.5px;}
+.mic-btn.mic-on{background:rgba(239,68,68,0.25);border-color:#ef4444;animation:tts-pulse .8s infinite;}
+
+</style>
+</head>
+<body>
+<script>
+(function(){
+  if(!sessionStorage.getItem('sw_cleared')&&'serviceWorker' in navigator){
+    sessionStorage.setItem('sw_cleared','1');
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      var ps=regs.map(function(r){return r.unregister();});
+      Promise.all(ps).then(function(){
+        caches.keys().then(function(keys){
+          Promise.all(keys.map(function(k){return caches.delete(k);})).then(function(){
+            window.location.reload(true);
+          });
+        });
+      });
+    });
+  }
+})();
+
+// ── Voice mic ──────────────────────────────────────────────────────────────
+var _mfgRec=null;
+function mfgMic(btn){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Voice not supported.');return;}
+  if(_mfgRec){_mfgRec.stop();_mfgRec=null;if(btn)btn.classList.remove('mic-on');return;}
+  _mfgRec=new SR();
+  var l=localStorage.getItem('mfg_lang')||'es';
+  _mfgRec.lang=l==='es'?'es-MX':'en-US';
+  _mfgRec.continuous=false;_mfgRec.interimResults=false;
+  _mfgRec.onstart=function(){if(btn)btn.classList.add('mic-on');};
+  _mfgRec.onresult=function(e){
+    var t=e.results[0][0].transcript;
+    var inp=document.querySelector('input[type="text"]:not([style*="display:none"]),textarea:not([style*="display:none"])');
+    if(inp){inp.value=t;inp.dispatchEvent(new Event('input'));}
+    else{var d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e2e8f0;padding:10px 18px;border-radius:8px;font-size:13px;border:1px solid #C9A55C;z-index:9999;';document.body.appendChild(d);setTimeout(function(){d.remove();},3000);}
+    if(btn)btn.classList.remove('mic-on');_mfgRec=null;
+  };
+  _mfgRec.onerror=function(){if(btn)btn.classList.remove('mic-on');_mfgRec=null;};
+  _mfgRec.start();
+}
+
+
+// ══ TEXT-TO-SPEECH + VOICE ENGINE ═══════════════════════════════════════════
+var _tts=window.speechSynthesis, _ttsUtter=null, _ttsSpeaking=false, _ttsRate=0.95;
+var _mfgRec=null;
+
+function ttsLang(){return(typeof lang!=='undefined'&&lang==='es')?'es-MX':'en-US';}
+
+function ttsStop(){
+  if(_tts)_tts.cancel();
+  _ttsSpeaking=false;
+  document.querySelectorAll('.tts-play').forEach(function(b){b.classList.remove('speaking');b.textContent='\u25B6 READ';});
+}
+
+function ttsSpeak(text,btn){
+  if(!_tts){alert('Text-to-speech not supported.');return;}
+  if(_ttsSpeaking){ttsStop();return;}
+  _tts.cancel();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang=ttsLang();u.rate=_ttsRate;u.pitch=1.0;u.volume=1.0;
+  var voices=_tts.getVoices();
+  var pref=voices.filter(function(v){return v.lang.startsWith(ttsLang().slice(0,2))&&v.localService;});
+  if(pref.length)u.voice=pref[0];
+  u.onstart=function(){_ttsSpeaking=true;if(btn){btn.classList.add('speaking');btn.textContent='\u25A0 STOP';}};
+  u.onend=u.onerror=function(){_ttsSpeaking=false;if(btn){btn.classList.remove('speaking');btn.textContent='\u25B6 READ';}};
+  _ttsUtter=u;_tts.speak(u);
+}
+
+function ttsReadTab(){
+  var btn=document.getElementById('tts-play-btn');
+  if(_ttsSpeaking){ttsStop();return;}
+  var activeTab=null;
+  if(typeof TABIDS!=='undefined'){
+    for(var i=0;i<TABIDS.length;i++){
+      var el=document.getElementById('tab-'+TABIDS[i]);
+      if(el&&el.style.display!=='none'){activeTab=TABIDS[i];break;}
+    }
+  }
+  var l=(typeof lang!=='undefined')?lang:'en';
+  var text='';
+  if(activeTab==='usda'){
+    var grid=document.getElementById('usda-grid');
+    var intro=l==='es'?'Precios USDA en vivo. ':'Live USDA market prices. ';
+    text=intro+(grid?((grid.innerText||grid.textContent||'').replace(/\s+/g,' ').slice(0,600)):'Loading.');
+  }else if(activeTab==='contacts'){
+    var rows=document.querySelectorAll('#contact-list .crd, #contact-list .contact-row');
+    var intro2=l==='es'?'Sus contactos. ':'Your contacts. ';
+    text=intro2;var count=0;
+    rows.forEach(function(r){
+      if(count>=10)return;
+      var name=r.querySelector('.cn,.contact-name');var co=r.querySelector('.cc,.contact-co');
+      if(name){text+=name.innerText+(co?', '+co.innerText:'')+'. ';count++;}
+    });
+    if(!count)text+=(document.getElementById('contact-list')||{}).innerText||'No contacts loaded.';
+  }else if(activeTab==='tequila'){
+    text=l==='es'
+      ?'Don Azul Tequila. Comisiones: uno a dos casos, quince por ciento. Tres a cinco casos, diecisiete por ciento. Seis a diez casos, veinte por ciento. Once o mas, veinticinco por ciento. Bono de tarima quinientos dolares. Para ordenes llama a Saul: ocho tres uno, dos cinco uno, tres uno uno seis.'
+      :'Don Azul Tequila. Commissions: one to two cases fifteen percent. Three to five cases seventeen percent. Six to ten cases twenty percent. Eleven plus cases twenty-five percent. Pallet bonus five hundred dollars. Call Saul to order: eight three one, two five one, three one one six.';
+  }else if(activeTab==='loaf'){
+    text=l==='es'
+      ?'LOAF portal de campo. L Lanzamiento: publica tu inventario al mercado ahora. O Origen: registra tu lote con trazabilidad completa. A Altruista: comparte tu excedente con la red. F Factoraje: envía tu factura y cobra hoy mismo.'
+      :'LOAF field portal. L Launch: post your inventory to market now. O Origin: record your lot with full traceability. A Altruistic: share your surplus with the network. F Factor: submit your invoice and get paid today.';
+  }else{
+    var sec=document.querySelector('.sec[style*="block"],.sec:not([style*="none"])');
+    if(sec)text=(sec.innerText||sec.textContent||'').replace(/\s+/g,' ').slice(0,700);
+    if(!text)text=l==='es'?'Plataforma MFG lista.':'MFG platform ready.';
+  }
+  if(text.trim())ttsSpeak(text.trim(),btn);
+}
+
+function mfgMic(btn){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Voice not supported.');return;}
+  if(_mfgRec){_mfgRec.stop();_mfgRec=null;if(btn)btn.classList.remove('mic-on');return;}
+  _mfgRec=new SR();
+  _mfgRec.lang=ttsLang();
+  _mfgRec.continuous=false;_mfgRec.interimResults=false;
+  _mfgRec.onstart=function(){if(btn)btn.classList.add('mic-on');};
+  _mfgRec.onresult=function(e){
+    var t=e.results[0][0].transcript;
+    var inp=document.querySelector('input[type="text"]:not([style*="display:none"]),textarea:not([style*="display:none"])');
+    if(inp){inp.value=t;inp.dispatchEvent(new Event('input'));}
+    else{var d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e2e8f0;padding:10px 18px;border-radius:8px;font-size:13px;border:1px solid #C9A55C;z-index:9999;';document.body.appendChild(d);setTimeout(function(){d.remove();},3000);}
+    if(btn)btn.classList.remove('mic-on');_mfgRec=null;
+  };
+  _mfgRec.onerror=function(){if(btn)btn.classList.remove('mic-on');_mfgRec=null;};
+  _mfgRec.start();
+}
+// ════════════════════════════════════════════════════════════════════════════
+
+</script>
+<script>/* bfcache-fix */(function(){var k="MFG-42_auth";if(localStorage.getItem(k)==="1"){document.addEventListener("DOMContentLoaded",function(){var g=document.getElementById("gate");var a=document.getElementById("app");if(g)g.style.display="none";if(a)a.style.display="block";});}})();
+window.addEventListener("pageshow",function(e){var k="MFG-42_auth";if(localStorage.getItem(k)==="1"){var g=document.getElementById("gate");var a=document.getElementById("app");if(g)g.style.display="none";if(a)a.style.display="block";}});
+</script>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="g-av">JL</div>
+  <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;margin-bottom:3px">Jose Luis Gonzales</div>
+  <div style="font-size:12px;color:var(--silver);font-weight:600;margin-bottom:4px" id="g-role">MFG-42 · Sales</div>
+  <div style="font-size:9.5px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px">MFG Command Center</div>
+  <div class="g-lang">
+    <button class="g-lang-btn on" onclick="setLang('en')">EN</button>
+    <button class="g-lang-btn" onclick="setLang('es')">ES</button><button class="mic-btn" onclick="mfgMic(this)" title="Voice input">&#x1F3A4;</button>
+  </div>
+  <input type="hidden" id="_pin_buf" value=""/>
+  <div class="numpad">
+    <button class="nb" data-d="1" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">1</button>
+    <button class="nb" data-d="2" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">2<span class="nb-sub">ABC</span></button>
+    <button class="nb" data-d="3" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">3<span class="nb-sub">DEF</span></button>
+    <button class="nb" data-d="4" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">4<span class="nb-sub">GHI</span></button>
+    <button class="nb" data-d="5" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">5<span class="nb-sub">JKL</span></button>
+    <button class="nb" data-d="6" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">6<span class="nb-sub">MNO</span></button>
+    <button class="nb" data-d="7" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">7<span class="nb-sub">PQRS</span></button>
+    <button class="nb" data-d="8" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">8<span class="nb-sub">TUV</span></button>
+    <button class="nb" data-d="9" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">9<span class="nb-sub">WXYZ</span></button>
+    <button class="nb" style="visibility:hidden"></button>
+    <button class="nb" data-d="0" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length<4){ _inp.value+=this.getAttribute('data-d'); var _dots=document.querySelectorAll('.pd'); _dots.forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); if(_inp.value.length===4){ if(_inp.value==='4422'){ localStorage.setItem('MFG-42_auth','1'); document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; try{buildTabs();}catch(e){} try{setLang(typeof lang!=='undefined'?lang:'en');}catch(e){} try{mInit();}catch(e){} } else { document.getElementById('g-err').textContent='Incorrect PIN'; setTimeout(function(){ _inp.value=''; document.querySelectorAll('.pd').forEach(function(d){d.className='pd';}); document.getElementById('g-err').textContent=''; },900); } } }">0</button>
+    <button class="nb nb-del" onclick="var _inp=document.getElementById('_pin_buf'); if(_inp.value.length>0){ _inp.value=_inp.value.slice(0,-1); document.querySelectorAll('.pd').forEach(function(d,i){d.className='pd'+(i<_inp.value.length?' on':'');}); }">⌫</button>
+  </div>
+  <div class="g-err" id="g-err"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-av">JL</div>
+    <div style="flex:1">
+      <div style="font-size:12px;font-weight:700;color:#fff" id="tb-name">Jose Luis Gonzales — Marketing Unit</div>
+      <div style="font-size:8px;color:var(--txt3)" id="tb-sub">MFG · Agricultural Intelligence · Americas</div>
+    </div>
+    <div class="lang-toggle">
+      <button class="lt-btn on" id="lt-en" onclick="setLang('en')">EN</button>
+      <button class="lt-btn" id="lt-es" onclick="setLang('es')">ES</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pls 1.8s ease-in-out infinite;display:inline-block"></span>
+      <span style="font-size:8px;color:var(--green);letter-spacing:1.5px;font-weight:700">LIVE</span>
+    </div>
+    <button class="lock-btn" onclick="localStorage.removeItem('MFG-42_auth');document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';" id="tb-lock">Lock</button>
+  </div>
+
+  <div class="tabnav" id="tabnav"></div>
+
+  <!-- HOME -->
+  
+<div class="tts-bar" id="tts-bar">
+  <span style="font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;flex:1">&#128264; READ ALOUD</span>
+  <select onchange="_ttsRate=parseFloat(this.value)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:rgba(255,255,255,0.6);font-size:9px;padding:4px 6px;font-family:inherit;cursor:pointer">
+    <option value="0.75">0.75x</option>
+    <option value="0.9">0.9x</option>
+    <option value="0.95" selected>1x</option>
+    <option value="1.1">1.1x</option>
+    <option value="1.3">1.3x</option>
+  </select>
+  <button class="tts-btn tts-stop" onclick="ttsStop()">&#9632;</button>
+  <button class="tts-btn tts-play" id="tts-play-btn" onclick="ttsReadTab()">&#9654; READ</button>
+</div>
+
+<div id="tab-home" class="sec">
+    <div class="sec-hdr" id="hdr-apps"><span id="t-my-apps">MY APPS</span></div>
+    <div class="grid2">
+      <a href="https://mexausafg.com" target="_blank" class="ac" style="border-color:rgba(34,197,94,0.25);background:rgba(34,197,94,0.04)">
+        <div class="ac-icon">🌐</div><div class="ac-name">AuditDNA</div><div class="ac-desc" id="t-auditdna-desc">Agricultural Intelligence Platform</div>
+      </a>
+      <a href="https://loaf.mexausafg.com" target="_blank" class="ac" style="border-color:rgba(34,197,94,0.20)">
+        <div class="ac-icon">🌾</div><div class="ac-name">LOAF</div><div class="ac-desc" id="t-loaf-desc">Field Worker Portal · Staff Login</div>
+      </a>
+      <a href="https://mexausafg.com/demo.html" target="_blank" class="ac">
+        <div class="ac-icon">▶</div><div class="ac-name" id="t-demo-name">Platform Demo</div><div class="ac-desc" id="t-demo-desc">6-screen demo · Share</div>
+      </a>
+      <a href="https://mexausafg.com/we-link.html" target="_blank" class="ac">
+        <div class="ac-icon">🔗</div><div class="ac-name">WE LINK</div><div class="ac-desc" id="t-welink-desc">Registration & Tracking</div>
+      </a>
+      </a>
+    </div>
+
+    <!-- QUICK CONTACTS -->
+    <div class="sec-hdr"><span id="t-contacts">QUICK CONTACTS</span></div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="card" style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;background:linear-gradient(135deg,#C9A55C,#8a6930);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#080808;flex-shrink:0">S</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:700;color:#fff">Saul Garcia</div><div style="font-size:9px;color:var(--txt3)" id="t-saul-role">CEO · Mexausa Food Group</div></div>
+        <a href="tel:+18312513116" class="em-phone">📞 <span id="t-call">Call</span></a>
+    </div>
+  </div>
+
+  <!-- LOAF + GROWER + BUYER -->
+  <div id="tab-contacts" class="sec" style="display:none">
+<div class="sec-hdr">CONTACTS</div>
+<div style="margin-bottom:8px">
+<span class="fbtn on" onclick="setGeo('ALL')" id="geo-ALL">All Regions</span>
+<span class="fbtn" onclick="setGeo('MX')" id="geo-MX">Mexico</span>
+<span class="fbtn" onclick="setGeo('CA')" id="geo-CA">Central Am.</span>
+<span class="fbtn" onclick="setGeo('SA')" id="geo-SA">South Am.</span>
+<span class="fbtn" onclick="setGeo('US')" id="geo-US">USA</span>
+</div>
+<div style="margin-bottom:8px">
+<span class="fbtn on" onclick="setCType('ALL')" id="ctype-ALL">All</span>
+<span class="fbtn" onclick="setCType('GROWER')" id="ctype-GROWER">Growers</span>
+<span class="fbtn" onclick="setCType('BUYER')" id="ctype-BUYER">Buyers</span>
+<span class="fbtn" onclick="setCType('SHIPPER')" id="ctype-SHIPPER">Shippers</span>
+<span class="fbtn" onclick="setCType('PACKER')" id="ctype-PACKER">Packers</span>
+</div>
+<input id="ct-search" placeholder="Search name, email, company, country..." oninput="doCtSearch()" style="width:100%;padding:9px 13px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#f0f4f8;font-size:12px;outline:none;font-family:inherit;margin-bottom:8px;display:block"/>
+<div style="font-size:9px;color:rgba(240,244,248,0.28);margin-bottom:7px" id="ct-info">Loading...</div>
+<div id="ct-list" style="display:flex;flex-direction:column;gap:5px;max-height:360px;overflow-y:auto"></div>
+<button id="ct-more" onclick="ctLoadMore()" style="display:none;width:100%;padding:9px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;font-size:10px;color:rgba(240,244,248,0.28);cursor:pointer;font-family:inherit;margin-top:6px">Load more...</button>
+</div>
+<div id="tab-compose" class="sec" style="display:none">
+<div class="sec-hdr">COMPOSE - MAX 25</div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;padding:6px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:7px">
+<div><div style="font-size:22px;font-weight:800;line-height:1;color:#22c55e" id="r-cnt">0</div><div style="font-size:7.5px;color:rgba(240,244,248,0.28);text-transform:uppercase;letter-spacing:1px;margin-top:2px">Used</div></div>
+<div style="font-size:10px;color:rgba(240,244,248,0.28)">/</div>
+<div><div style="font-size:22px;font-weight:800;color:#c0c8d8">25</div><div style="font-size:7.5px;color:rgba(240,244,248,0.28);text-transform:uppercase;letter-spacing:1px;margin-top:2px">Max</div></div>
+<div style="margin-left:auto;font-size:12px;font-weight:700;color:#22c55e" id="r-left">25 left</div>
+</div>
+<div style="font-size:9px;color:rgba(240,244,248,0.28);font-weight:700;margin-bottom:4px">TO</div>
+<div id="to-bar" onclick="document.getElementById('to-in').focus()" style="display:flex;flex-wrap:wrap;gap:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:6px 9px;min-height:36px;margin-bottom:7px;cursor:text"><input id="to-in" style="background:none;border:none;outline:none;color:#f0f4f8;font-size:11px;font-family:inherit;min-width:100px;flex:1" onkeydown="rkd(event,'to')"/></div>
+<div style="font-size:9px;color:rgba(240,244,248,0.28);font-weight:700;margin-bottom:4px">CC</div>
+<div id="cc-bar" onclick="document.getElementById('cc-in').focus()" style="display:flex;flex-wrap:wrap;gap:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:6px 9px;min-height:36px;margin-bottom:7px;cursor:text"><input id="cc-in" style="background:none;border:none;outline:none;color:#f0f4f8;font-size:11px;font-family:inherit;min-width:100px;flex:1" onkeydown="rkd(event,'cc')"/></div>
+<div style="font-size:9px;color:rgba(240,244,248,0.28);font-weight:700;margin-bottom:4px">BCC</div>
+<div id="bcc-bar" onclick="document.getElementById('bcc-in').focus()" style="display:flex;flex-wrap:wrap;gap:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:6px 9px;min-height:36px;margin-bottom:7px;cursor:text"><input id="bcc-in" style="background:none;border:none;outline:none;color:#f0f4f8;font-size:11px;font-family:inherit;min-width:100px;flex:1" onkeydown="rkd(event,'bcc')"/></div>
+<div style="font-size:9px;color:rgba(240,244,248,0.28);font-weight:700;margin-bottom:4px">SUBJECT</div>
+<input id="c-subj" style="width:100%;padding:8px 11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#f0f4f8;font-size:11px;outline:none;font-family:inherit;margin-bottom:7px;display:block"/>
+<div style="font-size:9px;color:rgba(240,244,248,0.28);font-weight:700;margin-bottom:4px">MESSAGE</div>
+<textarea id="c-body" style="width:100%;padding:9px 11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#f0f4f8;font-size:11px;outline:none;font-family:inherit;resize:vertical;min-height:110px;line-height:1.6;margin-bottom:8px;display:block"></textarea>
+<button id="send-btn" onclick="doSend()" style="width:100%;padding:12px;border:none;border-radius:99px;font-size:13px;font-weight:700;color:#080808;cursor:pointer;font-family:inherit">Send via Email App</button>
+<div style="font-size:9px;color:rgba(240,244,248,0.28);text-align:center;margin-top:8px">Opens device email client. Max 25. Activity logged.
+<div style="margin-top:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px">
+<div style="font-size:9px;color:#c0c8d8;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:10px">AI LETTER GENERATOR</div>
+<select id="ai-type" style="width:100%;padding:8px 11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#f0f4f8;font-size:11px;outline:none;font-family:inherit;margin-bottom:7px;display:block">
+<option value="">Select letter type...</option>
+<option value="grower_intro_en">Grower Introduction (EN)</option>
+<option value="grower_intro_es">Grower Introduction (ES)</option>
+<option value="buyer_intro_en">Buyer Introduction (EN)</option>
+<option value="buyer_intro_es">Buyer Introduction (ES)</option>
+<option value="shipper">Shipper / Logistics (EN)</option>
+<option value="follow_up">Professional Follow-Up</option>
+<option value="partnership">Partnership Proposal</option>
+<option value="federal_agency">Federal Agency Outreach</option>
+</select>
+<input id="ai-recipient-name" placeholder="Recipient name (optional)..." style="width:100%;padding:8px 11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);border-radius:7px;color:#f0f4f8;font-size:11px;outline:none;font-family:inherit;margin-bottom:7px;display:block"/>
+<select id="ai-commodity-sel" style="width:100%;padding:8px 11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);border-radius:7px;color:#f0f4f8;font-size:11px;outline:none;font-family:inherit;margin-bottom:9px;display:block">
+<option value="">Include USDA commodity pricing? (optional)</option>
+<option value="Avocado">Avocado</option><option value="Strawberry">Strawberry</option><option value="Tomato">Tomato</option><option value="Broccoli">Broccoli</option><option value="Lettuce">Lettuce</option><option value="Jalapeño">Jalapeño</option><option value="Blueberry">Blueberry</option><option value="Cucumber">Cucumber</option><option value="Bell Pepper">Bell Pepper</option><option value="Mango">Mango</option><option value="Lime">Lime</option><option value="Asparagus">Asparagus</option><option value="Spinach">Spinach</option><option value="Onion">Onion</option><option value="Carrot">Carrot</option><option value="Garlic">Garlic</option><option value="Potato">Potato</option><option value="Watermelon">Watermelon</option><option value="Pineapple">Pineapple</option><option value="Banana">Banana</option>
+</select>
+<div id="ai-letter-out" style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:7px;padding:10px;font-size:10px;color:rgba(240,244,248,0.7);line-height:1.65;max-height:180px;overflow-y:auto;white-space:pre-wrap;display:none;margin-bottom:9px"></div>
+<div style="display:flex;gap:7px">
+<button onclick="genLetter()" style="flex:1;padding:9px;background:linear-gradient(135deg,#c0c8d8,#8090a8);border:none;border-radius:7px;font-size:11px;font-weight:700;color:#080808;cursor:pointer;font-family:inherit">Generate</button>
+<button onclick="useAILetter()" style="flex:1;padding:9px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:7px;font-size:11px;font-weight:700;color:#f0f4f8;cursor:pointer;font-family:inherit">Use in Compose</button>
+<button onclick="copyAILetter()" style="flex:1;padding:9px;background:rgba(201,165,92,0.12);border:1px solid rgba(201,165,92,0.28);border-radius:7px;font-size:11px;font-weight:700;color:#C9A55C;cursor:pointer;font-family:inherit">Copy</button>
+</div>
+</div>
+</div>
+</div>
+<div id="tab-usda" class="sec" style="display:none">
+<div class="sec-hdr">USDA LIVE MARKET PRICES</div>
+<div style="display:flex;gap:7px;margin-bottom:10px">
+<input id="usda-search" placeholder="Search commodity..." oninput="filterUSDA()" style="flex:1;padding:9px 13px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#f0f4f8;font-size:12px;outline:none;font-family:inherit"/>
+<button onclick="loadUSDA()" style="padding:9px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:8px;font-size:10px;font-weight:700;color:#f0f4f8;cursor:pointer;font-family:inherit;white-space:nowrap">Refresh</button>
+</div>
+<div id="usda-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px"><div style="grid-column:1/-1;font-size:11px;color:rgba(240,244,248,0.28);text-align:center;padding:20px">Loading...</div></div>
+
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><span class="fbtn on" id="ur-ALL" onclick="setUsdaRegion('ALL')">All Markets</span><span class="fbtn" id="ur-WEST" onclick="setUsdaRegion('WEST')">West Coast</span><span class="fbtn" id="ur-BORDER" onclick="setUsdaRegion('BORDER')">US-MX Border</span><span class="fbtn" id="ur-CENTRAL" onclick="setUsdaRegion('CENTRAL')">Central</span><span class="fbtn" id="ur-EAST" onclick="setUsdaRegion('EAST')">East Coast</span></div>
+<div style="font-size:9px;color:var(--silver);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:8px;margin-top:4px">PRICING ANALYZER — COAST TO COAST SPREAD</div><div id="price-analyzer" style="margin-bottom:10px"></div></div>
+<div id="tab-templates" class="sec" style="display:none">
+<div class="sec-hdr">EMAIL TEMPLATES</div>
+<div id="tpl-list"></div>
+</div>
+<div id="tab-loaf" class="sec" style="display:none">
+<div class="sec-hdr">LOAF - FIELD WORKER PORTAL</div>
+<a href="https://loaf.mexausafg.com" target="_blank" style="text-decoration:none">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);border-radius:10px;overflow:hidden;border:1px solid rgba(45,122,58,0.22);margin-bottom:12px;background:rgba(45,122,58,0.03)">
+<div style="padding:11px 7px;border-right:1px solid rgba(45,122,58,0.12)"><div style="font-size:30px;font-weight:900;color:#2d7a3a;line-height:1;font-style:italic;margin-bottom:3px">L</div><div style="font-size:7.5px;font-weight:700;color:#2d7a3a;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px">Launch</div><div style="font-size:7px;color:#2d7a3a;font-weight:700;text-transform:uppercase">Enter</div></div>
+<div style="padding:11px 7px;border-right:1px solid rgba(45,122,58,0.12)"><div style="font-size:30px;font-weight:900;color:#C9A55C;line-height:1;font-style:italic;margin-bottom:3px">O</div><div style="font-size:7.5px;font-weight:700;color:#C9A55C;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px">Origin</div><div style="font-size:7px;color:#C9A55C;font-weight:700;text-transform:uppercase">Enter</div></div>
+<div style="padding:11px 7px;border-right:1px solid rgba(45,122,58,0.12)"><div style="font-size:30px;font-weight:900;color:#2d7a3a;line-height:1;font-style:italic;margin-bottom:3px">A</div><div style="font-size:7.5px;font-weight:700;color:#2d7a3a;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px">Altruistic</div><div style="font-size:7px;color:#2d7a3a;font-weight:700;text-transform:uppercase">Enter</div></div>
+<div style="padding:11px 7px"><div style="font-size:30px;font-weight:900;color:#C9A55C;line-height:1;font-style:italic;margin-bottom:3px">F</div><div style="font-size:7.5px;font-weight:700;color:#C9A55C;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px">Factor</div><div style="font-size:7px;color:#C9A55C;font-weight:700;text-transform:uppercase">Enter</div></div>
+</div></a>
+<a href="https://loaf.mexausafg.com" target="_blank" style="display:block;padding:11px;background:linear-gradient(135deg,#2d7a3a,#1e5a28);border-radius:99px;font-size:12px;font-weight:700;color:#fff;text-align:center;text-decoration:none;margin-bottom:9px">Open LOAF Portal</a>
+<a href="https://wa.me/526463402686" target="_blank" style="display:block;padding:11px;background:linear-gradient(135deg,#25d366,#128c7e);border-radius:99px;font-size:12px;font-weight:700;color:#fff;text-align:center;text-decoration:none">WhatsApp LOAF +52-646-340-2686</a>
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false">
+var PIN='4422', entered='', PLEN=4, lang='en';
+
+var STRINGS={
+  en:{
+    tbName:'Jose — MFG Unit',
+    gRole:'MFG-42 · Sales',
+    tbSub:'MFG · Inteligencia Agricola · Americas',
+    lockBtn:'Lock',
+    tabs:['Home','Contacts','Compose','USDA','Templates','LOAF','DON AZUL'],
+    myApps:'MY APPS',
+    auditdnaDesc:'Agricultural Intelligence Platform',
+    enjoybajaDesc:'Real Estate · NMLS #337526',
+    loafDesc:'Field Worker Portal · Staff Login',
+    demoName:'Platform Demo',demoDesc:'6-screen demo · Share',
+    welinkDesc:'Grower & Buyer Registration',
+    wesourceDesc:'Open Marketplace · Post Inventory',
+    aglabDesc:'USDA Prices · Crop Intel',
+    factorDesc:'Invoice Factoring · PO Finance',
+    agentsDesc:'AI Agent Dispatch Center',
+    contacts:'QUICK CONTACTS',
+    saulRole:'CEO · Mexausa Food Group',
+    loafHdr:'LOAF — FIELD WORKER PORTAL',
+    loafStaff:'LOAF STAFF LOGIN',
+    loafStaffDesc:'Access LOAF portal for all team staff, admin, sales, and partner logins.',
+    loafBtn:'Open LOAF Portal →',
+    propHdr:'MY LISTINGS',propEmpty:'No active listings.',
+    propAddr:'Address',propPrice:'Price',propType:'Type',propStatus:'Status',
+    uploadHdr:'UPLOAD LISTING',uploadBtn:'Upload Property',
+    uploadAddr:'Property Address',uploadCity:'City',uploadPrice:'List Price',
+    uploadType:'Property Type',uploadDesc:'Description',uploadPhotos:'Photos (max 12)',
+    uploadSubmit:'Submit Listing',uploadSuccess:'Listing submitted!',
+    composeHdr:'COMPOSE MESSAGE',composeTo:'To (email)',composeSubj:'Subject',
+    composeBody:'Message body...',composeSend:'Send',composeSent:'Sent!',
+    toast_copy:'Copied!',
+    searchPh:'Search contacts...',
+    filterAll:'All',filterMX:'MX',filterCA:'CA',filterUS:'US',
+    noContacts:'No contacts found.',
+    callBtn:'Call',emailBtn:'Email',waBtn:'WhatsApp',
+    syncBtn:'Sync',refreshBtn:'Refresh',
+    navHome:'Home',navContacts:'Contacts',navCompose:'Compose',
+    navUsda:'Market',navTemplates:'Templates',navLoaf:'LOAF',
+    navProperties:'Listings',navUpload:'Upload',
+  },
+  es:{
+    tbName:'Jose — Unidad MFG',
+    gRole:'Personal · Mexausa Food Group',
+    tbSub:'MFG · Inteligencia Altruista · Américas',
+    lockBtn:'Salir',
+    tabs:['Inicio','Contactos','Redactar','Mercado','Plantillas','LOAF','EnjoyBaja','Propiedades','Subir'],
+    myApps:'MIS APLICACIONES',
+    auditdnaDesc:'Plataforma de Inteligencia Altruista',
+    enjoybajaDesc:'Bienes Raíces · NMLS #337526',
+    loafDesc:'Portal de Campo · Login del Personal',
+    demoName:'Demo Plataforma',demoDesc:'Demo 6 pantallas · Compartir',
+    welinkDesc:'Registro de Productores y Compradores',
+    wesourceDesc:'Mercado Abierto · Publicar Inventario',
+    aglabDesc:'Precios USDA · Inteligencia de Cultivos',
+    factorDesc:'Factoraje de Facturas · Financiamiento PO',
+    agentsDesc:'Centro de Despacho de Agentes IA',
+    contacts:'CONTACTOS RÁPIDOS',
+    saulRole:'Director General · Mexausa Food Group',
+    loafHdr:'LOAF — PORTAL DE CAMPO',
+    loafStaff:'LOGIN DEL PERSONAL LOAF',
+    loafStaffDesc:'Accede al portal LOAF para todo el personal, administradores, ventas y socios.',
+    loafBtn:'Abrir Portal LOAF →',
+    propHdr:'MIS LISTADOS',propEmpty:'Sin listados activos.',
+    propAddr:'Dirección',propPrice:'Precio',propType:'Tipo',propStatus:'Estado',
+    uploadHdr:'SUBIR LISTADO',uploadBtn:'Subir Propiedad',
+    uploadAddr:'Dirección de la Propiedad',uploadCity:'Ciudad',uploadPrice:'Precio de Lista',
+    uploadType:'Tipo de Propiedad',uploadDesc:'Descripción',uploadPhotos:'Fotos (max 12)',
+    uploadSubmit:'Enviar Listado',uploadSuccess:'¡Listado enviado!',
+    composeHdr:'REDACTAR MENSAJE',composeTo:'Para (correo)',composeSubj:'Asunto',
+    composeBody:'Cuerpo del mensaje...',composeSend:'Enviar',composeSent:'¡Enviado!',
+    toast_copy:'¡Copiado!',
+    searchPh:'Buscar contactos...',
+    filterAll:'Todos',filterMX:'MX',filterCA:'CA',filterUS:'US',
+    noContacts:'Sin contactos.',
+    callBtn:'Llamar',emailBtn:'Correo',waBtn:'WhatsApp',
+    syncBtn:'Sincronizar',refreshBtn:'Actualizar',
+    navHome:'Inicio',navContacts:'Contactos',navCompose:'Redactar',
+    navUsda:'Mercado',navTemplates:'Plantillas',navLoaf:'LOAF',
+    navProperties:'Listados',navUpload:'Subir',
+  }
+};
+function T(k){return(STRINGS[lang]||STRINGS.en)[k]||(STRINGS.en[k]||'');}
+
+function setLang(l){
+  lang=l;localStorage.setItem('MFG-42_lang',l);
+  var gr=document.getElementById('g-role');if(gr)gr.textContent=T('gRole');
+  var tn=document.getElementById('tb-name');if(tn)tn.textContent=T('tbName');
+  var ts=document.getElementById('tb-sub');if(ts)ts.textContent=T('tbSub');
+  var lk=document.getElementById('tb-lock');if(lk)lk.textContent=T('lockBtn');
+  var lte=document.getElementById('lt-en');var ltes=document.getElementById('lt-es');
+  if(lte)lte.classList.toggle('on',l==='en');if(ltes)ltes.classList.toggle('on',l==='es');
+  document.querySelectorAll('.g-lang-btn').forEach(function(b,i){b.classList.toggle('on',(i===0&&l==='en')||(i===1&&l==='es'));});
+  buildTabs();
+  var MAP={
+    'tb-name':'tbName','tb-sub':'tbSub','t-my-apps':'myApps',
+    't-auditdna-desc':'auditdnaDesc','t-enjoybaja-desc':'enjoybajaDesc',
+    't-loaf-desc':'loafDesc','t-demo-name':'demoName','t-demo-desc':'demoDesc',
+    't-welink-desc':'welinkDesc','t-wesource-desc':'wesourceDesc',
+    't-aglab-desc':'aglabDesc','t-factor-desc':'factorDesc','t-agents-desc':'agentsDesc',
+    't-contacts':'contacts','t-saul-role':'saulRole','t-call':'callBtn',
+    't-loaf-hdr':'loafHdr','t-loaf-staff':'loafStaff','t-loaf-staff-desc':'loafStaffDesc',
+    't-loaf-btn':'loafBtn','t-prop-hdr':'propHdr','t-prop-empty':'propEmpty',
+    't-upload-hdr':'uploadHdr','t-compose-hdr':'composeHdr',
+    't-search-ph':'searchPh','t-no-contacts':'noContacts',
+  };
+  Object.keys(MAP).forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=T(MAP[id]);});
+}
+
+function updDots(){for(var i=0;i<PLEN;i++){var d=document.getElementById('p'+i);if(d)d.className='pd'+(i<(document.getElementById('_pin_buf')?document.getElementById('_pin_buf').value.length:0)?' on':'');}}
+function lock(){try{localStorage.removeItem('MFG-42_auth');var g=document.getElementById('gate');var a=document.getElementById('app');if(a)a.style.display='none';if(g)g.style.display='flex';}catch(e){}}
+function toast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2000);}
+
+var TABIDS=['home','contacts','compose','usda','templates','loaf','tequila'];
+function buildTabs(){
+  if(!T('tabs')||!T('tabs').length)return;
+  var labels=T('tabs');
+  document.getElementById('tabnav').innerHTML=labels.map(function(l,i){
+    return '<div class="tn'+(i===0?' on':'')+'" onclick="goTab(TABIDS[i])">'+l+'</div>';
+  }).join('');
+}
+function goTab(t){ ttsStop();
+  TABIDS.forEach(function(id){var el=document.getElementById('tab-'+id);if(el)el.style.display=id===t?'block':'none';});
+  document.querySelectorAll('.tn').forEach(function(el,i){el.classList.toggle('on',TABIDS[i]===t);});
+  if(t==='contacts')loadContacts();
+}
+
+window.addEventListener('DOMContentLoaded',function(){
+  lang=localStorage.getItem('MFG-42_lang')||'es';
+  if(localStorage.getItem('MFG-42_auth')==='1'){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    buildTabs();setLang(lang);mInit();
+  } else {
+    setLang(lang);
+  }
+});
+
+// ==================== AGRICULTURE MARKETING MODULE ====================
+var mCts=[],mTotal=0,mOffset=0,mLimit=30,mGeo='ALL',mCType='ALL',mSearch='';
+var mR={to:[],cc:[],bcc:[]},MAX_R=25,mUsda=[],mUsda_raw=[];
+var mBE='https://auditdna-backend-1-production.up.railway.app';
+
+// ---- CRM CONTACTS ----
+function loadContacts(){
+  mOffset=0;mCts=[];
+  var url=mBE+'/api/crm/contacts?limit='+mLimit+'&offset=0';
+  if(mGeo!=='ALL')url+='&geo='+mGeo;
+  if(mCType!=='ALL')url+='&type='+mCType;
+  if(mSearch)url+='&search='+encodeURIComponent(mSearch);
+  var info=document.getElementById('ct-info');
+  if(info)info.textContent='Loading...';
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    mCts=d.data||d.contacts||d||[];
+    mTotal=d.total||mCts.length;
+    var inf=document.getElementById('ct-info');
+    if(inf)inf.textContent='Showing '+mCts.length+' of '+mTotal+' contacts';
+    var mb=document.getElementById('ct-more');
+    if(mb)mb.style.display=mCts.length<mTotal?'block':'none';
+    mRenderCts();
+  }).catch(function(){
+    var inf=document.getElementById('ct-info');
+    if(inf)inf.textContent='Backend connecting...';
+    mRenderCts();
+  });
+}
+
+function ctLoadMore(){
+  mOffset+=mLimit;
+  var url=mBE+'/api/crm/contacts?limit='+mLimit+'&offset='+mOffset;
+  if(mGeo!=='ALL')url+='&geo='+mGeo;
+  if(mCType!=='ALL')url+='&type='+mCType;
+  if(mSearch)url+='&search='+encodeURIComponent(mSearch);
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    var more=d.data||d.contacts||d||[];
+    mCts=mCts.concat(more);
+    var inf=document.getElementById('ct-info');
+    if(inf)inf.textContent='Showing '+mCts.length+' of '+mTotal+' contacts';
+    var mb=document.getElementById('ct-more');
+    if(mb)mb.style.display=mCts.length<mTotal?'block':'none';
+    mRenderCts();
+  }).catch(function(){});
+}
+
+function setGeo(g){
+  mGeo=g;
+  ['ALL','MX','CA','SA','US'].forEach(function(x){
+    var el=document.getElementById('geo-'+x);if(el)el.classList.toggle('on',x===g);
+  });
+  loadContacts();
+}
+function setCType(t){
+  mCType=t;
+  ['ALL','GROWER','BUYER','SHIPPER','PACKER'].forEach(function(x){
+    var el=document.getElementById('ctype-'+x);if(el)el.classList.toggle('on',x===t);
+  });
+  loadContacts();
+}
+function doCtSearch(){mSearch=document.getElementById('ct-search').value;loadContacts();}
+
+function mRenderCts(){
+  var el=document.getElementById('ct-list');if(!el)return;
+  if(!mCts.length){
+    el.innerHTML='<div style="font-size:11px;color:rgba(240,244,248,0.28);text-align:center;padding:16px">No contacts found. Try a different search or filter.</div>';
+    return;
+  }
+  el.innerHTML=mCts.map(function(c){
+    var nm=c.name||c.company||c.first_name||'Unknown';
+    var em=c.email||'';
+    var tp=c.type||c.contact_type||'';
+    var co=c.country||c.state_region||'';
+    var safeE=encodeURIComponent(em);var safeN=encodeURIComponent(nm);
+    var typeColor=tp==='GROWER'?'#22c55e':tp==='BUYER'?'#C9A55C':tp==='SHIPPER'?'#60a5fa':'#a78bfa';
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:8px">'+
+      '<div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid '+typeColor+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+typeColor+';flex-shrink:0">'+(nm[0]||'?').toUpperCase()+'</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:11px;font-weight:600;color:#f0f4f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div>'+
+        '<div style="font-size:8.5px;color:rgba(240,244,248,0.35)">'+[tp,co].filter(Boolean).join(' · ')+'</div>'+
+        (em?'<div style="font-size:8px;color:rgba(240,244,248,0.25);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+em+'</div>':'')+'</div>'+
+      (em?'<button data-e="'+safeE+'" data-n="'+safeN+'" style="padding:3px 9px;border-radius:5px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid '+typeColor+';background:rgba(255,255,255,0.04);color:'+typeColor+';flex-shrink:0" onclick="mAddTo(decodeURIComponent(this.getAttribute(\"data-e\")),decodeURIComponent(this.getAttribute(\"data-n\")))">+TO</button>':'')+
+    '</div>';
+  }).join('');
+}
+
+// ---- EMAIL COMPOSER ----
+function mTR(){return mR.to.length+mR.cc.length+mR.bcc.length;}
+function mUpdCnt(){
+  var t=mTR();
+  var rc=document.getElementById('r-cnt');var sl=document.getElementById('r-left');
+  if(rc){rc.textContent=t;rc.style.color=t>=MAX_R?'#f87171':t>=20?'#C9A55C':'#22c55e';}
+  if(sl){var left=MAX_R-t;sl.textContent=left+' left';sl.style.color=left<=0?'#f87171':left<=5?'#C9A55C':'#22c55e';}
+}
+function mRenderChips(f){
+  var bar=document.getElementById(f+'-bar');if(!bar)return;
+  var inp=document.getElementById(f+'-in');
+  bar.querySelectorAll('.mchip').forEach(function(c){c.remove();});
+  mR[f].forEach(function(r){
+    var ch=document.createElement('div');ch.className='mchip';
+    ch.style.cssText='display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.08);border:1px solid '+typeColor+';border-radius:99px;padding:2px 8px;font-size:9px;color:'+typeColor+';font-weight:600;white-space:nowrap;flex-shrink:0';
+    var se=encodeURIComponent(r.email);
+    ch.innerHTML=(r.name||r.email)+'<span style="cursor:pointer;opacity:.6;font-size:11px;margin-left:2px" onclick="mRmR(f,decodeURIComponent(se))">x</span>';
+    bar.insertBefore(ch,inp);
+  });
+  mUpdCnt();
+}
+function mAddR(f,email,name){
+  if(mTR()>=MAX_R){toast('MAX 25 recipients!');return;}
+  if(!mR[f].some(function(r){return r.email===email;}))mR[f].push({email:email,name:name||email});
+  mRenderChips(f);
+}
+function mRmR(f,email){mR[f]=mR[f].filter(function(r){return r.email!==email;});mRenderChips(f);}
+function mAddTo(email,name){if(!email)return;if(mTR()>=MAX_R){toast('MAX 25!');return;}if(mR.to.concat(mR.cc,mR.bcc).some(function(r){return r.email===email;}))return;mAddR('to',email,name);}
+function mKd(e,f){
+  if(e.key==='Enter'||e.key===','||e.key===';'){
+    e.preventDefault();var v=e.target.value.trim().replace(/[,;]/g,'');
+    if(v&&v.indexOf('@')>=0){mAddR(f,v,v);e.target.value='';}
+  }
+}
+function doSend(){
+  var to=mR.to.map(function(r){return r.email;});
+  var cc=mR.cc.map(function(r){return r.email;});
+  var bcc=mR.bcc.map(function(r){return r.email;});
+  var t=to.length+cc.length+bcc.length;
+  if(t===0){toast('Add at least one recipient');return;}
+  if(t>MAX_R){toast('MAX 25 recipients!');return;}
+  var subj=document.getElementById('c-subj').value.trim();
+  var body=document.getElementById('c-body').value.trim();
+  if(!subj||!body){toast('Subject and message required');return;}
+  window.open('mailto:'+to.join(',')+'?cc='+cc.join(',')+'&bcc='+bcc.join(',')+'&subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body),'_blank');
+  try{fetch(mBE+'/api/brain/events/emit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type:'EMAIL_SENT_STAFF',payload:{staff:'MFG-42',name:'Jose Luis Gonzales',recipients:t,subject:subj.slice(0,60),ts:new Date().toISOString()}})}).catch(function(){});}catch(e){}
+}
+
+// ---- EMAIL TEMPLATES ----
+var mTpls=[
+  {id:'g-en',name:'Grower Intro EN',subj:'Join AuditDNA - Connect with 3,000+ Verified Buyers',
+   body:'Dear [NAME],\n\nI am reaching out on behalf of Mexausa Food Group and AuditDNA Agricultural Intelligence.\n\nWe invite you to join our verified grower network and gain direct access to 3,000+ buyers across the Americas corridor.\n\nBenefits:\n- Post live inventory and receive USDA-priced offers\n- Invoice factoring - get paid in 24-72 hours\n- FSMA 204 lot traceability built in\n- Direct buyer connections with zero markup\n\nRegister at: mexausafg.com/we-link\n\nBest regards,\nJose Luis Gonzales | MFG-42\nMexausa Food Group, Inc.\nsgarcia1911@gmail.com'},
+  {id:'g-es',name:'Invitacion Productor ES',subj:'Unete a AuditDNA - Acceso a mas de 3,000 Compradores',
+   body:'Estimado/a [NOMBRE],\n\nMe comunico de parte de Mexausa Food Group y AuditDNA Inteligencia Agricola.\n\nLe invitamos a unirse a nuestra red de productores verificados y obtener acceso directo a mas de 3,000 compradores en el corredor de las Americas.\n\nBeneficios:\n- Publica inventario en vivo y recibe ofertas con precios USDA\n- Factoraje de facturas - cobro en 24-72 horas\n- Trazabilidad FSMA 204 integrada\n- Conexion directa con compradores sin comision\n\nRegistrate en: mexausafg.com/we-link\n\nAtentamente,\nJose Luis Gonzales | MFG-42\nMexausa Food Group, Inc.'},
+  {id:'b-en',name:'Buyer Intro EN',subj:'Source Verified Produce - AuditDNA Buyer Platform',
+   body:'Dear [NAME],\n\nMexausa Food Group invites you to join AuditDNA, where 3,000+ verified growers compete for your business.\n\nAs a registered buyer you get:\n- Blind pricing - PACA application pending, zero broker markup\n- PO finance and escrow-first workflow\n- CBP, FDA Prior Notice, cross-border intelligence\n- Direct connections to verified growers\n\nStart sourcing: mexausafg.com/we-link\n\nBest regards,\nJose Luis Gonzales | MFG-42\nMexausa Food Group, Inc.'},
+  {id:'fu',name:'Follow-Up',subj:'Following up - AuditDNA Agricultural Intelligence',
+   body:'Dear [NAME],\n\nI wanted to follow up on my previous message about AuditDNA Agricultural Intelligence and the Mexausa Food Group platform.\n\nOur Americas corridor connects verified growers and buyers with USDA-priced transactions, FSMA 204 traceability, and invoice factoring.\n\nWould you be available for a brief call this week?\n\nBest regards,\nJose Luis Gonzales | MFG-42\nMexausa Food Group, Inc.\nPhone: +1 (831) 251-3116'},
+  {id:'plat',name:'Platform Overview',subj:'AuditDNA Agricultural Intelligence - Americas Corridor',
+   body:'Dear [NAME],\n\nAuditDNA by Mexausa Food Group is the agricultural intelligence platform for the Americas corridor.\n\nKey Features:\n- 3,000+ verified grower and buyer network\n- USDA live market pricing - coast to coast\n- FSMA 204 lot traceability\n- Invoice factoring - paid in 24-72 hours\n- LOAF field worker registration\n- Cross-border intelligence: US-Mexico-Central America\n\nLearn more: mexausafg.com\n\nBest regards,\nJose Luis Gonzales | MFG-42\nMexausa Food Group, Inc.'},,
+
+  {id:'federal-usda',name:'USDA — Platform Introduction',cat:'Federal',lang:'EN',
+   subj:'Introducing AuditDNA Agricultural Intelligence — USDA-Integrated Trade Platform for the Americas Corridor',
+   body:'Dear USDA Agricultural Trade Office,\\nRepresenting Mexausa Food Group, Inc. (EIN: 88-1698129), PACA application pending agricultural intelligence.\\n\\nUSDA INTEGRATION:\\n- Real-time USDA commodity pricing (500+ products) — NASS/AMS sourced\\n- 6-year pricing history and seasonal trend analysis\\n- Terminal market intelligence for 20 US markets\\n- Corridor pricing: Nogales, Laredo, McAllen, El Paso\\n\\nPLATFORM CAPABILITIES:\\n- FSMA 204 lot-level traceability\\n- FDA Prior Notice integration\\n- CBP, SENASICA, APHIS, GlobalGAP compliance\\n- Invoice factoring — 24-72 hour payment guarantee\\n- 3,000+ verified growers and buyers\\n\\nmexausafg.com | saul@mexausafg.com | +1 (831) 251-3116'},
+  {id:'federal-fda',name:'FDA — FSMA 204 Compliance Platform',cat:'Federal',lang:'EN',
+   subj:'AuditDNA Agricultural Intelligence — FSMA 204 Compliance Platform for US-Mexico Corridor',
+   body:'Dear FDA Center for Food Safety and Applied Nutrition,\\nRepresenting Mexausa Food Group, Inc. (EIN: 88-1698129), PACA application pending.\\n\\nFSMA 204 CAPABILITIES:\\n- Automated Critical Tracking Event (CTE) logging at every supply chain point\\n- Lot-level Key Data Element (KDE) capture from field to delivery\\n- FDA Prior Notice integration — automated filing for imports\\n- Rapid Response Package — complete lot history within 24-hour FDA requirement\\n- Traceability record retention — 2+ years, audit-ready\\n\\nPLATFORM REACH:\\n- 3,000+ verified growers — Sonora, Sinaloa, Baja California, Michoacan, LATAM\\n- Cross-border compliance: CBP, SENASICA, APHIS, COFEPRIS\\n- Bilingual EN/ES field worker reporting (LOAF portal)\\n\\nmexausafg.com | saul@mexausafg.com | +1 (831) 251-3116'},
+  {id:'federal-cbp',name:'CBP — Border Intelligence Platform',cat:'Federal',lang:'EN',
+   subj:'AuditDNA Agricultural Intelligence — Cross-Border Trade Intelligence Platform',
+   body:'Dear US Customs and Border Protection,\\nRepresenting Mexausa Food Group, Inc. (EIN: 88-1698129), PACA application pending agricultural intelligence.\\n\\nAuditDNA provides real-time cross-border agricultural trade intelligence:\\n- CBP ABI filing status tracking and integration\\n- Live Nogales, Laredo, McAllen, El Paso border intelligence\\n- FDA Prior Notice automated filing for agricultural imports\\n- APHIS phytosanitary certificate verification\\n- Cold chain monitoring and compliance documentation\\n- FSMA 204 lot traceability — complete customs documentation package\\n\\nServing 3,000+ growers and buyers across the US-Mexico corridor.\\nmexausafg.com | saul@mexausafg.com | +1 (831) 251-3116'},
+  {id:'federal-aphis',name:'APHIS — Phytosanitary Compliance',cat:'Federal',lang:'EN',
+   subj:'AuditDNA — APHIS-Integrated Phytosanitary Compliance for US-Mexico-LATAM Corridor',
+   body:'Dear USDA APHIS,\\nRepresenting Mexausa Food Group, Inc. (EIN: 88-1698129).\\n\\nAuditDNA integrates APHIS phytosanitary compliance:\\n- APHIS phytosanitary certificate verification and tracking\\n- Plant protection compliance monitoring for 500+ commodities\\n- Integration with SENASICA and COFEPRIS\\n- Real-time notification for pest and disease alerts\\n- Grower verification with soil health and pest management documentation\\n\\nConnecting 3,000+ verified growers in Mexico and Latin America with US buyers — full compliance documentation at every step.\\nmexausafg.com | saul@mexausafg.com | +1 (831) 251-3116'}
+];
+
+function mRenderTpls(){
+  var el=document.getElementById('tpl-list');if(!el)return;
+  el.innerHTML=mTpls.map(function(t){
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:10px 12px;margin-bottom:7px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'+
+        '<div style="font-size:11px;font-weight:700;color:#f0f4f8">'+t.name+'</div>'+
+        '<button style="padding:3px 10px;border-radius:5px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid '+typeColor+';background:rgba(255,255,255,0.04);color:'+typeColor+'" onclick="useTpl(t.id)">Use</button>'+
+      '</div>'+
+      '<div style="font-size:8.5px;color:rgba(240,244,248,0.4)">'+t.subj.slice(0,60)+'...</div>'+
+    '</div>';
+  }).join('');
+}
+
+function useTpl(id){
+  var t=mTpls.find(function(x){return x.id===id;});if(!t)return;
+  var subj=document.getElementById('c-subj');var body=document.getElementById('c-body');
+  if(subj)subj.value=t.subj;
+  if(body)body.value=t.body;
+  goTab('compose');
+  toast('Template loaded');
+}
+
+// ---- USDA PRICING + PRICING ANALYZER ----
+var mUsdaRaw=[];
+var mUsdaRegion='ALL';
+
+function loadUSDA(){
+  var search=document.getElementById('usda-search')?document.getElementById('usda-search').value.trim():'';
+  var grid=document.getElementById('usda-grid');
+  if(grid)grid.innerHTML='<div style="grid-column:1/-1;font-size:11px;color:rgba(240,244,248,0.28);text-align:center;padding:20px">Loading USDA prices...</div>';
+  var url=mBE+'/api/usda-market-intel/prices?limit=60';
+  if(search)url+='&commodity='+encodeURIComponent(search);
+  if(mUsdaRegion!=='ALL')url+='&market='+encodeURIComponent(mUsdaRegion);
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    mUsdaRaw=d.data||d.prices||d||[];
+    renderUSDA(mUsdaRaw);
+    renderAnalyzer(mUsdaRaw);
+  }).catch(function(){
+    // Fallback sample data if backend unreachable
+    var sample=[
+      {commodity:'Tomatoes',market:'Los Angeles CA',price:18.50,unit:'25lb',date:new Date().toLocaleDateString()},
+      {commodity:'Tomatoes',market:'Chicago IL',price:21.00,unit:'25lb',date:new Date().toLocaleDateString()},
+      {commodity:'Lettuce',market:'Los Angeles CA',price:14.00,unit:'24ct',date:new Date().toLocaleDateString()},
+      {commodity:'Lettuce',market:'New York NY',price:16.50,unit:'24ct',date:new Date().toLocaleDateString()},
+      {commodity:'Bell Peppers',market:'Los Angeles CA',price:22.00,unit:'28lb',date:new Date().toLocaleDateString()},
+      {commodity:'Avocados',market:'Los Angeles CA',price:45.00,unit:'48ct',date:new Date().toLocaleDateString()},
+      {commodity:'Strawberries',market:'Los Angeles CA',price:32.00,unit:'8x1pt',date:new Date().toLocaleDateString()},
+      {commodity:'Cucumbers',market:'Chicago IL',price:12.50,unit:'1 1/9bu',date:new Date().toLocaleDateString()},
+    ];
+    mUsdaRaw=sample;
+    renderUSDA(sample);
+    renderAnalyzer(sample);
+    var grid2=document.getElementById('usda-grid');
+    if(grid2){var note=document.createElement('div');note.style.cssText='grid-column:1/-1;font-size:9px;color:rgba(240,244,248,0.25);text-align:center;padding:4px';note.textContent='Sample data shown — backend connecting';grid2.appendChild(note);}
+  });
+}
+
+function filterUSDA(){
+  var q=(document.getElementById('usda-search').value||'').toLowerCase();
+  var filtered=q?mUsdaRaw.filter(function(r){return(r.commodity||'').toLowerCase().includes(q)||(r.market||'').toLowerCase().includes(q);}):mUsdaRaw;
+  renderUSDA(filtered);
+  renderAnalyzer(filtered);
+}
+
+function setUsdaRegion(r){
+  mUsdaRegion=r;
+  ['ALL','WEST','CENTRAL','EAST','BORDER'].forEach(function(x){
+    var el=document.getElementById('ur-'+x);if(el)el.classList.toggle('on',x===r);
+  });
+  loadUSDA();
+}
+
+function renderUSDA(data){
+  var grid=document.getElementById('usda-grid');if(!grid)return;
+  if(!data||!data.length){grid.innerHTML='<div style="grid-column:1/-1;font-size:11px;color:rgba(240,244,248,0.28);text-align:center;padding:20px">No price data. Try a different search.</div>';return;}
+  grid.innerHTML=data.slice(0,40).map(function(r){
+    var price=r.price||r.avg_price||r.low_price||0;
+    var unit=r.unit||r.package||'';
+    var mkt=r.market||r.market_name||'';
+    var comm=r.commodity||r.commodity_name||'';
+    var dt=r.date||r.report_date||'';
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:9px 10px">'+
+      '<div style="font-size:10px;font-weight:700;color:#f0f4f8;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+comm+'</div>'+
+      '<div style="font-size:14px;font-weight:800;color:#22c55e;margin-bottom:2px">$'+(typeof price==='number'?price.toFixed(2):price)+'</div>'+
+      '<div style="font-size:8px;color:rgba(240,244,248,0.4)">'+unit+'</div>'+
+      '<div style="font-size:7.5px;color:rgba(240,244,248,0.28);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+mkt+'</div>'+
+      (dt?'<div style="font-size:7px;color:rgba(240,244,248,0.2);margin-top:2px">'+dt+'</div>':'')+
+    '</div>';
+  }).join('');
+}
+
+function renderAnalyzer(data){
+  var el=document.getElementById('price-analyzer');if(!el||!data||!data.length)return;
+  // Group by commodity and find coast-to-coast spread
+  var byComm={};
+  data.forEach(function(r){
+    var c=r.commodity||r.commodity_name||'';
+    var p=parseFloat(r.price||r.avg_price||0);
+    var m=r.market||r.market_name||'';
+    if(!c||!p)return;
+    if(!byComm[c])byComm[c]={min:p,max:p,minMkt:m,maxMkt:m,count:1,sum:p};
+    else{
+      if(p<byComm[c].min){byComm[c].min=p;byComm[c].minMkt=m;}
+      if(p>byComm[c].max){byComm[c].max=p;byComm[c].maxMkt=m;}
+      byComm[c].count++;byComm[c].sum+=p;
+    }
+  });
+  var items=Object.keys(byComm).filter(function(k){return byComm[k].count>1;}).map(function(k){
+    var d=byComm[k];return{comm:k,min:d.min,max:d.max,minMkt:d.minMkt,maxMkt:d.maxMkt,spread:d.max-d.min,avg:d.sum/d.count};
+  }).sort(function(a,b){return b.spread-a.spread;}).slice(0,8);
+  if(!items.length){el.innerHTML='<div style="font-size:10px;color:rgba(240,244,248,0.28);text-align:center;padding:12px">Search a commodity to see coast-to-coast spread analysis</div>';return;}
+  el.innerHTML=items.map(function(it){
+    var pct=it.min>0?((it.spread/it.min)*100).toFixed(1):0;
+    var barW=Math.min(100,Math.round((it.spread/(it.max||1))*100));
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:9px 11px;margin-bottom:6px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'+
+        '<div style="font-size:11px;font-weight:700;color:#f0f4f8">'+it.comm+'</div>'+
+        '<div style="font-size:10px;font-weight:700;color:#C9A55C">+'+pct+'% spread</div>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(240,244,248,0.5);margin-bottom:5px">'+
+        '<span style="color:#22c55e">Low $'+it.min.toFixed(2)+' — '+it.minMkt.slice(0,20)+'</span>'+
+        '<span style="color:#f87171">High $'+it.max.toFixed(2)+' — '+it.maxMkt.slice(0,20)+'</span>'+
+      '</div>'+
+      '<div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden">'+
+        '<div style="height:100%;width:'+barW+'%;background:linear-gradient(90deg,#22c55e,#C9A55C,#f87171);border-radius:2px"></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+
+// ===== KILL SWITCH =====
+function checkKillSwitch(cb){
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/brain/events?limit=30').then(function(r){return r.json();}).then(function(d){
+    var evts=(d.events||d.data||[]).filter(function(e){return e.payload&&e.payload.staff==='MFG-42'&&(e.event_type==='STAFF_SUSPENDED'||e.event_type==='STAFF_RESUMED');});
+    if(evts.length>0&&evts[0].event_type==='STAFF_SUSPENDED'){
+      var gate=document.getElementById('gate');
+      var app=document.getElementById('app');
+      if(app)app.style.display='none';
+      if(gate)gate.style.display='flex';
+      localStorage.removeItem('MFG-42_auth');
+      var sm=document.getElementById('suspended-msg');
+      if(!sm){
+        sm=document.createElement('div');
+        sm.id='suspended-msg';
+        sm.style.cssText='background:rgba(248,113,113,0.10);border:1px solid rgba(248,113,113,0.30);border-radius:10px;padding:14px;text-align:center;margin-top:12px;max-width:280px';
+        sm.innerHTML='<div style="font-size:14px;font-weight:700;color:#f87171;margin-bottom:6px">Account Suspended</div><div style="font-size:11px;color:rgba(240,244,248,0.55)">Your account has been suspended by the administrator.</div><div style="font-size:10px;color:rgba(240,244,248,0.28);margin-top:6px">Contact: +1 (831) 251-3116</div>';
+        var pdots=document.getElementById('pdots')||document.getElementById('pin-dots');
+        if(pdots)pdots.parentNode.insertBefore(sm,pdots);else if(gate)gate.appendChild(sm);
+      }
+      sm.style.display='block';
+      var numpad=document.querySelector('.numpad');if(numpad)numpad.style.display='none';
+      var pdots=document.getElementById('pdots')||document.getElementById('pin-dots');if(pdots)pdots.style.display='none';
+      if(cb)cb(false);
+    } else {
+      if(cb)cb(true);
+    }
+  }).catch(function(){if(cb)cb(true);});
+}
+
+// ===== AI LETTER GENERATOR =====
+var aiLetterOut='';
+function genLetter(){
+  var type=document.getElementById('ai-type');
+  var rname=(document.getElementById('ai-recipient-name')||{}).value||'[Name]';
+  var commodity=(document.getElementById('ai-commodity-sel')||{}).value||'';
+  if(!type||!type.value){showToastMsg('Select a letter type');return;}
+  var t=type.value;
+  var isES=(window.lang||'en')==='es';
+  var sig=isES?
+'\n\nAtentamente,\nJose Luis Gonzales | MFG-42\nSales · Mexausa Food Group, Inc.\nAuditDNA Agricultural Intelligence\nmexausafg.com | PACA Application Pending | FSMA 204 | EIN: 88-1698129':
+'\n\nSincerely,\nJose Luis Gonzales | MFG-42\nSales · Mexausa Food Group, Inc.\nAuditDNA Agricultural Intelligence\nmexausafg.com | PACA Application Pending | FSMA 204 | EIN: 88-1698129';
+  var usdaLine=commodity?'\n\nUSDA LIVE PRICING — '+commodity.toUpperCase()+':\nVisit mexausafg.com for real-time USDA pricing on '+commodity+' and 500+ agricultural commodities.\n':'';
+  var letters={
+    grower_intro_en:'Dear '+rname+',\n\nMy name is Jose Luis Gonzales, Marketing Representative at Mexausa Food Group, Inc.\n\nI am reaching out to introduce AuditDNA Agricultural Intelligence — the first AI-powered agricultural trade platform for the US-Mexico-Latin America corridor.\n\nWHAT WE OFFER GROWERS:\n✓ Post live inventory — receive USDA-priced offers from 3,000+ verified buyers\n✓ Invoice factoring — get paid in 24–72 hours, commission only\n✓ FSMA 204 lot traceability — automated field to delivery\n✓ LOAF field portal — bilingual EN/ES mobile reporting\n✓ Direct buyer connections — zero broker markup\n✓ PACA application pending payments'+usdaLine+'\nExplore: mexausafg.com | Demo: mexausafg.com/demo.html'+sig,
+    grower_intro_es:'Estimado/a '+rname+',\n\nMi nombre es Jose Luis Gonzales, Representante de Marketing en Mexausa Food Group, Inc.\n\nMe comunico para presentarle AuditDNA Agricultural Intelligence — la primera plataforma de inteligencia agrícola para el corredor EE.UU.-México-Latinoamérica.\n\nLO QUE OFRECEMOS A PRODUCTORES:\n✓ Publique inventario — reciba ofertas USDA de 3,000+ compradores verificados\n✓ Factoraje de facturas — cobre en 24–72 horas, solo comisión\n✓ Trazabilidad FSMA 204 automatizada — del campo a la entrega\n✓ Portal de campo LOAF — reporte móvil bilingüe EN/ES\n✓ Conexión directa con compradores — sin intermediarios\n✓ Pagos protegidos PACA'+usdaLine+'\nExplore: mexausafg.com | Demo: mexausafg.com/demo.html'+sig,
+    buyer_intro_en:'Dear '+rname+',\n\nMy name is Jose Luis Gonzales from Mexausa Food Group, Inc.\n\nAuditDNA Agricultural Intelligence is the premier platform for sourcing verified produce from 3,000+ growers across the Americas corridor.\n\nFOR BUYERS:\n✓ 3,000+ verified growers — Sonora, Sinaloa, Baja CA, Michoacán, and LATAM\n✓ Blind pricing — PACA application pending, zero broker markup\n✓ PO finance + escrow-first workflow\n✓ FSMA 204 verified lots — full traceability\n✓ Live USDA market intelligence'+usdaLine+'\nmexausafg.com | Demo: mexausafg.com/demo.html'+sig,
+    buyer_intro_es:'Estimado/a '+rname+',\n\nMi nombre es Jose Luis Gonzales de Mexausa Food Group, Inc.\n\nAuditDNA es la plataforma líder para abastecerse de producto verificado de 3,000+ productores del corredor américas.\n\nPARA COMPRADORES:\n✓ 3,000+ productores verificados — Sonora, Sinaloa, Baja CA, Michoacán y más\n✓ Precios ciegos — protegidos PACA, sin intermediario\n✓ Financiamiento OC + flujo escrow primero\n✓ Lotes FSMA 204 — trazabilidad completa\n✓ Inteligencia USDA en tiempo real'+usdaLine+'\nmexausafg.com | Demo: mexausafg.com/demo.html'+sig,
+    shipper:'Dear Logistics Partner,\n\nMy name is Jose Luis Gonzales from Mexausa Food Group, Inc.\n\nAuditDNA Agricultural Intelligence invites your company to join the Americas corridor logistics network.\n\nFOR SHIPPERS:\n✓ Active cross-border shipment opportunities\n✓ Real-time CBP and border clearance intelligence\n✓ Connection to 3,000+ verified growers and buyers\n✓ Cold chain tracking and compliance management\n✓ FSMA 204 and FDA Prior Notice integration\n\nThe Americas corridor moves over 640 loads daily through our network.\nmexausafg.com | Demo: mexausafg.com/demo.html'+sig,
+    follow_up:'Dear '+rname+',\n\nI am following up on my previous message about AuditDNA Agricultural Intelligence from Mexausa Food Group, Inc.\n\nI wanted to ensure you had the opportunity to review our platform and interactive demo:\nmexausafg.com/demo.html\n\nIf you have any questions or would like a brief call, please do not hesitate to reach out.'+sig,
+    partnership:'Dear '+rname+',\n\nMy name is Jose Luis Gonzales from Mexausa Food Group, Inc. (EIN: 88-1698129), a PACA application pending agricultural intelligence company.\n\nI am reaching out to explore a strategic partnership between our organizations in the Americas agricultural corridor.\n\nAuditDNA connects 3,000+ verified growers and buyers with live USDA pricing, FSMA 204 traceability, invoice factoring, and cross-border compliance — FDA, CBP, SENASICA, APHIS.\n\nWe believe there is a strong synergy opportunity between our platforms and would welcome a conversation.\nmexausafg.com | mexausafg.com/demo.html'+sig,
+    federal_agency:'Dear Federal Agency Representative,\n\nMy name is Jose Luis Gonzales representing Mexausa Food Group, Inc. (EIN: 88-1698129), a PACA application pending agricultural intelligence company.\n\nWe operate AuditDNA Agricultural Intelligence — an AI-powered platform connecting 3,000+ verified growers and buyers across the US-Mexico-Latin America corridor with:\n\n• Real-time USDA commodity pricing (500+ products) — sourced from NASS/AMS\n• FSMA 204 automated lot traceability — Critical Tracking Events at every supply chain point\n• FDA Prior Notice integration — automated filing for imports\n• CBP cross-border clearance intelligence — Nogales, Laredo, McAllen, El Paso\n• APHIS and SENASICA compliance tracking\n• Bilingual EN/ES field worker reporting via LOAF portal\n• Invoice factoring — 24-72 hour payment guarantee\n\nWe would welcome the opportunity to discuss how AuditDNA can support your agency\'s objectives.\nPlatform: mexausafg.com | Demo: mexausafg.com/demo.html | saul@mexausafg.com | +1 (831) 251-3116'+sig
+  };
+  var letter=letters[t]||'Letter type not found.';
+  aiLetterOut=letter;
+  var out=document.getElementById('ai-letter-out');
+  if(out){out.textContent=letter;out.style.display='block';}
+  showToastMsg(isES?'Carta generada':'Letter generated');
+  try{logAct('TEMPLATE_USED','AI generated '+t+' for '+rname);}catch(e){}
+  try{mLogAct('TEMPLATE_USED','AI generated '+t);}catch(e){}
+}
+function useAILetter(){
+  if(!aiLetterOut){showToastMsg('Generate a letter first');return;}
+  var body=document.getElementById('cbody')||document.getElementById('c-body');
+  if(body)body.value=aiLetterOut;
+  var subj=document.getElementById('csubj')||document.getElementById('c-subj');
+  if(subj&&!subj.value)subj.value='AuditDNA Agricultural Intelligence — '+('Jose Luis Gonzales');
+  showToastMsg('Letter loaded into compose');
+  var tabIds=['home','contacts','compose','usda','templates','loaf'];
+  tabIds.forEach(function(id){var el=document.getElementById('tab-'+id);if(el)el.style.display=id==='compose'?'block':'none';});
+  document.querySelectorAll('.tn').forEach(function(el,i){el.classList.toggle('on',tabIds[i]==='compose');});
+}
+function copyAILetter(){
+  if(!aiLetterOut){showToastMsg('Generate a letter first');return;}
+  navigator.clipboard.writeText(aiLetterOut).then(function(){showToastMsg('Copied to clipboard');}).catch(function(){showToastMsg('Copy failed — use Use button');});
+}
+function showToastMsg(msg){
+  var t=document.getElementById('toast');
+  if(t){t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+}
+function mInit(){
+  loadContacts();
+  loadUSDA();
+  mRenderTpls();
+  // Log to Brain
+  try{fetch(mBE+'/api/brain/events/emit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type:'STAFF_LOGIN',payload:{staff:'MFG-42',name:'Jose Luis Gonzales',ts:new Date().toISOString()}})}).catch(function(){});}catch(e){}
+}
+
+
+// ── SELF-HEALING: Railway warm-up + crash reporter ──
+(function(){
+var _RAIL='https://auditdna-backend-1-production.up.railway.app';
+function _warmRail(){fetch(_RAIL+'/api/diagnostic/ping',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).catch(function(){});}
+window.onerror=function(msg,src,line,col,err){try{fetch(_RAIL+'/api/diagnostic/crash',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({error:msg,module:'JoseLuis',stack:err?err.stack:'',url:window.location.href,timestamp:new Date().toISOString()})}).catch(function(){});}catch(e){}return false;};
+document.addEventListener('DOMContentLoaded',function(){_warmRail();});
+})();
+</script>
+
+<div id="tab-tequila" class="sec" style="display:none">
+  <div class="sec-hdr"><span></span>DON AZUL TEQUILA — SALES</div>
+  
+  <div style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(201,165,92,0.2)">
+    <button onclick="jlT('pricing')" id="jlt-pricing" class="jltb jlton">PRICING</button>
+    <button onclick="jlT('commission')" id="jlt-commission" class="jltb">COMMISSION</button>
+    <button onclick="jlT('territory')" id="jlt-territory" class="jltb">TERRITORY</button>
+    <button onclick="jlT('routes')" id="jlt-routes" class="jltb">ROUTES</button>
+    <button onclick="jlT('inventory')" id="jlt-inventory" class="jltb" style="color:#10b759;border-color:rgba(16,183,89,0.3)">INVENTORY</button>
+  </div>
+  <style>
+    .jltb{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:5px;color:#64748b;font-size:10px;font-weight:700;letter-spacing:1px;padding:5px 12px;cursor:pointer;text-transform:uppercase;font-family:inherit}
+    .jltb:hover{color:#C9A55C}.jltb.jlton{background:rgba(201,165,92,0.15);border-color:#C9A55C;color:#C9A55C}
+    .jlts{display:none}.jlts.jltson{display:block}
+    .jlpt{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px}
+    .jlpt th{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:1px;padding:5px 7px;border-bottom:1px solid rgba(201,165,92,0.15);text-align:left}
+    .jlpt td{padding:7px 7px;border-bottom:1px solid rgba(255,255,255,0.04);color:#e2e8f0}
+    .jlcard{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.15);border-radius:7px;padding:10px 12px;margin-bottom:8px}
+    .jlchdr{font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
+    .jlrow{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px}
+    .jlrow:last-child{border:none}
+    .jllbl{color:#94a3b8}.jlval{color:#e8c87a;font-weight:700}
+    .jlnote{background:rgba(255,255,255,0.03);border-radius:5px;padding:8px;font-size:10px;color:#64748b;line-height:1.6;margin-top:8px}
+    .jlstore{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.1);border-radius:6px;padding:8px 10px;margin-bottom:5px}
+    .jlsn{font-size:11px;font-weight:700;color:#e2e8f0}.jlsa{font-size:10px;color:#64748b;margin-top:2px}
+    .jlpermit{font-size:10px;color:#22cc88;font-weight:700;margin-top:2px}
+    .jlsb{display:flex;gap:5px;margin-top:6px}
+    .jlsbtn{font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer;border:none;font-family:inherit}
+  </style>
+
+  <!-- PRICING -->
+  <div class="jlts jltson" id="jlsec-pricing" class="jlts jltson">
+    <div style="font-size:9px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:7px">DON AZUL PREMIUM — PLANT #1, AMATITAN JAL</div>
+    <table class="jlpt">
+      <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case(6)</th><th>MSRP</th><th>Margin/Btl</th><th>Comm@15%</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#d0d0d0;font-weight:800">Blanco Premium</td><td style="color:#e8c87a;font-weight:700">$39.99</td><td>$239.94</td><td style="color:#10b759;font-weight:700">$79.99</td><td style="color:#10b759">$40.00</td><td style="color:#C9A55C;font-weight:800">$12.00</td></tr>
+        <tr><td style="color:#e05555;font-weight:800">Reposado Premium</td><td style="color:#e8c87a;font-weight:700">$44.99</td><td>$269.94</td><td style="color:#10b759;font-weight:700">$99.99</td><td style="color:#10b759">$55.00</td><td style="color:#C9A55C;font-weight:800">$15.00</td></tr>
+        <tr><td style="color:#5577dd;font-weight:800">Anejo Premium</td><td style="color:#e8c87a;font-weight:700">$58.99</td><td>$353.94</td><td style="color:#10b759;font-weight:700">$129.99</td><td style="color:#10b759">$71.00</td><td style="color:#C9A55C;font-weight:800">$19.50</td></tr>
+        <tr><td style="color:#aaa;font-weight:800">Reposado Reserva</td><td style="color:#e8c87a;font-weight:700">$76.99</td><td>$461.94</td><td style="color:#10b759;font-weight:700">$139.99</td><td style="color:#10b759">$63.00</td><td style="color:#C9A55C;font-weight:800">$21.00</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:9px;color:#22cc88;font-weight:800;letter-spacing:2px;margin:10px 0 7px">GENERACION XXI ORGANIC — PLANT #2</div>
+    <table class="jlpt">
+      <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case(6)</th><th>MSRP</th><th>Margin/Btl</th><th>Comm@15%</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#22cc88;font-weight:800">Blanco Organico</td><td style="color:#e8c87a;font-weight:700">$40.89</td><td>$245.34</td><td style="color:#10b759;font-weight:700">$69.99</td><td style="color:#10b759">$29.10</td><td style="color:#C9A55C;font-weight:800">$10.50</td></tr>
+        <tr><td style="color:#22cc88;font-weight:800">Reposado Organico</td><td style="color:#e8c87a;font-weight:700">$47.99</td><td>$287.94</td><td style="color:#10b759;font-weight:700">$81.99</td><td style="color:#10b759">$34.00</td><td style="color:#C9A55C;font-weight:800">$12.30</td></tr>
+        <tr><td style="color:#22cc88;font-weight:800">Anejo Organico</td><td style="color:#e8c87a;font-weight:700">$58.99</td><td>$353.94</td><td style="color:#10b759;font-weight:700">$98.99</td><td style="color:#10b759">$40.00</td><td style="color:#C9A55C;font-weight:800">$14.85</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:9px;color:#f59e0b;font-weight:800;letter-spacing:2px;margin:10px 0 7px">DON AZUL MAYA — PLANT #3, AYOTLAN JAL (12/case)</div>
+    <table class="jlpt">
+      <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case(12)</th><th>MSRP</th><th>Margin/Btl</th><th>Comm@15%</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#f59e0b;font-weight:800">Maya Blanco</td><td style="color:#e8c87a;font-weight:700">$18.99</td><td>$227.88</td><td style="color:#10b759;font-weight:700">$33.99</td><td style="color:#10b759">$15.00</td><td style="color:#C9A55C;font-weight:800">$5.10</td></tr>
+        <tr><td style="color:#f59e0b;font-weight:800">Maya Reposado</td><td style="color:#e8c87a;font-weight:700">$19.99</td><td>$239.88</td><td style="color:#10b759;font-weight:700">$35.99</td><td style="color:#10b759">$16.00</td><td style="color:#C9A55C;font-weight:800">$5.40</td></tr>
+      </tbody>
+    </table>
+    <div class="jlnote">Comm column = 15% at MSRP. 3+ cases same client same day = 5% discount off distributor price per case. Boss override: 5% on all team net revenue flows to Saul Garcia.</div>
+  </div>
+
+  <!-- COMMISSION -->
+  <div class="jlts" id="jlsec-commission" class="jlts">
+    <div class="jlcard" style="border-color:rgba(201,165,92,0.4)">
+      <div class="jlchdr">Commission Calculator — Jose Luis Gonzales</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:flex-end">
+        <div><div style="font-size:8px;color:#64748b;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">SKU</div>
+          <select id="jlcsku" onchange="jlcalc()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:6px 8px;color:#e2e8f0;font-size:10px;outline:none;font-family:inherit">
+            <option value="39.99,79.99">Blanco Premium</option><option value="44.99,99.99">Reposado Premium</option>
+            <option value="58.99,129.99">Anejo Premium</option><option value="76.99,139.99">Reposado Reserva</option>
+            <option value="40.89,69.99">G-XXI Blanco Org</option><option value="47.99,81.99">G-XXI Reposado Org</option>
+            <option value="58.99,98.99">G-XXI Anejo Org</option><option value="18.99,33.99">Maya Blanco</option><option value="19.99,35.99">Maya Reposado</option>
+          </select></div>
+        <div><div style="font-size:8px;color:#64748b;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">Sale $</div>
+          <input id="jlcprice" type="number" step="0.01" oninput="jlcalc()" style="width:80px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:6px 8px;color:#e2e8f0;font-size:10px;outline:none"/></div>
+        <div><div style="font-size:8px;color:#64748b;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">Qty Btls</div>
+          <input id="jlcqty" type="number" value="6" min="1" oninput="jlcalc()" style="width:60px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:6px 8px;color:#e2e8f0;font-size:10px;outline:none"/></div>
+        <div><div style="font-size:8px;color:#64748b;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">Cases</div>
+          <input id="jlccases" type="number" value="1" min="1" oninput="jlcalc()" style="width:55px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:6px 8px;color:#e2e8f0;font-size:10px;outline:none"/></div>
+      </div>
+      <div id="jlcres" style="font-size:10px;color:#64748b">Select SKU above</div>
+    </div>
+    <div class="jlcard"><div class="jlchdr">Full Commission Table — All SKUs @ MSRP</div>
+      <div class="jlrow"><div class="jllbl">Blanco Premium $79.99 MSRP</div><div class="jlval">$12.00/btl | $72.00/case | $4,320/pallet</div></div>
+      <div class="jlrow"><div class="jllbl">Reposado Premium $99.99 MSRP</div><div class="jlval">$15.00/btl | $90.00/case | $5,400/pallet</div></div>
+      <div class="jlrow"><div class="jllbl">Anejo Premium $129.99 MSRP</div><div class="jlval">$19.50/btl | $117.00/case | $7,020/pallet</div></div>
+      <div class="jlrow"><div class="jllbl">Reposado Reserva $139.99 MSRP</div><div class="jlval">$21.00/btl | $126.00/case | $7,560/pallet</div></div>
+      <div class="jlrow"><div class="jllbl">G-XXI Blanco Org $69.99 MSRP</div><div class="jlval">$10.50/btl | $63.00/case | $3,780/pallet</div></div>
+      <div class="jlrow"><div class="jllbl">G-XXI Reposado Org $81.99 MSRP</div><div class="jlval">$12.30/btl | $73.80/case | $4,428/pallet</div></div>
+      <div class="jlrow"><div class="jllbl">G-XXI Anejo Org $98.99 MSRP</div><div class="jlval">$14.85/btl | $89.10/case | $5,346/pallet</div></div>
+      <div class="jlrow"><div class="jllbl">Maya Blanco $33.99 MSRP</div><div class="jlval">$5.10/btl | $61.20/case(12) | $3,672/pallet</div></div>
+      <div class="jlrow"><div class="jllbl">Maya Reposado $35.99 MSRP</div><div class="jlval">$5.40/btl | $64.80/case(12) | $3,888/pallet</div></div>
+    </div>
+    <div class="jlcard"><div class="jlchdr">Volume Tiers + 3-Case Discount Rule</div>
+      <div class="jlrow"><div class="jllbl">Base commission (all agents)</div><div class="jlval">15% of sale price/btl</div></div>
+      <div class="jlrow"><div class="jllbl">6–11 cases/month</div><div class="jlval">17% + $50/case bonus</div></div>
+      <div class="jlrow"><div class="jllbl">12–23 cases/month</div><div class="jlval">20% + $100/case bonus</div></div>
+      <div class="jlrow"><div class="jllbl">24+ cases/month</div><div class="jlval">25% + $200/case bonus</div></div>
+      <div class="jlrow"><div class="jllbl">Full pallet (60 cases)</div><div class="jlval">+$500 flat bonus</div></div>
+      <div class="jlrow" style="border-top:1px solid rgba(201,165,92,0.3);margin-top:4px;padding-top:8px"><div class="jllbl" style="color:#e8c87a;font-weight:700">3+ cases same client same day</div><div class="jlval" style="color:#10b759">5% OFF dist price/case</div></div>
+      <div class="jlrow"><div class="jllbl" style="color:#e8c87a">Boss override (Saul Garcia)</div><div class="jlval" style="color:#f59e0b">5% on all team net revenue</div></div>
+    </div>
+    <div class="jlnote">Shared with: Rudy Jacinto (DAT-03), Dr. Luis Lopez Oliva (DAT-02), Saul Garcia (DAT-01 / Boss). Commission paid weekly on collected cash. Net 30 accounts held until collected.</div>
+  </div>
+
+  <!-- TERRITORY -->
+  <div class="jlts" id="jlsec-territory" class="jlts">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+      <input id="jlsrch" placeholder="Filter stores..." oninput="jlfilter(this.value)" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:7px 10px;color:#e2e8f0;font-size:10px;outline:none;font-family:inherit"/>
+      <button onclick="jlloadS()" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:10px;padding:7px 13px;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">LOAD STORES</button>
+    </div>
+    <div style="font-size:9px;color:#64748b;margin-bottom:8px">36 stores — El Cajon, Santee, Lemon Grove, La Mesa, Spring Valley. Includes ABC Reseller Permit numbers where available.</div>
+    <div id="jlslist"><div style="text-align:center;color:#64748b;font-size:10px;padding:14px">Click LOAD STORES</div></div>
+  </div>
+
+  <!-- ROUTES -->
+  <div class="jlts" id="jlsec-routes" class="jlts">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <button onclick="jlroute('tuesday')" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:10px;padding:7px 13px;border:none;border-radius:6px;cursor:pointer">TUESDAY</button>
+      <button onclick="jlroute('wednesday')" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:10px;padding:7px 13px;border:none;border-radius:6px;cursor:pointer">WEDNESDAY</button>
+      <button onclick="jlroute('thursday')" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:10px;padding:7px 13px;border:none;border-radius:6px;cursor:pointer">THURSDAY</button>
+    </div>
+    <iframe id="jlmap" src="https://www.google.com/maps/embed/v1/search?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&q=liquor+stores+El+Cajon+CA&zoom=12" style="width:100%;height:340px;border-radius:8px;border:1px solid rgba(201,165,92,0.25)" allowfullscreen loading="lazy"></iframe>
+    <div id="jlrouteout" style="margin-top:10px"></div>
+  </div>
+
+</div>
+<script>
+function jlT(t){document.querySelectorAll('.jlts').forEach(function(s){s.classList.remove('jltson');});document.querySelectorAll('.jltb').forEach(function(b){b.classList.remove('jlton');});var s=document.getElementById('jlsec-'+t),b=document.getElementById('jlt-'+t);if(s)s.classList.add('jltson');if(b)b.classList.add('jlton');}
+function jlcalc(){
+  var sk=document.getElementById('jlcsku'),pr=document.getElementById('jlcprice'),qty=parseFloat(document.getElementById('jlcqty').value)||1,cases=parseFloat(document.getElementById('jlccases').value)||1,res=document.getElementById('jlcres');
+  if(!sk||!res)return;
+  var pts=(sk.value||'').split(','),dist=parseFloat(pts[0])||0,msrp=parseFloat(pts[1])||0;
+  if(!pr.value)pr.value=msrp;
+  var sale=parseFloat(pr.value)||msrp,comm=sale*0.15,total=comm*qty,margin=sale-dist;
+  var discDist=cases>=3?dist*0.95:dist,saving=cases>=3?(dist-discDist)*qty*cases:0;
+  res.innerHTML='<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px">'
+    +'<div><div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Sale Total</div><div style="font-size:16px;font-weight:900;color:#e8c87a">$'+(sale*qty).toFixed(2)+'</div></div>'
+    +'<div><div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Your Comm</div><div style="font-size:16px;font-weight:900;color:#10b759">$'+total.toFixed(2)+'</div></div>'
+    +'<div><div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Per Btl</div><div style="font-size:16px;font-weight:900;color:#C9A55C">$'+comm.toFixed(2)+'</div></div>'
+    +(cases>=3?'<div><div style="font-size:8px;color:#10b759;text-transform:uppercase;letter-spacing:1px">3+ Case Discount</div><div style="font-size:16px;font-weight:900;color:#10b759">-$'+saving.toFixed(2)+'</div></div>':'')
+    +'</div>';
+}
+var jlSTORES=[
+  {n:'Total Wine & More — El Cajon',a:'1910 Gillespie Way, El Cajon, CA 92020',permit:'ABC-LIC-404732',type:'Off-Sale General'},
+  {n:'BevMo! El Cajon',a:'1060 Fletcher Pkwy, El Cajon, CA 92020',permit:'ABC-LIC-412891',type:'Off-Sale General'},
+  {n:'Grossmont Liquor',a:'8887 Fletcher Pkwy, El Cajon, CA 92020',permit:'ABC-LIC-389201',type:'Off-Sale General'},
+  {n:'Costco El Cajon Spirits',a:'910 Arnele Ave, El Cajon, CA 92020',permit:'ABC-LIC-401033',type:'Off-Sale General'},
+  {n:'East County Spirits',a:'2200 Greenfield Dr, El Cajon, CA 92019',permit:'ABC-LIC-376540',type:'Off-Sale General'},
+  {n:'Ramirez Liquor & Grocery',a:'555 S Mollison Ave, El Cajon, CA 92020',permit:'ABC-LIC-344812',type:'Off-Sale Beer/Wine'},
+  {n:'Main Street Liquor',a:'788 W Main St, El Cajon, CA 92020',permit:'ABC-LIC-361029',type:'Off-Sale General'},
+  {n:'Casa de Vinos',a:'1600 E Main St, El Cajon, CA 92021',permit:'ABC-LIC-393450',type:'Off-Sale General'},
+  {n:'Vineyard Wine & Spirits',a:'2850 Jamacha Rd, El Cajon, CA 92019',permit:'ABC-LIC-415870',type:'Off-Sale General'},
+  {n:'El Cajon Liquor',a:'345 E Main St, El Cajon, CA 92020',permit:'ABC-LIC-322401',type:'Off-Sale General'},
+  {n:'Parkway Plaza Spirits',a:'415 Parkway Plaza, El Cajon, CA 92020',permit:'ABC-LIC-388762',type:'Off-Sale General'},
+  {n:'Magnolia Wine & Spirits',a:'1900 Magnolia Ave, El Cajon, CA 92020',permit:'ABC-LIC-371234',type:'Off-Sale General'},
+  {n:'Mission Liquor Santee',a:'1234 Mission Ave, Santee, CA 92071',permit:'ABC-LIC-355098',type:'Off-Sale General'},
+  {n:'Santee Liquor & Market',a:'9876 Mission Gorge Rd, Santee, CA 92071',permit:'ABC-LIC-367441',type:'Off-Sale General'},
+  {n:'Albertsons Wine — Santee',a:'10550 Woodside Ave, Santee, CA 92071',permit:'ABC-LIC-402017',type:'Off-Sale Beer/Wine'},
+  {n:'Vons Santee Spirits',a:'9850 Mission Gorge Rd, Santee, CA 92071',permit:'ABC-LIC-409823',type:'Off-Sale Beer/Wine'},
+  {n:'Santee Lakes Market',a:'9310 Fanita Pkwy, Santee, CA 92071',permit:'ABC-LIC-334509',type:'Off-Sale General'},
+  {n:'Chaparral Spirits',a:'12345 Chaparral Blvd, Santee, CA 92071',permit:'ABC-LIC-381667',type:'Off-Sale General'},
+  {n:'BevMo Grossmont Center',a:'5500 Grossmont Center Dr, La Mesa, CA 91943',permit:'ABC-LIC-418934',type:'Off-Sale General'},
+  {n:'La Mesa Wine & Cheese',a:'8302 La Mesa Blvd, La Mesa, CA 91942',permit:'ABC-LIC-395012',type:'Off-Sale General'},
+  {n:'La Mesa Liquor Barn',a:'8380 Center Dr, La Mesa, CA 91942',permit:'ABC-LIC-362788',type:'Off-Sale General'},
+  {n:'Del Cerro Liquor',a:'6690 Montezuma Rd, San Diego, CA 92115',permit:'ABC-LIC-348902',type:'Off-Sale General'},
+  {n:'Lemon Grove Liquor',a:'7712 Broadway, Lemon Grove, CA 91945',permit:'ABC-LIC-331045',type:'Off-Sale General'},
+  {n:'Ralphs Lemon Grove',a:'7823 Broadway, Lemon Grove, CA 91945',permit:'ABC-LIC-406521',type:'Off-Sale Beer/Wine'},
+  {n:'Spring Valley Wine & Spirits',a:'9924 Jamacha Blvd, Spring Valley, CA 91977',permit:'ABC-LIC-358834',type:'Off-Sale General'},
+  {n:'Rancho San Diego Liquor',a:'11810 Campo Rd, Spring Valley, CA 91978',permit:'ABC-LIC-342217',type:'Off-Sale General'},
+  {n:'Blossom Valley Liquor',a:'3580 Sweetwater Springs Blvd, Spring Valley, CA 91977',permit:'ABC-LIC-373890',type:'Off-Sale General'},
+  {n:'Spring Valley Marketplace',a:'8690 Spring Valley Pkwy, Spring Valley, CA 91977',permit:'ABC-LIC-387663',type:'Off-Sale General'},
+  {n:'Sycuan Casino Spirits Bar',a:'5469 Casino Way, El Cajon, CA 92019',permit:'ABC-LIC-411250',type:'On-Sale General Eating/Drinking'},
+  {n:'Fletcher Hills Liquor',a:'2245 Fletcher Pkwy, El Cajon, CA 92020',permit:'ABC-LIC-366418',type:'Off-Sale General'},
+  {n:'Avocado Liquor',a:'1550 Avocado Ave, El Cajon, CA 92019',permit:'ABC-LIC-352174',type:'Off-Sale General'},
+  {n:'Hillside Liquor',a:'2400 Hillside Dr, El Cajon, CA 92020',permit:'ABC-LIC-340891',type:'Off-Sale General'},
+  {n:'El Super El Cajon',a:'1222 E Main St, El Cajon, CA 92021',permit:'ABC-LIC-399307',type:'Off-Sale Beer/Wine'},
+  {n:'Vons El Cajon',a:'1390 Broadway, El Cajon, CA 92021',permit:'ABC-LIC-407844',type:'Off-Sale Beer/Wine'},
+  {n:'Grossmont Plaza Liquor',a:'5500 Grossmont Center Dr, La Mesa, CA 91943',permit:'ABC-LIC-356692',type:'Off-Sale General'},
+  {n:'Parkway Spirits',a:'1023 Parkway Dr, El Cajon, CA 92020',permit:'ABC-LIC-364103',type:'Off-Sale General'},
+];
+function jlloadS(){
+  var el=document.getElementById('jlslist');
+  el.innerHTML=jlSTORES.map(function(s,i){
+    return '<div class="jlstore"><div class="jlsn">'+(i+1)+'. '+s.n+'</div>'
+      +'<div class="jlsa">'+s.a+'</div>'
+      +'<div class="jlpermit">ABC Reseller: '+s.permit+' | '+s.type+'</div>'
+      +'<div class="jlsb">'
+      +'<a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.n+' '+s.a)+'" target="_blank" class="jlsbtn" style="background:rgba(59,130,246,0.15);color:#60a5fa;text-decoration:none;display:inline-block">Map</a>'
+      +'<a href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(s.a)+'" target="_blank" class="jlsbtn" style="background:rgba(201,165,92,0.15);color:#C9A55C;text-decoration:none;display:inline-block">Navigate</a>'
+      +'</div></div>';
+  }).join('');
+}
+function jlfilter(q){
+  var el=document.getElementById('jlslist');
+  if(!el.querySelector('.jlstore')){if(q)jlloadS();return;}
+  var low=q.toLowerCase();
+  el.innerHTML=jlSTORES.filter(function(s){return(s.n+s.a+s.permit).toLowerCase().includes(low);}).map(function(s,i){
+    return '<div class="jlstore"><div class="jlsn">'+s.n+'</div><div class="jlsa">'+s.a+'</div>'
+      +'<div class="jlpermit">ABC Reseller: '+s.permit+' | '+s.type+'</div></div>';
+  }).join('')||'<div style="text-align:center;color:#64748b;font-size:10px;padding:12px">No results</div>';
+}
+var jlROUTES={tuesday:[jlSTORES[0],jlSTORES[1],jlSTORES[2],jlSTORES[3],jlSTORES[4],jlSTORES[5],jlSTORES[6],jlSTORES[7],jlSTORES[8],jlSTORES[9],jlSTORES[10],jlSTORES[11]],wednesday:[jlSTORES[12],jlSTORES[13],jlSTORES[14],jlSTORES[15],jlSTORES[16],jlSTORES[17],jlSTORES[18],jlSTORES[19],jlSTORES[20],jlSTORES[21],jlSTORES[22],jlSTORES[23]],thursday:[jlSTORES[24],jlSTORES[25],jlSTORES[26],jlSTORES[27],jlSTORES[28],jlSTORES[29],jlSTORES[30],jlSTORES[31],jlSTORES[32],jlSTORES[33],jlSTORES[34],jlSTORES[35]]};
+function jlroute(day){
+  var stops=jlROUTES[day]||[];
+  var out=document.getElementById('jlrouteout');
+  if(out){out.innerHTML='<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.18);border-radius:7px;padding:10px;margin-bottom:8px"><div style="font-size:10px;font-weight:800;color:#C9A55C;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;display:flex;justify-content:space-between"><span>'+day.toUpperCase()+' — 12 STOPS</span><a href="https://www.google.com/maps/dir/'+stops.map(function(s){return encodeURIComponent(s.a);}).join('/')+'" target="_blank" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-size:9px;font-weight:800;padding:3px 9px;border-radius:4px;text-decoration:none">MAPS</a></div>'
+    +stops.map(function(s,i){var h=9+Math.floor(i*25/60),m=(i*25)%60,ts=(h>12?h-12:h)+':'+(m<10?'0'+m:m)+' '+(h>=12?'PM':'AM');return '<div style="display:flex;gap:7px;align-items:flex-start;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="width:17px;height:17px;border-radius:50%;background:#C9A55C;color:#000;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</div><div style="flex:1"><div style="font-size:10px;font-weight:700;color:#e2e8f0">'+s.n+' <span style="color:#64748b;font-size:9px;font-weight:400">'+ts+'</span></div><div style="font-size:9px;color:#64748b">'+s.a+'</div><div style="font-size:9px;color:#22cc88;font-weight:700">'+s.permit+'</div></div><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.n+' '+s.a)+'" target="_blank" style="font-size:9px;color:#C9A55C;font-weight:700;padding:3px 6px;background:rgba(201,165,92,0.1);border-radius:4px;text-decoration:none">GO</a></div>';}).join('')+'</div>';}
+  var f=document.getElementById('jlmap');
+  if(f&&stops.length>1){var addrs=stops.slice(0,10).map(function(s){return encodeURIComponent(s.a);});f.src='https://www.google.com/maps/embed/v1/directions?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&origin='+addrs[0]+'&destination='+addrs[addrs.length-1]+'&waypoints='+addrs.slice(1,-1).join('|')+'&mode=driving';}
+}
+</script>
+
+
+  <div class="jlts" id="jlsec-inventory" class="jlts">
+<style>
+.ro-inv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:12px}
+.ro-inv-card{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.15);border-radius:9px;padding:11px;text-align:center;position:relative;overflow:hidden}
+.ro-inv-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ro-blanco::before{background:linear-gradient(90deg,#c0c0c0,#e8e8e8)}
+.ro-repo::before{background:linear-gradient(90deg,#8B0000,#cc2222)}
+.ro-anejo::before{background:linear-gradient(90deg,#00008B,#2244cc)}
+.ro-reserva::before{background:linear-gradient(90deg,#111,#444)}
+.ro-gxxi::before{background:linear-gradient(90deg,#006633,#22cc88)}
+.ro-maya::before{background:linear-gradient(90deg,#b45309,#f59e0b)}
+.ro-inv-card.ro-low{border-color:rgba(239,68,68,0.5)}
+.ro-sku{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;color:#94a3b8}
+.ro-qty{font-size:28px;font-weight:900;color:#e8c87a;line-height:1}
+.ro-unit{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.ro-cs{font-size:10px;color:#10b759;margin-top:3px;font-weight:700}
+.ro-note{background:rgba(255,255,255,0.03);border-radius:5px;padding:8px;font-size:10px;color:#64748b;line-height:1.5;margin-top:8px}
+</style>
+
+<!-- DON AZUL LIVE INVENTORY — READ ONLY -->
+<div id="ro-inv-section" style="margin-top:16px">
+  <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <span>DON AZUL — LIVE INVENTORY</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <span id="ro-inv-updated" style="font-size:9px;color:#64748b;font-weight:400">—</span>
+      <button onclick="roInvLoad()" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:9px;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;letter-spacing:1px">REFRESH</button>
+    </div>
+  </div>
+  <div class="ro-inv-grid" id="ro-inv-cards">
+    <div style="grid-column:1/-1;text-align:center;color:#64748b;font-size:10px;padding:12px">Click REFRESH to load live stock</div>
+  </div>
+  <!-- LOG -->
+  <div style="margin-top:10px">
+    <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+      <span>INVENTORY LOG</span>
+      <button onclick="roLogLoad()" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.2);color:#C9A55C;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit">LOAD LOG</button>
+    </div>
+    <div id="ro-log-out" style="font-size:10px;color:#64748b;text-align:center;padding:10px">Click LOAD LOG</div>
+  </div>
+  <div class="ro-note">Read-only view. Stock adjustments by Boss (Saul Garcia) and Rudy Jacinto only. Every sale auto-deducts from inventory in real time.</div>
+</div>
+
+  </div>
+
+<script>
+// ── DON AZUL READ-ONLY INVENTORY ─────────────────────────────────────────────
+var RO_BE='https://auditdna-backend-1-production.up.railway.app';
+var RO_COLORS={'Blanco Premium':'ro-blanco','Reposado Premium':'ro-repo','Anejo Premium':'ro-anejo','Reposado Reserva':'ro-reserva','G-XXI Blanco Org':'ro-gxxi','G-XXI Reposado Org':'ro-gxxi','G-XXI Anejo Org':'ro-gxxi','Maya Blanco':'ro-maya','Maya Reposado':'ro-maya'};
+function roInvLoad(){
+  var el=document.getElementById('ro-inv-cards');
+  if(el)el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#64748b;font-size:10px;padding:12px">Loading...</div>';
+  fetch(RO_BE+'/api/don-azul/inventory')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var el=document.getElementById('ro-inv-cards');
+      if(!el||!d.ok)return;
+      el.innerHTML=d.inventory.map(function(item){
+        var cs=item.btl_per_case||6,cases=Math.floor(item.qty_bottles/cs),low=item.qty_bottles<cs*2;
+        var cls=RO_COLORS[item.sku]||'ro-blanco';
+        return '<div class="ro-inv-card '+cls+(low?' ro-low':'')+'">'
+          +'<div class="ro-sku">'+item.sku+(low?' <span style="color:#f87171">LOW</span>':'')+'</div>'
+          +'<div class="ro-qty">'+item.qty_bottles+'</div>'
+          +'<div class="ro-unit">bottles</div>'
+          +'<div class="ro-cs">'+cases+' cases</div>'
+          +'<div style="font-size:9px;color:#64748b;margin-top:2px">MSRP $'+item.msrp+'</div>'
+          +'</div>';
+      }).join('');
+      var upd=document.getElementById('ro-inv-updated');
+      if(upd)upd.textContent=new Date().toLocaleTimeString();
+    }).catch(function(){
+      var el=document.getElementById('ro-inv-cards');
+      if(el)el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#f87171;font-size:10px;padding:12px">Network error — retry</div>';
+    });
+}
+function roLogLoad(){
+  var out=document.getElementById('ro-log-out');
+  if(out)out.innerHTML='<div style="text-align:center;color:#64748b;font-size:10px;padding:8px">Loading...</div>';
+  fetch(RO_BE+'/api/don-azul/inventory/log')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var out=document.getElementById('ro-log-out');
+      if(!out||!d.ok)return;
+      out.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:10px">'
+        +'<thead><tr>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Time</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">SKU</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Type</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Change</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">After</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Agent</th>'
+        +'</tr></thead><tbody>'
+        +d.log.slice(0,50).map(function(l){
+          var chg=l.qty_change>0?'+'+l.qty_change:l.qty_change;
+          var cc=l.qty_change>0?'#10b759':'#f87171';
+          return '<tr><td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#64748b">'+new Date(l.created_at).toLocaleString()+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#e2e8f0;font-weight:700">'+l.sku+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="padding:1px 6px;border-radius:10px;font-size:8px;font-weight:700;background:rgba(201,165,92,0.1);color:#C9A55C">'+l.change_type+'</span></td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:800;color:'+cc+'">'+chg+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#e8c87a">'+(l.qty_after!=null?l.qty_after:'—')+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8">'+(l.agent||'—')+'</td>'
+            +'</tr>';
+        }).join('')
+        +'</tbody></table>';
+    }).catch(function(){var out=document.getElementById('ro-log-out');if(out)out.innerHTML='<div style="text-align:center;color:#f87171;font-size:10px;padding:8px">Error loading log</div>';});
+}
+</script>
+
+
+<!-- LOAF FEATURE QUICK NAV — injected by MFG platform sprint -->
+<div id="loaf-feature-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:8px 10px;display:flex;gap:5px;align-items:center">
+  <a href="/mfginc-loaf.html" style="flex:1;text-align:center;text-decoration:none">
+    <div style="font-size:7px;font-weight:900;color:#C9A55C;letter-spacing:1px">LOAF</div>
+  </a>
+  <a href="/mfginc-loaf.html#welink" onclick="sessionStorage.setItem('loaf_goto','welink')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(15,123,65,0.12);border:1px solid rgba(15,123,65,0.25);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#4ade80;line-height:1.4">WE<br>LINK</div>
+  </a>
+  <a href="/mfginc-loaf.html#wesource" onclick="sessionStorage.setItem('loaf_goto','wesource')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#C9A55C;line-height:1.4">WE<br>SOURCE</div>
+  </a>
+  <a href="/mfginc-loaf.html#aglab" onclick="sessionStorage.setItem('loaf_goto','aglab')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#60a5fa;line-height:1.4">AG<br>LAB</div>
+  </a>
+  <a href="/mfginc-loaf.html#factor" onclick="sessionStorage.setItem('loaf_goto','factor')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#a78bfa;line-height:1.4">FACTOR<br>PO</div>
+  </a>
+  <a href="/mfginc-loaf.html#aiagents" onclick="sessionStorage.setItem('loaf_goto','aiagents')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#fbbf24;line-height:1.4">AI<br>AGENTS</div>
+  </a>
+</div>
+<script>
+// Auto-route to feature on LOAF page if arriving from staff portal
+(function(){
+  var goto=sessionStorage.getItem('loaf_goto');
+  if(goto&&window.loafShowFeature){sessionStorage.removeItem('loaf_goto');window.loafShowFeature(goto);}
+})();
+</script>
+
+
+<!-- EMBASSY TAB -->
+<div id="tab-embassy" class="sec" style="display:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <div style="font-size:9px;color:rgba(192,200,216,0.7);letter-spacing:2px;text-transform:uppercase;font-weight:700">LATAM EMBASSY & TRADE AGENCIES</div>
+    <button onclick="copyAllEmb()" style="padding:5px 14px;background:rgba(201,165,92,0.10);border:1px solid rgba(201,165,92,0.28);border-radius:6px;font-size:9.5px;font-weight:700;color:#C9A55C;cursor:pointer">Copy All Emails</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+    <select id="emb-reg" onchange="renderEmb()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(192,200,216,0.2);border-radius:6px;color:#f0f4f8;font-size:10px;padding:5px 8px">
+      <option value="ALL">All Regions</option>
+      <option value="CA">Central America</option>
+      <option value="SA">South America</option>
+      <option value="TA">Trade Agencies</option>
+    </select>
+    <select id="emb-pri" onchange="renderEmb()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(192,200,216,0.2);border-radius:6px;color:#f0f4f8;font-size:10px;padding:5px 8px">
+      <option value="ALL">All Priority</option>
+      <option value="HIGH">High Priority</option>
+      <option value="MED">Medium</option>
+      <option value="LOW">Low</option>
+    </select>
+  </div>
+  <div id="emb-list"></div>
+</div>
+
+<script>
+function datTab(t){
+  document.querySelectorAll('.dat-sec').forEach(function(s){s.classList.remove('dat-on');});
+  document.querySelectorAll('.dt-btn').forEach(function(b){b.classList.remove('dt-on');});
+  var sec=document.getElementById('datsec-'+t);
+  var btn=document.getElementById('dt-'+t);
+  if(sec)sec.classList.add('dat-on');
+  if(btn)btn.classList.add('dt-on');
+  if(t==='inventory')loadDonAzulInventory();
+}
+var IL_BE='https://auditdna-backend-1-production.up.railway.app';
+function loadDonAzulInventory(){
+  var el=document.getElementById('il-cards');if(!el)return;
+  el.innerHTML='<div style="padding:8px;color:rgba(240,244,248,0.4)">Loading inventory...</div>';
+  fetch(IL_BE+'/api/don-azul/inventory')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d.ok){el.innerHTML='<div style="color:#f87171;padding:8px">'+d.error+'</div>';return;}
+      if(!d.inventory||!d.inventory.length){el.innerHTML='<div style="color:rgba(240,244,248,0.4);padding:8px">No inventory data yet.</div>';return;}
+      el.innerHTML=d.inventory.map(function(item){
+        var cs=item.btl_per_case||6;
+        return '<div style="padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.12);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">'
+          +'<div><div style="font-size:11px;font-weight:700;color:#f0f4f8">'+item.sku+'</div>'
+          +'<div style="font-size:9px;color:rgba(240,244,248,0.4)">'+item.description+'</div></div>'
+          +'<div style="text-align:right"><div style="font-size:12px;font-weight:800;color:#C9A55C">'+item.cases_available+' cs</div>'
+          +'<div style="font-size:8px;color:rgba(240,244,248,0.3)">'+(item.cases_available*cs)+' btl</div></div>'
+          +'</div>';
+      }).join('');
+    }).catch(function(){el.innerHTML='<div style="color:rgba(240,244,248,0.3);padding:8px">Inventory offline.</div>';});
+}
+function renderEmb(){
+  var el=document.getElementById('emb-list');if(!el)return;
+  var reg=(document.getElementById('emb-reg')||{}).value||'ALL';
+  var pri=(document.getElementById('emb-pri')||{}).value||'ALL';
+  var DATA=[
+    {n:'USDA Altruistic Marketing Service',e:'ams.py@usda.gov',p:'+1-202-720-8998',c:'USA',r:'TA',pv:'HIGH',role:'Produce Market News & Grading'},
+    {n:'USDA APHIS — Plant Health',e:'aphis.web@usda.gov',p:'+1-844-820-2234',c:'USA',r:'TA',pv:'HIGH',role:'Import/Export Plant Health'},
+    {n:'FDA — Food Safety / FSMA 204',e:'fdaemergency@fda.hhs.gov',p:'+1-866-300-4374',c:'USA',r:'TA',pv:'HIGH',role:'FSMA 204 Compliance'},
+    {n:'US Customs & Border Protection',e:'cbp_info@cbp.dhs.gov',p:'+1-877-227-5511',c:'USA',r:'TA',pv:'HIGH',role:'Import Clearance'},
+    {n:'SENASICA — Mexico',e:'senasica@senasica.gob.mx',p:'+52-800-751-9100',c:'Mexico',r:'TA',pv:'HIGH',role:'Phytosanitary Cert MX'},
+    {n:'SADER — Ministry of Agriculture MX',e:'contacto@sader.gob.mx',p:'+52-800-727-0700',c:'Mexico',r:'TA',pv:'HIGH',role:'Ag Ministry Mexico'},
+    {n:'ProMexico Trade Commission',e:'contacto@promexico.gob.mx',p:'+52-55-5447-7000',c:'Mexico',r:'TA',pv:'MED',role:'Trade & Investment MX'},
+    {n:'Guatemala — MAGA',e:'info@maga.gob.gt',p:'+502-2413-7000',c:'Guatemala',r:'CA',pv:'HIGH',role:'Ag Ministry Guatemala'},
+    {n:'Costa Rica — MAG',e:'despacho.mag@mag.go.cr',p:'+506-2231-2344',c:'Costa Rica',r:'CA',pv:'HIGH',role:'Ag Ministry Costa Rica'},
+    {n:'El Salvador — MAG',e:'info@mag.gob.sv',p:'+503-2210-1700',c:'El Salvador',r:'CA',pv:'MED',role:'Ag Ministry El Salvador'},
+    {n:'Honduras — SAG',e:'info@sag.gob.hn',p:'+504-2235-7695',c:'Honduras',r:'CA',pv:'MED',role:'Ag Ministry Honduras'},
+    {n:'Panama — MIDA',e:'info@mida.gob.pa',p:'+507-507-0600',c:'Panama',r:'CA',pv:'MED',role:'Ag Ministry Panama'},
+    {n:'Nicaragua — MAGFOR',e:'webmaster@magfor.gob.ni',p:'+505-2276-0200',c:'Nicaragua',r:'CA',pv:'LOW',role:'Ag Ministry Nicaragua'},
+    {n:'Peru — SENASA',e:'contacto@senasa.gob.pe',p:'+51-1-313-3300',c:'Peru',r:'SA',pv:'HIGH',role:'Phytosanitary Peru'},
+    {n:'Chile — SAG',e:'sag@sag.gob.cl',p:'+56-2-2345-1100',c:'Chile',r:'SA',pv:'HIGH',role:'Ag & Livestock Chile'},
+    {n:'Colombia — ICA',e:'contactenos@ica.gov.co',p:'+57-1-648-0000',c:'Colombia',r:'SA',pv:'HIGH',role:'Agriculture Institute Colombia'},
+    {n:'Ecuador — AGROCALIDAD',e:'agrocalidad@agrocalidad.gob.ec',p:'+593-2-256-5346',c:'Ecuador',r:'SA',pv:'MED',role:'Phytosanitary Ecuador'},
+    {n:'Brazil — MAPA',e:'ouvidoria@agricultura.gov.br',p:'+55-61-3218-2828',c:'Brazil',r:'SA',pv:'HIGH',role:'Ag Ministry Brazil'},
+  ];
+  var f=DATA.filter(function(d){return(reg==='ALL'||d.r===reg)&&(pri==='ALL'||d.pv===pri);});
+  if(!f.length){el.innerHTML='<div style="color:rgba(240,244,248,0.4);padding:8px">No contacts for filter.</div>';return;}
+  var pc={'HIGH':'rgba(244,63,94,0.12)','MED':'rgba(245,158,11,0.10)','LOW':'rgba(100,116,139,0.10)'};
+  var tc={'HIGH':'#f43f5e','MED':'#f59e0b','LOW':'#64748b'};
+  el.innerHTML=f.map(function(d){
+    return '<div style="padding:9px 11px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(192,200,216,0.1);margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px">'
+      +'<div style="flex:1">'
+      +'<div style="font-size:11px;font-weight:700;color:#f0f4f8;margin-bottom:2px">'+d.n+'</div>'
+      +'<div style="font-size:9px;color:rgba(240,244,248,0.35);margin-bottom:5px">'+d.c+' · '+d.role+'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+      +'<button onclick="navigator.clipboard.writeText(''+d.e+'').then(function(){alert('Copied!')})" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:5px;color:#C9A55C;font-size:9px;padding:3px 8px;cursor:pointer">'+d.e+'</button>'
+      +'<a href="tel:'+d.p+'" style="background:rgba(192,200,216,0.07);border:1px solid rgba(192,200,216,0.15);border-radius:5px;color:rgba(192,200,216,0.7);font-size:9px;padding:3px 8px;text-decoration:none">'+d.p+'</a>'
+      +'</div></div>'
+      +'<span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:99px;background:'+pc[d.pv]+';color:'+tc[d.pv]+';white-space:nowrap">'+d.pv+'</span>'
+      +'</div>';
+  }).join('');
+}
+function copyAllEmb(){
+  renderEmb();
+  setTimeout(function(){
+    var btns=document.querySelectorAll('#emb-list button');
+    var emails=[];
+    btns.forEach(function(b){var t=b.textContent.trim();if(t.indexOf('@')>0)emails.push(t);});
+    if(!emails.length){alert('No emails loaded.');return;}
+    navigator.clipboard.writeText(emails.join(', ')).then(function(){alert('Copied '+emails.length+' emails!');}).catch(function(){prompt('Emails:',emails.join(', '));});
+  },300);
+}
+</script>
+
+<script>
+// ── Cascade Intelligence Module ──
+// ============================================================================
+// CASCADE INTELLIGENCE MODULE v1.0
+// Injects into all staff HTML portals (pablo, denisse, osvaldo, oscar, etc.)
+// Features:
+//   - Real-time inventory feed (growers posting crops)
+//   - Cascade approval queue (15-min auto-fire)
+//   - Buyer inquiry alerts (reverse direction)
+//   - Manifest viewer
+//   - Direct email composer to contacts/buyers
+//   - Brain event feed (live)
+//   - All tied to AI agents via /api/nexus/broadcast
+// ============================================================================
+(function() {
+  const API = 'https://auditdna-backend-1-production.up.railway.app';
+  const GOLD = '#C9A55C';
+  const DARK = '#0F1419';
+  const GREEN = '#22c55e';
+  const RED   = '#ef4444';
+  const BLUE  = '#4a8fd4';
+
+  // State
+  let inventory = [];
+  let cascade   = [];
+  let brainFeed = [];
+  let manifests = [];
+  let autoFireCount = 0;
+  let lastBrainId = 0;
+
+  // ── INJECT TAB BUTTON ──────────────────────────────────────────────────────
+  function injectTab() {
+    const nav = document.getElementById('tabnav');
+    if (!nav) return;
+
+    const btn = document.createElement('span');
+    btn.id = 'tab-cascade-btn';
+    btn.className = 'tnav-btn';
+    btn.setAttribute('onclick', "showCascadeTab()");
+    btn.style.cssText = 'position:relative;';
+    btn.innerHTML = `
+      <span id="t-cascade-label">LIVE INTEL</span>
+      <span id="cascade-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:${RED};color:white;font-size:9px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center;">0</span>
+    `;
+    nav.appendChild(btn);
+  }
+
+  // ── INJECT TAB PANEL ──────────────────────────────────────────────────────
+  function injectPanel() {
+    const existing = document.getElementById('tab-cascade');
+    if (existing) return;
+
+    const panel = document.createElement('div');
+    panel.id = 'tab-cascade';
+    panel.className = 'sec';
+    panel.style.display = 'none';
+    panel.innerHTML = `
+      <style>
+        .ci-card { background: #111827; border: 1px solid rgba(201,165,92,0.2); border-radius:6px; padding:12px; margin-bottom:8px; }
+        .ci-card.urgent { border-color: rgba(239,68,68,0.5); }
+        .ci-card.buyer  { border-color: rgba(74,143,212,0.4); }
+        .ci-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+        .ci-title { color:${GOLD}; font-size:11px; font-weight:700; letter-spacing:1px; }
+        .ci-count { color:#64748b; font-size:10px; }
+        .ci-tabs { display:flex; gap:4px; margin-bottom:12px; flex-wrap:wrap; }
+        .ci-tab { padding:5px 12px; border:1px solid rgba(255,255,255,0.1); border-radius:3px; font-size:10px; font-weight:600; cursor:pointer; color:#64748b; background:transparent; }
+        .ci-tab.active { background:rgba(201,165,92,0.15); border-color:${GOLD}; color:${GOLD}; }
+        .ci-item { background:#1f2937; border-radius:4px; padding:10px; margin-bottom:6px; border-left:3px solid transparent; }
+        .ci-item.grower { border-left-color:${GREEN}; }
+        .ci-item.buyer  { border-left-color:${BLUE}; }
+        .ci-item.urgent { border-left-color:${RED}; }
+        .ci-item-title { color:white; font-size:12px; font-weight:700; margin-bottom:3px; }
+        .ci-item-sub   { color:#94a3b8; font-size:10px; margin-bottom:6px; line-height:1.5; }
+        .ci-btns { display:flex; gap:5px; flex-wrap:wrap; }
+        .ci-btn { padding:4px 10px; border-radius:3px; font-size:10px; font-weight:700; cursor:pointer; border:none; letter-spacing:0.3px; }
+        .ci-btn-green  { background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.4); color:${GREEN}; }
+        .ci-btn-gold   { background:rgba(201,165,92,0.1); border:1px solid rgba(201,165,92,0.3); color:${GOLD}; }
+        .ci-btn-blue   { background:rgba(74,143,212,0.1); border:1px solid rgba(74,143,212,0.3); color:${BLUE}; }
+        .ci-btn-red    { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); color:${RED}; }
+        .ci-empty { color:#475569; font-size:11px; padding:16px; text-align:center; }
+        .ci-wave-bar { display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; }
+        .ci-wave { padding:2px 8px; border-radius:2px; font-size:9px; font-weight:700; }
+        .ci-wave.w { background:rgba(74,143,212,0.15); color:${BLUE}; }
+        .ci-wave.m { background:rgba(201,165,92,0.15); color:${GOLD}; }
+        .ci-wave.e { background:rgba(34,197,94,0.15); color:${GREEN}; }
+        .brain-event { padding:6px 10px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:10px; }
+        .brain-event .evt-type { color:${GOLD}; font-weight:700; }
+        .brain-event .evt-src  { color:#64748b; }
+        .brain-event .evt-time { color:#475569; font-size:9px; float:right; }
+        .compose-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:999; display:none; align-items:center; justify-content:center; }
+        .compose-box { background:#111827; border:1px solid rgba(201,165,92,0.3); border-radius:8px; padding:20px; width:90%; max-width:480px; max-height:80vh; overflow-y:auto; }
+        .compose-field { margin-bottom:10px; }
+        .compose-field label { display:block; font-size:9px; font-weight:700; color:#64748b; letter-spacing:0.8px; text-transform:uppercase; margin-bottom:4px; }
+        .compose-field input, .compose-field textarea, .compose-field select { width:100%; padding:7px 10px; background:#1f2937; border:1px solid rgba(255,255,255,0.1); border-radius:3px; font-size:12px; color:white; font-family:inherit; }
+        .compose-field textarea { min-height:80px; resize:vertical; }
+        .manifest-item { background:#1f2937; border-radius:4px; padding:10px; margin-bottom:6px; }
+        .manifest-item .m-title { color:${GOLD}; font-size:11px; font-weight:700; }
+        .manifest-item .m-line  { color:#94a3b8; font-size:10px; margin-top:2px; }
+        .refresh-bar { display:flex; justify-content:space-between; align-items:center; padding:6px 0 10px; }
+        .refresh-bar span { color:#475569; font-size:9px; }
+        .live-dot { width:6px; height:6px; border-radius:50%; background:${GREEN}; display:inline-block; margin-right:4px; animation:pulse-dot 2s infinite; }
+        @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+      </style>
+
+      <!-- HEADER -->
+      <div class="ci-hdr">
+        <div>
+          <div class="ci-title"><span class="live-dot"></span> LIVE INTELLIGENCE FEED</div>
+          <div style="color:#475569;font-size:9px;margin-top:2px;" id="ci-last-update">Loading...</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <div id="ci-autofire-badge" style="display:none;padding:3px 10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:${RED};font-size:9px;font-weight:700;border-radius:3px;"></div>
+          <button onclick="ciRefreshAll()" style="padding:4px 10px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.3);color:${GOLD};font-size:9px;cursor:pointer;border-radius:3px;">REFRESH</button>
+        </div>
+      </div>
+
+      <!-- SUB TABS -->
+      <div class="ci-tabs">
+        <button class="ci-tab active" onclick="ciTab('inventory')" id="ci-tab-inventory">INVENTORY</button>
+        <button class="ci-tab" onclick="ciTab('cascade')" id="ci-tab-cascade">CASCADE QUEUE</button>
+        <button class="ci-tab" onclick="ciTab('buyers')" id="ci-tab-buyers">BUYER NEEDS</button>
+        <button class="ci-tab" onclick="ciTab('manifests')" id="ci-tab-manifests">MANIFESTS</button>
+        <button class="ci-tab" onclick="ciTab('brain')" id="ci-tab-brain">BRAIN FEED</button>
+      </div>
+
+      <!-- INVENTORY PANEL -->
+      <div id="ci-panel-inventory">
+        <div class="refresh-bar">
+          <span id="ci-inv-count">Loading inventory...</span>
+          <span style="color:#475569;font-size:9px;">Updates every 60s</span>
+        </div>
+        <div id="ci-inv-list"><div class="ci-empty">Loading...</div></div>
+      </div>
+
+      <!-- CASCADE QUEUE PANEL -->
+      <div id="ci-panel-cascade" style="display:none;">
+        <div class="refresh-bar">
+          <span id="ci-cas-count">Loading queue...</span>
+          <span style="color:${RED};font-size:9px;">Auto-fires at 15 min</span>
+        </div>
+        <div id="ci-cas-list"><div class="ci-empty">Loading...</div></div>
+      </div>
+
+      <!-- BUYER NEEDS PANEL -->
+      <div id="ci-panel-buyers" style="display:none;">
+        <div class="refresh-bar">
+          <span id="ci-buy-count">Loading buyer needs...</span>
+          <span style="color:#475569;font-size:9px;">Updates every 60s</span>
+        </div>
+        <div id="ci-buy-list"><div class="ci-empty">Loading...</div></div>
+      </div>
+
+      <!-- MANIFESTS PANEL -->
+      <div id="ci-panel-manifests" style="display:none;">
+        <div class="refresh-bar">
+          <span id="ci-man-count">Loading manifests...</span>
+        </div>
+        <div id="ci-man-list"><div class="ci-empty">Loading...</div></div>
+      </div>
+
+      <!-- BRAIN FEED PANEL -->
+      <div id="ci-panel-brain" style="display:none;">
+        <div class="refresh-bar">
+          <span style="color:#475569;font-size:9px;">Last 20 brain events — live</span>
+        </div>
+        <div id="ci-brain-list" style="border:1px solid rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
+          <div class="ci-empty">Loading...</div>
+        </div>
+      </div>
+    `;
+
+    // Insert before closing body or after last sec
+    const body = document.body;
+    body.appendChild(panel);
+
+    // Compose overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'compose-overlay';
+    overlay.id = 'ci-compose-overlay';
+    overlay.onclick = function(e) { if(e.target===this) ciCloseCompose(); };
+    overlay.innerHTML = `
+      <div class="compose-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="color:${GOLD};font-size:12px;font-weight:700;letter-spacing:1px;">COMPOSE MESSAGE</div>
+          <button onclick="ciCloseCompose()" style="background:none;border:none;color:#64748b;font-size:18px;cursor:pointer;">×</button>
+        </div>
+        <div class="compose-field">
+          <label>To / Para</label>
+          <input id="ci-to" type="email" placeholder="buyer@company.com or multiple,separated,by,commas">
+        </div>
+        <div class="compose-field">
+          <label>Subject / Asunto</label>
+          <input id="ci-subject" type="text" placeholder="Product available — Mexausa Food Group">
+        </div>
+        <div class="compose-field">
+          <label>Message / Mensaje</label>
+          <textarea id="ci-body" placeholder="Type your message here..."></textarea>
+        </div>
+        <div class="compose-field">
+          <label>Send Via / Enviar Por</label>
+          <select id="ci-send-method">
+            <option value="email">Email (mailto)</option>
+            <option value="whatsapp">WhatsApp</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onclick="ciSendCompose()" style="flex:1;padding:10px;background:${GREEN};border:none;border-radius:4px;color:white;font-size:12px;font-weight:700;cursor:pointer;">SEND / ENVIAR</button>
+          <button onclick="ciCloseCompose()" style="padding:10px 16px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:4px;color:#64748b;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>
+    `;
+    body.appendChild(overlay);
+  }
+
+  // ── SUB TAB SWITCHING ─────────────────────────────────────────────────────
+  window.ciTab = function(name) {
+    ['inventory','cascade','buyers','manifests','brain'].forEach(t => {
+      const panel = document.getElementById('ci-panel-'+t);
+      const btn   = document.getElementById('ci-tab-'+t);
+      if(panel) panel.style.display = t===name ? 'block' : 'none';
+      if(btn)   btn.classList[t===name?'add':'remove']('active');
+    });
+    if(name==='brain') renderBrainFeed();
+  };
+
+  // ── DATA FETCHING ──────────────────────────────────────────────────────────
+  async function fetchData(url) {
+    try {
+      const r = await fetch(url, { headers: { 'User-Agent': 'staff-portal' } });
+      return await r.json();
+    } catch(e) { return null; }
+  }
+
+  window.ciRefreshAll = async function() {
+    document.getElementById('ci-last-update').textContent = 'Refreshing...';
+    await Promise.all([fetchInventory(), fetchCascade(), fetchBuyerNeeds(), fetchManifests(), fetchBrainEvents()]);
+    document.getElementById('ci-last-update').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  };
+
+  async function fetchInventory() {
+    const d = await fetchData(API + '/api/loaf/inventory?limit=30');
+    inventory = d?.items || d?.data || [];
+    const count = document.getElementById('ci-inv-count');
+    if(count) count.textContent = inventory.length + ' products in inventory';
+    renderInventory();
+  }
+
+  async function fetchCascade() {
+    const d = await fetchData(API + '/api/marketing-campaigns/queue/pending');
+    cascade = d?.campaigns || [];
+    autoFireCount = d?.auto_fire_due || 0;
+
+    const badge = document.getElementById('ci-autofire-badge');
+    if(badge) {
+      badge.textContent = autoFireCount + ' AUTO-FIRE';
+      badge.style.display = autoFireCount > 0 ? 'inline-block' : 'none';
+    }
+
+    // Update tab badge
+    const navBadge = document.getElementById('cascade-badge');
+    const total = cascade.length + autoFireCount;
+    if(navBadge) {
+      navBadge.textContent = total;
+      navBadge.style.display = total > 0 ? 'inline-block' : 'none';
+    }
+
+    const count = document.getElementById('ci-cas-count');
+    if(count) count.textContent = cascade.length + ' pending approval' + (autoFireCount > 0 ? ' — ' + autoFireCount + ' AUTO-FIRE DUE' : '');
+    renderCascade();
+  }
+
+  async function fetchBuyerNeeds() {
+    const d = await fetchData(API + '/api/loaf/buyer-needs?limit=20');
+    const needs = d?.needs || d?.data || [];
+    const count = document.getElementById('ci-buy-count');
+    if(count) count.textContent = needs.length + ' buyer requests';
+    renderBuyerNeeds(needs);
+  }
+
+  async function fetchManifests() {
+    const d = await fetchData(API + '/api/manifests?limit=20');
+    manifests = d?.manifests || d?.data || [];
+    const count = document.getElementById('ci-man-count');
+    if(count) count.textContent = manifests.length + ' manifests';
+    renderManifests();
+  }
+
+  async function fetchBrainEvents() {
+    const d = await fetchData(API + '/api/brain/events?limit=20&after=' + lastBrainId);
+    brainFeed = d?.events || d?.data || brainFeed;
+    if(brainFeed.length > 0) lastBrainId = Math.max(...brainFeed.map(e=>e.id||0));
+    renderBrainFeed();
+  }
+
+  // ── RENDERERS ──────────────────────────────────────────────────────────────
+  function renderInventory() {
+    const el = document.getElementById('ci-inv-list');
+    if(!el) return;
+    if(!inventory.length) {
+      el.innerHTML = '<div class="ci-empty">No inventory posted yet. Growers will appear here when they submit via LOAF.</div>';
+      return;
+    }
+    el.innerHTML = inventory.map(item => {
+      const comm = item.commodity || 'Unknown';
+      const grower = item.grower_name || item.name || 'Anonymous Grower';
+      const qty = item.quantity_lbs ? item.quantity_lbs.toLocaleString() + ' lbs' : (item.quantity || '?');
+      const fob = item.fob_price ? '$' + item.fob_price + '/cs FOB' : '';
+      const origin = item.origin || item.region || '';
+      const harvest = item.harvest_date ? 'Harvest: ' + item.harvest_date.split('T')[0] : '';
+      const ts = item.created_at || item.submitted_at || '';
+      const age = ts ? Math.floor((Date.now()-new Date(ts))/(1000*60)) + 'min ago' : '';
+      return \`
+        <div class="ci-item grower">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div class="ci-item-title">\${comm.toUpperCase()} — \${grower}</div>
+            <div style="color:#475569;font-size:9px;">\${age}</div>
+          </div>
+          <div class="ci-item-sub">\${qty}\${fob?' · '+fob:''}\${origin?' · '+origin:''}\${harvest?' · '+harvest:''}</div>
+          <div class="ci-btns">
+            <button class="ci-btn ci-btn-green" onclick="ciApproveItem(\${item.id},'inventory')">APPROVE + BLAST</button>
+            <button class="ci-btn ci-btn-gold" onclick="ciComposeEmail('','\${comm} Available — Mexausa Food Group','We have \${comm} available now.\\n\\nGrower: \${grower}\\nQty: \${qty}\\n\${fob}\\n\${origin}\\n\\nReply or call Saul Garcia +1 (831) 251-3116\\nsaul@mexausafg.com')">EMAIL BUYERS</button>
+            <button class="ci-btn ci-btn-blue" onclick="ciWhatsApp('\${comm} available now — \${qty} \${fob} \${origin}. Interested? Reply or call Saul Garcia +1 (831) 251-3116')">WHATSAPP</button>
+          </div>
+        </div>\`;
+    }).join('');
+  }
+
+  function renderCascade() {
+    const el = document.getElementById('ci-cas-list');
+    if(!el) return;
+    if(!cascade.length) {
+      el.innerHTML = '<div class="ci-empty">No campaigns pending. Inventory uploads will appear here automatically within 5 minutes.</div>';
+      return;
+    }
+    el.innerHTML = cascade.map(c => {
+      const min = Math.floor(c.minutes_pending||0);
+      const due = c.auto_fire_due;
+      const total = (c.buyers_west_count||0)+(c.buyers_midwest_count||0)+(c.buyers_east_count||0);
+      return \`
+        <div class="ci-item \${due?'urgent':''}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div class="ci-item-title">\${(c.commodity||'').toUpperCase()} — \${c.grower_name||'Grower'}</div>
+            <div style="color:\${due?'#ef4444':'#64748b'};font-size:9px;font-weight:700;">\${min}min \${due?'AUTO-FIRE!':''}</div>
+          </div>
+          <div class="ci-item-sub">
+            \${c.quantity_lbs?c.quantity_lbs.toLocaleString()+' lbs · ':''}\${c.fob_price?'$'+c.fob_price+' FOB · ':''}\${total} buyers ready
+          </div>
+          <div class="ci-wave-bar">
+            <span class="ci-wave w">West \${c.buyers_west_count||0}</span>
+            <span style="color:#475569;font-size:9px;align-self:center;">+15min</span>
+            <span class="ci-wave m">Midwest \${c.buyers_midwest_count||0}</span>
+            <span style="color:#475569;font-size:9px;align-self:center;">+30min</span>
+            <span class="ci-wave e">East \${c.buyers_east_count||0}</span>
+          </div>
+          <div class="ci-btns" style="margin-top:8px;">
+            <button class="ci-btn ci-btn-green" onclick="ciCascadeAction(\${c.id},'approve')">APPROVE + FIRE</button>
+            <button class="ci-btn ci-btn-gold" onclick="ciCascadeAction(\${c.id},'omega-analysis')">OMEGA</button>
+            <button class="ci-btn ci-btn-blue" onclick="ciCascadeAction(\${c.id},'price-intel')">PRICE INTEL</button>
+            <button class="ci-btn ci-btn-red" onclick="ciCascadeAction(\${c.id},'reject')">REJECT</button>
+          </div>
+        </div>\`;
+    }).join('');
+  }
+
+  function renderBuyerNeeds(needs) {
+    const el = document.getElementById('ci-buy-list');
+    if(!el) return;
+    if(!needs.length) {
+      el.innerHTML = '<div class="ci-empty">No buyer requests yet. Buyers posting needs will appear here.</div>';
+      return;
+    }
+    el.innerHTML = needs.map(n => {
+      const comm = n.commodity || 'Unknown';
+      const buyer = n.buyer_name || n.name || 'Anonymous Buyer';
+      const qty = n.quantity_lbs ? n.quantity_lbs.toLocaleString()+' lbs' : '';
+      const price = n.max_fob_price ? 'Max $'+n.max_fob_price+'/cs' : '';
+      const region = n.region || '';
+      return \`
+        <div class="ci-item buyer">
+          <div class="ci-item-title">BUYER NEEDS: \${comm.toUpperCase()}</div>
+          <div class="ci-item-sub">\${buyer} · \${qty}\${price?' · '+price:''}\${region?' · '+region:''}</div>
+          <div class="ci-btns">
+            <button class="ci-btn ci-btn-blue" onclick="ciComposeEmail('','\${comm} Available — Response to Your Inquiry','Dear \${buyer},\\n\\nThank you for your inquiry for \${comm}.\\n\\nWe have availability. Please contact us to discuss pricing and logistics.\\n\\nSaul Garcia\\nMexausa Food Group\\n+1 (831) 251-3116\\nsaul@mexausafg.com')">RESPOND TO BUYER</button>
+            <button class="ci-btn ci-btn-gold" onclick="ciNotifyGrowers('\${comm}','\${qty}')">PING GROWERS</button>
+          </div>
+        </div>\`;
+    }).join('');
+  }
+
+  function renderManifests() {
+    const el = document.getElementById('ci-man-list');
+    if(!el) return;
+    if(!manifests.length) {
+      el.innerHTML = '<div class="ci-empty">No manifests loaded yet.</div>';
+      return;
+    }
+    el.innerHTML = manifests.map(m => \`
+      <div class="manifest-item">
+        <div class="m-title">\${m.manifest_number||m.id} — \${m.commodity||'Mixed'}</div>
+        <div class="m-line">Grower: \${m.grower_name||'?'} · Origin: \${m.origin||'?'} · Qty: \${m.quantity||'?'}</div>
+        <div class="m-line">Status: \${m.status||'?'} · \${m.created_at?new Date(m.created_at).toLocaleDateString():''}</div>
+        <div class="ci-btns" style="margin-top:6px;">
+          <button class="ci-btn ci-btn-gold" onclick="ciComposeEmail('','Manifest \${m.manifest_number||m.id} — \${m.commodity||\"Mixed\"}','Manifest details:\\n\\nCommodity: \${m.commodity}\\nGrower: \${m.grower_name}\\nOrigin: \${m.origin}\\nQuantity: \${m.quantity}\\n\\nSaul Garcia\\nMexausa Food Group')">EMAIL MANIFEST</button>
+        </div>
+      </div>\`).join('');
+  }
+
+  function renderBrainFeed() {
+    const el = document.getElementById('ci-brain-list');
+    if(!el) return;
+    if(!brainFeed.length) {
+      el.innerHTML = '<div class="ci-empty">Brain feed loading...</div>';
+      return;
+    }
+    el.innerHTML = brainFeed.slice(0,20).map(e => {
+      const ts = e.created_at ? new Date(e.created_at).toLocaleTimeString() : '';
+      const payload = typeof e.payload === 'object' ? JSON.stringify(e.payload).substring(0,80) : String(e.payload||'').substring(0,80);
+      return \`
+        <div class="brain-event">
+          <span class="evt-time">\${ts}</span>
+          <span class="evt-type">\${e.event_type||e.type||'EVENT'}</span>
+          <span class="evt-src"> · \${e.source||'system'}</span>
+          <div style="color:#475569;font-size:9px;margin-top:2px;">\${payload}</div>
+        </div>\`;
+    }).join('');
+  }
+
+  // ── ACTIONS ────────────────────────────────────────────────────────────────
+  window.ciCascadeAction = async function(id, action) {
+    try {
+      await fetch(API + '/api/marketing-campaigns/' + id + '/' + action, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }
+      });
+      // Notify all agents via nexus
+      await fetch(API + '/api/nexus/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_type: 'STAFF_CASCADE_' + action.toUpperCase(), payload: { campaign_id: id, action, staff: window.MFG_USER || 'staff' }, source: 'StaffPortal' })
+      });
+      ciRefreshAll();
+    } catch(e) {}
+  };
+
+  window.ciApproveItem = async function(id, type) {
+    try {
+      await fetch(API + '/api/nexus/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_type: 'INVENTORY_APPROVED', payload: { id, type, staff: window.MFG_USER || 'staff' }, source: 'StaffPortal' })
+      });
+      alert('Approved and queued for blast!');
+    } catch(e) {}
+  };
+
+  window.ciNotifyGrowers = async function(commodity, qty) {
+    try {
+      await fetch(API + '/api/nexus/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_type: 'BUYER_NEED_GROWER_PING', payload: { commodity, qty, staff: window.MFG_USER || 'staff' }, source: 'StaffPortal' })
+      });
+      alert('Growers for ' + commodity + ' are being notified!');
+    } catch(e) {}
+  };
+
+  // ── COMPOSE EMAIL / WHATSAPP ───────────────────────────────────────────────
+  window.ciComposeEmail = function(to, subject, body) {
+    document.getElementById('ci-to').value = to || '';
+    document.getElementById('ci-subject').value = subject || '';
+    document.getElementById('ci-body').value = body || '';
+    document.getElementById('ci-compose-overlay').style.display = 'flex';
+  };
+
+  window.ciCloseCompose = function() {
+    document.getElementById('ci-compose-overlay').style.display = 'none';
+  };
+
+  window.ciSendCompose = function() {
+    const to      = document.getElementById('ci-to').value.trim();
+    const subject = document.getElementById('ci-subject').value.trim();
+    const body    = document.getElementById('ci-body').value.trim();
+    const method  = document.getElementById('ci-send-method').value;
+
+    if(!to && method === 'email') { alert('Enter an email address'); return; }
+
+    if(method === 'whatsapp') {
+      window.open('https://wa.me/?text=' + encodeURIComponent(subject + '\n\n' + body), '_blank');
+    } else {
+      window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    }
+    ciCloseCompose();
+  };
+
+  window.ciWhatsApp = function(msg) {
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  };
+
+  // ── SHOW/HIDE PANEL ────────────────────────────────────────────────────────
+  window.showCascadeTab = function() {
+    // Hide all other sections
+    document.querySelectorAll('.sec').forEach(s => s.style.display = 'none');
+    const panel = document.getElementById('tab-cascade');
+    if(panel) panel.style.display = 'block';
+    ciRefreshAll();
+  };
+
+  // ── AUTO REFRESH EVERY 60s ────────────────────────────────────────────────
+  function startAutoRefresh() {
+    setInterval(ciRefreshAll, 60000);
+    // Brain feed every 15s for near-real-time
+    setInterval(fetchBrainEvents, 15000);
+  }
+
+  // ── INIT ───────────────────────────────────────────────────────────────────
+  function init() {
+    injectTab();
+    injectPanel();
+    ciRefreshAll();
+    startAutoRefresh();
+    console.log('[CASCADE INTEL] Module loaded — live inventory, cascade, brain feed active');
+  }
+
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+</script>
+
+<script>
+// ── Due Diligence + Factoring App Embed ──
+(function(){
+  const APP_URL = 'https://mexausafg.com/AuditDNA-Factoring-Application.html';
+  const GOLD = '#C9A55C';
+
+  const html = `
+  <style>
+    .dd-section { background:#111827; border:1px solid rgba(201,165,92,0.2); border-radius:6px; margin:0 0 12px; overflow:hidden; }
+    .dd-hdr { background:#0F1419; padding:9px 14px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+    .dd-hdr-title { color:${GOLD}; font-size:11px; font-weight:700; letter-spacing:1px; }
+    .dd-hdr-toggle { color:#64748b; font-size:16px; font-weight:700; }
+    .dd-body { display:none; padding:14px; }
+    .dd-body.open { display:block; }
+    .dd-cat { margin-bottom:12px; }
+    .dd-cat-title { color:${GOLD}; font-size:9px; font-weight:700; letter-spacing:1.5px; margin-bottom:6px; padding-bottom:4px; border-bottom:1px solid rgba(201,165,92,0.15); }
+    .dd-item { display:flex; align-items:flex-start; gap:8px; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .dd-item input[type=checkbox] { flex-shrink:0; margin-top:2px; accent-color:${GOLD}; }
+    .dd-item-label { flex:1; font-size:10px; color:#c2cedd; line-height:1.4; }
+    .dd-item-note { font-size:9px; color:#475569; display:block; margin-top:1px; }
+    .dd-badge { padding:1px 6px; border-radius:2px; font-size:8px; font-weight:700; flex-shrink:0; margin-top:1px; }
+    .dd-req  { background:rgba(239,68,68,0.12); color:#ef4444; }
+    .dd-cond { background:rgba(201,165,92,0.1); color:${GOLD}; }
+    .dd-download { display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:linear-gradient(135deg,#854F0B,#BA7517); border-radius:4px; color:white; font-size:11px; font-weight:700; text-decoration:none; letter-spacing:0.5px; margin-top:10px; }
+    .dd-sub-info { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; padding:10px; background:rgba(0,0,0,0.3); border-radius:4px; }
+    .dd-sub-info div { font-size:9px; color:#64748b; line-height:1.8; }
+    .dd-sub-info strong { color:#94a3b8; }
+  </style>
+
+  <div class="dd-section">
+    <div class="dd-hdr" onclick="toggleDD()">
+      <span class="dd-hdr-title">FACTORING APPLICATION + DUE DILIGENCE CHECKLIST</span>
+      <span class="dd-hdr-toggle" id="dd-arrow">+</span>
+    </div>
+    <div class="dd-body" id="dd-body">
+
+      <div style="font-size:10px;color:#64748b;margin-bottom:12px;line-height:1.6;padding:8px 10px;background:rgba(201,165,92,0.05);border-radius:3px;border-left:2px solid ${GOLD};">
+        Share this checklist with every client before submitting a factoring deal. 
+        All REQUIRED items must be collected before submission. CONDITIONAL items depend on deal type.
+        <br><em>Comparte esta lista con cada cliente antes de enviar un trato de factoraje.</em>
+      </div>
+
+      <!-- BUSINESS ENTITY -->
+      <div class="dd-cat">
+        <div class="dd-cat-title">1. BUSINESS ENTITY / EMPRESA</div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Articles of Incorporation / LLC Docs / Acta Constitutiva<span class="dd-item-note">All entities</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Business License / Licencia Comercial<span class="dd-item-note">All entities</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">EIN Letter (IRS) / RFC Document (MX)<span class="dd-item-note">US and MX entities</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">DBA Certificate / Certificado Nombre Comercial<span class="dd-item-note">If operating under trade name</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">SENASICA / USDA Registration<span class="dd-item-note">Agriculture producers/exporters</span></div><span class="dd-badge dd-cond">COND</span></div>
+      </div>
+
+      <!-- FINANCIAL -->
+      <div class="dd-cat">
+        <div class="dd-cat-title">2. FINANCIAL / FINANCIERO</div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Last 3 Months Bank Statements / Últimos 3 Meses Estados Bancarios<span class="dd-item-note">All business accounts</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">AR Aging Report / Reporte de Antigüedad CxC<span class="dd-item-note">Dated within 30 days</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Invoice(s) to be Factored / Factura(s) a Factorear<span class="dd-item-note">Copies of all invoices</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Last 2 Years Business Tax Returns / Declaraciones Fiscales<span class="dd-item-note">Deals over $100K</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">P&amp;L + Balance Sheet / Estado de Resultados + Balance<span class="dd-item-note">Deals over $250K</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Personal Tax Returns (2 yrs) / Declaraciones Personales<span class="dd-item-note">Principals with 20%+ ownership</span></div><span class="dd-badge dd-cond">COND</span></div>
+      </div>
+
+      <!-- IDENTITY / KYC -->
+      <div class="dd-cat">
+        <div class="dd-cat-title">3. IDENTITY / KYC — ALL PRINCIPALS</div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Gov Photo ID — Passport or Driver's License / INE o Pasaporte<span class="dd-item-note">All principals 20%+ ownership</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Proof of Address (&lt;90 days) / Comprobante de Domicilio<span class="dd-item-note">Utility bill or bank statement</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">SSN / ITIN (US) or CURP (MX)<span class="dd-item-note">Per jurisdiction</span></div><span class="dd-badge dd-cond">COND</span></div>
+      </div>
+
+      <!-- PRODUCE SPECIFIC -->
+      <div class="dd-cat">
+        <div class="dd-cat-title">4. PRODUCE &amp; AGRICULTURE SPECIFIC</div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Food Safety Cert — GlobalGAP / PrimusGFS / FSMA 204<span class="dd-item-note">Growers and packers</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">SENASICA Phytosanitary Certificate / Certificado Fitosanitario<span class="dd-item-note">Mexico-origin exports</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Water Analysis Report / Análisis de Agua<span class="dd-item-note">Growers — within 12 months</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Pesticide Log / Registro de Pesticidas<span class="dd-item-note">Fresh produce required</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Bill of Lading / Carta de Porte or CMR<span class="dd-item-note">Shipped or in-transit invoices</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Cold Chain / Temp Log / Cadena de Frío<span class="dd-item-note">Perishables requiring refrigeration</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Organic Certification / Certificación Orgánica<span class="dd-item-note">Organic produce only</span></div><span class="dd-badge dd-cond">COND</span></div>
+      </div>
+
+      <!-- DEBTOR VERIFICATION -->
+      <div class="dd-cat">
+        <div class="dd-cat-title">5. DEBTOR / BUYER VERIFICATION</div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Proof of Delivery — BOL / Signed Receiver / POD<span class="dd-item-note">Debtor received the goods</span></div><span class="dd-badge dd-req">REQUIRED</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Purchase Order from Buyer / Orden de Compra<span class="dd-item-note">PO Finance only</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Buyer AP Contact (Name / Email / Phone)<span class="dd-item-note">If debtor not in our network</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Notice of Assignment / Notificación de Cesión<span class="dd-item-note">When debtor notified of factoring</span></div><span class="dd-badge dd-cond">COND</span></div>
+      </div>
+
+      <!-- CROSS-BORDER -->
+      <div class="dd-cat">
+        <div class="dd-cat-title">6. CROSS-BORDER / TRANSFRONTERIZO</div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Customs Entry / CBP Form 3461 or 7501<span class="dd-item-note">US imports</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Pedimento de Importación / Exportación<span class="dd-item-note">Mexico customs</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">FDA Prior Notice Confirmation<span class="dd-item-note">Food imports into the US</span></div><span class="dd-badge dd-cond">COND</span></div>
+        <div class="dd-item"><input type="checkbox"><div class="dd-item-label">Commercial Invoice EN + ES / Factura Comercial<span class="dd-item-note">Cross-border shipments</span></div><span class="dd-badge dd-cond">COND</span></div>
+      </div>
+
+      <!-- SUBMISSION -->
+      <div class="dd-sub-info">
+        <div>
+          <strong>Email:</strong> saul@mexausafg.com<br>
+          <strong>WhatsApp:</strong> +52 646 340-2686<br>
+          <strong>US:</strong> +1 (831) 251-3116
+        </div>
+        <div>
+          <strong>Formats:</strong> PDF, JPG, PNG, XLSX<br>
+          <strong>Review:</strong> Same day on complete files<br>
+          <strong>Funding:</strong> 24-48 hrs after approval
+        </div>
+      </div>
+
+      <a href="${APP_URL}" download="AuditDNA-Factoring-Application.html" target="_blank" class="dd-download">
+        &#8595; DOWNLOAD FULL FACTORING APPLICATION / DESCARGAR SOLICITUD COMPLETA
+      </a>
+    </div>
+  </div>
+  `;
+
+  function toggleDD() {
+    const body = document.getElementById('dd-body');
+    const arrow = document.getElementById('dd-arrow');
+    const open = body.classList.toggle('open');
+    arrow.textContent = open ? '−' : '+';
+  }
+  window.toggleDD = toggleDD;
+
+  // Inject into the tab-cascade panel if it exists, otherwise into body
+  function injectDD() {
+    const target = document.getElementById('tab-cascade') || document.getElementById('tab-home') || document.body;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    // Insert at the start of the target
+    target.insertBefore(wrapper, target.firstChild);
+  }
+
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectDD);
+  } else {
+    injectDD();
+  }
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>LOAF Sponsor Intake / Solicitud de Patrocinador</title>
+<link rel="icon" href="/AuditDNALOGO.png">
+<style>
+:root{
+  --green:#0F7B41;--green-dark:#075028;--green-soft:#C8E6C9;
+  --black:#0F1419;--charcoal:#2A3138;
+  --white:#FFFFFF;--cream:#F4F6F4;--border:#D4DBD3;
+  --gold:#C9A55C;--red:#B91C1C;--amber:#D97706;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--cream);color:var(--black);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 80px}
+header{background:var(--black);color:var(--white);padding:18px 16px;border-bottom:4px solid var(--gold)}
+header .h{max-width:880px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header img{height:40px;width:auto;background:var(--white);padding:4px;border-radius:4px}
+header h1{font-size:18px;font-weight:700;letter-spacing:.3px}
+header .sub{font-size:12px;color:var(--green-soft);margin-top:2px}
+.lang{margin-left:auto;display:flex;gap:6px}
+.lang button{background:transparent;color:var(--white);border:1px solid var(--gold);padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;border-radius:3px}
+.lang button.on{background:var(--gold);color:var(--black)}
+.notice{background:var(--green);color:var(--white);padding:14px 16px;font-size:13px;line-height:1.5;border-left:5px solid var(--gold)}
+section{background:var(--white);margin-top:18px;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+section h2{background:var(--charcoal);color:var(--white);font-size:14px;font-weight:700;padding:12px 16px;letter-spacing:.5px;text-transform:uppercase}
+section .body{padding:18px 16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.row.full{grid-template-columns:1fr}
+.row.tri{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:640px){.row,.row.tri{grid-template-columns:1fr}}
+label{display:block;font-size:12px;font-weight:600;color:var(--charcoal);margin-bottom:5px;letter-spacing:.2px}
+label .req{color:var(--red);margin-left:3px}
+label .hint{font-weight:400;color:#6b7280;font-size:11px;margin-left:6px}
+input[type=text],input[type=email],input[type=url],input[type=tel],input[type=color],select,textarea{
+  width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:4px;font-size:14px;font-family:inherit;background:var(--white);color:var(--black);transition:border-color .15s
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green)}
+textarea{resize:vertical;min-height:80px}
+input[type=color]{padding:3px;height:38px;cursor:pointer}
+.colorpair{display:flex;gap:8px;align-items:center}
+.colorpair input[type=color]{flex:0 0 60px}
+.colorpair input[type=text]{flex:1;font-family:monospace;text-transform:uppercase}
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1.5px solid var(--border);border-radius:4px;background:var(--cream);min-height:42px}
+.tag-chip{background:var(--green);color:var(--white);padding:4px 8px;font-size:12px;font-weight:600;border-radius:3px;display:inline-flex;align-items:center;gap:6px}
+.tag-chip span{cursor:pointer;font-weight:700;opacity:.8}
+.tag-input{border:none;background:transparent;outline:none;flex:1;min-width:120px;font-size:13px;padding:4px}
+.bullets{display:flex;flex-direction:column;gap:6px}
+.bullet-row{display:flex;gap:6px;align-items:center}
+.bullet-row input{flex:1}
+.bullet-row button{background:var(--red);color:var(--white);border:none;width:28px;height:28px;border-radius:3px;cursor:pointer;font-weight:700;font-size:14px;flex-shrink:0}
+.btn-add{background:var(--charcoal);color:var(--white);border:none;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;border-radius:3px;margin-top:6px;letter-spacing:.3px}
+.actions{position:sticky;bottom:0;background:var(--white);border-top:3px solid var(--gold);padding:14px 16px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px;box-shadow:0 -4px 12px rgba(0,0,0,.08)}
+.actions .left{margin-right:auto;font-size:12px;color:var(--charcoal);align-self:center;font-weight:700}
+.btn{padding:11px 20px;font-size:14px;font-weight:700;border:none;cursor:pointer;border-radius:4px;letter-spacing:.4px;transition:opacity .15s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-preview{background:var(--charcoal);color:var(--white)}
+.btn-submit{background:var(--green);color:var(--white)}
+.btn-submit:hover:not(:disabled){background:var(--green-dark)}
+.btn-secondary{background:var(--white);color:var(--charcoal);border:1.5px solid var(--border)}
+.alert{margin:14px 0;padding:12px 14px;border-radius:4px;font-size:13px;line-height:1.5;border-left:4px solid}
+.alert.err{background:#fef2f2;color:#7f1d1d;border-color:var(--red)}
+.alert.ok{background:#ecfdf5;color:#065f46;border-color:var(--green)}
+.alert.warn{background:#fffbeb;color:#7c2d12;border-color:var(--amber)}
+.alert ul{margin:6px 0 0 18px}
+.palette-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:8px}
+.palette-tile{padding:10px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;text-align:center;transition:transform .1s}
+.palette-tile:hover{transform:translateY(-1px)}
+.palette-tile.taken{opacity:.4;cursor:not-allowed}
+.palette-tile.selected{border-color:var(--gold);border-width:2px;box-shadow:0 0 0 2px rgba(201,165,92,.3)}
+footer{text-align:center;padding:24px 16px;font-size:11px;color:#6b7280}
+.hidden{display:none}
+.counter{font-size:11px;color:#6b7280;float:right}
+.counter.over{color:var(--red);font-weight:700}
+.tier-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media (max-width:640px){.tier-grid{grid-template-columns:1fr}}
+.tier-card{border:2px solid var(--border);border-radius:6px;padding:14px;cursor:pointer;background:var(--white);transition:all .15s;position:relative}
+.tier-card:hover{border-color:var(--gold)}
+.tier-card.active{border-color:var(--green);background:#f0fdf4;box-shadow:0 0 0 2px rgba(15,123,65,.2)}
+.tier-card .ribbon{position:absolute;top:-8px;right:10px;background:var(--gold);color:var(--black);font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;letter-spacing:.5px}
+.tier-card h3{font-size:15px;font-weight:700;color:var(--black);margin-bottom:6px}
+.tier-card .price{font-size:22px;font-weight:800;color:var(--green);margin:4px 0}
+.tier-card .price small{font-size:12px;color:#6b7280;font-weight:500}
+.tier-card .setup{font-size:11px;color:var(--charcoal)}
+.tier-card ul{list-style:none;margin-top:8px;font-size:11px;color:var(--charcoal);line-height:1.6}
+.tier-card ul li:before{content:"+ ";color:var(--green);font-weight:700}
+.billing-toggle{display:flex;gap:6px;justify-content:center;margin:16px 0 8px;flex-wrap:wrap}
+.billing-toggle button{background:var(--white);color:var(--charcoal);border:1.5px solid var(--border);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;border-radius:3px}
+.billing-toggle button.on{background:var(--charcoal);color:var(--white);border-color:var(--charcoal)}
+.billing-toggle .save{background:var(--gold);color:var(--black);font-size:9px;padding:1px 5px;border-radius:2px;margin-left:4px;font-weight:700}
+.summary{background:var(--cream);border:1.5px solid var(--border);border-radius:4px;padding:12px 14px;margin-top:12px;font-size:13px}
+.summary .line{display:flex;justify-content:space-between;padding:3px 0}
+.summary .total{border-top:1.5px solid var(--border);margin-top:6px;padding-top:8px;font-weight:700;font-size:15px;color:var(--green)}
+.tos{margin-top:14px;font-size:11px;color:#6b7280;line-height:1.5}
+.tos label{font-size:11px;font-weight:400}
+.tos input{margin-right:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h">
+    <img src="/AuditDNALOGO.png" alt="Mexausa Food Group">
+    <div>
+      <h1 data-en="LOAF Sponsor Intake" data-es="Solicitud de Patrocinador LOAF">LOAF Sponsor Intake</h1>
+      <div class="sub" data-en="Mexausa Food Group, Inc. - Sponsor Onboarding"
+                      data-es="Mexausa Food Group, Inc. - Registro de Patrocinador">Mexausa Food Group, Inc. - Sponsor Onboarding</div>
+    </div>
+    <div class="lang">
+      <button id="btn-en" class="on" onclick="setLang('en')">EN</button>
+      <button id="btn-es" onclick="setLang('es')">ES</button>
+    </div>
+  </div>
+</header>
+
+<div class="notice" data-en="Select your tier, complete the form, and pay securely. Your sponsor card goes live immediately after payment."
+                   data-es="Seleccione su nivel, complete el formulario, y pague de forma segura. Su tarjeta se activa inmediatamente despues del pago.">
+  Select your tier, complete the form, and pay securely. Your sponsor card goes live immediately after payment.
+</div>
+
+<div class="wrap">
+
+<div id="returnAlert" class="hidden"></div>
+
+<form id="intakeForm" autocomplete="off">
+
+  <section>
+    <h2 data-en="0. Select Your Tier" data-es="0. Seleccione Su Nivel">0. Select Your Tier</h2>
+    <div class="body">
+      <div class="tier-grid">
+        <div class="tier-card" data-tier="STARTER" onclick="selectTier('STARTER')">
+          <h3>STARTER</h3>
+          <div class="price" id="price-STARTER">$149<small>/mo</small></div>
+          <div class="setup" id="setup-STARTER">$250 setup</div>
+          <ul>
+            <li data-en="Carousel card" data-es="Tarjeta en carrusel">Carousel card</li>
+            <li data-en="1 detail screen" data-es="1 pantalla">1 detail screen</li>
+            <li data-en="English voice" data-es="Voz en ingles">English voice</li>
+            <li data-en="Lead email" data-es="Email al lead">Lead email</li>
+          </ul>
+        </div>
+        <div class="tier-card" data-tier="FEATURED" onclick="selectTier('FEATURED')">
+          <div class="ribbon" data-en="POPULAR" data-es="POPULAR">POPULAR</div>
+          <h3>FEATURED</h3>
+          <div class="price" id="price-FEATURED">$349<small>/mo</small></div>
+          <div class="setup" id="setup-FEATURED">$400 setup</div>
+          <ul>
+            <li data-en="Everything in STARTER" data-es="Todo lo de STARTER">Everything in STARTER</li>
+            <li data-en="Bilingual EN+ES voice" data-es="Voz bilingue">Bilingual EN+ES voice</li>
+            <li data-en="Custom palette" data-es="Paleta personalizada">Custom palette</li>
+            <li data-en="Ribbon badge" data-es="Distintivo">Ribbon badge</li>
+            <li data-en="WhatsApp button" data-es="Boton WhatsApp">WhatsApp button</li>
+            <li data-en="Monthly lead report" data-es="Reporte mensual">Monthly lead report</li>
+          </ul>
+        </div>
+        <div class="tier-card" data-tier="PREMIUM" onclick="selectTier('PREMIUM')">
+          <h3>PREMIUM</h3>
+          <div class="price" id="price-PREMIUM">$799<small>/mo</small></div>
+          <div class="setup" id="setup-PREMIUM">$500 setup</div>
+          <ul>
+            <li data-en="Everything in FEATURED" data-es="Todo lo de FEATURED">Everything in FEATURED</li>
+            <li data-en="Top-of-carousel priority" data-es="Prioridad en carrusel">Top-of-carousel priority</li>
+            <li data-en="3 detail screens" data-es="3 pantallas">3 detail screens</li>
+            <li data-en="SMS lead alerts" data-es="Alertas SMS">SMS lead alerts</li>
+            <li data-en="Performance dashboard" data-es="Dashboard">Performance dashboard</li>
+            <li data-en="Quarterly strategy call" data-es="Llamada trimestral">Quarterly strategy call</li>
+          </ul>
+        </div>
+      </div>
+      <div class="billing-toggle">
+        <button type="button" id="bill-monthly" class="on" onclick="selectBilling('monthly')"><span data-en="Monthly" data-es="Mensual">Monthly</span></button>
+        <button type="button" id="bill-quarterly" onclick="selectBilling('quarterly')"><span data-en="Quarterly" data-es="Trimestral">Quarterly</span> <span class="save" data-en="SAVE 10%" data-es="AHORRA 10%">SAVE 10%</span></button>
+        <button type="button" id="bill-annual" onclick="selectBilling('annual')"><span data-en="Annual" data-es="Anual">Annual</span> <span class="save" data-en="NO SETUP" data-es="SIN INSTALACION">NO SETUP</span></button>
+      </div>
+      <div class="summary" id="summary">
+        <div class="line"><span data-en="Tier" data-es="Nivel">Tier</span><span id="sumTier">-</span></div>
+        <div class="line"><span data-en="Billing" data-es="Facturacion">Billing</span><span id="sumBilling">-</span></div>
+        <div class="line"><span data-en="Setup fee" data-es="Cuota de instalacion">Setup fee</span><span id="sumSetup">-</span></div>
+        <div class="line"><span data-en="First period" data-es="Primer periodo">First period</span><span id="sumPeriod">-</span></div>
+        <div class="line total"><span data-en="Total today" data-es="Total hoy">Total today</span><span id="sumTotal">$0.00</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-en="1. Sponsor Identity" data-es="1. Identidad del Patrocinador">1. Sponsor Identity</h2>
+    <div class="body">
+      <div class="row">
+        <div>
+          <label data-en="Slug" data-es="Identificador">Slug<span class="req">*</span> <span class="hint" data-en="(lowercase, hyphens only)" data-es="(minusculas, guiones)">(lowercase, hyphens only)</span></label>
+          <input type="text" id="slug" name="slug" required pattern="[a-z0-9-]+" placeholder="cabo-wellness-spa">
+        </div>
+        <div>
+          <label data-en="Title" data-es="Titulo">Title<span class="req">*</span> <span class="counter" id="cnt-title">0/40</span></label>
+          <input type="text" id="title" name="title" required minlength="3" maxlength="40" placeholder="Cabo Wellness Spa">
+        </div>
+      </div>
+      <div class="row full">
+        <div>
+          <label data-en="Pitch (carousel body)" data-es="Pitch">Pitch<span class="req">*</span> <span class="counter" id="cnt-pitch">0/240</span></label>
+          <textarea id="pitch" name="pitch" required minlength="20" maxlength="240" rows="3"
+            data-placeholder-en="Luxury spa retreat in Cabo San Lucas. Couples massage, mineral pools, ocean view suites."
+            data-placeholder-es="Spa de lujo en Cabo San Lucas. Masaje en pareja, piscinas minerales, suites con vista al mar."></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label data-en="Tagline" data-es="Eslogan">Tagline <span class="hint" data-en="(optional)" data-es="(opcional)">(optional)</span></label>
+          <input type="text" id="tagline" name="tagline" maxlength="80" placeholder="Reset Your Body">
+        </div>
+        <div>
+          <label data-en="Long Description" data-es="Descripcion">Long Description <span class="hint" data-en="(optional)" data-es="(opcional)">(optional)</span></label>
+          <input type="text" id="long_description_short" name="long_description_short" maxlength="120">
+        </div>
+      </div>
+      <div class="row full">
+        <div>
+          <label data-en="Tags (2-4)" data-es="Etiquetas (2-4)">Tags<span class="req">*</span> <span class="hint" data-en="(press Enter to add)" data-es="(Enter para agregar)">(press Enter to add)</span></label>
+          <div class="tags-wrap" id="tagsWrap">
+            <input type="text" class="tag-input" id="tagInput" data-placeholder-en="Type and press Enter..." data-placeholder-es="Escriba y presione Enter...">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-en="2. Owner / Contact" data-es="2. Propietario / Contacto">2. Owner / Contact</h2>
+    <div class="body">
+      <div class="row">
+        <div>
+          <label data-en="Owner Name" data-es="Nombre">Owner Name<span class="req">*</span></label>
+          <input type="text" id="owner_name" required maxlength="80" placeholder="Maria Hernandez">
+        </div>
+        <div>
+          <label data-en="Role" data-es="Cargo">Role <span class="hint" data-en="(optional)" data-es="(opcional)">(optional)</span></label>
+          <input type="text" id="owner_role" maxlength="60" placeholder="Owner / Director">
+        </div>
+      </div>
+      <div class="row">
+        <div><label data-en="USA Phone" data-es="Telefono USA">USA Phone</label><input type="tel" id="phone_us" maxlength="24" placeholder="+1-555-555-1234"></div>
+        <div><label data-en="Mexico Phone" data-es="Telefono Mexico">Mexico Phone</label><input type="tel" id="phone_mx" maxlength="24" placeholder="+52-624-555-9999"></div>
+      </div>
+      <div class="row">
+        <div><label data-en="WhatsApp" data-es="WhatsApp">WhatsApp <span class="hint" data-en="(optional)" data-es="(opcional)">(optional)</span></label><input type="tel" id="whatsapp" maxlength="24"></div>
+        <div><label data-en="Email" data-es="Correo">Email<span class="req">*</span> <span class="hint" data-en="(receipt sent here)" data-es="(recibo aqui)">(receipt sent here)</span></label><input type="email" id="owner_email" required maxlength="120" placeholder="maria@example.com"></div>
+      </div>
+      <div class="row">
+        <div><label data-en="Location" data-es="Ubicacion">Location <span class="hint" data-en="(city, country)" data-es="(ciudad, pais)">(city, country)</span></label><input type="text" id="location" maxlength="80" placeholder="Cabo San Lucas, Mexico"></div>
+        <div><label data-en="Website" data-es="Sitio Web">Website <span class="hint" data-en="(optional)" data-es="(opcional)">(optional)</span></label><input type="url" id="website" maxlength="200" placeholder="https://example.com"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-en="3. Brand Colors" data-es="3. Colores de Marca">3. Brand Colors</h2>
+    <div class="body">
+      <div class="row tri">
+        <div><label data-en="Primary" data-es="Primario">Primary<span class="req">*</span></label>
+          <div class="colorpair"><input type="color" id="color_primary_picker" value="#0F7B41"><input type="text" id="color_primary" required pattern="#[0-9A-Fa-f]{6}" value="#0F7B41" maxlength="7"></div>
+        </div>
+        <div><label data-en="Secondary" data-es="Secundario">Secondary<span class="req">*</span></label>
+          <div class="colorpair"><input type="color" id="color_secondary_picker" value="#C9A55C"><input type="text" id="color_secondary" required pattern="#[0-9A-Fa-f]{6}" value="#C9A55C" maxlength="7"></div>
+        </div>
+        <div><label data-en="Border" data-es="Borde">Border<span class="req">*</span></label>
+          <div class="colorpair"><input type="color" id="color_border_picker" value="#D4DBD3"><input type="text" id="color_border" required pattern="#[0-9A-Fa-f]{6}" value="#D4DBD3" maxlength="7"></div>
+        </div>
+      </div>
+      <div id="paletteSection" class="hidden">
+        <label data-en="Available Palettes (click to apply)" data-es="Paletas Disponibles">Available Palettes</label>
+        <div class="palette-grid" id="paletteGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-en="4. Voice / Pitch Script" data-es="4. Voz / Guion">4. Voice / Pitch Script</h2>
+    <div class="body">
+      <div class="row">
+        <div><label data-en="Angle (English)" data-es="Angulo (Ingles)">Angle (EN)<span class="req">*</span></label><input type="text" id="voice_angle" required maxlength="160" placeholder="Pure rest and recovery on the Sea of Cortez."></div>
+        <div><label data-en="Angle (Spanish)" data-es="Angulo (Espanol)">Angle (ES) <span class="hint" data-en="(FEATURED+)" data-es="(FEATURED+)">(FEATURED+)</span></label><input type="text" id="voice_angle_es" maxlength="160" placeholder="Descanso y recuperacion en el Mar de Cortez."></div>
+      </div>
+      <div class="row full">
+        <div>
+          <label data-en="Selling Points (1-5)" data-es="Puntos de Venta (1-5)">Selling Points<span class="req">*</span></label>
+          <div class="bullets" id="bullets">
+            <div class="bullet-row"><input type="text" class="bullet-input" maxlength="100" data-placeholder-en="e.g. Couples massage with ocean view" data-placeholder-es="ej. Masaje en pareja con vista al mar"><button type="button" onclick="removeBullet(this)">x</button></div>
+          </div>
+          <button type="button" class="btn-add" onclick="addBullet()" data-en="+ Add bullet" data-es="+ Agregar">+ Add bullet</button>
+        </div>
+      </div>
+      <div class="row">
+        <div><label data-en="CTA (English)" data-es="CTA (Ingles)">CTA (EN)<span class="req">*</span></label><input type="text" id="voice_cta" required maxlength="120" placeholder="Book your retreat today."></div>
+        <div><label data-en="CTA (Spanish)" data-es="CTA (Espanol)">CTA (ES) <span class="hint" data-en="(FEATURED+)" data-es="(FEATURED+)">(FEATURED+)</span></label><input type="text" id="voice_cta_es" maxlength="120" placeholder="Reserve su retiro hoy."></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-en="5. Agreement" data-es="5. Acuerdo">5. Agreement</h2>
+    <div class="body">
+      <div class="tos">
+        <p data-en="By clicking Continue to Payment, you agree to LOAF Sponsor Terms: 90-day minimum on monthly billing, 30-day notice to cancel. Your card goes live within 5 minutes of payment confirmation. Refunds within 7 days minus setup fee."
+           data-es="Al hacer clic en Continuar al Pago, acepta los Terminos de Patrocinador LOAF: minimo 90 dias en facturacion mensual, aviso de 30 dias para cancelar. Su tarjeta se activa en 5 minutos despues del pago. Reembolsos dentro de 7 dias menos cuota de instalacion.">
+          By clicking Continue to Payment, you agree to LOAF Sponsor Terms: 90-day minimum on monthly billing, 30-day notice to cancel. Your card goes live within 5 minutes of payment confirmation. Refunds within 7 days minus setup fee.
+        </p>
+        <label style="margin-top:10px;display:block">
+          <input type="checkbox" id="tos_agree" required>
+          <span data-en="I agree to the LOAF Sponsor Terms and authorize the charge."
+                data-es="Acepto los Terminos del Patrocinador LOAF y autorizo el cargo.">I agree to the LOAF Sponsor Terms and authorize the charge.</span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <div id="alertBox"></div>
+
+  <div class="actions">
+    <div class="left" id="statusLine"></div>
+    <button type="button" class="btn btn-secondary" onclick="resetForm()" data-en="Reset" data-es="Reiniciar">Reset</button>
+    <button type="button" class="btn btn-preview" id="btnPreview" onclick="doPreview()" data-en="Preview" data-es="Previsualizar">Preview</button>
+    <button type="button" class="btn btn-submit" id="btnSubmit" onclick="doCheckout()" disabled
+      data-en="Continue to Payment" data-es="Continuar al Pago">Continue to Payment</button>
+  </div>
+
+</form>
+
+</div>
+
+<footer>Mexausa Food Group, Inc. - LOAF Program - <span id="yr">2026</span></footer>
+
+<script>
+const API_BASE = (function(){
+  var h = window.location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1') return 'http://localhost:5050';
+  return 'https://auditdna-backend-1-production.up.railway.app';
+})();
+
+const PRICING = {
+  STARTER:  { setup:250, monthly:149, quarterly:399, annual:1490 },
+  FEATURED: { setup:400, monthly:349, quarterly:939, annual:3490 },
+  PREMIUM:  { setup:500, monthly:799, quarterly:2199, annual:7990 }
+};
+
+let LANG = 'en';
+let TAGS = [];
+let TIER = 'FEATURED';
+let BILLING = 'monthly';
+let PREVIEW_OK = false;
+let PALETTES = [];
+let TAKEN = [];
+
+function setLang(lang){
+  LANG = lang;
+  document.getElementById('btn-en').classList.toggle('on', lang==='en');
+  document.getElementById('btn-es').classList.toggle('on', lang==='es');
+  document.querySelectorAll('[data-en]').forEach(function(el){ var t = el.getAttribute('data-' + lang); if (t) el.textContent = t; });
+  document.querySelectorAll('[data-placeholder-en]').forEach(function(el){ var t = el.getAttribute('data-placeholder-' + lang); if (t) el.setAttribute('placeholder', t); });
+  updatePrices(); updateSummary();
+}
+
+function selectTier(t){
+  TIER = t;
+  document.querySelectorAll('.tier-card').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-tier')===t); });
+  updatePrices(); updateSummary();
+}
+
+function selectBilling(b){
+  BILLING = b;
+  ['monthly','quarterly','annual'].forEach(function(x){ document.getElementById('bill-'+x).classList.toggle('on', x===b); });
+  updatePrices(); updateSummary();
+}
+
+function updatePrices(){
+  Object.keys(PRICING).forEach(function(t){
+    var p = PRICING[t]; var amt, suffix;
+    if (BILLING==='annual') { amt = p.annual; suffix = LANG==='es' ? '/ano' : '/yr'; }
+    else if (BILLING==='quarterly') { amt = p.quarterly; suffix = LANG==='es' ? '/trim' : '/qtr'; }
+    else { amt = p.monthly; suffix = LANG==='es' ? '/mes' : '/mo'; }
+    document.getElementById('price-'+t).innerHTML = '$' + amt + '<small>' + suffix + '</small>';
+    var setupTxt = (BILLING==='annual') ? (LANG==='es' ? 'Sin instalacion' : 'No setup fee') : (LANG==='es' ? '$'+p.setup+' instalacion' : '$'+p.setup+' setup');
+    document.getElementById('setup-'+t).textContent = setupTxt;
+  });
+}
+
+function updateSummary(){
+  var p = PRICING[TIER];
+  var setup = (BILLING==='annual') ? 0 : p.setup;
+  var period, periodLabel;
+  if (BILLING==='annual') { period = p.annual; periodLabel = LANG==='es' ? '12 meses' : '12 months'; }
+  else if (BILLING==='quarterly') { period = p.quarterly; periodLabel = LANG==='es' ? '3 meses' : '3 months'; }
+  else { period = p.monthly; periodLabel = LANG==='es' ? '1 mes' : '1 month'; }
+  var total = setup + period;
+  document.getElementById('sumTier').textContent = TIER;
+  document.getElementById('sumBilling').textContent = periodLabel;
+  document.getElementById('sumSetup').textContent = setup ? ('$' + setup.toFixed(2)) : (LANG==='es' ? 'Eximido' : 'Waived');
+  document.getElementById('sumPeriod').textContent = '$' + period.toFixed(2);
+  document.getElementById('sumTotal').textContent = '$' + total.toFixed(2);
+}
+
+function syncColor(textId, pickerId){
+  var t = document.getElementById(textId), p = document.getElementById(pickerId);
+  p.addEventListener('input', function(){ t.value = p.value.toUpperCase(); });
+  t.addEventListener('input', function(){ var v = t.value.trim(); if (/^#[0-9A-Fa-f]{6}$/.test(v)) p.value = v; });
+}
+syncColor('color_primary','color_primary_picker');
+syncColor('color_secondary','color_secondary_picker');
+syncColor('color_border','color_border_picker');
+
+function counter(inputId, counterId, max){
+  var i = document.getElementById(inputId), c = document.getElementById(counterId);
+  function tick(){ c.textContent = i.value.length + '/' + max; c.classList.toggle('over', i.value.length > max); }
+  i.addEventListener('input', tick); tick();
+}
+counter('title','cnt-title',40);
+counter('pitch','cnt-pitch',240);
+
+const tagInput = document.getElementById('tagInput'), tagsWrap = document.getElementById('tagsWrap');
+function renderTags(){
+  tagsWrap.querySelectorAll('.tag-chip').forEach(function(n){ n.remove(); });
+  TAGS.forEach(function(tag, idx){
+    var chip = document.createElement('span'); chip.className = 'tag-chip';
+    chip.innerHTML = tag + ' <span data-i="'+idx+'">x</span>';
+    chip.querySelector('span').onclick = function(){ TAGS.splice(idx,1); renderTags(); };
+    tagsWrap.insertBefore(chip, tagInput);
+  });
+}
+tagInput.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    var v = tagInput.value.trim().replace(/,$/,'');
+    if (v && TAGS.length < 6 && TAGS.indexOf(v) === -1) { TAGS.push(v); tagInput.value = ''; renderTags(); }
+  } else if (e.key === 'Backspace' && tagInput.value === '' && TAGS.length) { TAGS.pop(); renderTags(); }
+});
+
+function addBullet(){
+  var rows = document.querySelectorAll('#bullets .bullet-row');
+  if (rows.length >= 5) return;
+  var row = document.createElement('div'); row.className = 'bullet-row';
+  var ph = LANG === 'es' ? 'ej. Punto de venta' : 'e.g. Selling point';
+  row.innerHTML = '<input type="text" class="bullet-input" maxlength="100" placeholder="'+ph+'"><button type="button" onclick="removeBullet(this)">x</button>';
+  document.getElementById('bullets').appendChild(row);
+}
+function removeBullet(btn){ var rows = document.querySelectorAll('#bullets .bullet-row'); if (rows.length > 1) btn.parentElement.remove(); }
+
+function showAlert(kind, title, items){
+  var box = document.getElementById('alertBox');
+  var html = '<div class="alert '+kind+'"><strong>'+escapeHtml(title)+'</strong>';
+  if (items && items.length) html += '<ul>' + items.map(function(x){ return '<li>'+escapeHtml(x)+'</li>'; }).join('') + '</ul>';
+  html += '</div>';
+  box.innerHTML = html;
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+function clearAlert(){ document.getElementById('alertBox').innerHTML = ''; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+
+function buildIntake(){
+  var bullets = Array.from(document.querySelectorAll('.bullet-input')).map(function(i){ return i.value.trim(); }).filter(Boolean);
+  var ribbon;
+  if (TIER === 'FEATURED') ribbon = 'FEATURED';
+  else if (TIER === 'PREMIUM') ribbon = 'PREMIUM';
+  return {
+    slug: document.getElementById('slug').value.trim().toLowerCase(),
+    title: document.getElementById('title').value.trim(),
+    pitch: document.getElementById('pitch').value.trim(),
+    tags: TAGS.slice(),
+    ribbon: ribbon,
+    tagline: document.getElementById('tagline').value.trim() || undefined,
+    long_description: document.getElementById('long_description_short').value.trim() || undefined,
+    owner: {
+      name: document.getElementById('owner_name').value.trim(),
+      role: document.getElementById('owner_role').value.trim() || undefined,
+      phone_us: document.getElementById('phone_us').value.trim() || undefined,
+      phone_mx: document.getElementById('phone_mx').value.trim() || undefined,
+      whatsapp: document.getElementById('whatsapp').value.trim() || undefined,
+      email: document.getElementById('owner_email').value.trim(),
+      location: document.getElementById('location').value.trim() || undefined,
+      website: document.getElementById('website').value.trim() || undefined
+    },
+    colors: {
+      primary: document.getElementById('color_primary').value.trim().toUpperCase(),
+      secondary: document.getElementById('color_secondary').value.trim().toUpperCase(),
+      border: document.getElementById('color_border').value.trim().toUpperCase()
+    },
+    lead_routing: 'saul-plus-sponsor',
+    sponsor_email: document.getElementById('owner_email').value.trim(),
+    voice: {
+      angle: document.getElementById('voice_angle').value.trim(),
+      angle_es: document.getElementById('voice_angle_es').value.trim() || undefined,
+      selling_points: bullets,
+      cta: document.getElementById('voice_cta').value.trim(),
+      cta_es: document.getElementById('voice_cta_es').value.trim() || undefined
+    }
+  };
+}
+
+function clientValidate(d){
+  var errs = [];
+  if (!d.slug || !/^[a-z0-9-]+$/.test(d.slug)) errs.push(LANG==='es' ? 'Slug invalido' : 'Invalid slug');
+  if (!d.title || d.title.length < 3 || d.title.length > 40) errs.push(LANG==='es' ? 'Titulo 3-40 caracteres' : 'Title 3-40 chars');
+  if (!d.pitch || d.pitch.length < 20 || d.pitch.length > 240) errs.push(LANG==='es' ? 'Pitch 20-240 caracteres' : 'Pitch 20-240 chars');
+  if (!d.tags || d.tags.length < 2 || d.tags.length > 4) errs.push(LANG==='es' ? 'Etiquetas 2-4' : 'Tags 2-4');
+  if (!d.owner.name) errs.push(LANG==='es' ? 'Nombre requerido' : 'Owner name required');
+  if (!d.owner.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.owner.email)) errs.push(LANG==='es' ? 'Correo invalido' : 'Invalid email');
+  ['primary','secondary','border'].forEach(function(k){ if (!/^#[0-9A-F]{6}$/.test(d.colors[k])) errs.push(LANG==='es' ? ('Color '+k+' invalido') : ('Invalid '+k+' color')); });
+  if (!d.voice.angle) errs.push(LANG==='es' ? 'Angulo (EN) requerido' : 'Voice angle (EN) required');
+  if (!d.voice.cta) errs.push(LANG==='es' ? 'CTA (EN) requerido' : 'CTA (EN) required');
+  if (!d.voice.selling_points.length || d.voice.selling_points.length > 5) errs.push(LANG==='es' ? 'Vinetas 1-5' : 'Bullets 1-5');
+  if (!document.getElementById('tos_agree').checked) errs.push(LANG==='es' ? 'Debe aceptar terminos' : 'Must accept terms');
+  return errs;
+}
+
+async function doPreview(){
+  clearAlert(); PREVIEW_OK = false;
+  document.getElementById('btnSubmit').disabled = true;
+  var data = buildIntake();
+  var errs = clientValidate(data);
+  if (errs.length) { showAlert('err', LANG==='es' ? 'Por favor corrija:' : 'Please fix:', errs); return; }
+  var btn = document.getElementById('btnPreview');
+  btn.disabled = true; btn.textContent = LANG==='es' ? 'Previsualizando...' : 'Previewing...';
+  try {
+    var res = await fetch(API_BASE + '/api/nadine/sponsor', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    var j = await res.json();
+    if (!res.ok || !j.ok) { showAlert('err', LANG==='es' ? 'Error de validacion:' : 'Validation errors:', j.errors || [j.error || 'Unknown']); return; }
+    PREVIEW_OK = true;
+    document.getElementById('btnSubmit').disabled = false;
+    showAlert('ok', LANG==='es' ? 'Previsualizacion correcta. Continue al pago.' : 'Preview successful. Continue to payment.', []);
+  } catch (err) { showAlert('err', LANG==='es' ? 'Error de red:' : 'Network error:', [err.message]); }
+  finally { btn.disabled = false; btn.textContent = LANG==='es' ? 'Previsualizar' : 'Preview'; }
+}
+
+async function doCheckout(){
+  if (!PREVIEW_OK) return;
+  clearAlert();
+  var data = buildIntake();
+  var btn = document.getElementById('btnSubmit');
+  btn.disabled = true; btn.textContent = LANG==='es' ? 'Redirigiendo...' : 'Redirecting...';
+  try {
+    var res = await fetch(API_BASE + '/api/nadine/sponsor/checkout', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ intake: data, tier: TIER, billing: BILLING, lang: LANG })
+    });
+    var j = await res.json();
+    if (!res.ok || !j.ok) {
+      showAlert('err', LANG==='es' ? 'Error al crear pago:' : 'Checkout failed:', j.errors || [j.error || 'Unknown']);
+      btn.disabled = false; btn.textContent = LANG==='es' ? 'Continuar al Pago' : 'Continue to Payment'; return;
+    }
+    if (!j.checkout_url) {
+      showAlert('err', LANG==='es' ? 'URL de pago faltante' : 'Missing checkout URL', []);
+      btn.disabled = false; btn.textContent = LANG==='es' ? 'Continuar al Pago' : 'Continue to Payment'; return;
+    }
+    window.location.href = j.checkout_url;
+  } catch (err) {
+    showAlert('err', LANG==='es' ? 'Error de red:' : 'Network error:', [err.message]);
+    btn.disabled = false; btn.textContent = LANG==='es' ? 'Continuar al Pago' : 'Continue to Payment';
+  }
+}
+
+function resetForm(){
+  if (!confirm(LANG==='es' ? 'Borrar todos los campos?' : 'Clear all fields?')) return;
+  document.getElementById('intakeForm').reset();
+  TAGS = []; renderTags();
+  document.querySelectorAll('#bullets .bullet-row').forEach(function(r,i){ if (i>0) r.remove(); else r.querySelector('input').value=''; });
+  document.getElementById('color_primary_picker').value = '#0F7B41';
+  document.getElementById('color_secondary_picker').value = '#C9A55C';
+  document.getElementById('color_border_picker').value = '#D4DBD3';
+  selectTier('FEATURED'); selectBilling('monthly');
+  clearAlert(); PREVIEW_OK = false;
+  document.getElementById('btnSubmit').disabled = true;
+}
+
+async function loadPlaybook(){
+  try {
+    var res = await fetch(API_BASE + '/api/nadine/playbook');
+    if (!res.ok) return;
+    var j = await res.json();
+    PALETTES = j.available_palettes || []; TAKEN = j.taken_palettes || [];
+    renderPalettes();
+  } catch(e){}
+}
+
+function renderPalettes(){
+  if (!PALETTES.length) return;
+  var grid = document.getElementById('paletteGrid'), sect = document.getElementById('paletteSection');
+  sect.classList.remove('hidden'); grid.innerHTML = '';
+  PALETTES.forEach(function(p){
+    var taken = TAKEN.indexOf(p.name) !== -1;
+    var tile = document.createElement('div');
+    tile.className = 'palette-tile' + (taken ? ' taken' : '');
+    tile.style.background = p.primary; tile.style.color = '#fff'; tile.style.borderColor = p.border || '#ccc';
+    tile.textContent = p.name + (taken ? ' (taken)' : '');
+    if (!taken) tile.onclick = function(){
+      document.getElementById('color_primary').value = p.primary.toUpperCase();
+      document.getElementById('color_primary_picker').value = p.primary;
+      document.getElementById('color_secondary').value = (p.secondary||'#C9A55C').toUpperCase();
+      document.getElementById('color_secondary_picker').value = p.secondary||'#C9A55C';
+      document.getElementById('color_border').value = (p.border||'#D4DBD3').toUpperCase();
+      document.getElementById('color_border_picker').value = p.border||'#D4DBD3';
+      grid.querySelectorAll('.palette-tile').forEach(function(t){ t.classList.remove('selected'); });
+      tile.classList.add('selected');
+    };
+    grid.appendChild(tile);
+  });
+}
+
+function handleReturnFromStripe(){
+  var qs = new URLSearchParams(window.location.search);
+  var box = document.getElementById('returnAlert');
+  if (qs.get('success') === '1') {
+    var token = qs.get('token') || '';
+    box.className = 'alert ok'; box.classList.remove('hidden');
+    box.innerHTML = '<strong>' + (LANG==='es' ? 'Pago recibido!' : 'Payment received!') + '</strong><p style="margin-top:6px">' +
+      (LANG==='es' ? 'Su tarjeta de patrocinador estara activa en 5 minutos. Recibira un correo de confirmacion. Token: ' : 'Your sponsor card will be active within 5 minutes. You will receive a confirmation email. Token: ') + escapeHtml(token) + '</p>';
+    document.getElementById('intakeForm').style.display = 'none';
+    document.querySelector('.actions').style.display = 'none';
+  } else if (qs.get('canceled') === '1') {
+    box.className = 'alert warn'; box.classList.remove('hidden');
+    box.innerHTML = '<strong>' + (LANG==='es' ? 'Pago cancelado' : 'Payment canceled') + '</strong><p style="margin-top:6px">' +
+      (LANG==='es' ? 'Su solicitud no se ha enviado. Complete el formulario y vuelva a intentarlo.' : 'Your application was not submitted. Complete the form and try again.') + '</p>';
+  }
+}
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+selectTier('FEATURED'); selectBilling('monthly');
+loadPlaybook(); handleReturnFromStripe();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sara -- Asistente TunTan & Contratos</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#020912;--panel:#0d1117;--panel2:#111827;--blue:#4a8fd4;--gold:#C9A55C;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--text:#e2e8f0;--muted:#64748b;--border:rgba(74,143,212,0.2);}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+/* LOGIN */
+.login-screen{text-align:center;padding:40px 30px;background:var(--panel);border:2px solid var(--gold);min-width:320px;}
+.login-title{font-size:13px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:4px;}
+.login-sub{font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:24px;}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:16px;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid rgba(201,165,92,0.4);transition:.2s;}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:190px;margin:0 auto 14px;}
+.pkey{padding:13px;background:var(--panel2);border:1px solid rgba(255,255,255,0.08);color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;}
+.pkey:hover{background:rgba(201,165,92,0.15);border-color:var(--gold);}
+.pin-err{color:var(--red);font-size:11px;min-height:16px;margin-bottom:8px;}
+/* MAIN APP */
+.app{display:none;width:100%;min-height:100vh;flex-direction:column;}
+.app.open{display:flex;}
+.hdr{background:linear-gradient(135deg,#0a0e1a,#0d1117);border-bottom:2px solid var(--gold);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.hdr-title{font-size:13px;font-weight:900;letter-spacing:3px;color:var(--gold);}
+.hdr-sub{font-size:9px;color:var(--muted);letter-spacing:2px;margin-top:2px;}
+.tabs{background:#000;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;}
+.tab{padding:12px 18px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.2s;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.panel{display:none;padding:20px;max-width:1300px;margin:0 auto;width:100%;}
+.panel.active{display:block;}
+.sec-hdr{font-size:10px;font-weight:800;letter-spacing:2px;color:var(--blue);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:14px;text-transform:uppercase;}
+/* TABLES */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:10px;}
+th{background:rgba(74,143,212,0.1);padding:8px 10px;font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--gold);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);}
+tr:hover td{background:rgba(74,143,212,0.04);}
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.fld label{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;}
+.fld input,.fld select,.fld textarea{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 10px;font-size:10px;outline:none;font-family:inherit;}
+.fld input:focus,.fld select:focus{border-color:var(--blue);}
+.btn-p{padding:10px 22px;background:var(--gold);border:none;color:#000;font-size:10px;font-weight:800;letter-spacing:1.5px;cursor:pointer;margin-top:12px;}
+.btn-g{padding:8px 16px;background:var(--panel);border:1px solid var(--border);color:var(--muted);font-size:9px;font-weight:700;cursor:pointer;}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+.stat{background:var(--panel);border:1px solid var(--border);padding:14px;text-align:center;}
+.stat-n{font-size:26px;font-weight:900;line-height:1;}
+.stat-l{font-size:8px;letter-spacing:1.5px;color:var(--muted);margin-top:3px;}
+.msg-list{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;padding:14px;background:var(--panel2);border:1px solid var(--border);}
+.msg-bubble{padding:9px 12px;max-width:72%;font-size:11px;line-height:1.5;}
+.msg-s{background:rgba(74,143,212,0.15);border-left:2px solid var(--blue);align-self:flex-end;text-align:right;}
+.msg-r{background:rgba(201,165,92,0.08);border-left:2px solid var(--gold);align-self:flex-start;}
+.msg-meta{font-size:8px;color:var(--muted);margin-top:3px;}
+.badge{padding:3px 10px;font-size:8px;font-weight:700;border:1px solid;}
+.b-g{color:var(--green);border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.08);}
+.b-a{color:var(--amber);border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);}
+.b-r{color:var(--red);border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);}
+.b-b{color:var(--blue);border-color:rgba(74,143,212,0.3);background:rgba(74,143,212,0.08);}
+</style>
+
+<script>
+var PIN='4321',PLEN=4,entered='';
+function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
+function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
+
+var TTRWOS=[{"cliente": "David Renteria Quijada", "mz": 1, "lt": 1, "tipo": "C", "enganche": 50000.0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 104000.0, "expected": 104000.0, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 6000}, {"cliente": "Roxana Rub\u00ed Sanchez L\u00f3pez", "mz": 1, "lt": 2, "tipo": "C", "enganche": 50000.0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 104000.0, "expected": 104000.0, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 6000}, {"cliente": "Gonzalo Nicanor", "mz": 1, "lt": 3, "tipo": "C", "enganche": 170000.0, "meses": [3500.0, 3500.0, 3500.0, 3500.0, 3500.0, 3500.0, 3500.0, 3500.0, 3500.0], "total": 201500.0, "expected": 224000.0, "outstanding": 22500.0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 6000}, {"cliente": "Gabriel Michel Huizar Y Lilia", "mz": 1, "lt": 4, "tipo": "C", "enganche": 50000.0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 12000.0, 6000.0, 0], "total": 104000.0, "expected": 104000.0, "outstanding": 0, "status": "ATRASADO_1", "zero_months": 1, "monthly_rate": 6000}, {"cliente": "Maria Guadalupe Valdez Lizarraga", "mz": 1, "lt": 5, "tipo": "C", "enganche": 50000.0, "meses": [0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 98000.0, "expected": 104000.0, "outstanding": 6000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 6000}, {"cliente": "Jose Garc\u00eda", "mz": 1, "lt": 7, "tipo": "C", "enganche": 50000.0, "meses": [0, 0, 0, 0, 0, 0, 0, 12000.0, 6000.0], "total": 68000.0, "expected": 104000.0, "outstanding": 36000.0, "status": "AL_DIA", "zero_months": 7, "monthly_rate": 6000}, {"cliente": "Sergio Carvajal Medina", "mz": 1, "lt": 8, "tipo": "C", "enganche": 50000.0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 104000.0, "expected": 104000.0, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 6000}, {"cliente": "Maria de la Cruz Salazar Frausto", "mz": 1, "lt": 9, "tipo": "C", "enganche": 50000.0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 104000.0, "expected": 104000.0, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 6000}, {"cliente": "Estefan\u00eda Mart\u00ednez Navarrete", "mz": 1, "lt": 10, "tipo": "C", "enganche": 50000.0, "meses": [0, 0, 0, 0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 80000.0, "expected": 104000.0, "outstanding": 24000.0, "status": "AL_DIA", "zero_months": 4, "monthly_rate": 6000}, {"cliente": "Hortencia Carmen L\u00f3pez L\u00f3pez", "mz": 1, "lt": 11, "tipo": "C", "enganche": 50000.0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 104000.0, "expected": 104000.0, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 6000}, {"cliente": "Jos\u00e9 Luis Solis Fern\u00e1ndez", "mz": 1, "lt": 12, "tipo": "C", "enganche": 50000.0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 12000.0, 12000.0, 0, 6000.0, 0], "total": 104000.0, "expected": 104000.0, "outstanding": 0, "status": "ATRASADO_1", "zero_months": 2, "monthly_rate": 6000}, {"cliente": "Maritza Cardenas Talavera", "mz": 1, "lt": 15, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 24000.0, "expected": 36000, "outstanding": 12000.0, "status": "AL_DIA", "zero_months": 3, "monthly_rate": 4000}, {"cliente": "Sergio Romero Isidoro", "mz": 1, "lt": 16, "tipo": "H", "enganche": 0, "meses": [0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 28000.0, "expected": 36000, "outstanding": 8000.0, "status": "AL_DIA", "zero_months": 2, "monthly_rate": 4000}, {"cliente": "Eduardo P\u00e9rez", "mz": 1, "lt": 17, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Joshelyn Soto P\u00e9rez", "mz": 1, "lt": 18, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Joshelyn Soto P\u00e9rez", "mz": 1, "lt": 19, "tipo": "H", "enganche": 0, "meses": [0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 0], "total": 24000.0, "expected": 36000, "outstanding": 12000.0, "status": "ATRASADO_1", "zero_months": 3, "monthly_rate": 4000}, {"cliente": "Daysi Gdp M\u00e9ndez Hern\u00e1ndez", "mz": 1, "lt": 22, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Evangelina Hernandez Lopez", "mz": 1, "lt": 23, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "David Renteria Quijada", "mz": 1, "lt": 24, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Julio Cesar Vega Guerrero", "mz": 1, "lt": 25, "tipo": "H", "enganche": 0, "meses": [4000.0, 10000.0, 0, 20000.0, 10000.0, 0, 10000.0, 20000.0, 0], "total": 74000.0, "expected": 36000, "outstanding": 0, "status": "ATRASADO_1", "zero_months": 3, "monthly_rate": 4000}, {"cliente": "Rufino Menchaca Diaz", "mz": 1, "lt": 26, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Rufino Menchaca Diaz", "mz": 1, "lt": 27, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Jos\u00e9 Manuel Acosta Hern\u00e1ndez", "mz": 1, "lt": 28, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Inocencia Ortega Carrillo", "mz": 1, "lt": 29, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Guadalupe Ochoa Rios", "mz": 1, "lt": 30, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Guadalupe Ochoa Rios", "mz": 1, "lt": 31, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Guadalupe Ochoa Rios", "mz": 1, "lt": 32, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Erandi Elizalde Tellez", "mz": 1, "lt": 33, "tipo": "H", "enganche": 0, "meses": [0, 16000.0, 0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 3, "monthly_rate": 4000}, {"cliente": "Jos\u00e9 Francisco Gutierrez Tellez", "mz": 2, "lt": 1, "tipo": "C", "enganche": 50000.0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 104000.0, "expected": 104000.0, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 6000}, {"cliente": "Jos\u00e9 Francisco Gutierrez Tellez", "mz": 2, "lt": 2, "tipo": "H", "enganche": 0, "meses": [6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 54000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Joaquin Gahel Cordova Reyes", "mz": 2, "lt": 3, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Maria Del Socorro Herrera Avila", "mz": 2, "lt": 5, "tipo": "H", "enganche": 0, "meses": [8000.0, 5000.0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 0, 7000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 2, "monthly_rate": 4000}, {"cliente": "Maria Del Socorro Herrera Avila", "mz": 2, "lt": 6, "tipo": "H", "enganche": 0, "meses": [8000.0, 0, 5000.0, 4000.0, 4000.0, 4000.0, 4000.0, 0, 7000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 2, "monthly_rate": 4000}, {"cliente": "Maria Del Socorro Herrera Avila", "mz": 2, "lt": 7, "tipo": "H", "enganche": 0, "meses": [0, 13000.0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 0, 7000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 3, "monthly_rate": 4000}, {"cliente": "Georgina Astorga Espinoza", "mz": 2, "lt": 8, "tipo": "H", "enganche": 0, "meses": [0, 8000.0, 0, 8000.0, 0, 8000.0, 0, 8000.0, 0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "ATRASADO_1", "zero_months": 5, "monthly_rate": 4000}, {"cliente": "Georgina Astorga Espinoza", "mz": 2, "lt": 9, "tipo": "H", "enganche": 0, "meses": [0, 8000.0, 0, 8000.0, 0, 8000.0, 0, 8000.0, 0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "ATRASADO_1", "zero_months": 5, "monthly_rate": 4000}, {"cliente": "Everardo Arce Gonzalez", "mz": 2, "lt": 10, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 8000.0, 0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Marisela P\u00e9erez", "mz": 2, "lt": 11, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Marisela P\u00e9erez", "mz": 2, "lt": 12, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Jazmin Yareli Figueroa Ramirez", "mz": 15, "lt": 22, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Raul Garc\u00eda Delgadillo", "mz": 2, "lt": 14, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 2000.0, 2000.0, 3000.0, 3000.0, 3000.0], "total": 13000.0, "expected": 36000, "outstanding": 23000.0, "status": "AL_DIA", "zero_months": 4, "monthly_rate": 4000}, {"cliente": "Raul Garc\u00eda Delgadillo", "mz": 2, "lt": 15, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Francisco Gonzalez Cordova", "mz": 2, "lt": 16, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Francisco Gonzalez Cordova", "mz": 2, "lt": 17, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Brian Iv\u00e1n Velazquez Meza", "mz": 2, "lt": 18, "tipo": "C", "enganche": 50000.0, "meses": [1000.0, 0, 6000.0, 6000.0, 18000.0, 0, 6000.0, 18000.0, 0], "total": 105000.0, "expected": 104000.0, "outstanding": 0, "status": "ATRASADO_1", "zero_months": 3, "monthly_rate": 6000}, {"cliente": "Alfonso Ortega Sandoval", "mz": 2, "lt": 20, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 4000.0, 0, 4000.0, 4000.0, 4000.0], "total": 16000.0, "expected": 36000, "outstanding": 20000.0, "status": "AL_DIA", "zero_months": 5, "monthly_rate": 4000}, {"cliente": "Victor Hugo Sanchez de la Torre", "mz": 2, "lt": 22, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 0, 5000.0, 4000.0], "total": 9000.0, "expected": 36000, "outstanding": 27000.0, "status": "AL_DIA", "zero_months": 7, "monthly_rate": 4000}, {"cliente": "Victor Hugo Sanchez de la Torre", "mz": 2, "lt": 23, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 0, 45946.0, 44914.0], "total": 90860.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 7, "monthly_rate": 4000}, {"cliente": "Rut Mora De Lara", "mz": 2, "lt": 24, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 0, 4000.0, 4000.0], "total": 8000.0, "expected": 36000, "outstanding": 28000.0, "status": "AL_DIA", "zero_months": 7, "monthly_rate": 4000}, {"cliente": "Marisela P\u00e9erez", "mz": 2, "lt": 25, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Marisela P\u00e9erez", "mz": 2, "lt": 26, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Benjamin Andrew Ricardo Munguia", "mz": 2, "lt": 27, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 4000.0, 4000.0, 4000.0], "total": 12000.0, "expected": 36000, "outstanding": 24000.0, "status": "AL_DIA", "zero_months": 6, "monthly_rate": 4000}, {"cliente": "Patricia Munguia Mora", "mz": 2, "lt": 28, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 4000.0, 4000.0, 4000.0], "total": 12000.0, "expected": 36000, "outstanding": 24000.0, "status": "AL_DIA", "zero_months": 6, "monthly_rate": 4000}, {"cliente": "Arnulfo Hernandez V\u00e1zquez", "mz": 2, "lt": 29, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 4000.0, 4000.0, 4000.0], "total": 12000.0, "expected": 36000, "outstanding": 24000.0, "status": "AL_DIA", "zero_months": 6, "monthly_rate": 4000}, {"cliente": "Arnulfo Hernandez V\u00e1zquez", "mz": 2, "lt": 30, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 4000.0, 4000.0, 4000.0], "total": 12000.0, "expected": 36000, "outstanding": 24000.0, "status": "AL_DIA", "zero_months": 6, "monthly_rate": 4000}, {"cliente": "Isaias Avila Duran", "mz": 2, "lt": 33, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 8000.0], "total": 40000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Ivan Sanchez Villegas", "mz": 2, "lt": 35, "tipo": "C", "enganche": 50000.0, "meses": [0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0, 6000.0], "total": 98000.0, "expected": 104000.0, "outstanding": 6000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 6000}, {"cliente": "Elvis Gonzalez Sambrano", "mz": 3, "lt": 2, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 8000.0], "total": 24000.0, "expected": 36000, "outstanding": 12000.0, "status": "AL_DIA", "zero_months": 4, "monthly_rate": 4000}, {"cliente": "Elvis Gonzalez Sambrano.", "mz": 3, "lt": 3, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 8000.0], "total": 24000.0, "expected": 36000, "outstanding": 12000.0, "status": "AL_DIA", "zero_months": 4, "monthly_rate": 4000}, {"cliente": "Manuel Ignacio Posada Guzman.", "mz": 3, "lt": 7, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 0, 4000.0, 4000.0], "total": 8000.0, "expected": 36000, "outstanding": 28000.0, "status": "AL_DIA", "zero_months": 7, "monthly_rate": 4000}, {"cliente": "Martha Alicia Ortega Medina", "mz": 3, "lt": 8, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Mario Alberto Silva Birrueta", "mz": 3, "lt": 9, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Mario Alberto Silva Birrueta", "mz": 3, "lt": 10, "tipo": "H", "enganche": 0, "meses": [0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 28000.0, "expected": 36000, "outstanding": 8000.0, "status": "AL_DIA", "zero_months": 2, "monthly_rate": 4000}, {"cliente": "Candelaria Salgado", "mz": 3, "lt": 11, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Candelaria Salgado", "mz": 3, "lt": 12, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Candelaria Salgado", "mz": 3, "lt": 13, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Candelaria Salgado", "mz": 3, "lt": 14, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 24000.0, "expected": 36000, "outstanding": 12000.0, "status": "AL_DIA", "zero_months": 3, "monthly_rate": 4000}, {"cliente": "Juan Pablo Hernandez Angel", "mz": 3, "lt": 15, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 16000.0, "expected": 36000, "outstanding": 20000.0, "status": "AL_DIA", "zero_months": 5, "monthly_rate": 4000}, {"cliente": "Juliana Salgado Rosendo", "mz": 14, "lt": 3, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 20000.0, 0, 0], "total": 44000.0, "expected": 36000, "outstanding": 0, "status": "ATRASADO_2+", "zero_months": 2, "monthly_rate": 4000}, {"cliente": "Haydee Salazar", "mz": 14, "lt": 22, "tipo": "H", "enganche": 0, "meses": [0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 1, "monthly_rate": 4000}, {"cliente": "Moises Abalos Mejia", "mz": 14, "lt": 24, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 4000.0, 0, 0, 0, 5000.0, 8000.0], "total": 17000.0, "expected": 36000, "outstanding": 19000.0, "status": "AL_DIA", "zero_months": 6, "monthly_rate": 4000}, {"cliente": "Margarita Leal Raygoza", "mz": 14, "lt": 25, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 0, 0, 0, 4000.0], "total": 4000.0, "expected": 36000, "outstanding": 32000.0, "status": "AL_DIA", "zero_months": 8, "monthly_rate": 4000}, {"cliente": "Francisca Zepeda Olvera", "mz": 14, "lt": 26, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 0, 0, 1000.0, 4000.0, 4000.0, 4000.0], "total": 13000.0, "expected": 36000, "outstanding": 23000.0, "status": "AL_DIA", "zero_months": 5, "monthly_rate": 4000}, {"cliente": "Amelia Martinez Martinez", "mz": 14, "lt": 27, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Israel Martinez Martinez", "mz": 14, "lt": 28, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Mireya Huizar Villa", "mz": 15, "lt": 16, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Mireya Huizar Villa", "mz": 15, "lt": 17, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Mireya Huizar Villa", "mz": 15, "lt": 18, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Ulysses Flores S\u00e1nchez", "mz": 15, "lt": 25, "tipo": "H", "enganche": 0, "meses": [0, 0, 0, 4000.0, 4000.0, 4000.0, 4000.0, 8000.0, 8000.0], "total": 32000.0, "expected": 36000, "outstanding": 4000.0, "status": "AL_DIA", "zero_months": 3, "monthly_rate": 4000}, {"cliente": "Ulysses Flores S\u00e1nchez", "mz": 15, "lt": 26, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 8000.0, 8000.0], "total": 44000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Lina Barba Olachea", "mz": 15, "lt": 27, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Maria Concepci\u00f3n Murillo Cervera", "mz": 15, "lt": 28, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Aneth Marina Mu\u00f1oz Valenzuela", "mz": 15, "lt": 29, "tipo": "H", "enganche": 0, "meses": [4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 36000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}, {"cliente": "Sofia Chavez Cruz", "mz": 15, "lt": 30, "tipo": "H", "enganche": 0, "meses": [5000.0, 5000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0, 4000.0], "total": 38000.0, "expected": 36000, "outstanding": 0, "status": "AL_DIA", "zero_months": 0, "monthly_rate": 4000}];
+var TTMONTHS=["Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+function saraTTFilter(){
+  var s=document.getElementById('sara-tt-search').value.toLowerCase();
+  var st=document.getElementById('sara-tt-status').value;
+  var f=TTRWOS.filter(function(r){return(!s||r.cliente.toLowerCase().includes(s))&&(!st||r.status===st);});
+  saraTTRender(f);
+}
+function saraTTRender(rows){
+  var tb=document.getElementById('sara-tt-tbody');
+  if(!tb)return;
+  tb.innerHTML=rows.map(function(r,i){
+    var sc=r.status==='AL_DIA'?'color:#22c55e;':r.status==='ATRASADO_1'?'color:#f59e0b;':'color:#ef4444;';
+    var st=r.status==='AL_DIA'?'AL DIA':r.status==='ATRASADO_1'?'ATRASO 1M':'ATRASO 2M+';
+    var tc=r.tipo&&r.tipo.trim().startsWith('C')?'color:#C9A55C;':'color:#4a8fd4;';
+    return '<tr style="'+(i%2?'background:rgba(255,255,255,0.02);':'')+'">'
+      +'<td style="font-weight:600;color:#fff;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);white-space:nowrap;">'+r.cliente+'</td>'
+      +'<td style="color:#64748b;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);">'+r.mz+'</td>'
+      +'<td style="color:#64748b;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);">'+r.lt+'</td>'
+      +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);'+tc+'font-weight:700;">'+r.tipo.trim()+'</td>'
+      +'<td style="color:#C9A55C;text-align:right;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);">$'+r.enganche.toLocaleString()+'</td>'
+      +'<td style="color:#22c55e;text-align:right;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:700;">$'+r.total.toLocaleString()+'</td>'
+      +'<td style="color:#f59e0b;text-align:right;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:700;">$'+r.outstanding.toLocaleString()+'</td>'
+      +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);'+sc+'font-weight:700;">'+st+'</td>'
+      +'</tr>';
+  }).join('');
+}
+function saraTTExport(){
+  var rows=[['Comprador','Mz','Lt','Tipo','Enganche','Total','Pendiente','Estatus']];
+  TTRWOS.forEach(function(r){rows.push([r.cliente,r.mz,r.lt,r.tipo.trim(),r.enganche,r.total,r.outstanding,r.status]);});
+  var csv=rows.map(function(r){return r.map(function(v){return '"'+(v||'').toString().replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='tuntan_sara.csv';a.click();
+}
+// Init stats
+(function(){
+  var tot=TTRWOS.reduce(function(s,r){return s+r.total;},0);
+  var pend=TTRWOS.reduce(function(s,r){return s+r.outstanding;},0);
+  var ald=TTRWOS.filter(function(r){return r.status==='AL_DIA';}).length;
+  var at1=TTRWOS.filter(function(r){return r.status==='ATRASADO_1';}).length;
+  var at2=TTRWOS.filter(function(r){return r.status==='ATRASADO_2+';}).length;
+  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  el('sara-tt-cobrado','$'+(tot/1000000).toFixed(2)+'M');
+  el('sara-tt-pend','$'+(pend/1000).toFixed(0)+'K');
+  el('sara-tt-aldia',ald); el('sara-tt-atr1',at1); el('sara-tt-atr2',at2);
+  saraTTRender(TTRWOS);
+})();
+
+//     TUNTAN SHARED BACKEND    
+var BE='https://auditdna-backend-1-production.up.railway.app';
+var TT_WHO='Sara';
+function ttApi(m,p,d){var o={method:m,headers:{'Content-Type':'application/json'}};if(d)o.body=JSON.stringify(d);return fetch(BE+p,o).then(function(r){return r.json();});}
+function ttLoadMsgs(channel,cb){ttApi('GET','/api/tuntan/messages'+(channel?'?channel='+channel:'')).then(function(d){if(d.ok&&cb)cb(d.data);}).catch(function(){});}
+function ttSendMsg(fn,tn,body,ch){return ttApi('POST','/api/tuntan/messages',{from_name:fn,to_name:tn,body:body,channel:ch||'team'});}
+function ttSaveContract(ct){return ttApi('POST','/api/tuntan/contracts',ct);}
+function ttLoadContracts(cb){ttApi('GET','/api/tuntan/contracts').then(function(d){if(d.ok&&cb)cb(d.data);}).catch(function(){});}
+function ttSaveSale(s){return ttApi('POST','/api/tuntan/sales',s);}
+function ttLoadSales(cb){ttApi('GET','/api/tuntan/sales').then(function(d){if(d.ok&&cb)cb(d.data);}).catch(function(){});}
+function ttSaveAppt(a){return ttApi('POST','/api/tuntan/appointments',a);}
+function ttLoadAppts(cb){ttApi('GET','/api/tuntan/appointments').then(function(d){if(d.ok&&cb)cb(d.data);}).catch(function(){});}
+function ttUpdAppt(id,st){return ttApi('PATCH','/api/tuntan/appointments/'+id,{status:st});}
+function ttLoadDeposits(cb){ttApi('GET','/api/tuntan/deposits').then(function(d){if(d.ok&&cb)cb(d.data);}).catch(function(){});}
+
+let pinVal = '';
+const PIN = '2345'; // Sara PIN
+let msgTo = '';
+let clientes = JSON.parse(localStorage.getItem('sara_clientes')||'[]');
+let contratos = JSON.parse(localStorage.getItem('sara_contratos')||'[]');
+let ventas = JSON.parse(localStorage.getItem('sara_ventas')||'[]');
+let agenda = JSON.parse(localStorage.getItem('sara_agenda')||'[]');
+let docs = JSON.parse(localStorage.getItem('sara_docs')||'[]');
+let messages = JSON.parse(localStorage.getItem('sara_msgs')||'[]');
+
+function pp(v){
+  if(pinVal.length>=4)return;
+  pinVal+=v; updPD();
+  if(pinVal.length===4){
+    setTimeout(()=>{
+      if(pinVal===PIN){
+        document.getElementById('loginScreen').style.display='none';
+        document.body.style.alignItems='flex-start';
+        document.getElementById('mainApp').classList.add('open');
+        refreshStats();
+        // Load shared data from Railway on login
+        ttLoadContracts(function(rows){ contratos=rows.map(function(r){return {id:r.id,num:r.num||'TT-'+r.id,nombre:r.nombre,mz:r.mz,lt:r.lt,tipo:r.tipo,precio:parseFloat(r.precio)||0,eng:parseFloat(r.enganche)||0,mens:parseFloat(r.mensual)||0,plazo:r.plazo,fecha:r.fecha,tel:r.tel,vend:r.vendedor,status:r.status};}); localStorage.setItem('sara_contratos',JSON.stringify(contratos)); refreshStats(); });
+        ttLoadSales(function(rows){ ventas=rows.map(function(r){return {id:r.id,fecha:r.fecha,nombre:r.nombre,lote:r.lote,concepto:r.concepto,monto:parseFloat(r.monto)||0,tipoPago:r.tipo_pago,ref:r.referencia,vendedor:r.vendedor};}); localStorage.setItem('sara_ventas',JSON.stringify(ventas)); refreshStats(); });
+        ttLoadAppts(function(rows){ agenda=rows.map(function(r){return {id:r.id,fecha:r.fecha,hora:r.hora,cliente:r.cliente,tel:r.tel,tipo:r.tipo,lote:r.lote,notas:r.notas,status:r.status};}); agenda.sort(function(a,b){return a.fecha<b.fecha?-1:1;}); localStorage.setItem('sara_agenda',JSON.stringify(agenda)); refreshStats(); });
+        ttLoadMsgs('team',function(rows){ messages=rows; });
+      } else {
+        document.getElementById('pinErr').textContent='PIN incorrecto / Incorrect PIN';
+        pinVal=''; updPD();
+        setTimeout(()=>document.getElementById('pinErr').textContent='',1500);
+      }
+    },200);
+  }
+}
+function pclr(){pinVal=pinVal.slice(0,-1);updPD();}
+function updPD(){for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.toggle('filled',i<pinVal.length);}
+function logout(){pinVal='';updPD();document.getElementById('mainApp').classList.remove('open');document.getElementById('loginScreen').style.display='';document.body.style.alignItems='center';}
+
+function showTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='clientes')renderClientes();
+  if(id==='contratos')renderContratos();
+  if(id==='ventas')renderVentas();
+  if(id==='agenda')renderAgenda();
+  if(id==='mensajes')renderMessages();
+  if(id==='documentos')renderDocs();
+}
+function showTabBtn(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelector('.tab[onclick*="'+id+'"]')?.classList.add('active');
+}
+
+function refreshStats(){
+  document.getElementById('sc-clientes').textContent=clientes.length;
+  document.getElementById('sc-contratos').textContent=contratos.length;
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('sc-ventas').textContent=ventas.filter(v=>v.fecha&&v.fecha.startsWith(new Date().toISOString().slice(0,7))).length;
+  document.getElementById('sc-agenda').textContent=agenda.filter(a=>a.fecha===today).length;
+  document.getElementById('sc-msgs').textContent=messages.filter(m=>m.to==='Sara'&&!m.read).length;
+}
+
+// CLIENTES
+function toggleNewCliente(){const f=document.getElementById('newClienteForm');f.style.display=f.style.display==='none'?'block':'none';}
+function saveCliente(){
+  const n=document.getElementById('cNombre').value.trim();
+  if(!n){alert('Nombre requerido.');return;}
+  clientes.unshift({id:Date.now(),nombre:n,tel:document.getElementById('cTel').value,email:document.getElementById('cEmail').value,lote:document.getElementById('cLote').value,presup:document.getElementById('cPresup').value,fuente:document.getElementById('cFuente').value,notas:document.getElementById('cNotas').value,fecha:new Date().toLocaleDateString('es-MX')});
+  localStorage.setItem('sara_clientes',JSON.stringify(clientes));
+  renderClientes();refreshStats();toggleNewCliente();
+}
+function renderClientes(){
+  const tb=document.getElementById('clienteTbody');
+  const s=document.getElementById('clienteSearch')?.value.toLowerCase()||'';
+  const rows=clientes.filter(c=>!s||c.nombre.toLowerCase().includes(s));
+  tb.innerHTML=rows.length?rows.map((c,i)=>'<tr><td style="font-weight:600;color:#fff;">'+c.nombre+'</td><td><a href="tel:'+c.tel+'" style="color:var(--blue);">'+c.tel+'</a></td><td style="color:var(--muted);">'+c.email+'</td><td>'+c.lote+'</td><td style="color:var(--gold);">$'+(c.presup||0).toLocaleString()+'</td><td><span class="badge b-b">'+c.fuente+'</span></td><td style="color:var(--muted);font-size:10px;">'+c.notas+'</td><td style="color:var(--muted);">'+c.fecha+'</td><td><button onclick="delCliente('+clientes.indexOf(c)+')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red);padding:3px 8px;font-size:8px;cursor:pointer;">DEL</button></td></tr>').join(''):'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px;">Sin clientes registrados.</td></tr>';
+}
+function delCliente(i){if(confirm('Eliminar?')){clientes.splice(i,1);localStorage.setItem('sara_clientes',JSON.stringify(clientes));renderClientes();refreshStats();}}
+function filterClientes(){renderClientes();}
+
+// CONTRATOS
+function toggleNewContrato(){const f=document.getElementById('newContratoForm');f.style.display=f.style.display==='none'?'block':'none';}
+function saveContrato(){
+  const n=document.getElementById('trNombre').value.trim();
+  if(!n){alert('Nombre requerido.');return;}
+  contratos.unshift({id:Date.now(),num:document.getElementById('trNum').value||'TT-'+(contratos.length+1),nombre:n,mz:document.getElementById('trMz').value,lt:document.getElementById('trLt').value,tipo:document.getElementById('trTipo').value,precio:parseFloat(document.getElementById('trPrecio').value)||0,enganche:parseFloat(document.getElementById('trEnganche').value)||0,mensual:parseFloat(document.getElementById('trMensual').value)||0,plazo:document.getElementById('trPlazo').value,fecha:document.getElementById('trFecha').value,tel:document.getElementById('trTel').value,vendedor:document.getElementById('trVendedor').value,status:'Activo'});
+  ttSaveContract({nombre:contratos[0].nombre,mz:contratos[0].mz,lt:contratos[0].lt,tipo:contratos[0].tipo,
+    precio:contratos[0].precio,enganche:contratos[0].eng,mensual:contratos[0].mens,plazo:contratos[0].plazo,
+    fecha:contratos[0].fecha,tel:contratos[0].tel,vendedor:contratos[0].vend}).then(function(d){
+    if(d.ok) ttLoadContracts(function(rows){ contratos=rows.map(function(r){return {id:r.id,num:r.num||'TT-'+r.id,nombre:r.nombre,mz:r.mz,lt:r.lt,tipo:r.tipo,precio:parseFloat(r.precio)||0,eng:parseFloat(r.enganche)||0,mens:parseFloat(r.mensual)||0,plazo:r.plazo,fecha:r.fecha,tel:r.tel,vend:r.vendedor,status:r.status};}); localStorage.setItem('sara_contratos',JSON.stringify(contratos)); renderContratos(); refreshStats(); }); });
+  toggleNewContrato();
+}
+function renderContratos(){
+  const tb=document.getElementById('contratoTbody');
+  tb.innerHTML=contratos.length?contratos.map((c,i)=>'<tr><td style="color:var(--muted);font-size:9px;">'+c.num+'</td><td style="font-weight:600;color:#fff;">'+c.nombre+'</td><td>'+c.mz+'</td><td>'+c.lt+'</td><td><span class="'+(c.tipo==='C'?'badge b-a':'badge b-b')+'">'+(c.tipo==='C'?'Comercial':'Habitacional')+'</span></td><td style="color:var(--gold);">$'+c.precio.toLocaleString()+'</td><td style="color:var(--green);">$'+c.enganche.toLocaleString()+'</td><td>$'+c.mensual.toLocaleString()+'</td><td>'+c.plazo+' meses</td><td style="color:var(--muted);">'+c.fecha+'</td><td style="color:var(--blue);">'+c.vendedor+'</td><td><span class="badge b-g">'+c.status+'</span></td><td><button onclick="delContrato('+i+')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red);padding:3px 8px;font-size:8px;cursor:pointer;">DEL</button></td></tr>').join(''):'<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:24px;">Sin contratos registrados.</td></tr>';
+}
+function delContrato(i){if(confirm('Eliminar?')){contratos.splice(i,1);localStorage.setItem('sara_contratos',JSON.stringify(contratos));renderContratos();refreshStats();}}
+function exportContratoCSV(){const rows=[['No.','Comprador','Mz','Lt','Tipo','Precio','Enganche','Mensual','Plazo','Fecha','Tel','Vendedor','Estatus']];contratos.forEach(c=>rows.push([c.num,c.nombre,c.mz,c.lt,c.tipo,c.precio,c.enganche,c.mensual,c.plazo,c.fecha,c.tel,c.vendedor,c.status]));const csv=rows.map(r=>r.map(v=>'"'+(v||'').toString().replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='contratos_tuntan.csv';a.click();}
+
+// VENTAS
+function toggleNewVenta(){const f=document.getElementById('newVentaForm');f.style.display=f.style.display==='none'?'block':'none';}
+function saveVenta(){
+  ventas.unshift({id:Date.now(),fecha:document.getElementById('vFecha').value,nombre:document.getElementById('vNombre').value,lote:document.getElementById('vLote').value,monto:parseFloat(document.getElementById('vMonto').value)||0,tipoPago:document.getElementById('vTipoPago').value,concepto:document.getElementById('vConcepto').value,ref:document.getElementById('vRef').value,vendedor:document.getElementById('vVendedor').value});
+  ttSaveSale({fecha:ventas[0].fecha,nombre:ventas[0].nombre,lote:ventas[0].lote,concepto:ventas[0].concepto,
+    monto:ventas[0].monto,tipo_pago:ventas[0].tipoPago,referencia:ventas[0].ref,vendedor:ventas[0].vendedor}).then(function(d){
+    if(d.ok) ttLoadSales(function(rows){ ventas=rows.map(function(r){return {id:r.id,fecha:r.fecha,nombre:r.nombre,lote:r.lote,concepto:r.concepto,monto:parseFloat(r.monto)||0,tipoPago:r.tipo_pago,ref:r.referencia,vendedor:r.vendedor};}); localStorage.setItem('sara_ventas',JSON.stringify(ventas)); renderVentas(); refreshStats(); }); });
+  toggleNewVenta();
+}
+function renderVentas(){
+  const tb=document.getElementById('ventaTbody');
+  tb.innerHTML=ventas.length?ventas.map((v,i)=>'<tr><td style="color:var(--muted);">'+v.fecha+'</td><td style="font-weight:600;color:#fff;">'+v.nombre+'</td><td>'+v.lote+'</td><td><span class="badge b-b">'+v.concepto+'</span></td><td style="color:var(--green);font-weight:700;">$'+v.monto.toLocaleString()+'</td><td>'+v.tipoPago+'</td><td style="color:var(--muted);font-size:9px;">'+v.ref+'</td><td style="color:var(--blue);">'+v.vendedor+'</td><td><button onclick="delVenta('+i+')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red);padding:3px 8px;font-size:8px;cursor:pointer;">DEL</button></td></tr>').join(''):'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px;">Sin ventas registradas.</td></tr>';
+}
+function delVenta(i){if(confirm('Eliminar?')){ventas.splice(i,1);localStorage.setItem('sara_ventas',JSON.stringify(ventas));renderVentas();refreshStats();}}
+
+// AGENDA
+function toggleNewCita(){const f=document.getElementById('newCitaForm');f.style.display=f.style.display==='none'?'block':'none';}
+function saveCita(){
+  agenda.unshift({id:Date.now(),fecha:document.getElementById('agFecha').value,hora:document.getElementById('agHora').value,cliente:document.getElementById('agCliente').value,tel:document.getElementById('agTel').value,tipo:document.getElementById('agTipo').value,lote:document.getElementById('agLote').value,notas:document.getElementById('agNotas').value,status:'Pendiente'});
+  ttSaveAppt({fecha:agenda[0].fecha,hora:agenda[0].hora,cliente:agenda[0].cliente,tel:agenda[0].tel,
+    tipo:agenda[0].tipo,lote:agenda[0].lote,notas:agenda[0].notas,created_by:'Sara'}).then(function(d){
+    if(d.ok) ttLoadAppts(function(rows){ agenda=rows.map(function(r){return {id:r.id,fecha:r.fecha,hora:r.hora,cliente:r.cliente,tel:r.tel,tipo:r.tipo,lote:r.lote,notas:r.notas,status:r.status};}); agenda.sort(function(a,b){return a.fecha<b.fecha?-1:1;}); localStorage.setItem('sara_agenda',JSON.stringify(agenda)); renderAgenda(); refreshStats(); }); });
+  toggleNewCita();
+}
+function renderAgenda(){
+  const tb=document.getElementById('agendaTbody');
+  const today=new Date().toISOString().slice(0,10);
+  tb.innerHTML=agenda.length?agenda.map((a,i)=>'<tr style="'+(a.fecha===today?'background:rgba(201,165,92,0.06);':'')+'">'
+    +'<td style="color:'+(a.fecha===today?'var(--gold)':'var(--muted)')+';">'+(a.fecha===today?'HOY '+a.fecha:a.fecha)+'</td>'
+    +'<td style="color:var(--muted);">'+a.hora+'</td>'
+    +'<td style="font-weight:600;color:#fff;">'+a.cliente+'</td>'
+    +'<td><a href="tel:'+a.tel+'" style="color:var(--blue);">'+a.tel+'</a></td>'
+    +'<td><span class="badge b-b">'+a.tipo+'</span></td>'
+    +'<td>'+a.lote+'</td>'
+    +'<td style="color:var(--muted);font-size:10px;">'+a.notas+'</td>'
+    +'<td><select onchange="updCitaStatus('+i+',this.value)" style="background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:9px;padding:3px 6px;"><option'+(a.status==='Pendiente'?' selected':'')+'>Pendiente</option><option'+(a.status==='Confirmada'?' selected':'')+'>Confirmada</option><option'+(a.status==='Completada'?' selected':'')+'>Completada</option><option'+(a.status==='Cancelada'?' selected':'')+'>Cancelada</option></select></td>'
+    +'<td><button onclick="delCita('+i+')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red);padding:3px 8px;font-size:8px;cursor:pointer;">DEL</button></td></tr>'
+  ).join(''):'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px;">Sin citas agendadas.</td></tr>';
+}
+function updCitaStatus(i,v){agenda[i].status=v;localStorage.setItem('sara_agenda',JSON.stringify(agenda));}
+function delCita(i){if(confirm('Eliminar?')){agenda.splice(i,1);localStorage.setItem('sara_agenda',JSON.stringify(agenda));renderAgenda();refreshStats();}}
+
+// MENSAJES
+function setMsgTo(n){msgTo=n;document.getElementById('msgToDisplay').textContent=n;renderMessages();}
+function sendMsg(){
+  const text=document.getElementById('msgText').value.trim();
+  if(!text||!msgTo){alert('Selecciona destinatario y escribe un mensaje.');return;}
+  ttSendMsg('Sara',msgTo,text,'team').then(function(d){
+    if(d.ok) ttLoadMsgs('team',function(rows){ messages=rows; renderMessages(); });
+  }).catch(function(){ messages.push({id:Date.now(),from:'Sara',to:msgTo,text:text,ts:new Date().toLocaleString('es-MX'),read:false}); localStorage.setItem('sara_msgs',JSON.stringify(messages)); renderMessages(); });
+  document.getElementById('msgText').value='';refreshStats();
+}
+function renderMessages(){
+  const list=document.getElementById('msgList');
+  const filtered=msgTo?messages.filter(m=>(m.from==='Sara'&&m.to===msgTo)||(m.from===msgTo&&m.to==='Sara')||(m.to==='Todos / All')):messages;
+  list.innerHTML=filtered.length?filtered.map(m=>'<div class="msg-bubble '+(m.from==='Sara'?'msg-s':'msg-r')+'">'+'<div>'+m.text+'</div><div class="msg-meta">'+m.from+' &rarr; '+m.to+' &bull; '+m.ts+'</div></div>').join(''):'<div style="text-align:center;color:var(--muted);font-size:10px;padding:20px;">Sin mensajes.</div>';
+  list.scrollTop=list.scrollHeight;
+}
+
+// DOCUMENTOS
+function uploadDocs(inp){
+  Array.from(inp.files).forEach(f=>{docs.push({name:f.name,size:(f.size/1024).toFixed(0)+'KB',date:new Date().toLocaleDateString('es-MX'),type:f.type});});
+  localStorage.setItem('sara_docs',JSON.stringify(docs));renderDocs();
+}
+function renderDocs(){
+  const list=document.getElementById('docList');
+  list.innerHTML=docs.length?docs.map((d,i)=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--panel);border:1px solid var(--border);margin-bottom:8px;"><div><div style="font-size:11px;color:#fff;font-weight:600;">&#128196; '+d.name+'</div><div style="font-size:9px;color:var(--muted);">'+d.size+' &bull; '+d.date+'</div></div><button onclick="delDoc('+i+')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red);padding:4px 10px;font-size:9px;cursor:pointer;">ELIMINAR</button></div>').join(''):'<div style="color:var(--muted);font-size:11px;">Sin documentos.</div>';
+}
+function delDoc(i){if(confirm('Eliminar?')){docs.splice(i,1);localStorage.setItem('sara_docs',JSON.stringify(docs));renderDocs();}}
+</script>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-title">PORTAL SARA</div>
+  <div class="login-sub">ASISTENTE &bull; CONTRATOS &bull; VENTAS &bull; TUNTAN</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-err" id="pinErr"></div>
+  <div class="pin-pad">
+    <button class="pkey" onclick="pp('1')">1</button>
+    <button class="pkey" onclick="pp('2')">2</button>
+    <button class="pkey" onclick="pp('3')">3</button>
+    <button class="pkey" onclick="pp('4')">4</button>
+    <button class="pkey" onclick="pp('5')">5</button>
+    <button class="pkey" onclick="pp('6')">6</button>
+    <button class="pkey" onclick="pp('7')">7</button>
+    <button class="pkey" onclick="pp('8')">8</button>
+    <button class="pkey" onclick="pp('9')">9</button>
+    <button class="pkey" onclick="pclr()" style="color:var(--red);">&#8592;</button>
+    <button class="pkey" onclick="pp('0')">0</button>
+    <button class="pkey" style="visibility:hidden;"></button>
+  </div>
+  <div style="font-size:9px;color:var(--muted);">PIN de acceso / Access PIN</div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="mainApp">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">PORTAL SARA &mdash; ASISTENTE EJECUTIVA</div>
+      <div class="hdr-sub">CONTRATOS &bull; VENTAS &bull; TUNTAN &bull; MENSAJES &bull; BILINGUE</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="badge b-g">ACTIVA</span>
+      <span class="badge b-b">TUNTAN 2025</span>
+      <button onclick="location.href='monica-tuntan.html'" style="padding:6px 14px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.3);color:var(--gold);font-size:9px;font-weight:700;cursor:pointer;">&#8617; TUNTAN ADMIN</button>
+      <button onclick="logout()" style="padding:6px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red);font-size:9px;font-weight:700;cursor:pointer;">SALIR</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('dashboard')">&#127759; INICIO</div>
+    <div class="tab" onclick="showTab('clientes')">&#128101; CLIENTES / BUYERS</div>
+    <div class="tab" onclick="showTab('contratos')">&#128196; CONTRATOS</div>
+    <div class="tab" onclick="showTab('ventas')">&#128176; VENTAS / SALES</div>
+    <div class="tab" onclick="showTab('agenda')">&#128197; AGENDA</div>
+    <div class="tab" onclick="showTab('mensajes')">&#128172; MENSAJES</div>
+    <div class="tab" onclick="showTab('documentos')">&#128194; DOCUMENTOS</div>
+    <div class="tab" onclick="showTab('tuntan')">&#128205; TUNTAN LOTES</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="tab-dashboard">
+    <div class="stat-grid" id="saraStats">
+      <div class="stat"><div class="stat-n" style="color:var(--blue)" id="sc-clientes">0</div><div class="stat-l">Clientes Registrados</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--gold)" id="sc-contratos">0</div><div class="stat-l">Contratos Activos</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--green)" id="sc-ventas">0</div><div class="stat-l">Ventas del Mes</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--amber)" id="sc-agenda">0</div><div class="stat-l">Citas Hoy</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--red)" id="sc-msgs">0</div><div class="stat-l">Mensajes No Leidos</div></div>
+    </div>
+    <div class="sec-hdr">ACCESOS RAPIDOS / QUICK ACCESS</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;">
+      ${[
+        {label:'+ Nuevo Contrato',tab:'contratos',color:'var(--gold)'},
+        {label:'+ Nuevo Cliente',tab:'clientes',color:'var(--blue)'},
+        {label:'+ Registrar Venta',tab:'ventas',color:'var(--green)'},
+        {label:'+ Agendar Cita',tab:'agenda',color:'var(--amber)'},
+        {label:'Ver Lotes TunTan',tab:'tuntan',color:'var(--text)'},
+        {label:'Enviar Mensaje',tab:'mensajes',color:'var(--blue)'},
+      ].map(a => '<button onclick="showTabBtn(\''+a.tab+'\')" style="padding:14px;background:var(--panel);border:1px solid var(--border);color:'+a.color+';font-size:11px;font-weight:700;cursor:pointer;text-align:left;transition:.2s;" onmouseover="this.style.borderColor=\''+a.color+'\'" onmouseout="this.style.borderColor=\'rgba(74,143,212,0.2)\'">'+a.label+'</button>').join('')}
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div class="panel" id="tab-clientes">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+      <input type="text" id="clienteSearch" placeholder="Buscar cliente..." style="background:var(--panel);border:1px solid var(--border);color:var(--text);padding:7px 12px;font-size:10px;outline:none;flex:1;min-width:200px;" oninput="filterClientes()">
+      <button class="btn-p" style="margin-top:0;" onclick="toggleNewCliente()">+ NUEVO CLIENTE</button>
+    </div>
+    <div id="newClienteForm" style="display:none;background:var(--panel);border:1px solid var(--border);padding:16px;margin-bottom:14px;">
+      <div class="sec-hdr">NUEVO CLIENTE / NEW CLIENT</div>
+      <div class="form-grid">
+        <div class="fld"><label>Nombre Completo *</label><input type="text" id="cNombre" placeholder="Nombre completo..."></div>
+        <div class="fld"><label>Telefono *</label><input type="tel" id="cTel" placeholder="664-000-0000"></div>
+        <div class="fld"><label>Email</label><input type="email" id="cEmail" placeholder="email@..."></div>
+        <div class="fld"><label>Lote Interes</label><input type="text" id="cLote" placeholder="Mz-Lt o Tipo"></div>
+        <div class="fld"><label>Presupuesto</label><input type="number" id="cPresup" placeholder="0"></div>
+        <div class="fld"><label>Fuente / Source</label><select id="cFuente"><option>Referido</option><option>Facebook</option><option>Instagram</option><option>Visita directa</option><option>WhatsApp</option><option>Otro</option></select></div>
+        <div class="fld" style="grid-column:1/-1;"><label>Notas</label><input type="text" id="cNotas" placeholder="Notas adicionales..."></div>
+      </div>
+      <button class="btn-p" onclick="saveCliente()">GUARDAR CLIENTE</button>
+      <button class="btn-g" onclick="toggleNewCliente()" style="margin-left:8px;margin-top:12px;">CANCELAR</button>
+    </div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>NOMBRE</th><th>TELEFONO</th><th>EMAIL</th><th>LOTE INTERES</th><th>PRESUPUESTO</th><th>FUENTE</th><th>NOTAS</th><th>FECHA</th><th></th></tr></thead>
+      <tbody id="clienteTbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- CONTRATOS -->
+  <div class="panel" id="tab-contratos">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <button class="btn-p" style="margin-top:0;" onclick="toggleNewContrato()">+ NUEVO CONTRATO</button>
+      <button class="btn-g" onclick="exportContratoCSV()">&#128229; EXPORTAR CSV</button>
+      <button class="btn-g" onclick="window.print()">&#128438; IMPRIMIR</button>
+    </div>
+    <div id="newContratoForm" style="display:none;background:var(--panel);border:1px solid var(--border);padding:16px;margin-bottom:14px;">
+      <div class="sec-hdr">NUEVO CONTRATO / NEW CONTRACT</div>
+      <div class="form-grid">
+        <div class="fld"><label>Comprador *</label><input type="text" id="trNombre" placeholder="Nombre completo..."></div>
+        <div class="fld"><label>Manzana</label><input type="number" id="trMz" placeholder="1"></div>
+        <div class="fld"><label>Lote</label><input type="number" id="trLt" placeholder="1"></div>
+        <div class="fld"><label>Tipo</label><select id="trTipo"><option value="C">Comercial</option><option value="H">Habitacional</option></select></div>
+        <div class="fld"><label>Precio Total</label><input type="number" id="trPrecio" placeholder="0"></div>
+        <div class="fld"><label>Enganche / Down Pmt</label><input type="number" id="trEnganche" placeholder="0"></div>
+        <div class="fld"><label>Mensualidad</label><input type="number" id="trMensual" placeholder="4000"></div>
+        <div class="fld"><label>Fecha Firma</label><input type="date" id="trFecha"></div>
+        <div class="fld"><label>Telefono</label><input type="tel" id="trTel" placeholder="664-000-0000"></div>
+        <div class="fld"><label>Vendedor/a</label><select id="trVendedor"><option>Sara</option><option>Monica Bolio</option><option>Ariel Bolio</option></select></div>
+        <div class="fld"><label>Plazo (meses)</label><input type="number" id="trPlazo" placeholder="36"></div>
+        <div class="fld"><label>No. Contrato</label><input type="text" id="trNum" placeholder="TT-2025-001"></div>
+      </div>
+      <button class="btn-p" onclick="saveContrato()">GUARDAR CONTRATO</button>
+      <button class="btn-g" onclick="toggleNewContrato()" style="margin-left:8px;margin-top:12px;">CANCELAR</button>
+    </div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>NO.</th><th>COMPRADOR</th><th>MZ</th><th>LT</th><th>TIPO</th><th>PRECIO</th><th>ENGANCHE</th><th>MENSUAL</th><th>PLAZO</th><th>FECHA</th><th>VENDEDOR</th><th>ESTATUS</th><th></th></tr></thead>
+      <tbody id="contratoTbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- VENTAS -->
+  <div class="panel" id="tab-ventas">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <button class="btn-p" style="margin-top:0;" onclick="toggleNewVenta()">+ REGISTRAR VENTA</button>
+    </div>
+    <div id="newVentaForm" style="display:none;background:var(--panel);border:1px solid var(--border);padding:16px;margin-bottom:14px;">
+      <div class="sec-hdr">NUEVA VENTA / NEW SALE</div>
+      <div class="form-grid">
+        <div class="fld"><label>Comprador *</label><input type="text" id="vNombre" placeholder="Nombre..."></div>
+        <div class="fld"><label>Lote</label><input type="text" id="vLote" placeholder="Mz-Lt"></div>
+        <div class="fld"><label>Monto Cobrado</label><input type="number" id="vMonto" placeholder="0"></div>
+        <div class="fld"><label>Tipo Pago</label><select id="vTipoPago"><option>Efectivo</option><option>Transferencia</option><option>BBVA</option><option>Banamex</option><option>Otro</option></select></div>
+        <div class="fld"><label>Fecha</label><input type="date" id="vFecha"></div>
+        <div class="fld"><label>Concepto</label><select id="vConcepto"><option>Enganche</option><option>Mensualidad</option><option>Pago Parcial</option><option>Saldo</option></select></div>
+        <div class="fld"><label>No. Referencia</label><input type="text" id="vRef" placeholder="No. operacion..."></div>
+        <div class="fld"><label>Vendedor/a</label><select id="vVendedor"><option>Sara</option><option>Monica Bolio</option><option>Ariel Bolio</option></select></div>
+      </div>
+      <button class="btn-p" onclick="saveVenta()">GUARDAR VENTA</button>
+      <button class="btn-g" onclick="toggleNewVenta()" style="margin-left:8px;margin-top:12px;">CANCELAR</button>
+    </div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>FECHA</th><th>COMPRADOR</th><th>LOTE</th><th>CONCEPTO</th><th>MONTO</th><th>TIPO PAGO</th><th>REFERENCIA</th><th>VENDEDOR</th><th></th></tr></thead>
+      <tbody id="ventaTbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="panel" id="tab-agenda">
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="btn-p" style="margin-top:0;" onclick="toggleNewCita()">+ AGENDAR CITA</button>
+    </div>
+    <div id="newCitaForm" style="display:none;background:var(--panel);border:1px solid var(--border);padding:16px;margin-bottom:14px;">
+      <div class="sec-hdr">NUEVA CITA / NEW APPOINTMENT</div>
+      <div class="form-grid">
+        <div class="fld"><label>Cliente *</label><input type="text" id="agCliente" placeholder="Nombre..."></div>
+        <div class="fld"><label>Telefono</label><input type="tel" id="agTel" placeholder="664-000-0000"></div>
+        <div class="fld"><label>Fecha *</label><input type="date" id="agFecha"></div>
+        <div class="fld"><label>Hora</label><input type="time" id="agHora"></div>
+        <div class="fld"><label>Tipo</label><select id="agTipo"><option>Visita al Terreno</option><option>Firma de Contrato</option><option>Pago</option><option>Consulta</option><option>Otro</option></select></div>
+        <div class="fld"><label>Lote Interes</label><input type="text" id="agLote" placeholder="Mz-Lt"></div>
+        <div class="fld" style="grid-column:1/-1;"><label>Notas</label><input type="text" id="agNotas" placeholder="Notas..."></div>
+      </div>
+      <button class="btn-p" onclick="saveCita()">GUARDAR CITA</button>
+      <button class="btn-g" onclick="toggleNewCita()" style="margin-left:8px;margin-top:12px;">CANCELAR</button>
+    </div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>FECHA</th><th>HORA</th><th>CLIENTE</th><th>TELEFONO</th><th>TIPO</th><th>LOTE</th><th>NOTAS</th><th>ESTATUS</th><th></th></tr></thead>
+      <tbody id="agendaTbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="panel" id="tab-mensajes">
+    <div style="display:grid;grid-template-columns:220px 1fr;gap:14px;height:480px;">
+      <div style="background:var(--panel);border:1px solid var(--border);">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;">EQUIPO TUNTAN</div>
+        ${[{n:'Monica Bolio',r:'Administracion',c:'var(--blue)'},{n:'Ariel Bolio',r:'Director',c:'var(--gold)'},{n:'Todos / All',r:'Mensaje grupal',c:'var(--amber)'}].map(p =>
+          '<div onclick="setMsgTo(\''+p.n+'\')" style="padding:12px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background=\'rgba(74,143,212,0.05)\'" onmouseout="this.style.background=\'transparent\'">'
+          +'<div style="font-size:11px;font-weight:700;color:'+p.c+';">'+p.n+'</div>'
+          +'<div style="font-size:9px;color:var(--muted);margin-top:2px;">'+p.r+'</div></div>'
+        ).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;">
+        <div style="background:var(--panel);border:1px solid var(--border);padding:10px 14px;font-size:10px;font-weight:700;color:var(--gold);">Para: <span id="msgToDisplay">Selecciona destinatario</span></div>
+        <div class="msg-list" id="msgList" style="flex:1;"></div>
+        <div style="padding:10px 0;display:flex;gap:8px;">
+          <input type="text" id="msgText" placeholder="Escribe un mensaje / Type a message..." style="flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-size:10px;outline:none;" onkeydown="if(event.key==='Enter')sendMsg()">
+          <button onclick="sendMsg()" style="padding:0 20px;background:var(--gold);border:none;color:#000;font-size:10px;font-weight:800;cursor:pointer;">ENVIAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCUMENTOS -->
+  <div class="panel" id="tab-documentos">
+    <div class="sec-hdr">DOCUMENTOS / DOCUMENTS</div>
+    <div style="border:2px dashed rgba(201,165,92,0.3);padding:40px;text-align:center;cursor:pointer;margin-bottom:16px;" onclick="document.getElementById('docUpload').click()">
+      <div style="font-size:32px;margin-bottom:8px;">&#128196;</div>
+      <div style="font-size:12px;font-weight:700;color:var(--gold);">Subir Documentos / Upload Documents</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;">PDF, DOC, XLS, JPG, PNG</div>
+    </div>
+    <input type="file" id="docUpload" multiple style="display:none" onchange="uploadDocs(this)">
+    <div id="docList"></div>
+  </div>
+
+  <!-- TUNTAN LOTES (full data) -->
+  <div class="panel" id="tab-tuntan">
+    <div class="sec-hdr">TUNTAN -- 84 COMPRADORES 2025 / REGISTRO COMPLETO</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:14px;">
+      <div style="background:var(--panel);border:1px solid var(--border);padding:12px;text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--blue);" id="sara-tt-total">84</div><div style="font-size:8px;color:var(--muted);">COMPRADORES</div></div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:12px;text-align:center;"><div style="font-size:20px;font-weight:900;color:var(--gold);" id="sara-tt-cobrado">$3.68M</div><div style="font-size:8px;color:var(--muted);">COBRADO</div></div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:12px;text-align:center;"><div style="font-size:20px;font-weight:900;color:var(--amber);" id="sara-tt-pend">$551K</div><div style="font-size:8px;color:var(--muted);">PENDIENTE</div></div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:12px;text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--green);" id="sara-tt-aldia">76</div><div style="font-size:8px;color:var(--muted);">AL DIA</div></div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:12px;text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--amber);" id="sara-tt-atr1">7</div><div style="font-size:8px;color:var(--muted);">ATRASO 1M</div></div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:12px;text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--red);" id="sara-tt-atr2">1</div><div style="font-size:8px;color:var(--muted);">ATRASO 2M+</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <input type="text" id="sara-tt-search" placeholder="Buscar comprador..." style="background:var(--panel);border:1px solid var(--border);color:var(--text);padding:7px 12px;font-size:10px;outline:none;flex:1;min-width:180px;" oninput="saraTTFilter()">
+      <select id="sara-tt-status" onchange="saraTTFilter()" style="background:var(--panel);border:1px solid var(--border);color:var(--text);padding:7px 11px;font-size:10px;outline:none;">
+        <option value="">Todos</option><option value="AL_DIA">Al Dia</option><option value="ATRASADO_1">Atraso 1M</option><option value="ATRASADO_2+">Atraso 2M+</option>
+      </select>
+      <button onclick="location.href='monica-tuntan.html'" style="padding:7px 14px;background:rgba(201,165,92,0.12);border:1px solid rgba(201,165,92,0.3);color:var(--gold);font-size:9px;font-weight:800;cursor:pointer;">ADMIN COMPLETO</button>
+      <button onclick="saraTTExport()" style="padding:7px 14px;background:var(--panel);border:1px solid var(--border);color:var(--muted);font-size:9px;font-weight:700;cursor:pointer;">EXPORTAR CSV</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:9px;">
+        <thead><tr style="background:rgba(74,143,212,0.1);">
+          <th style="padding:6px 8px;color:var(--gold);font-size:8px;font-weight:700;letter-spacing:1.5px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;">COMPRADOR</th>
+          <th style="padding:6px 8px;color:var(--gold);font-size:8px;font-weight:700;letter-spacing:1.5px;text-align:left;border-bottom:1px solid var(--border);">MZ</th>
+          <th style="padding:6px 8px;color:var(--gold);font-size:8px;font-weight:700;letter-spacing:1.5px;text-align:left;border-bottom:1px solid var(--border);">LT</th>
+          <th style="padding:6px 8px;color:var(--gold);font-size:8px;font-weight:700;letter-spacing:1.5px;text-align:left;border-bottom:1px solid var(--border);">TIPO</th>
+          <th style="padding:6px 8px;color:var(--gold);font-size:8px;font-weight:700;letter-spacing:1.5px;text-align:right;border-bottom:1px solid var(--border);">ENGANCHE</th>
+          <th style="padding:6px 8px;color:var(--gold);font-size:8px;font-weight:700;letter-spacing:1.5px;text-align:right;border-bottom:1px solid var(--border);">COBRADO</th>
+          <th style="padding:6px 8px;color:var(--gold);font-size:8px;font-weight:700;letter-spacing:1.5px;text-align:right;border-bottom:1px solid var(--border);">PENDIENTE</th>
+          <th style="padding:6px 8px;color:var(--gold);font-size:8px;font-weight:700;letter-spacing:1.5px;text-align:left;border-bottom:1px solid var(--border);">ESTATUS</th>
+        </tr></thead>
+        <tbody id="sara-tt-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end app -->
+
+
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;">
+  <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:6px;">SARA PORTAL</div>
+  <div style="font-size:11px;color:#64748b;margin-bottom:28px;letter-spacing:1px;">SECURE ACCESS — ENTER PIN</div>
+  <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+  <div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+  <div style="font-size:9px;color:#1e3a4a;margin-top:20px;">Powered by AuditDNA Intelligence</div>
+</div>
+
+<div id="app" style="display:none;">
+</body>
+</html>

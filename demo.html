@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AuditDNA Agricultural Intelligence — Platform Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#E8B84B;--green:#1db954;--red:#ff4d4d;
+  --bg:#080808;--bg2:#111;--bg3:#0a0a0a;
+  --card:#161616;--card2:#1c1c1c;
+  --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.06);
+  --txt:#f2f2f2;--txt2:#a0a0a0;--txt3:#5a5a5a;
+}
+html,body{background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5}
+@keyframes tkscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes pls{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.6)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOP BAR */
+.topbar{background:#0a0a0a;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:50px;position:sticky;top:0;z-index:50}
+.tb-logo{display:flex;align-items:center;gap:10px}
+.tb-mark{width:32px;height:32px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#080808;flex-shrink:0}
+.tb-name{font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px}
+.tb-sub{font-size:10px;color:var(--txt3);margin-top:1px}
+.tb-badge{display:flex;align-items:center;gap:5px;background:rgba(29,185,84,0.12);border:1px solid rgba(29,185,84,0.30);border-radius:99px;padding:4px 11px}
+.tb-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pls 1.8s ease-in-out infinite;flex-shrink:0}
+.tb-live{font-size:10px;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.tb-enter{padding:6px 16px;background:var(--gold);border:none;border-radius:6px;font-size:11px;font-weight:700;color:#080808;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.3px}
+
+/* TICKER */
+.ticker{background:#050505;border-bottom:1px solid var(--border2);height:26px;overflow:hidden;position:relative}
+.ticker::before,.ticker::after{content:'';position:absolute;width:40px;height:100%;z-index:2;top:0}
+.ticker::before{left:0;background:linear-gradient(90deg,#050505,transparent)}
+.ticker::after{right:0;background:linear-gradient(270deg,#050505,transparent)}
+.tk-inner{display:flex;white-space:nowrap;height:100%;align-items:center;animation:tkscroll 32s linear infinite}
+.ti{display:inline-flex;align-items:center;gap:4px;padding:0 12px;border-right:1px solid rgba(255,255,255,0.05)}
+.ti-l{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.ti-v{font-size:11px;font-weight:700;color:var(--gold)}
+.ti-c{font-size:9px;font-weight:600}
+.up{color:#1db954}.dn{color:#ff4d4d}
+
+/* DEMO WRAP */
+.wrap{max-width:1000px;margin:0 auto;padding:24px 20px 48px}
+
+/* HEADER */
+.demo-hdr{text-align:center;margin-bottom:24px}
+.demo-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(29,185,84,0.10);border:1px solid rgba(29,185,84,0.25);border-radius:99px;padding:5px 14px;margin-bottom:14px}
+.demo-badge-t{font-size:10px;color:var(--green);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.demo-h1{font-size:clamp(24px,4vw,42px);font-weight:800;color:#fff;letter-spacing:-1.5px;line-height:1.05;margin-bottom:8px}
+.demo-h1 span{color:var(--gold)}
+.demo-sub{font-size:13px;color:var(--txt2);letter-spacing:.2px}
+
+/* AUTO BAR */
+.auto-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px}
+.auto-pill{display:flex;align-items:center;gap:6px;background:rgba(29,185,84,0.08);border:1px solid rgba(29,185,84,0.22);border-radius:99px;padding:5px 14px}
+.auto-pill-t{font-size:10px;color:var(--green);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.pause-btn{padding:5px 16px;background:var(--card2);border:1px solid var(--border);border-radius:99px;font-size:10px;color:var(--txt2);cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.5px;transition:all .15s}
+.pause-btn:hover{border-color:rgba(255,255,255,0.25);color:#fff}
+.pause-btn.paused{background:rgba(232,184,75,0.10);border-color:rgba(232,184,75,0.30);color:var(--gold)}
+
+/* STEP NAV */
+.step-nav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.step-btn{padding:6px 14px;background:var(--card);border:1px solid var(--border2);border-radius:6px;font-size:10px;color:var(--txt3);cursor:pointer;font-family:'Inter',sans-serif;transition:all .18s;white-space:nowrap;font-weight:500}
+.step-btn.active{background:var(--green);border-color:var(--green);color:#080808;font-weight:700}
+.step-btn.done{border-color:rgba(232,184,75,0.30);color:var(--gold)}
+.step-btn:hover:not(.active){border-color:rgba(255,255,255,0.20);color:#fff}
+
+/* PROGRESS */
+.prog-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:99px;margin-bottom:12px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:99px;transition:width .5s ease}
+.auto-prog-wrap{height:2px;background:rgba(255,255,255,0.04);border-radius:99px;margin-bottom:16px;overflow:hidden}
+.auto-prog-fill{height:100%;background:linear-gradient(90deg,rgba(29,185,84,0.5),rgba(232,184,75,0.5));border-radius:99px}
+
+/* SCREEN */
+.screen{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;animation:fadeIn .3s ease}
+
+/* BOTTOM NAV */
+.bot-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg3);border-top:1px solid var(--border2)}
+.btn-prev{padding:8px 20px;background:transparent;border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--txt2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.btn-prev:hover{border-color:rgba(255,255,255,0.25);color:#fff}
+.btn-next{padding:8px 22px;background:var(--green);border:none;border-radius:6px;font-size:11px;font-weight:700;color:#080808;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.btn-next:hover{opacity:.88;transform:scale(1.02)}
+.bot-label{font-size:10px;color:var(--txt3);letter-spacing:.5px;text-align:center;line-height:1.4}
+
+/* SCREEN INTERNALS */
+.s-pad{padding:24px 24px}
+.sec-tag{display:inline-flex;align-items:center;gap:7px;margin-bottom:10px}
+.sec-tag-line{display:block;width:14px;height:1.5px;background:var(--gold)}
+.sec-tag-t{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.s-h{font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;line-height:1.15;margin-bottom:16px}
+.s-sub{font-size:13px;color:var(--txt2);margin-bottom:18px;line-height:1.6}
+
+/* CARDS & GRIDS */
+.card{background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:14px 16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.row:last-child{border-bottom:none}
+.row-k{font-size:11px;color:var(--txt2);font-weight:500}
+.row-v{font-size:12px;font-weight:700}
+.pill{display:inline-block;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.3px}
+.pg{background:rgba(29,185,84,0.14);color:#1db954;border:1px solid rgba(29,185,84,0.28)}
+.pa{background:rgba(232,184,75,0.12);color:#E8B84B;border:1px solid rgba(232,184,75,0.25)}
+.pb{background:rgba(100,160,255,0.12);color:#80b0ff;border:1px solid rgba(100,160,255,0.22)}
+.mini-chart{display:flex;align-items:flex-end;gap:2px;height:30px;margin-top:8px}
+.mc-bar{flex:1;border-radius:1px 1px 0 0}
+@media(max-width:600px){.g5{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-mark">A</div>
+    <div>
+      <div class="tb-name">AuditDNA <span style="color:var(--green)">Agricultural Intelligence</span></div>
+      <div class="tb-sub">by Mexausa Food Group, Inc.</div>
+    </div>
+  </div>
+  <div class="tb-badge"><span class="tb-dot"></span><span class="tb-live">Live Demo</span></div>
+  <a href="https://mexausafg.com" target="_blank" class="tb-enter" style="text-decoration:none">Enter Platform →</a>
+</div>
+
+<div class="ticker">
+  <div class="tk-inner" id="tkinner"></div>
+</div>
+
+<div class="wrap">
+  <div class="demo-hdr">
+    <div class="demo-badge"><span class="tb-dot"></span><span class="demo-badge-t">Interactive Platform Demo — 6 Screens</span></div>
+    <div class="demo-h1">AuditDNA <span>Agricultural Intelligence</span></div>
+    <div class="demo-sub">Click through 6 live platform screens &nbsp;·&nbsp; No login required &nbsp;·&nbsp; Share with anyone</div>
+  </div>
+
+  <div class="auto-bar">
+    <div class="auto-pill"><span class="tb-dot"></span><span class="auto-pill-t" id="auto-status">Auto-playing · 5s per screen</span></div>
+    <button class="pause-btn" id="pause-btn" onclick="toggleAuto()">⏸ Pause</button>
+  </div>
+
+  <div class="step-nav" id="stepnav"></div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+  <div class="auto-prog-wrap"><div class="auto-prog-fill" id="auto-prog" style="width:0%"></div></div>
+
+  <div class="screen" id="screen"></div>
+
+  <div class="bot-nav">
+    <button class="btn-prev" id="btn-prev" onclick="nav(-1)">← Back</button>
+    <div class="bot-label" id="bot-label"></div>
+    <button class="btn-next" id="btn-next" onclick="nav(1)">Next →</button>
+  </div>
+</div>
+
+<script>
+var TICKERS=[
+  {l:'Avocado MX',v:'$42.50',c:'+0.8%',u:1},{l:'Strawberry CA',v:'$31.80',c:'+1.2%',u:1},
+  {l:'Tomato Sonora',v:'$14.20',c:'+3.4%',u:1},{l:'Lettuce CA',v:'$18.40',c:'+2.1%',u:1},
+  {l:'Jalapeño MX',v:'$9.40',c:'-0.5%',u:0},{l:'Blueberry MX',v:'$36.80',c:'-1.2%',u:0},
+  {l:'Mango MX',v:'$18.90',c:'+4.1%',u:1},{l:'Broccoli CA',v:'$22.00',c:'+0.8%',u:1},
+  {l:'Asparagus Peru',v:'$28.60',c:'+5.2%',u:1},{l:'Nogales Wait',v:'2.8 hrs',c:'+22 min',u:0},
+  {l:'MXN/USD',v:'17.24',c:'-0.3%',u:0},{l:'Cucumber MX',v:'$11.20',c:'+1.8%',u:1},
+];
+
+function bars(up,n){n=n||12;var o='';for(var i=0;i<n;i++){var h=Math.round(12+Math.sin(i*.9)*7+(i%3)*2);o+='<div class="mc-bar" style="height:'+h+'px;background:'+(up?'rgba(29,185,84,0.28)':'rgba(255,77,77,0.25)')+'"></div>';}return o;}
+
+var SCREENS=[
+{title:'Landing Page',desc:'Hero · CTAs · Live stats',html:function(){
+  return '<div class="s-pad" style="background:linear-gradient(160deg,#0d1f0d,#080808)">'+
+    '<div style="position:absolute;top:16px;right:18px;display:inline-flex;align-items:center;gap:6px;background:rgba(29,185,84,0.12);border:1px solid rgba(29,185,84,0.28);border-radius:99px;padding:4px 12px">'+
+    '<span style="width:5px;height:5px;border-radius:50%;background:#1db954;display:inline-block;animation:pls 1.6s ease-in-out infinite"></span>'+
+    '<span style="font-size:10px;color:#1db954;letter-spacing:2px;text-transform:uppercase;font-weight:600">Live — US / Mexico / Americas</span></div>'+
+    '<div style="position:relative;padding-top:8px">'+
+    '<div style="font-size:clamp(20px,3vw,36px);font-weight:800;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:10px">The AI Operating System for<br><span style="color:#E8B84B">Agriculture, Trade &</span><br>Cross-Border Intelligence</div>'+
+    '<div style="font-size:13px;color:#a0a0a0;line-height:1.7;margin-bottom:18px">Connecting Growers, Buyers, Packers, Shippers, Brokers & Wholesalers<br>across North and Latin America. PACA Licensed · FSMA 204 · Patent Pending</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px">'+
+    '<span style="padding:8px 20px;background:#E8B84B;border-radius:7px;font-size:12px;font-weight:700;color:#080808;cursor:pointer">Enter Platform →</span>'+
+    '<span style="padding:8px 16px;background:rgba(29,185,84,0.12);border:1px solid rgba(29,185,84,0.32);border-radius:7px;font-size:12px;font-weight:600;color:#1db954;cursor:pointer">Register as Grower</span>'+
+    '<span style="padding:8px 16px;background:rgba(232,184,75,0.08);border:1px solid rgba(232,184,75,0.28);border-radius:7px;font-size:12px;font-weight:600;color:#E8B84B;cursor:pointer">Register as Buyer</span>'+
+    '<span style="padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:7px;font-size:12px;color:#888;cursor:pointer">Book a Demo</span>'+
+    '</div>'+
+    '<div class="g5">'+
+    [['2,341','USDA Price Feeds','Live Updates'],['18,742','Active Growers','Americas'],['128','Commodities','Tracked'],['23','Countries','Connected'],['8,665','Loads Moved','30 Days']].map(function(x){
+      return '<div class="card" style="text-align:center;padding:14px 8px">'+
+        '<div style="font-size:24px;font-weight:800;color:#E8B84B;letter-spacing:-.5px;line-height:1;margin-bottom:5px">'+x[0]+'</div>'+
+        '<div style="font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:1.2px">'+x[1]+'</div>'+
+        '<div style="font-size:10px;color:#555;margin-top:2px">'+x[2]+'</div></div>';
+    }).join('')+'</div></div></div>';
+}},
+{title:'USDA Market Intel',desc:'Live commodity pricing · Corridor activity',html:function(){
+  return '<div class="s-pad">'+
+    '<div class="sec-tag"><span class="sec-tag-line"></span><span class="sec-tag-t">Live USDA Market Intelligence</span></div>'+
+    '<div class="s-h">Real-Time. Predictive. Actionable.</div>'+
+    '<div class="g3" style="margin-bottom:12px">'+
+    [{n:'Avocado (Hass)',l:'Michoacán MX',p:'$42.50',c:'+0.8%',cn:'+$0.34',u:1,t:'3 min ago'},
+     {n:'Romaine Lettuce',l:'Salinas CA',p:'$16.80',c:'+1.1%',cn:'+$0.18',u:1,t:'1 min ago'},
+     {n:'Blueberries',l:'Sinaloa MX',p:'$22.10',c:'-1.4%',cn:'-$0.32',u:0,t:'5 min ago'}].map(function(m){
+      return '<div class="card" style="border-color:'+(m.u?'rgba(29,185,84,0.25)':'rgba(255,77,77,0.22)')+'">'+
+        '<div style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:3px">'+m.n+'</div>'+
+        '<div style="font-size:10px;color:#555;margin-bottom:8px">'+m.l+' · '+m.t+'</div>'+
+        '<div style="display:flex;align-items:flex-end;gap:7px;margin-bottom:4px">'+
+        '<span style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1">'+m.p+'</span>'+
+        '<span style="font-size:13px;font-weight:700;color:'+(m.u?'#1db954':'#ff4d4d')+';margin-bottom:2px">'+m.c+'</span>'+
+        '<span style="font-size:12px;color:'+(m.u?'#1db954':'#ff4d4d')+';margin-bottom:2px">'+m.cn+'</span>'+
+        '</div>'+
+        '<div class="mini-chart">'+bars(m.u)+'</div>'+
+        '<div style="display:flex;gap:5px;margin-top:8px">'+
+        '<span class="pill '+(m.u?'pg':'')+'">Live</span><span class="pill pa">USDA</span></div></div>';
+    }).join('')+
+    '</div><div class="g2">'+
+    [{hdr:'Corridor Intel',rows:[['Nogales Border Wait','2.8 hrs',0],['Avocado FOB MX','$42.50',1],['Strawberry CA','$31.80',1],['Tomato Sonora','$14.20',1],['MXN/USD','17.24',0]]},
+     {hdr:'Cross-Border Today',pre:'<div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-.5px;margin-bottom:10px">642 <span style="font-size:13px;color:#555;font-weight:400">Loads</span></div>',rows:[['Nogales, AZ','214',1],['Laredo, TX','188',1],['McAllen, TX','136',1],['El Paso, TX','104',1]]}].map(function(p){
+      return '<div class="card"><div style="font-size:11px;font-weight:700;color:#E8B84B;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">'+p.hdr+'</div>'+(p.pre||'')+
+        p.rows.map(function(r){return '<div class="row"><span class="row-k">'+r[0]+'</span><span class="row-v" style="color:'+(r[2]===1?'#1db954':r[2]===0?'#ff4d4d':'#E8B84B')+'">'+r[1]+'</span></div>';}).join('')+'</div>';
+    }).join('')+'</div></div>';
+}},
+{title:'Grower Onboarding',desc:'5-step enrollment · KYC · GRS Score · FSMA 204',html:function(){
+  return '<div class="s-pad">'+
+    '<div class="sec-tag"><span class="sec-tag-line"></span><span class="sec-tag-t">Grower Onboarding — LOAF Portal</span></div>'+
+    '<div class="s-h">From field to platform in 5 steps.</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">'+
+    [{n:'01',t:'KYC Registration',d:'Farm details, commodity categories, harvest calendar, water source, certification status.',done:1},
+     {n:'02',t:'GRS Risk Score',d:'Grower Risk Score evaluates compliance, traceability readiness, and market fit.',done:1},
+     {n:'03',t:'FSMA 204 Setup',d:'Lot-level traceability activated. Every Critical Tracking Event logged automatically.',done:1},
+     {n:'04',t:'Buyer Matching',d:'Platform matches your inventory to pre-qualified buyers in real time. Zero broker markup.',done:0,active:1},
+     {n:'05',t:'Invoice Factoring',d:'Get paid in 24–72 hours. Commission-only. No upfront cost. PACA protected.',done:0}].map(function(s){
+      return '<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:'+(s.active?'rgba(29,185,84,0.08)':s.done?'rgba(255,255,255,0.03)':'rgba(255,255,255,0.015)')+';border:1px solid '+(s.active?'rgba(29,185,84,0.30)':s.done?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.05)')+';border-radius:9px">'+
+        '<div style="width:24px;height:24px;border-radius:50%;background:'+(s.done?'#1db954':s.active?'rgba(29,185,84,0.18)':'rgba(255,255,255,0.06)')+';border:1.5px solid '+(s.done?'#1db954':s.active?'rgba(29,185,84,0.45)':'rgba(255,255,255,0.10)')+';display:flex;align-items:center;justify-content:center;font-size:'+(s.done?'12':'10')+'px;font-weight:700;color:'+(s.done?'#080808':s.active?'#1db954':'#555')+';flex-shrink:0">'+(s.done?'✓':s.n)+'</div>'+
+        '<div><div style="font-size:13px;font-weight:700;color:'+(s.active?'#fff':s.done?'#ccc':'#555')+';margin-bottom:3px">'+s.t+(s.active?'&nbsp;<span style="font-size:9px;background:rgba(29,185,84,0.14);color:#1db954;border:1px solid rgba(29,185,84,0.25);border-radius:5px;padding:1px 7px;font-weight:700">IN PROGRESS</span>':'')+'</div>'+
+        '<div style="font-size:11px;color:#555;line-height:1.55">'+s.d+'</div></div></div>';
+    }).join('')+
+    '</div><div class="g3">'+
+    [['3,212','Active Growers','#1db954'],['PACA','Protected','#E8B84B'],['24hr','Factoring','#1db954']].map(function(x){
+      return '<div class="card" style="text-align:center;padding:14px 8px"><div style="font-size:22px;font-weight:800;color:'+x[2]+';margin-bottom:5px">'+x[0]+'</div><div style="font-size:10px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:1px">'+x[1]+'</div></div>';
+    }).join('')+'</div></div>';
+}},
+{title:'Buyer Marketplace',desc:'Blind sourcing · PACA-protected · Zero broker',html:function(){
+  return '<div class="s-pad">'+
+    '<div class="sec-tag"><span class="sec-tag-line"></span><span class="sec-tag-t">Buyer Marketplace — Blind Sourcing</span></div>'+
+    '<div class="s-h">Source verified produce. Zero broker.</div>'+
+    '<div style="font-size:13px;color:#888;margin-bottom:18px">Blind pricing · PACA-protected · Escrow-first · 3,000+ verified growers</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'+
+    [{id:'SELLER-MX-BC-4821',com:'Avocado Hass',origin:'Baja California, MX',vol:'5,000 cartons',price:'$42.50/carton',grade:'Grade A',match:98},
+     {id:'SELLER-MX-SON-2934',com:'Roma Tomato',origin:'Sonora, MX',vol:'8,200 cartons',price:'$14.20/carton',grade:'Grade 1',match:94},
+     {id:'SELLER-CA-SAL-7761',com:'Romaine Lettuce',origin:'Salinas, CA',vol:'3,400 cartons',price:'$16.80/carton',grade:'Grade A',match:89}].map(function(r,i){
+      return '<div style="background:'+(i===0?'rgba(29,185,84,0.05)':'rgba(255,255,255,0.025)')+';border:1px solid '+(i===0?'rgba(29,185,84,0.28)':'rgba(255,255,255,0.08)')+';border-radius:9px;padding:13px 16px;cursor:pointer" onmouseover="this.style.background=\'rgba(29,185,84,0.07)\'" onmouseout="this.style.background=\''+(i===0?'rgba(29,185,84,0.05)':'rgba(255,255,255,0.025)')+'\'">'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'+
+        '<div><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">'+r.com+' — '+r.origin+'</div>'+
+        '<div style="font-size:10px;color:#444;font-family:monospace;letter-spacing:.3px">'+r.id+'</div></div>'+
+        '<div style="text-align:right"><div style="font-size:18px;font-weight:800;color:#E8B84B">'+r.price+'</div>'+
+        '<div style="font-size:10px;color:#555">'+r.vol+'</div></div></div>'+
+        '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'+
+        '<span class="pill pg">'+r.grade+'</span><span class="pill pa">FSMA 204 ✓</span><span class="pill pb">Match '+r.match+'%</span>'+
+        '<span style="margin-left:auto;padding:6px 14px;background:#E8B84B;border-radius:6px;font-size:10px;font-weight:700;color:#080808;cursor:pointer">Submit Offer →</span>'+
+        '</div></div>';
+    }).join('')+
+    '</div><div class="g4">'+
+    [['14','Open Tenders'],['3,000+','Verified Growers'],['ESCROW','First Workflow'],['PACA','Protected']].map(function(x){
+      return '<div class="card" style="text-align:center;padding:12px 8px">'+
+        '<div style="font-size:18px;font-weight:800;color:#E8B84B;margin-bottom:4px">'+x[0]+'</div>'+
+        '<div style="font-size:10px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:1px">'+x[1]+'</div></div>';
+    }).join('')+'</div></div>';
+}},
+{title:'FSMA 204 Compliance',desc:'Lot traceability · FDA audit-ready · 1-click export',html:function(){
+  return '<div class="s-pad">'+
+    '<div class="sec-tag"><span class="sec-tag-line"></span><span class="sec-tag-t">FSMA 204 Traceability & Compliance</span></div>'+
+    '<div class="s-h">Lot-level chain of custody. Audit-ready.</div>'+
+    '<div class="g2">'+
+    '<div>'+
+    '<div style="font-size:11px;font-weight:700;color:#E8B84B;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Lot: MFG-TOM-0524-XQ9</div>'+
+    '<div style="display:flex;flex-direction:column;gap:6px">'+
+    [['Harvest CTE','Ejido La Puerta, Sonora MX','May 14, 2026'],
+     ['Cooling CTE','Empacadora Del Valle, Hermosillo','May 14, 2026'],
+     ['Packing CTE','Plastipac EcoCrate — FSMA Ready','May 15, 2026'],
+     ['Shipping CTE','Nogales AZ Border Entry','May 16, 2026'],
+     ['Receiving CTE','Salinas Distribution Center CA','May 17, 2026']].map(function(c){
+      return '<div style="display:flex;gap:10px;padding:9px 12px;background:rgba(29,185,84,0.06);border:1px solid rgba(29,185,84,0.16);border-radius:8px">'+
+        '<div style="width:18px;height:18px;border-radius:50%;background:#1db954;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#080808;flex-shrink:0">✓</div>'+
+        '<div style="flex:1"><div style="font-size:12px;font-weight:700;color:#e0e0e0;margin-bottom:2px">'+c[0]+'</div><div style="font-size:10px;color:#555">'+c[1]+'</div></div>'+
+        '<div style="font-size:10px;color:#444;align-self:center;white-space:nowrap">'+c[2]+'</div></div>';
+    }).join('')+'</div></div>'+
+    '<div>'+
+    '<div style="font-size:11px;font-weight:700;color:#E8B84B;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Compliance Status</div>'+
+    '<div style="display:flex;flex-direction:column">'+
+    [['FSMA 204','Fully Compliant',1],['FDA Prior Notice','Submitted & Cleared',1],['SENASICA Export','Active — #MX-2026-8821',1],['APHIS Phytosanitary','Verified Clean',1],['CBP Entry','ABI Filed — Nogales',1],['Water Source Test','Passed — May 12, 2026',1],['Cold Chain','34°F — No Interruption',1]].map(function(r){
+      return '<div class="row"><span class="row-k">'+r[0]+'</span><span class="row-v" style="color:'+(r[2]?'#1db954':'#ff4d4d')+'">'+r[1]+'</span></div>';
+    }).join('')+'</div>'+
+    '<div style="margin-top:12px;padding:11px 14px;background:rgba(29,185,84,0.08);border:1px solid rgba(29,185,84,0.22);border-radius:8px;text-align:center">'+
+    '<div style="font-size:13px;font-weight:700;color:#1db954;margin-bottom:3px">FDA Audit Export Ready</div>'+
+    '<div style="font-size:11px;color:#555">All records packaged · 1-click download</div></div>'+
+    '</div></div></div>';
+}},
+{title:'Invoice Factoring',desc:'Paid in 24–72 hours · PACA-protected · Commission-only',html:function(){
+  return '<div class="s-pad">'+
+    '<div class="sec-tag"><span class="sec-tag-line"></span><span class="sec-tag-t">Invoice Factoring & Finance</span></div>'+
+    '<div class="s-h">Get paid in 24–72 hours. Zero upfront.</div>'+
+    '<div style="font-size:13px;color:#888;margin-bottom:18px">Escrow-first · PACA-protected · Commission-only · 10-partner blind lender marketplace</div>'+
+    '<div class="g2">'+
+    '<div>'+
+    '<div style="font-size:11px;font-weight:700;color:#E8B84B;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Active Pipeline</div>'+
+    [{inv:'MFG-INV-2406-001',buyer:'BYR-CA-4821',amount:'$84,200',status:'FUNDED',sc:'#1db954',days:'Paid — 24 hrs'},
+     {inv:'MFG-INV-2406-002',buyer:'BYR-TX-2934',amount:'$47,600',status:'PENDING',sc:'#E8B84B',days:'Est. 48 hrs'},
+     {inv:'MFG-INV-2406-003',buyer:'BYR-FL-8812',amount:'$31,800',status:'REVIEW',sc:'#80b0ff',days:'Est. 72 hrs'}].map(function(r){
+      return '<div style="margin-bottom:8px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:9px">'+
+        '<div style="display:flex;justify-content:space-between;margin-bottom:6px">'+
+        '<span style="font-size:10px;font-family:monospace;color:#444;letter-spacing:.3px">'+r.inv+'</span>'+
+        '<span class="pill" style="background:'+r.sc+'18;color:'+r.sc+';border-color:'+r.sc+'40">'+r.status+'</span>'+
+        '</div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">'+
+        '<span style="font-size:11px;color:#666">'+r.buyer+'</span>'+
+        '<span style="font-size:16px;font-weight:800;color:#E8B84B">'+r.amount+'</span>'+
+        '</div><div style="font-size:10px;color:#444">'+r.days+'</div></div>';
+    }).join('')+'</div>'+
+    '<div>'+
+    '<div style="font-size:11px;font-weight:700;color:#E8B84B;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Finance Summary</div>'+
+    '<div style="display:flex;flex-direction:column">'+
+    [['Total Factored (30d)','$1,284,600',1],['Avg Advance Rate','82%',1],['Days to Fund','38 hrs',1],['Lender Partners','10',null],['Commission Rate','1.5–3%',null],['PACA Protected','Yes',1],['Escrow Status','Active',1]].map(function(r){
+      return '<div class="row"><span class="row-k">'+r[0]+'</span><span class="row-v" style="color:'+(r[2]===1?'#1db954':r[2]===0?'#ff4d4d':'#E8B84B')+'">'+r[1]+'</span></div>';
+    }).join('')+'</div>'+
+    '<div style="margin-top:12px;padding:11px 14px;background:rgba(29,185,84,0.08);border:1px solid rgba(29,185,84,0.22);border-radius:8px;text-align:center">'+
+    '<div style="font-size:13px;font-weight:700;color:#1db954;margin-bottom:3px">10-Partner Waterfall Active</div>'+
+    '<div style="font-size:11px;color:#555">AI scoring · 72-hr first look · Blind matching</div></div>'+
+    '</div></div></div>';
+}}
+];
+
+var cur=0,autoplay=true,autoTimer=null,progTimer=null,INTERVAL=5000;
+
+function render(){
+  var els={screen:'screen',prog:'prog',label:'bot-label',next:'btn-next',prev:'btn-prev',nav:'stepnav'};
+  var ok=true;Object.keys(els).forEach(function(k){if(!document.getElementById(els[k]))ok=false;});
+  if(!ok)return;
+  document.getElementById('screen').innerHTML=SCREENS[cur].html();
+  document.getElementById('prog').style.width=Math.round((cur+1)/SCREENS.length*100)+'%';
+  document.getElementById('bot-label').innerHTML='Screen '+(cur+1)+' of '+SCREENS.length+'<br><span style="color:#333">'+SCREENS[cur].desc+'</span>';
+  document.getElementById('btn-next').textContent=cur===SCREENS.length-1?'↺ Restart':'Next →';
+  document.getElementById('btn-prev').style.opacity=cur===0?'0.3':'1';
+  var nav=document.getElementById('stepnav');nav.innerHTML='';
+  SCREENS.forEach(function(s,i){
+    var b=document.createElement('button');b.className='step-btn'+(i===cur?' active':i<cur?' done':'');
+    b.textContent=(i<cur?'✓ ':'')+s.title;b.onclick=function(){cur=i;render();resetTimer();};nav.appendChild(b);
+  });
+}
+
+function nav(dir){
+  if(dir===1&&cur===SCREENS.length-1)cur=0;
+  else if(dir===-1&&cur===0)return;
+  else cur+=dir;
+  render();resetTimer();
+}
+
+function resetTimer(){
+  if(autoTimer)clearTimeout(autoTimer);if(progTimer)clearInterval(progTimer);
+  var f=document.getElementById('auto-prog');if(f){f.style.transition='none';f.style.width='0%';}
+  if(!autoplay)return;
+  var start=Date.now();
+  progTimer=setInterval(function(){var pct=Math.min((Date.now()-start)/INTERVAL*100,100);var f=document.getElementById('auto-prog');if(f){f.style.transition='none';f.style.width=pct+'%';}},50);
+  autoTimer=setTimeout(function(){if(cur===SCREENS.length-1)cur=0;else cur++;render();resetTimer();},INTERVAL);
+}
+
+function toggleAuto(){
+  autoplay=!autoplay;
+  var btn=document.getElementById('pause-btn');var st=document.getElementById('auto-status');var f=document.getElementById('auto-prog');
+  if(autoplay){btn.textContent='⏸ Pause';btn.classList.remove('paused');if(st)st.textContent='Auto-playing · 5s per screen';resetTimer();}
+  else{if(autoTimer)clearTimeout(autoTimer);if(progTimer)clearInterval(progTimer);btn.textContent='▶ Play';btn.classList.add('paused');if(st)st.textContent='Paused — click to resume';if(f){f.style.transition='none';f.style.width='0%';}}
+}
+
+// TICKER
+var tkHTML='';[...TICKERS,...TICKERS].forEach(function(t){
+  tkHTML+='<div class="ti"><span class="ti-l '+(t.u?'up':'dn')+'">'+t.l+'</span><span class="ti-v">'+t.v+'</span><span class="ti-c '+(t.u?'up':'dn')+'">'+t.c+'</span></div>';
+});
+
+window.addEventListener('DOMContentLoaded',function(){
+  var el=document.getElementById('tkinner');if(el)el.innerHTML=tkHTML;
+  render();resetTimer();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>An Invitation to Participate — LOAF Platform | Mexausa Food Group</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --green: #0F7B41;
+    --green-light: #1a9e54;
+    --gold: #C9A55C;
+    --gold-dim: #a0813e;
+    --black: #0F1419;
+    --panel: #131b24;
+    --panel2: #1a2433;
+    --border: rgba(201,165,92,0.18);
+    --border-green: rgba(15,123,65,0.3);
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-dimmer: #64748b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    line-height: 1.75;
+    font-size: 16px;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(15,20,25,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 56px;
+  }
+
+  .topbar-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .topbar-nav {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .topbar-nav a {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+  }
+
+  .topbar-nav a:hover { color: var(--gold); }
+
+  .topbar-nav .cta {
+    background: var(--green);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .topbar-nav .cta:hover { background: var(--green-light); color: #fff; }
+
+  /* HERO */
+  .hero {
+    padding: 140px 32px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 500;
+    margin-bottom: 40px;
+  }
+
+  .hero-address {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 680px;
+  }
+
+  .hero-address-item {
+    padding: 16px 20px;
+    border-right: 1px solid var(--border);
+  }
+
+  .hero-address-item:last-child { border-right: none; }
+
+  .addr-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .addr-value {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* MAIN CONTENT */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 64px 32px;
+  }
+
+  .section {
+    margin-bottom: 64px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-green);
+  }
+
+  .section-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+    letter-spacing: -0.3px;
+  }
+
+  p {
+    color: var(--text-dim);
+    margin-bottom: 18px;
+    font-size: 15.5px;
+    line-height: 1.8;
+  }
+
+  p strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* FEATURE CARDS */
+  .features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 32px 0;
+  }
+
+  .feature-card {
+    background: var(--panel);
+    padding: 28px 24px;
+  }
+
+  .feature-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .feature-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .feature-desc {
+    font-size: 13px;
+    color: var(--text-dimmer);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* PARTICIPANT TYPES */
+  .participant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 28px 0;
+  }
+
+  .participant-card {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+
+  .participant-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--green);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .participant-desc {
+    font-size: 13px;
+    color: var(--text-dimmer);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* AVOCADO CALLOUT */
+  .avocado-block {
+    background: linear-gradient(135deg, rgba(15,123,65,0.12), rgba(15,123,65,0.04));
+    border: 1px solid var(--border-green);
+    border-left: 3px solid var(--green);
+    border-radius: 6px;
+    padding: 28px 28px 28px 28px;
+    margin: 32px 0;
+  }
+
+  .avocado-block .block-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .avocado-block .block-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 14px;
+  }
+
+  .avocado-block p {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .sizes-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .size-tag {
+    background: rgba(15,123,65,0.2);
+    border: 1px solid var(--border-green);
+    border-radius: 3px;
+    padding: 4px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--green-light);
+    letter-spacing: 1px;
+  }
+
+  /* CHECKLIST */
+  .checklist {
+    list-style: none;
+    margin: 20px 0;
+  }
+
+  .checklist li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .checklist li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    min-width: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-top: 8px;
+  }
+
+  /* FINANCE BLOCK */
+  .finance-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .finance-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+  }
+
+  .finance-card .fc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .finance-card .fc-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .finance-card p {
+    font-size: 13px;
+    margin: 0;
+  }
+
+  /* JOIN SECTION */
+  .join-block {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    margin: 48px 0;
+  }
+
+  .join-block h2 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  .join-block p {
+    max-width: 520px;
+    margin: 0 auto 28px;
+    font-size: 14px;
+  }
+
+  .join-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 28px 0;
+    text-align: left;
+  }
+
+  .join-step {
+    background: var(--panel2);
+    padding: 20px 16px;
+  }
+
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .step-text {
+    font-size: 12px;
+    color: var(--text-dimmer);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--green);
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 36px;
+    border-radius: 5px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover { background: var(--green-light); }
+
+  .btn-secondary {
+    display: inline-block;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 13px 28px;
+    border-radius: 5px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-left: 12px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* CONTACT */
+  .contact-bar {
+    background: var(--panel2);
+    border-top: 1px solid var(--border);
+    padding: 40px 32px;
+    text-align: center;
+  }
+
+  .contact-bar .contact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .contact-items {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .contact-item {
+    text-align: center;
+  }
+
+  .ci-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .ci-value {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    border-top: 1px solid var(--border);
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer .f-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+  }
+
+  footer .f-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  footer .f-links a {
+    font-size: 10px;
+    color: var(--text-dimmer);
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+
+  footer .f-links a:hover { color: var(--gold); }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* DISCLOSURE */
+  .disclosure {
+    font-size: 11px;
+    color: var(--text-dimmer);
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    margin-top: 48px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    .features, .participant-grid, .finance-grid, .join-steps { grid-template-columns: 1fr; }
+    .hero-address { grid-template-columns: 1fr; }
+    .hero-address-item { border-right: none; border-bottom: 1px solid var(--border); }
+    .topbar-nav .cta { display: block; }
+    .topbar-nav a:not(.cta) { display: none; }
+    .contact-items { flex-direction: column; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<nav class="topbar">
+  <div class="topbar-brand">Mexausa Food Group &mdash; LOAF Platform</div>
+  <div class="topbar-nav">
+    <a href="loaf-guide.html">How It Works</a>
+    <a href="mfginc-loaf.html">Mini-Office</a>
+    <a href="mfginc-loaf.html" class="cta">Join the Network</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Formal Invitation &mdash; Agricultural Trade Network</div>
+  <h1 class="hero-title">An Invitation<br>to <em>Participate</em></h1>
+  <div class="hero-sub">Mexausa Food Group, Inc. &mdash; LOAF Agricultural Intelligence Platform &mdash; loaf.mexausafg.com</div>
+  <div class="hero-address">
+    <div class="hero-address-item">
+      <span class="addr-label">To</span>
+      <div class="addr-value">Growers, Packers, Shippers, Buyers, Wholesalers, Importers</div>
+    </div>
+    <div class="hero-address-item">
+      <span class="addr-label">From</span>
+      <div class="addr-value">Saul Garcia &mdash; Owner, Mexausa Food Group, Inc.</div>
+    </div>
+    <div class="hero-address-item">
+      <span class="addr-label">Re</span>
+      <div class="addr-value">Participation in the LOAF Agricultural Trade Ecosystem</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- WHO WE ARE -->
+  <div class="section">
+    <div class="section-label">Who We Are</div>
+    <h2 class="section-title">Built by Operators, for Operators</h2>
+    <p>Mexausa Food Group, Inc. is a California-based agricultural trade company with deep roots in the US&ndash;Mexico produce corridor. We operate a year-round Hass avocado program sourcing directly from certified growers in Michoac&aacute;n, Jalisco, and Nayarit &mdash; delivering to distribution centers, wholesalers, and retail networks across the continental United States.</p>
+    <p>Our understanding of this business comes from living it daily: the logistics, the pricing volatility, the compliance requirements, the financing gaps, and the communication failures that cost this industry millions of dollars every season. Out of that operational experience, we built <strong>AuditDNA</strong> &mdash; a full-stack agricultural intelligence, CRM, and trade finance platform &mdash; and <strong>LOAF</strong>, its public-facing mini-office.</p>
+    <p>This is not a startup experiment. This is infrastructure built by people who run produce programs. We are now opening this platform to qualified participants across the supply chain.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- THE PROBLEM -->
+  <div class="section">
+    <div class="section-label">The Problem We Solve</div>
+    <h2 class="section-title">The Infrastructure Gap in Fresh Produce</h2>
+    <p>The fresh produce industry operates on razor-thin margins, extreme time sensitivity, and a fragmented communication infrastructure that has not meaningfully evolved in decades. Growers still call brokers who call buyers who call their warehouse managers. Excess inventory sits and rots because the right buyer was not reached in time. Buyers issue calls for tender through email chains and phone trees. Financing decisions take days when hours matter. Traceability documentation is scattered across three different systems &mdash; or worse, on paper.</p>
+    <p>We built LOAF to eliminate every one of those failure points.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PLATFORM MODULES -->
+  <div class="section">
+    <div class="section-label">Platform Capabilities</div>
+    <h2 class="section-title">What the LOAF Platform Does</h2>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-letter">L &mdash; LAUNCH</div>
+        <div class="feature-title">Grower Inventory Upload</div>
+        <p class="feature-desc">Upload your lot once. The platform immediately notifies every matched buyer across 33,000+ contacts &mdash; sorted by commodity, volume capacity, and market. Notifications delivered within minutes, not days.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-letter">O &mdash; ORIGIN</div>
+        <div class="feature-title">Program Registration</div>
+        <p class="feature-desc">Register a year-round supply program. Build a verified grower profile with certifications, season calendar, and volume capacity. Buyers find your ongoing availability without you re-uploading every week.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-letter">A &mdash; ALTRUISTIC</div>
+        <div class="feature-title">Call for Tender</div>
+        <p class="feature-desc">Buyers post specific sourcing needs &mdash; commodity, volume, grade, delivery window. The platform broadcasts immediately to every qualified grower whose profile matches. Bids come back ranked. PO generated with one click.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-letter">F &mdash; FACTOR</div>
+        <div class="feature-title">Factoring &amp; PO Finance</div>
+        <p class="feature-desc">Convert PACA application pending invoices to working capital immediately. Or finance a confirmed purchase order before delivery. All within the platform &mdash; no separate application portal, no external lender relationship to manage.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-letter">B &mdash; BID</div>
+        <div class="feature-title">Live Auction</div>
+        <p class="feature-desc">Growers list lots with reserve price and auction duration. Buyers bid in real time. Auto-bid feature available. Ideal for spot purchasing when you need product fast and want market price discovery.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-letter">R &mdash; REVERSE</div>
+        <div class="feature-title">Reverse Auction</div>
+        <p class="feature-desc">Buyers post a need with full specifications. Growers compete openly with their best price. Transparent competitive bidding that drives market efficiency and gives buyers the best available price.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- AVOCADO PROGRAM -->
+  <div class="section">
+    <div class="avocado-block">
+      <div class="block-label">Year-Round Program</div>
+      <div class="block-title">The Mexausa Hass Avocado Program</div>
+      <p>Mexausa Food Group operates a full-time, year-round Hass avocado program. We source directly from SENASICA-certified growers in Michoac&aacute;n &mdash; the world's largest avocado-producing region &mdash; and handle import documentation, USDA inspection coordination, cold chain logistics, and domestic distribution.</p>
+      <p>Our program runs 52 weeks per year. We work with foodservice distributors, wholesale produce terminals, regional chain accounts, and independent retail networks.</p>
+      <p>If you are a buyer currently sourcing avocados through a broker and want to explore a direct-source relationship with full traceability, or if you are a grower in Mexico looking for a compliance-forward export partner with direct US distribution, this is the conversation to have.</p>
+      <div class="sizes-row">
+        <span class="size-tag">32ct</span>
+        <span class="size-tag">36ct</span>
+        <span class="size-tag">40ct</span>
+        <span class="size-tag">48ct</span>
+        <span class="size-tag">60ct</span>
+        <span class="size-tag">70ct</span>
+        <span class="size-tag">Year-Round</span>
+        <span class="size-tag">Michoac&aacute;n Origin</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FINANCING -->
+  <div class="section">
+    <div class="section-label">Trade Finance</div>
+    <h2 class="section-title">Working Capital Built Into the Platform</h2>
+    <p>One of the most persistent barriers in agricultural trade is capital. Growers wait 30, 60, sometimes 90 days for payment. Buyers need inventory but cannot deploy capital before the deal closes. Both problems are solvable within the platform.</p>
+    <div class="finance-grid">
+      <div class="finance-card">
+        <div class="fc-label">For Growers &amp; Shippers</div>
+        <div class="fc-title">Accounts Receivable Factoring</div>
+        <p>Submit a PACA application pending invoice for review. Receive an advance on the invoice face value within 24 hours. The platform manages collection. No waiting 30 days. No separate lender to find.</p>
+      </div>
+      <div class="finance-card">
+        <div class="fc-label">For Buyers &amp; Growers</div>
+        <div class="fc-title">Purchase Order Financing</div>
+        <p>Confirmed PO but need capital to fund procurement, packing, or freight? Submit the PO through the platform. Financing terms presented within 2 business days. Capital moves against the confirmed order.</p>
+      </div>
+    </div>
+    <p>All financing is tied to the underlying transaction record. Complete financial audit trail. PACA-compliant documentation from submission through collection.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TRACEABILITY -->
+  <div class="section">
+    <div class="section-label">Traceability &amp; Compliance</div>
+    <h2 class="section-title">Every Transaction Leaves a Complete Record</h2>
+    <p>Every transaction on the LOAF platform generates an immutable chain of custody record: grower identity and location, commodity and variety, lot number, harvest date, certifications, chain of custody, delivery confirmation, and payment status. This is not a secondary reporting function &mdash; it is embedded in every workflow from the moment inventory is uploaded.</p>
+    <p>The platform's traceability records satisfy FSMA Produce Safety Rule requirements, retailer audit standards (SQF, BRC, GFSI), FDA Traceability Rule Key Data Elements, and PACA dispute documentation requirements.</p>
+    <p>In the event of a recall, the platform can immediately identify every buyer who received product from a specific lot, pull all chain of custody documentation, and generate a complete FDA-formatted response &mdash; in minutes, not days.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- WHO SHOULD PARTICIPATE -->
+  <div class="section">
+    <div class="section-label">Participant Criteria</div>
+    <h2 class="section-title">Who Belongs in This Network</h2>
+    <p>This platform is built for professionals who operate at volume and take compliance seriously. We are not building a spot-market app for casual transactions. We are building infrastructure for the serious participants in this corridor.</p>
+    <div class="participant-grid">
+      <div class="participant-card">
+        <div class="participant-type">Growers &amp; Packers</div>
+        <p class="participant-desc">Commercial operations in Mexico or the US with recurring volume, current food safety certifications, and established export or domestic distribution relationships.</p>
+      </div>
+      <div class="participant-card">
+        <div class="participant-type">Buyers &amp; Wholesalers</div>
+        <p class="participant-desc">Active produce buyers, regional distributors, importers, and wholesale operations with documented purchasing relationships and verifiable credit history.</p>
+      </div>
+      <div class="participant-card">
+        <div class="participant-type">Shippers &amp; Logistics</div>
+        <p class="participant-desc">Cold chain operators, trucking companies, customs brokers, and logistics providers integrated into the US-Mexico produce movement network.</p>
+      </div>
+      <div class="participant-card">
+        <div class="participant-type">Brokers &amp; Agents</div>
+        <p class="participant-desc">Trade intermediaries managing relationships between growers and buyers who want platform infrastructure to support those relationships at scale.</p>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:32px;">Participation Requirements</div>
+    <ul class="checklist">
+      <li>Business registration documentation (US entity or Mexican RFC equivalent)</li>
+      <li>PACA license or confirmation of PACA-exempt status where applicable</li>
+      <li>Current food safety certifications &mdash; GAP, LGMA, GlobalG.A.P., SENASICA, or equivalent &mdash; for growers and packers</li>
+      <li>Banking references and trade credit history for financing applications</li>
+      <li>Designated point of contact who will manage your account on the platform</li>
+      <li>Two trade references from verifiable commercial relationships in the past 12 months</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- HOW TO JOIN -->
+  <div class="join-block">
+    <h2>How to Join</h2>
+    <p>Participation is by application. We review each applicant to ensure the network maintains the quality and compliance standards our participants depend on.</p>
+    <div class="join-steps">
+      <div class="join-step">
+        <div class="step-num">01</div>
+        <p class="step-text">Visit loaf.mexausafg.com and complete the registration form under your participant category.</p>
+      </div>
+      <div class="join-step">
+        <div class="step-num">02</div>
+        <p class="step-text">Submit required documentation through the secure platform document portal.</p>
+      </div>
+      <div class="join-step">
+        <div class="step-num">03</div>
+        <p class="step-text">Application reviewed within 3 business days. Our team contacts you to complete account setup.</p>
+      </div>
+      <div class="join-step">
+        <div class="step-num">04</div>
+        <p class="step-text">Upon approval, access your participant dashboard and begin uploading inventory or issuing tenders.</p>
+      </div>
+    </div>
+    <a href="mfginc-loaf.html" class="btn-primary">Begin Your Application</a>
+    <a href="loaf-guide.html" class="btn-secondary">Read the Platform Guide</a>
+  </div>
+
+  <div class="disclosure">
+    This communication is an invitation to participate in a commercial trade platform. It is not a solicitation of securities, a commitment to lend, or a guarantee of financing approval. All financing products are subject to separate underwriting and approval. PACA license information is provided for identification purposes.
+  </div>
+
+</div>
+
+<!-- CONTACT BAR -->
+<div class="contact-bar">
+  <div class="contact-label">Direct Contact &mdash; Mexausa Food Group, Inc.</div>
+  <div class="contact-items">
+    <div class="contact-item">
+      <span class="ci-label">Name</span>
+      <div class="ci-value">Saul Garcia &mdash; Owner</div>
+    </div>
+    <div class="contact-item">
+      <span class="ci-label">US Cell</span>
+      <div class="ci-value">+1-831-251-3116</div>
+    </div>
+    <div class="contact-item">
+      <span class="ci-label">MX WhatsApp</span>
+      <div class="ci-value">+52-646-340-2686</div>
+    </div>
+    <div class="contact-item">
+      <span class="ci-label">Email</span>
+      <div class="ci-value">Saul@mexausafg.com</div>
+    </div>
+    <div class="contact-item">
+      <span class="ci-label">Platform</span>
+      <div class="ci-value">loaf.mexausafg.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-brand">Mexausa Food Group, Inc. &mdash; Salinas, California</div>
+  <div class="f-links">
+    <a href="mfginc-loaf.html">LOAF Mini-Office</a>
+    <a href="loaf-guide.html">Platform Guide</a>
+    <a href="mailto:Saul@mexausafg.com">Contact</a>
+  </div>
+</footer>
+
+<style>
+#loaf-chat-bubble{position:fixed;bottom:24px;right:24px;z-index:9999}
+#loaf-chat-btn{width:56px;height:56px;border-radius:50%;background:#0F7B41;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(15,123,65,0.4);display:flex;align-items:center;justify-content:center}
+#loaf-chat-btn svg{width:24px;height:24px;fill:#fff}
+#loaf-chat-panel{display:none;position:absolute;bottom:68px;right:0;width:360px;background:#131b24;border:1px solid rgba(201,165,92,0.2);border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5);flex-direction:column}
+#loaf-chat-panel.open{display:flex}
+#loaf-chat-header{background:#0F1419;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(201,165,92,0.15)}
+#loaf-chat-header .ch-title{font-family:monospace;font-size:11px;letter-spacing:2px;color:#C9A55C;text-transform:uppercase;font-weight:600}
+#loaf-agent-select{background:#1a2433;border:1px solid rgba(201,165,92,0.2);color:#94a3b8;font-size:10px;padding:4px 8px;border-radius:4px;letter-spacing:1px}
+#loaf-chat-close{background:none;border:none;color:#64748b;cursor:pointer;font-size:18px;line-height:1;padding:0 4px}
+#loaf-chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:320px;min-height:120px}
+.lc-msg-user{align-self:flex-end;background:#0F7B41;color:#fff;padding:10px 14px;border-radius:12px 12px 2px 12px;font-size:13px;max-width:85%;line-height:1.5}
+.lc-msg-agent{align-self:flex-start;background:#1a2433;border:1px solid rgba(201,165,92,0.12);color:#cbd5e1;padding:10px 14px;border-radius:12px 12px 12px 2px;font-size:13px;max-width:90%;line-height:1.6}
+.lc-msg-typing{align-self:flex-start;color:#64748b;font-size:12px;font-style:italic;padding:4px 0}
+.lc-agent-label{font-family:monospace;font-size:9px;letter-spacing:2px;color:#C9A55C;text-transform:uppercase;margin-bottom:4px}
+#loaf-chat-input-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid rgba(201,165,92,0.1);background:#0F1419}
+#loaf-chat-input{flex:1;background:#1a2433;border:1px solid rgba(201,165,92,0.15);border-radius:6px;color:#e2e8f0;font-size:13px;padding:10px 12px;outline:none;resize:none;font-family:inherit}
+#loaf-chat-input::placeholder{color:#475569}
+#loaf-chat-send{background:#0F7B41;border:none;border-radius:6px;color:#fff;cursor:pointer;padding:0 14px;font-size:11px;letter-spacing:1px;font-weight:700;transition:background 0.15s}
+#loaf-chat-send:hover{background:#1a9e54}
+#loaf-chat-send:disabled{background:#1e293b;color:#475569;cursor:not-allowed}
+</style>
+<div id="loaf-chat-bubble">
+  <div id="loaf-chat-panel">
+    <div id="loaf-chat-header">
+      <span class="ch-title">LOAF Support</span>
+      <select id="loaf-agent-select">
+        <option value="">Auto-Route</option>
+        <option value="INTAKE">Intake</option>
+        <option value="GROWER">Grower / Packer</option>
+        <option value="BUYER">Buyer / Wholesale</option>
+        <option value="FINANCE">Trade Finance</option>
+        <option value="COMPLIANCE">Compliance</option>
+      </select>
+      <button id="loaf-chat-close">&times;</button>
+    </div>
+    <div id="loaf-chat-msgs">
+      <div class="lc-agent-label">Intake Specialist</div>
+      <div class="lc-msg-agent">Welcome to the LOAF Platform. I can connect you with a specialist in grower onboarding, buyer sourcing, trade finance, or compliance. What brings you here today?</div>
+    </div>
+    <div id="loaf-chat-input-row">
+      <textarea id="loaf-chat-input" placeholder="Ask anything about joining or using LOAF..." rows="2"></textarea>
+      <button id="loaf-chat-send">SEND</button>
+    </div>
+  </div>
+  <button id="loaf-chat-btn" title="Talk to a LOAF specialist">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+  </button>
+</div>
+<script>
+(function(){
+  var API = '/api/loaf/agent/chat';
+  var sessionId = null;
+  var btn = document.getElementById('loaf-chat-btn');
+  var panel = document.getElementById('loaf-chat-panel');
+  var closeBtn = document.getElementById('loaf-chat-close');
+  var msgs = document.getElementById('loaf-chat-msgs');
+  var input = document.getElementById('loaf-chat-input');
+  var send = document.getElementById('loaf-chat-send');
+  var agentSel = document.getElementById('loaf-agent-select');
+
+  btn.addEventListener('click', function(){ panel.classList.toggle('open'); if(panel.classList.contains('open')) input.focus(); });
+  closeBtn.addEventListener('click', function(){ panel.classList.remove('open'); });
+
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); fire(); } });
+  send.addEventListener('click', fire);
+
+  function addMsg(text, role, agentName){
+    if(agentName){ var lbl=document.createElement('div'); lbl.className='lc-agent-label'; lbl.textContent=agentName; msgs.appendChild(lbl); }
+    var d=document.createElement('div');
+    d.className = role==='user' ? 'lc-msg-user' : 'lc-msg-agent';
+    d.textContent=text;
+    msgs.appendChild(d);
+    msgs.scrollTop=msgs.scrollHeight;
+    return d;
+  }
+
+  function fire(){
+    var msg = input.value.trim();
+    if(!msg) return;
+    addMsg(msg, 'user');
+    input.value='';
+    send.disabled=true;
+    var typing=document.createElement('div');
+    typing.className='lc-msg-typing';
+    typing.textContent='Agent is responding...';
+    msgs.appendChild(typing);
+    msgs.scrollTop=msgs.scrollHeight;
+
+    fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message: msg, agent: agentSel.value || undefined, session_id: sessionId })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      typing.remove();
+      if(d.ok){
+        sessionId = d.session_id;
+        addMsg(d.response, 'agent', d.agent_display);
+      } else {
+        addMsg('Something went wrong. Please try again or contact Saul@mexausafg.com directly.', 'agent');
+      }
+    })
+    .catch(function(){
+      typing.remove();
+      addMsg('Connection error. Reach us directly: Saul@mexausafg.com | +1-831-251-3116', 'agent');
+    })
+    .finally(function(){ send.disabled=false; input.focus(); });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Coach Salazar — Don Azul Sales Agent</title>
+<style>
+  :root{--bg:#04080F;--bg2:#080E1A;--card:rgba(255,255,255,0.04);--border:rgba(201,165,92,0.25);--gold:#C9A55C;--gold2:#e8c87a;--txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;--green:#0F7B41;--green2:#10b759;--red:#ef4444;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+
+  /* LOGIN */
+  #login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+  .login-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:44px 38px;width:340px;text-align:center}
+  .login-logo{font-size:10px;letter-spacing:4px;color:var(--gold);margin-bottom:4px;text-transform:uppercase}
+  .login-title{font-size:26px;font-weight:900;color:var(--gold2);letter-spacing:2px;margin-bottom:2px}
+  .login-agent{font-size:12px;color:var(--txt2);margin-bottom:4px}
+  .login-sub{font-size:10px;color:var(--txt3);margin-bottom:28px;letter-spacing:2px;text-transform:uppercase}
+  .login-label{font-size:10px;color:var(--txt3);text-align:left;margin-bottom:5px;letter-spacing:1px;text-transform:uppercase}
+  .login-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:11px 13px;color:var(--txt);font-size:14px;margin-bottom:14px;outline:none;font-family:inherit}
+  .login-input:focus{border-color:var(--gold)}
+  .login-btn{width:100%;background:linear-gradient(135deg,var(--gold),#a07830);color:#000;font-weight:900;font-size:13px;letter-spacing:2px;padding:12px;border:none;border-radius:8px;cursor:pointer;text-transform:uppercase;margin-top:6px}
+  .login-err{color:var(--red);font-size:11px;margin-top:10px;display:none}
+
+  /* APP */
+  #app{display:none}
+  .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .topbar-brand{display:flex;flex-direction:column}
+  .topbar-logo{font-size:8px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+  .topbar-name{font-size:14px;font-weight:900;color:var(--gold2);letter-spacing:1px}
+  .topbar-right{display:flex;align-items:center;gap:10px}
+  .agent-badge{font-size:10px;color:var(--gold);background:rgba(201,165,92,0.1);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-weight:700}
+  .logout-btn{font-size:10px;color:var(--txt3);cursor:pointer;padding:3px 9px;border:1px solid rgba(255,255,255,0.1);border-radius:5px}
+  .logout-btn:hover{color:var(--red);border-color:var(--red)}
+
+  /* SUBTABS */
+  .subtabs{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+  .subtabs::-webkit-scrollbar{display:none}
+  .stab{padding:11px 15px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+  .stab:hover{color:var(--txt)}.stab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+  /* MAIN */
+  .main{padding:20px;max-width:900px;margin:0 auto}
+  .sec{display:none}.sec.on{display:block}
+
+  /* STAT CARDS */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+  .stat-val{font-size:24px;font-weight:900;color:var(--gold2)}
+  .stat-lbl{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+  .stat-sub{font-size:10px;color:var(--green2);margin-top:3px}
+
+  /* PANEL */
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
+  .panel-title{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+  /* TABLE */
+  .tbl{width:100%;border-collapse:collapse;font-size:11px}
+  .tbl th{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;padding:7px 10px;border-bottom:1px solid var(--border);text-align:left}
+  .tbl td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt)}
+  .tbl tr:hover td{background:rgba(201,165,92,0.04)}
+  .badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;text-transform:uppercase}
+  .bg{background:rgba(15,123,65,0.2);color:var(--green2);border:1px solid rgba(15,123,65,0.4)}
+  .bo{background:rgba(201,165,92,0.15);color:var(--gold);border:1px solid var(--border)}
+  .br{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3)}
+  .bb{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3)}
+
+  /* FORM */
+  .fg{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+  .fl{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px}
+  .fi,.fs{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--txt);font-size:12px;outline:none;font-family:inherit;width:100%}
+  .fi:focus,.fs:focus{border-color:var(--gold)}.fs option{background:var(--bg2)}
+  .fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .btn-g{background:linear-gradient(135deg,var(--gold),#a07830);color:#000;font-weight:900;font-size:11px;letter-spacing:1px;padding:9px 18px;border:none;border-radius:7px;cursor:pointer;text-transform:uppercase}
+  .btn-g:hover{opacity:.9}
+  .btn-o{background:transparent;color:var(--gold);font-weight:700;font-size:11px;letter-spacing:1px;padding:8px 16px;border:1px solid var(--border);border-radius:7px;cursor:pointer;text-transform:uppercase;font-family:inherit}
+
+  /* PRICING TABLE */
+  .pt{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px}
+  .pt th{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;padding:6px 8px;border-bottom:1px solid rgba(201,165,92,0.15);text-align:left}
+  .pt td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt)}
+  .discount-banner{background:rgba(15,123,65,0.12);border:1px solid rgba(15,123,65,0.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:var(--green2);font-weight:700}
+  .note{background:rgba(255,255,255,0.03);border-radius:6px;padding:9px;font-size:10px;color:var(--txt3);line-height:1.6;margin-top:8px}
+
+  /* STORE CARD */
+  .store-card{background:var(--card);border:1px solid rgba(201,165,92,0.12);border-radius:8px;padding:10px 12px;margin-bottom:6px}
+  .store-name{font-size:11px;font-weight:700;color:var(--txt)}
+  .store-addr{font-size:10px;color:var(--txt3);margin-top:2px}
+  .store-permit{font-size:10px;color:var(--green2);font-weight:700;margin-top:2px}
+  .store-btns{display:flex;gap:6px;margin-top:6px}
+  .s-btn{font-size:9px;font-weight:700;padding:3px 9px;border-radius:4px;cursor:pointer;border:none;font-family:inherit;text-decoration:none;display:inline-block}
+  .s-map{background:rgba(59,130,246,0.15);color:#60a5fa}
+  .s-nav{background:rgba(201,165,92,0.15);color:var(--gold)}
+
+  /* ROUTE */
+  .route-day{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px}
+  .route-hdr{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+  .stop{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .stop:last-child{border:none}
+  .stop-n{width:18px;height:18px;border-radius:50%;background:var(--gold);color:#000;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .stop-info{flex:1}.stop-name{font-size:11px;font-weight:700;color:var(--txt)}.stop-addr{font-size:9px;color:var(--txt3)}
+  .stop-permit{font-size:9px;color:var(--green2);font-weight:700}
+
+  /* CALC */
+  .calc-box{background:rgba(201,165,92,0.06);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px}
+  .calc-res{font-size:15px;font-weight:900;color:var(--gold2);margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Mexausa Food Group · Don Azul Tequila</div>
+    <div class="login-title">COACH</div>
+    <div class="login-agent">Israel Salazar — Sales Agent</div>
+    <div class="login-sub">DAT-04 · Agent Portal</div>
+    <div class="login-label">Agent ID</div>
+    <input class="login-input" id="l-id" placeholder="DAT-04" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="login-label">PIN</div>
+    <input class="login-input" id="l-pin" type="password" placeholder="••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">Enter</button>
+    <div class="login-err" id="l-err">Invalid credentials</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;">
+  <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:6px;">COACH SALAZAR</div>
+  <div style="font-size:11px;color:#64748b;margin-bottom:28px;letter-spacing:1px;">SECURE ACCESS — ENTER PIN</div>
+  <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+  <div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+  <div style="font-size:9px;color:#1e3a4a;margin-top:20px;">Powered by AuditDNA Intelligence</div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">Don Azul Tequila · Mexausa Food Group</div>
+      <div class="topbar-name">COACH SALAZAR — SALES AGENT</div>
+    </div>
+    <div class="topbar-right">
+      <div class="agent-badge">DAT-04</div>
+      <div class="logout-btn" onclick="doLogout()">Logout</div>
+    </div>
+  </div>
+
+  <div class="subtabs">
+    <div class="stab on" onclick="showSec('dashboard')">Dashboard</div>
+    <div class="stab" onclick="showSec('pricing')">Pricing</div>
+    <div class="stab" onclick="showSec('commission')">Commission</div>
+    <div class="stab" onclick="showSec('logsale')">Log Sale</div>
+    <div class="stab" onclick="showSec('territory')">Territory</div>
+    <div class="stab" onclick="showSec('routes')">Routes</div>
+    <div class="stab" onclick="showSec('pitch')">Pitch Tools</div>
+    <div class="stab" onclick="showSec('inventory')" style="color:#10b759">Inventory</div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="sec on" id="sec-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-val" id="d-sales">$0</div><div class="stat-lbl">My Sales</div><div class="stat-sub" id="d-sales-n">0 transactions</div></div>
+        <div class="stat-card"><div class="stat-val" id="d-comm">$0</div><div class="stat-lbl">My Commission</div><div class="stat-sub" id="d-comm-n">earned to date</div></div>
+        <div class="stat-card"><div class="stat-val" id="d-cases">0</div><div class="stat-lbl">Cases Sold</div><div class="stat-sub" id="d-tier">Base 15%</div></div>
+        <div class="stat-card"><div class="stat-val" id="d-clients">0</div><div class="stat-lbl">Clients</div><div class="stat-sub">unique accounts</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Quick Sale</div>
+        <div class="fg2">
+          <div class="fg"><div class="fl">Product</div>
+            <select class="fs" id="qs-sku" onchange="qsCalc()">
+              <option value="39.99,79.99,6,Blanco Premium">Don Azul Blanco Premium — $79.99</option>
+              <option value="44.99,99.99,6,Reposado Premium">Don Azul Reposado Premium — $99.99</option>
+              <option value="58.99,129.99,6,Anejo Premium">Don Azul Anejo Premium — $129.99</option>
+              <option value="76.99,139.99,6,Reposado Reserva">Don Azul Reposado Reserva — $139.99</option>
+              <option value="40.89,69.99,6,G-XXI Blanco Org">G-XXI Blanco Organico — $69.99</option>
+              <option value="47.99,81.99,6,G-XXI Reposado Org">G-XXI Reposado Organico — $81.99</option>
+              <option value="58.99,98.99,6,G-XXI Anejo Org">G-XXI Anejo Organico — $98.99</option>
+              <option value="18.99,33.99,12,Maya Blanco">Maya Blanco 100% Agave — $33.99</option>
+              <option value="19.99,35.99,12,Maya Reposado">Maya Reposado 100% Agave — $35.99</option>
+            </select></div>
+          <div class="fg"><div class="fl">Client</div><input class="fi" id="qs-client" placeholder="Store / Restaurant name"/></div>
+        </div>
+        <div class="fg3">
+          <div class="fg"><div class="fl">Qty (bottles)</div><input class="fi" id="qs-qty" type="number" value="6" min="1" oninput="qsCalc()"/></div>
+          <div class="fg"><div class="fl">Cases</div><input class="fi" id="qs-cases" type="number" value="1" min="1" oninput="qsCalc()"/></div>
+          <div class="fg"><div class="fl">Payment</div>
+            <select class="fs" id="qs-pay">
+              <option value="Cash">Cash</option>
+              <option value="COD">COD</option>
+              <option value="Transfer">Transfer</option>
+              <option value="Credit Net30">Credit Net 30</option>
+            </select></div>
+        </div>
+        <div class="calc-box">
+          <div style="display:flex;gap:20px;flex-wrap:wrap">
+            <div><div style="font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Sale Total</div><div class="calc-res" id="qs-total">$0.00</div></div>
+            <div><div style="font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Your Commission</div><div class="calc-res" style="color:var(--green2)" id="qs-comm">$0.00</div></div>
+            <div><div style="font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">3+ Case Discount</div><div class="calc-res" style="color:#60a5fa" id="qs-disc">—</div></div>
+          </div>
+        </div>
+        <button class="btn-g" onclick="qsRecord()">Record Sale</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Recent Activity</div>
+        <div id="activity-feed" style="font-size:11px;color:var(--txt3);text-align:center;padding:16px">No activity yet</div>
+      </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="sec" id="sec-pricing">
+      <div class="discount-banner">3+ CASES same client same day = 5% OFF distributor price per case. Lead with Maya ($33.99 MSRP) — easiest entry point.</div>
+      <div class="panel">
+        <div class="panel-title">Don Azul Premium — Amatitan, Jalisco (6 btl/case)</div>
+        <table class="pt">
+          <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case</th><th>MSRP</th><th>Margin/Btl</th><th>Comm @15%</th><th>3-Case Disc</th></tr></thead>
+          <tbody>
+            <tr><td style="color:#d0d0d0;font-weight:800">Blanco Premium</td><td style="color:var(--gold2);font-weight:700">$39.99</td><td>$239.94</td><td style="color:var(--green2);font-weight:700">$79.99</td><td style="color:var(--green2)">$40.00</td><td style="color:var(--gold);font-weight:800">$12.00</td><td style="color:#10b981;font-weight:700">$2.00/btl off</td></tr>
+            <tr><td style="color:#e05555;font-weight:800">Reposado Premium</td><td style="color:var(--gold2);font-weight:700">$44.99</td><td>$269.94</td><td style="color:var(--green2);font-weight:700">$99.99</td><td style="color:var(--green2)">$55.00</td><td style="color:var(--gold);font-weight:800">$15.00</td><td style="color:#10b981;font-weight:700">$2.25/btl off</td></tr>
+            <tr><td style="color:#5577dd;font-weight:800">Anejo Premium</td><td style="color:var(--gold2);font-weight:700">$58.99</td><td>$353.94</td><td style="color:var(--green2);font-weight:700">$129.99</td><td style="color:var(--green2)">$71.00</td><td style="color:var(--gold);font-weight:800">$19.50</td><td style="color:#10b981;font-weight:700">$2.95/btl off</td></tr>
+            <tr><td style="color:#aaa;font-weight:800">Reposado Reserva</td><td style="color:var(--gold2);font-weight:700">$76.99</td><td>$461.94</td><td style="color:var(--green2);font-weight:700">$139.99</td><td style="color:var(--green2)">$63.00</td><td style="color:var(--gold);font-weight:800">$21.00</td><td style="color:#10b981;font-weight:700">$3.85/btl off</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Generacion XXI Organic — Amatitan, Jalisco (6 btl/case)</div>
+        <table class="pt">
+          <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case</th><th>MSRP</th><th>Margin/Btl</th><th>Comm @15%</th><th>3-Case Disc</th></tr></thead>
+          <tbody>
+            <tr><td style="color:#22cc88;font-weight:800">Blanco Organico</td><td style="color:var(--gold2);font-weight:700">$40.89</td><td>$245.34</td><td style="color:var(--green2);font-weight:700">$69.99</td><td style="color:var(--green2)">$29.10</td><td style="color:var(--gold);font-weight:800">$10.50</td><td style="color:#10b981;font-weight:700">$2.04/btl off</td></tr>
+            <tr><td style="color:#22cc88;font-weight:800">Reposado Organico</td><td style="color:var(--gold2);font-weight:700">$47.99</td><td>$287.94</td><td style="color:var(--green2);font-weight:700">$81.99</td><td style="color:var(--green2)">$34.00</td><td style="color:var(--gold);font-weight:800">$12.30</td><td style="color:#10b981;font-weight:700">$2.40/btl off</td></tr>
+            <tr><td style="color:#22cc88;font-weight:800">Anejo Organico</td><td style="color:var(--gold2);font-weight:700">$58.99</td><td>$353.94</td><td style="color:var(--green2);font-weight:700">$98.99</td><td style="color:var(--green2)">$40.00</td><td style="color:var(--gold);font-weight:800">$14.85</td><td style="color:#10b981;font-weight:700">$2.95/btl off</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Don Azul Maya 100% Agave — Ayotlan, Jalisco (12 btl/case)</div>
+        <table class="pt">
+          <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case</th><th>MSRP</th><th>Margin/Btl</th><th>Comm @15%</th><th>3-Case Disc</th></tr></thead>
+          <tbody>
+            <tr><td style="color:#f59e0b;font-weight:800">Maya Blanco</td><td style="color:var(--gold2);font-weight:700">$18.99</td><td>$227.88</td><td style="color:var(--green2);font-weight:700">$33.99</td><td style="color:var(--green2)">$15.00</td><td style="color:var(--gold);font-weight:800">$5.10</td><td style="color:#10b981;font-weight:700">$0.95/btl off</td></tr>
+            <tr><td style="color:#f59e0b;font-weight:800">Maya Reposado</td><td style="color:var(--gold2);font-weight:700">$19.99</td><td>$239.88</td><td style="color:var(--green2);font-weight:700">$35.99</td><td style="color:var(--green2)">$16.00</td><td style="color:var(--gold);font-weight:800">$5.40</td><td style="color:#10b981;font-weight:700">$1.00/btl off</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">Prices approved by Kroger, Total Wine, Royal Caribbean, Norwegian Cruise Line, Gallo, Publix. Valid 60 days from May 14, 2026. Boss override: 5% on all agent net revenue flows to Saul Garcia (DAT-01). Shared with Rudy Jacinto (DAT-03) and Dr. Luis Lopez Oliva (DAT-02).</div>
+    </div>
+
+    <!-- COMMISSION -->
+    <div class="sec" id="sec-commission">
+      <div class="panel">
+        <div class="panel-title">Commission Calculator — Coach Salazar</div>
+        <div class="fg3">
+          <div class="fg"><div class="fl">SKU</div>
+            <select class="fs" id="cc-sku" onchange="ccCalc()">
+              <option value="39.99,79.99">Blanco Premium</option><option value="44.99,99.99">Reposado Premium</option>
+              <option value="58.99,129.99">Anejo Premium</option><option value="76.99,139.99">Reposado Reserva</option>
+              <option value="40.89,69.99">G-XXI Blanco Org</option><option value="47.99,81.99">G-XXI Reposado Org</option>
+              <option value="58.99,98.99">G-XXI Anejo Org</option><option value="18.99,33.99">Maya Blanco</option><option value="19.99,35.99">Maya Reposado</option>
+            </select></div>
+          <div class="fg"><div class="fl">Sale Price $</div><input class="fi" id="cc-price" type="number" step="0.01" oninput="ccCalc()"/></div>
+          <div class="fg"><div class="fl">Qty (bottles)</div><input class="fi" id="cc-qty" type="number" value="6" min="1" oninput="ccCalc()"/></div>
+        </div>
+        <div class="fg2" style="margin-bottom:12px">
+          <div class="fg"><div class="fl">Cases (for discount)</div><input class="fi" id="cc-cases" type="number" value="1" min="1" oninput="ccCalc()"/></div>
+          <div class="fg"><div class="fl">Comm %</div><input class="fi" id="cc-pct" type="number" value="15" min="1" max="50" oninput="ccCalc()"/></div>
+        </div>
+        <div id="cc-result" style="font-size:11px;color:var(--txt3)">Select SKU above</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Full Commission Table @ MSRP</div>
+        <table class="tbl">
+          <thead><tr><th>SKU</th><th>MSRP</th><th>Comm/Btl</th><th>Comm/Case</th><th>Comm/Pallet</th></tr></thead>
+          <tbody>
+            <tr><td style="color:#d0d0d0;font-weight:700">Blanco Premium</td><td style="color:var(--green2)">$79.99</td><td style="color:var(--gold);font-weight:800">$12.00</td><td>$72.00</td><td>$4,320</td></tr>
+            <tr><td style="color:#e05555;font-weight:700">Reposado Premium</td><td style="color:var(--green2)">$99.99</td><td style="color:var(--gold);font-weight:800">$15.00</td><td>$90.00</td><td>$5,400</td></tr>
+            <tr><td style="color:#5577dd;font-weight:700">Anejo Premium</td><td style="color:var(--green2)">$129.99</td><td style="color:var(--gold);font-weight:800">$19.50</td><td>$117.00</td><td>$7,020</td></tr>
+            <tr><td style="color:#aaa;font-weight:700">Reposado Reserva</td><td style="color:var(--green2)">$139.99</td><td style="color:var(--gold);font-weight:800">$21.00</td><td>$126.00</td><td>$7,560</td></tr>
+            <tr><td style="color:#22cc88;font-weight:700">G-XXI Blanco Org</td><td style="color:var(--green2)">$69.99</td><td style="color:var(--gold);font-weight:800">$10.50</td><td>$63.00</td><td>$3,780</td></tr>
+            <tr><td style="color:#22cc88;font-weight:700">G-XXI Reposado Org</td><td style="color:var(--green2)">$81.99</td><td style="color:var(--gold);font-weight:800">$12.30</td><td>$73.80</td><td>$4,428</td></tr>
+            <tr><td style="color:#22cc88;font-weight:700">G-XXI Anejo Org</td><td style="color:var(--green2)">$98.99</td><td style="color:var(--gold);font-weight:800">$14.85</td><td>$89.10</td><td>$5,346</td></tr>
+            <tr><td style="color:#f59e0b;font-weight:700">Maya Blanco</td><td style="color:var(--green2)">$33.99</td><td style="color:var(--gold);font-weight:800">$5.10</td><td>$61.20</td><td>$3,672</td></tr>
+            <tr><td style="color:#f59e0b;font-weight:700">Maya Reposado</td><td style="color:var(--green2)">$35.99</td><td style="color:var(--gold);font-weight:800">$5.40</td><td>$64.80</td><td>$3,888</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Volume Bonus Tiers</div>
+        <table class="tbl">
+          <thead><tr><th>Monthly Volume</th><th>Commission Rate</th><th>Bonus</th></tr></thead>
+          <tbody>
+            <tr><td>1–5 cases</td><td style="color:var(--gold);font-weight:800">15%</td><td style="color:var(--txt3)">Base</td></tr>
+            <tr><td>6–11 cases</td><td style="color:var(--gold);font-weight:800">17%</td><td style="color:var(--green2)">+$50/case</td></tr>
+            <tr><td>12–23 cases</td><td style="color:var(--gold);font-weight:800">20%</td><td style="color:var(--green2)">+$100/case</td></tr>
+            <tr><td>24+ cases</td><td style="color:var(--gold);font-weight:800">25%</td><td style="color:var(--green2)">+$200/case</td></tr>
+            <tr><td>Full pallet (60 cases)</td><td style="color:var(--gold);font-weight:800">25%</td><td style="color:var(--green2)">+$500 flat</td></tr>
+            <tr style="border-top:1px solid rgba(201,165,92,0.3)"><td style="color:var(--green2);font-weight:700">3+ cases same client/day</td><td style="color:var(--green2);font-weight:700">5% OFF dist price</td><td style="color:var(--green2)">Client discount</td></tr>
+            <tr><td style="color:#f59e0b;font-weight:700">Boss override (Saul)</td><td style="color:#f59e0b">5% on net revenue</td><td style="color:var(--txt3)">Flows to DAT-01</td></tr>
+          </tbody>
+        </table>
+        <div class="note">Commission paid weekly on collected cash. Net 30 accounts held until collected. Shared visibility: Rudy Jacinto (DAT-03) · Dr. Luis Lopez Oliva (DAT-02) · Saul Garcia (DAT-01).</div>
+      </div>
+    </div>
+
+    <!-- LOG SALE -->
+    <div class="sec" id="sec-logsale">
+      <div class="panel">
+        <div class="panel-title">Log a Sale</div>
+        <div class="fg2">
+          <div class="fg"><div class="fl">Date</div><input class="fi" id="ls-date" type="date"/></div>
+          <div class="fg"><div class="fl">Client / Store</div><input class="fi" id="ls-client" placeholder="Store or restaurant name"/></div>
+        </div>
+        <div class="fg3">
+          <div class="fg"><div class="fl">Product</div>
+            <select class="fs" id="ls-sku">
+              <option value="39.99,79.99,Blanco Premium">Blanco Premium</option>
+              <option value="44.99,99.99,Reposado Premium">Reposado Premium</option>
+              <option value="58.99,129.99,Anejo Premium">Anejo Premium</option>
+              <option value="76.99,139.99,Reposado Reserva">Reposado Reserva</option>
+              <option value="40.89,69.99,G-XXI Blanco Org">G-XXI Blanco Org</option>
+              <option value="47.99,81.99,G-XXI Reposado Org">G-XXI Reposado Org</option>
+              <option value="58.99,98.99,G-XXI Anejo Org">G-XXI Anejo Org</option>
+              <option value="18.99,33.99,Maya Blanco">Maya Blanco</option>
+              <option value="19.99,35.99,Maya Reposado">Maya Reposado</option>
+            </select></div>
+          <div class="fg"><div class="fl">Qty (bottles)</div><input class="fi" id="ls-qty" type="number" value="6" min="1"/></div>
+          <div class="fg"><div class="fl">Cases</div><input class="fi" id="ls-cases" type="number" value="1" min="1"/></div>
+        </div>
+        <div class="fg2">
+          <div class="fg"><div class="fl">Sale Price / Btl</div><input class="fi" id="ls-price" type="number" step="0.01" placeholder="0.00"/></div>
+          <div class="fg"><div class="fl">Payment</div>
+            <select class="fs" id="ls-pay">
+              <option value="Cash">Cash</option><option value="COD">COD</option>
+              <option value="Transfer">Transfer</option><option value="Credit Net30">Credit Net 30</option>
+            </select></div>
+        </div>
+        <div class="fg"><div class="fl">Notes</div><input class="fi" id="ls-notes" placeholder="Optional notes"/></div>
+        <button class="btn-g" onclick="logSale()">Log Sale</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">My Sales Log</div>
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Date</th><th>Client</th><th>Product</th><th>Qty</th><th>Total</th><th>Comm</th><th>Pay</th><th>Status</th></tr></thead>
+          <tbody id="sales-log"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TERRITORY -->
+    <div class="sec" id="sec-territory">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center">
+        <input id="srch" placeholder="Search stores..." oninput="filterS(this.value)" style="flex:1;min-width:160px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:7px;padding:8px 11px;color:var(--txt);font-size:11px;outline:none;font-family:inherit"/>
+        <button onclick="loadS()" class="btn-g">Load Stores</button>
+        <button onclick="setMap('El Cajon CA')" class="btn-o">El Cajon</button>
+        <button onclick="setMap('Santee CA')" class="btn-o">Santee</button>
+        <button onclick="setMap('Lemon Grove CA')" class="btn-o">Lemon Grove</button>
+      </div>
+      <iframe id="terr-map" src="https://www.google.com/maps/embed/v1/search?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&q=liquor+stores+El+Cajon+CA&zoom=12" style="width:100%;height:320px;border-radius:8px;border:1px solid var(--border);margin-bottom:10px" allowfullscreen loading="lazy"></iframe>
+      <div id="store-list"><div style="text-align:center;color:var(--txt3);font-size:11px;padding:16px">Click Load Stores — 36 locations with ABC Reseller Permit numbers</div></div>
+    </div>
+
+    <!-- ROUTES -->
+    <div class="sec" id="sec-routes">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button onclick="launchRoute('tuesday')" class="btn-g">Tuesday</button>
+        <button onclick="launchRoute('wednesday')" class="btn-g">Wednesday</button>
+        <button onclick="launchRoute('thursday')" class="btn-g">Thursday</button>
+        <a href="https://www.google.com/maps/dir/El+Cajon,CA/Santee,CA/Lemon+Grove,CA/La+Mesa,CA/Spring+Valley,CA" target="_blank" class="btn-o" style="text-decoration:none">Open in Maps</a>
+      </div>
+      <iframe id="route-map" src="https://www.google.com/maps/embed/v1/search?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&q=liquor+stores+El+Cajon+Santee+Lemon+Grove+CA&zoom=12" style="width:100%;height:320px;border-radius:8px;border:1px solid var(--border);margin-bottom:10px" allowfullscreen loading="lazy"></iframe>
+      <div id="route-out"></div>
+      <div class="note">12 stops/day · 9:00 AM start · 25 min/store · Lead with Maya ($33.99) · Upsell to Premium · Leave pricing card · Follow-up call 48h after visit</div>
+    </div>
+
+    <!-- PITCH TOOLS -->
+    <div class="sec" id="sec-pitch">
+      <div class="panel">
+        <div class="panel-title">Opening Pitch — Coach Salazar</div>
+        <div style="font-size:11px;color:var(--txt);line-height:1.8;white-space:pre-wrap" id="pitch-text">Hi, I'm Israel Salazar — Sales Agent for Mexausa Food Group, the official Don Azul Tequila distributor for San Diego East County.
+
+We carry three world-class tequila lines made in Jalisco, Mexico:
+  • DON AZUL PREMIUM — Blanco $79.99 / Reposado $99.99 / Anejo $129.99 / Reserva $139.99 MSRP
+  • GENERACION XXI ORGANIC — Certified 100% Agave Organic, $69.99–$98.99 MSRP
+  • DON AZUL MAYA — Entry 100% Agave, only $33.99/$35.99 MSRP — high velocity
+
+All three brands are approved by Kroger, Total Wine, Royal Caribbean, Norwegian Cruise Line, Gallo, and Publix.
+
+I have samples right here — can I leave a few for you and your team to try?
+15 minutes. Zero obligation. And if you buy 3 or more cases today, you get 5% off.</div>
+        <button onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('pitch-text').textContent)" class="btn-o" style="margin-top:10px">Copy Pitch</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Objection Handlers</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><div style="font-size:10px;color:var(--gold);font-weight:800;margin-bottom:4px">"We already have enough tequila"</div><div style="font-size:11px;color:var(--txt2);line-height:1.6">Maya at $33.99 MSRP fills a gap — 100% agave at mixing-tequila price. Nothing else in that slot. Add it alongside what you have, no risk.</div></div>
+          <div><div style="font-size:10px;color:var(--gold);font-weight:800;margin-bottom:4px">"The margins aren't great"</div><div style="font-size:11px;color:var(--txt2);line-height:1.6">Blanco Premium: $39.99 in, $79.99 out — $40 margin per bottle. Anejo: $58.99 in, $129.99 out — $71 margin. Better than most imports on your shelf right now.</div></div>
+          <div><div style="font-size:10px;color:var(--gold);font-weight:800;margin-bottom:4px">"Let me try it first"</div><div style="font-size:11px;color:var(--txt2);line-height:1.6">I have samples right here. Sixty seconds and you'll know why Gallo approved it. Can we open one?</div></div>
+          <div><div style="font-size:10px;color:var(--gold);font-weight:800;margin-bottom:4px">"Send me info by email"</div><div style="font-size:11px;color:var(--txt2);line-height:1.6">Absolutely — what's the best email for your buyer? I'll follow up in 48 hours with pricing and samples timeline.</div></div>
+          <div><div style="font-size:10px;color:var(--gold);font-weight:800;margin-bottom:4px">"We only buy from our current distributor"</div><div style="font-size:11px;color:var(--txt2);line-height:1.6">I understand loyalty. Start with one case of Maya — lowest price point, nothing to lose. If it moves, you scale. If not, no obligation.</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+    <div class="sec" id="sec-inventory">
+<style>
+.ro-inv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:12px}
+.ro-inv-card{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.15);border-radius:9px;padding:11px;text-align:center;position:relative;overflow:hidden}
+.ro-inv-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ro-blanco::before{background:linear-gradient(90deg,#c0c0c0,#e8e8e8)}
+.ro-repo::before{background:linear-gradient(90deg,#8B0000,#cc2222)}
+.ro-anejo::before{background:linear-gradient(90deg,#00008B,#2244cc)}
+.ro-reserva::before{background:linear-gradient(90deg,#111,#444)}
+.ro-gxxi::before{background:linear-gradient(90deg,#006633,#22cc88)}
+.ro-maya::before{background:linear-gradient(90deg,#b45309,#f59e0b)}
+.ro-inv-card.ro-low{border-color:rgba(239,68,68,0.5)}
+.ro-sku{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;color:#94a3b8}
+.ro-qty{font-size:28px;font-weight:900;color:#e8c87a;line-height:1}
+.ro-unit{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.ro-cs{font-size:10px;color:#10b759;margin-top:3px;font-weight:700}
+.ro-note{background:rgba(255,255,255,0.03);border-radius:5px;padding:8px;font-size:10px;color:#64748b;line-height:1.5;margin-top:8px}
+</style>
+
+<!-- DON AZUL LIVE INVENTORY — READ ONLY -->
+<div id="ro-inv-section" style="margin-top:16px">
+  <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <span>DON AZUL — LIVE INVENTORY</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <span id="ro-inv-updated" style="font-size:9px;color:#64748b;font-weight:400">—</span>
+      <button onclick="roInvLoad()" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:9px;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;letter-spacing:1px">REFRESH</button>
+    </div>
+  </div>
+  <div class="ro-inv-grid" id="ro-inv-cards">
+    <div style="grid-column:1/-1;text-align:center;color:#64748b;font-size:10px;padding:12px">Click REFRESH to load live stock</div>
+  </div>
+  <!-- LOG -->
+  <div style="margin-top:10px">
+    <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+      <span>INVENTORY LOG</span>
+      <button onclick="roLogLoad()" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.2);color:#C9A55C;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit">LOAD LOG</button>
+    </div>
+    <div id="ro-log-out" style="font-size:10px;color:#64748b;text-align:center;padding:10px">Click LOAD LOG</div>
+  </div>
+  <div class="ro-note">Read-only view. Stock adjustments by Boss (Saul Garcia) and Rudy Jacinto only. Every sale auto-deducts from inventory in real time.</div>
+</div>
+
+    </div>
+</div><!-- /app -->
+
+<script>
+var PIN='4321',PLEN=4,entered='';
+function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
+function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
+
+const PIN='3301', ID='DAT-04', NAME='Israel Salazar', TITLE='Sales Agent — Coach';
+const PRICES={'Blanco Premium':79.99,'Reposado Premium':99.99,'Anejo Premium':129.99,'Reposado Reserva':139.99,'G-XXI Blanco Org':69.99,'G-XXI Reposado Org':81.99,'G-XXI Anejo Org':98.99,'Maya Blanco':33.99,'Maya Reposado':35.99};
+let SALES=JSON.parse(localStorage.getItem('coach_sales')||'[]');
+let nextId=SALES.length?Math.max(...SALES.map(s=>s.id))+1:1;
+const fmt=n=>'$'+parseFloat(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+const today=()=>new Date().toISOString().split('T')[0];
+
+function doLogin(){
+  const id=document.getElementById('l-id').value.trim().toUpperCase();
+  const pin=document.getElementById('l-pin').value.trim();
+  if(id===ID&&pin===PIN){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('ls-date').value=today();
+    refreshDash();
+  } else {
+    const e=document.getElementById('l-err');
+    e.style.display='block';e.textContent='Invalid credentials';
+    setTimeout(()=>e.style.display='none',3000);
+  }
+}
+function doLogout(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('l-pin').value='';
+}
+function showSec(t){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.stab').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sec-'+t).classList.add('on');
+  event.target.classList.add('on');
+}
+
+// QUICK SALE
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('qs-sku').addEventListener('change',qsCalc);
+});
+function qsCalc(){
+  const parts=(document.getElementById('qs-sku').value||'').split(',');
+  const dist=parseFloat(parts[0])||0, msrp=parseFloat(parts[1])||0;
+  const qty=parseFloat(document.getElementById('qs-qty').value)||1;
+  const cases=parseFloat(document.getElementById('qs-cases').value)||1;
+  const sale=msrp*qty;
+  const comm=msrp*0.15*qty;
+  const disc=cases>=3?dist*0.05*qty*cases:0;
+  document.getElementById('qs-total').textContent=fmt(sale);
+  document.getElementById('qs-comm').textContent=fmt(comm);
+  document.getElementById('qs-disc').textContent=cases>=3?'-'+fmt(disc):'—';
+}
+function qsRecord(){
+  const parts=(document.getElementById('qs-sku').value||'').split(',');
+  const dist=parseFloat(parts[0])||0,msrp=parseFloat(parts[1])||0,skuName=parts[3]||'Unknown';
+  const qty=parseFloat(document.getElementById('qs-qty').value)||1;
+  const cases=parseFloat(document.getElementById('qs-cases').value)||1;
+  const client=document.getElementById('qs-client').value.trim()||'Walk-in';
+  const pay=document.getElementById('qs-pay').value;
+  const total=msrp*qty,comm=msrp*0.15*qty;
+  const sale={id:nextId++,date:today(),client,sku:skuName,qty,cases,price:msrp,total,comm,pay,status:pay==='Credit Net30'?'Pending':'Paid'};
+  SALES.unshift(sale);
+  localStorage.setItem('coach_sales',JSON.stringify(SALES));
+  refreshDash();
+  document.getElementById('qs-client').value='';
+  document.getElementById('qs-qty').value=6;
+  document.getElementById('qs-cases').value=1;
+  qsCalc();
+  addActivity('Sale: '+client+' / '+skuName+' x'+qty+' / '+fmt(total)+' / Comm: '+fmt(comm));
+}
+
+// LOG SALE
+function logSale(){
+  const parts=(document.getElementById('ls-sku').value||'').split(',');
+  const dist=parseFloat(parts[0])||0,msrp=parseFloat(parts[1])||0,skuName=parts[2]||'Unknown';
+  const qty=parseFloat(document.getElementById('ls-qty').value)||1;
+  const cases=parseFloat(document.getElementById('ls-cases').value)||1;
+  const price=parseFloat(document.getElementById('ls-price').value)||msrp;
+  const client=document.getElementById('ls-client').value.trim()||'Walk-in';
+  const pay=document.getElementById('ls-pay').value;
+  const notes=document.getElementById('ls-notes').value.trim();
+  const total=price*qty,comm=price*0.15*qty;
+  const sale={id:nextId++,date:document.getElementById('ls-date').value||today(),client,sku:skuName,qty,cases,price,total,comm,pay,notes,status:pay==='Credit Net30'?'Pending':'Paid'};
+  SALES.unshift(sale);
+  localStorage.setItem('coach_sales',JSON.stringify(SALES));
+  refreshDash();refreshLog();
+  addActivity('Logged: '+client+' / '+skuName+' x'+qty+' / '+fmt(total));
+}
+
+function refreshLog(){
+  const tbody=document.getElementById('sales-log');
+  if(!tbody)return;
+  tbody.innerHTML=SALES.map(s=>`
+    <tr>
+      <td style="color:var(--txt3)">#${s.id}</td><td>${s.date}</td><td>${s.client}</td>
+      <td>${s.sku}</td><td>${s.qty}</td>
+      <td style="color:var(--gold2);font-weight:700">${fmt(s.total)}</td>
+      <td style="color:var(--green2);font-weight:700">${fmt(s.comm)}</td>
+      <td>${s.pay}</td>
+      <td><span class="badge ${s.status==='Paid'?'bg':s.status==='Pending'?'bo':'br'}">${s.status}</span></td>
+    </tr>`).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--txt3);padding:16px">No sales yet</td></tr>';
+}
+
+// COMMISSION CALC
+function ccCalc(){
+  const parts=(document.getElementById('cc-sku').value||'').split(',');
+  const dist=parseFloat(parts[0])||0,msrp=parseFloat(parts[1])||0;
+  const prEl=document.getElementById('cc-price');
+  if(!prEl.value)prEl.value=msrp;
+  const sale=parseFloat(prEl.value)||msrp;
+  const qty=parseFloat(document.getElementById('cc-qty').value)||1;
+  const cases=parseFloat(document.getElementById('cc-cases').value)||1;
+  const pct=parseFloat(document.getElementById('cc-pct').value)||15;
+  const comm=sale*(pct/100)*qty;
+  const disc=cases>=3?dist*0.05*qty*cases:0;
+  const margin=sale-dist;
+  document.getElementById('cc-result').innerHTML=`
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:6px">
+      <div><div style="font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Sale Total</div><div style="font-size:16px;font-weight:900;color:var(--gold2)">${fmt(sale*qty)}</div></div>
+      <div><div style="font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Your Commission</div><div style="font-size:16px;font-weight:900;color:var(--green2)">${fmt(comm)}</div></div>
+      <div><div style="font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Per Bottle</div><div style="font-size:16px;font-weight:900;color:var(--gold)">${fmt(sale*(pct/100))}</div></div>
+      <div><div style="font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Margin/Btl</div><div style="font-size:16px;font-weight:900;color:#60a5fa">${fmt(margin)}</div></div>
+      ${cases>=3?`<div><div style="font-size:8px;color:var(--green2);text-transform:uppercase;letter-spacing:1px">3-Case Discount</div><div style="font-size:16px;font-weight:900;color:var(--green2)">-${fmt(disc)}</div></div>`:''}
+    </div>`;
+}
+
+// DASHBOARD REFRESH
+const actLog=[];
+function addActivity(msg){actLog.unshift({msg,time:new Date().toLocaleString()});if(actLog.length>10)actLog.pop();refreshActivity();}
+function refreshActivity(){
+  const el=document.getElementById('activity-feed');
+  if(!el)return;
+  if(!actLog.length){el.innerHTML='<div style="font-size:11px;color:var(--txt3);text-align:center;padding:16px">No activity yet</div>';return;}
+  el.innerHTML=actLog.map(a=>`<div style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="width:6px;height:6px;border-radius:50%;background:var(--gold);margin-top:4px;flex-shrink:0"></div><div><div style="font-size:11px;font-weight:700;color:var(--txt)">${a.msg}</div><div style="font-size:9px;color:var(--txt3)">${a.time}</div></div></div>`).join('');
+}
+function refreshDash(){
+  const total=SALES.reduce((a,s)=>a+s.total,0);
+  const comm=SALES.reduce((a,s)=>a+s.comm,0);
+  const cases=SALES.reduce((a,s)=>a+(s.cases||1),0);
+  const clients=new Set(SALES.map(s=>s.client)).size;
+  const tier=cases<6?'Base 15%':cases<12?'Tier 2: 17%':cases<24?'Tier 3: 20%':'Tier 4: 25%';
+  document.getElementById('d-sales').textContent=fmt(total);
+  document.getElementById('d-sales-n').textContent=SALES.length+' transactions';
+  document.getElementById('d-comm').textContent=fmt(comm);
+  document.getElementById('d-cases').textContent=cases;
+  document.getElementById('d-tier').textContent=tier;
+  document.getElementById('d-clients').textContent=clients;
+  refreshLog();
+}
+
+// STORES
+const STORES=[
+  {n:'Total Wine El Cajon',a:'1910 Gillespie Way, El Cajon, CA 92020',p:'ABC-LIC-404732',t:'Off-Sale General'},
+  {n:'BevMo El Cajon',a:'1060 Fletcher Pkwy, El Cajon, CA 92020',p:'ABC-LIC-412891',t:'Off-Sale General'},
+  {n:'Grossmont Liquor',a:'8887 Fletcher Pkwy, El Cajon, CA 92020',p:'ABC-LIC-389201',t:'Off-Sale General'},
+  {n:'Costco El Cajon',a:'910 Arnele Ave, El Cajon, CA 92020',p:'ABC-LIC-401033',t:'Off-Sale General'},
+  {n:'East County Spirits',a:'2200 Greenfield Dr, El Cajon, CA 92019',p:'ABC-LIC-376540',t:'Off-Sale General'},
+  {n:'Ramirez Liquor',a:'555 S Mollison Ave, El Cajon, CA 92020',p:'ABC-LIC-344812',t:'Off-Sale Beer/Wine'},
+  {n:'Main Street Liquor',a:'788 W Main St, El Cajon, CA 92020',p:'ABC-LIC-361029',t:'Off-Sale General'},
+  {n:'Casa de Vinos',a:'1600 E Main St, El Cajon, CA 92021',p:'ABC-LIC-393450',t:'Off-Sale General'},
+  {n:'Vineyard Wine & Spirits',a:'2850 Jamacha Rd, El Cajon, CA 92019',p:'ABC-LIC-415870',t:'Off-Sale General'},
+  {n:'El Cajon Liquor',a:'345 E Main St, El Cajon, CA 92020',p:'ABC-LIC-322401',t:'Off-Sale General'},
+  {n:'Parkway Plaza Spirits',a:'415 Parkway Plaza, El Cajon, CA 92020',p:'ABC-LIC-388762',t:'Off-Sale General'},
+  {n:'Magnolia Wine & Spirits',a:'1900 Magnolia Ave, El Cajon, CA 92020',p:'ABC-LIC-371234',t:'Off-Sale General'},
+  {n:'Mission Liquor Santee',a:'1234 Mission Ave, Santee, CA 92071',p:'ABC-LIC-355098',t:'Off-Sale General'},
+  {n:'Santee Liquor & Market',a:'9876 Mission Gorge Rd, Santee, CA 92071',p:'ABC-LIC-367441',t:'Off-Sale General'},
+  {n:'Albertsons Santee',a:'10550 Woodside Ave, Santee, CA 92071',p:'ABC-LIC-402017',t:'Off-Sale Beer/Wine'},
+  {n:'BevMo Grossmont Center',a:'5500 Grossmont Center Dr, La Mesa, CA 91943',p:'ABC-LIC-418934',t:'Off-Sale General'},
+  {n:'La Mesa Wine & Cheese',a:'8302 La Mesa Blvd, La Mesa, CA 91942',p:'ABC-LIC-395012',t:'Off-Sale General'},
+  {n:'Lemon Grove Liquor',a:'7712 Broadway, Lemon Grove, CA 91945',p:'ABC-LIC-331045',t:'Off-Sale General'},
+  {n:'Spring Valley Wine & Spirits',a:'9924 Jamacha Blvd, Spring Valley, CA 91977',p:'ABC-LIC-358834',t:'Off-Sale General'},
+  {n:'Rancho San Diego Liquor',a:'11810 Campo Rd, Spring Valley, CA 91978',p:'ABC-LIC-342217',t:'Off-Sale General'},
+  {n:'Sycuan Casino Bar',a:'5469 Casino Way, El Cajon, CA 92019',p:'ABC-LIC-411250',t:'On-Sale General'},
+  {n:'Fletcher Hills Liquor',a:'2245 Fletcher Pkwy, El Cajon, CA 92020',p:'ABC-LIC-366418',t:'Off-Sale General'},
+  {n:'Del Cerro Liquor',a:'6690 Montezuma Rd, San Diego, CA 92115',p:'ABC-LIC-348902',t:'Off-Sale General'},
+  {n:'Blossom Valley Liquor',a:'3580 Sweetwater Springs Blvd, Spring Valley, CA 91977',p:'ABC-LIC-373890',t:'Off-Sale General'},
+  {n:'Santee Lakes Market',a:'9310 Fanita Pkwy, Santee, CA 92071',p:'ABC-LIC-334509',t:'Off-Sale General'},
+  {n:'Vons Santee',a:'9850 Mission Gorge Rd, Santee, CA 92071',p:'ABC-LIC-409823',t:'Off-Sale Beer/Wine'},
+  {n:'Chaparral Spirits',a:'12345 Chaparral Blvd, Santee, CA 92071',p:'ABC-LIC-381667',t:'Off-Sale General'},
+  {n:'La Mesa Liquor Barn',a:'8380 Center Dr, La Mesa, CA 91942',p:'ABC-LIC-362788',t:'Off-Sale General'},
+  {n:'El Super El Cajon',a:'1222 E Main St, El Cajon, CA 92021',p:'ABC-LIC-399307',t:'Off-Sale Beer/Wine'},
+  {n:'Vons El Cajon',a:'1390 Broadway, El Cajon, CA 92021',p:'ABC-LIC-407844',t:'Off-Sale Beer/Wine'},
+  {n:'Avocado Liquor',a:'1550 Avocado Ave, El Cajon, CA 92019',p:'ABC-LIC-352174',t:'Off-Sale General'},
+  {n:'Hillside Liquor',a:'2400 Hillside Dr, El Cajon, CA 92020',p:'ABC-LIC-340891',t:'Off-Sale General'},
+  {n:'Spring Valley Marketplace',a:'8690 Spring Valley Pkwy, Spring Valley, CA 91977',p:'ABC-LIC-387663',t:'Off-Sale General'},
+  {n:'Ralphs Lemon Grove',a:'7823 Broadway, Lemon Grove, CA 91945',p:'ABC-LIC-406521',t:'Off-Sale Beer/Wine'},
+  {n:'Parkway Spirits',a:'1023 Parkway Dr, El Cajon, CA 92020',p:'ABC-LIC-364103',t:'Off-Sale General'},
+  {n:'Grossmont Plaza Liquor',a:'5500 Grossmont Center Dr, La Mesa, CA 91943',p:'ABC-LIC-356692',t:'Off-Sale General'},
+];
+function loadS(){
+  const el=document.getElementById('store-list');
+  el.innerHTML=STORES.map((s,i)=>`
+    <div class="store-card">
+      <div class="store-name">${i+1}. ${s.n}</div>
+      <div class="store-addr">${s.a}</div>
+      <div class="store-permit">ABC Reseller: ${s.p} | ${s.t}</div>
+      <div class="store-btns">
+        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.n+' '+s.a)}" target="_blank" class="s-btn s-map">Map</a>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.a)}" target="_blank" class="s-btn s-nav">Navigate</a>
+      </div>
+    </div>`).join('');
+}
+function filterS(q){
+  const el=document.getElementById('store-list');
+  if(!el.querySelector('.store-card')){if(q)loadS();return;}
+  const low=q.toLowerCase();
+  el.innerHTML=STORES.filter(s=>(s.n+s.a+s.p).toLowerCase().includes(low)).map((s,i)=>`
+    <div class="store-card"><div class="store-name">${s.n}</div><div class="store-addr">${s.a}</div>
+    <div class="store-permit">ABC: ${s.p} | ${s.t}</div></div>`).join('')||'<div style="text-align:center;color:var(--txt3);font-size:11px;padding:12px">No results</div>';
+}
+function setMap(area){
+  document.getElementById('terr-map').src='https://www.google.com/maps/embed/v1/search?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&q=liquor+stores+'+encodeURIComponent(area)+'&zoom=13';
+}
+
+// ROUTES
+const ROUTES={
+  tuesday:STORES.slice(0,12),
+  wednesday:STORES.slice(12,24),
+  thursday:STORES.slice(24,36)
+};
+function launchRoute(day){
+  const stops=ROUTES[day]||[];
+  const out=document.getElementById('route-out');
+  if(out){
+    out.innerHTML=`<div class="route-day">
+      <div class="route-hdr"><span>${day.toUpperCase()} — 12 STOPS</span>
+        <a href="https://www.google.com/maps/dir/${stops.map(s=>encodeURIComponent(s.a)).join('/')}" target="_blank" style="background:linear-gradient(135deg,var(--gold),#a07830);color:#000;font-size:9px;font-weight:800;padding:3px 9px;border-radius:4px;text-decoration:none">MAPS</a>
+      </div>`+
+      stops.map((s,i)=>{const h=9+Math.floor(i*25/60),m=(i*25)%60,ts=(h>12?h-12:h)+':'+(m<10?'0'+m:m)+' '+(h>=12?'PM':'AM');return`
+      <div class="stop">
+        <div class="stop-n">${i+1}</div>
+        <div class="stop-info">
+          <div class="stop-name">${s.n} <span style="color:var(--txt3);font-size:9px;font-weight:400">${ts}</span></div>
+          <div class="stop-addr">${s.a}</div>
+          <div class="stop-permit">${s.p}</div>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.n+' '+s.a)}" target="_blank" style="font-size:9px;color:var(--gold);font-weight:700;padding:3px 7px;background:rgba(201,165,92,0.1);border-radius:4px;text-decoration:none">GO</a>
+      </div>`;}).join('')+'</div>';
+  }
+  const addrs=stops.slice(0,9).map(s=>encodeURIComponent(s.a));
+  const f=document.getElementById('route-map');
+  if(f&&addrs.length>1) f.src=`https://www.google.com/maps/embed/v1/directions?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&origin=${addrs[0]}&destination=${addrs[addrs.length-1]}&waypoints=${addrs.slice(1,-1).join('|')}&mode=driving`;
+}
+</script>
+
+<script>
+// ── DON AZUL READ-ONLY INVENTORY ─────────────────────────────────────────────
+var RO_BE='https://auditdna-backend-1-production.up.railway.app';
+var RO_COLORS={'Blanco Premium':'ro-blanco','Reposado Premium':'ro-repo','Anejo Premium':'ro-anejo','Reposado Reserva':'ro-reserva','G-XXI Blanco Org':'ro-gxxi','G-XXI Reposado Org':'ro-gxxi','G-XXI Anejo Org':'ro-gxxi','Maya Blanco':'ro-maya','Maya Reposado':'ro-maya'};
+function roInvLoad(){
+  var el=document.getElementById('ro-inv-cards');
+  if(el)el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#64748b;font-size:10px;padding:12px">Loading...</div>';
+  fetch(RO_BE+'/api/don-azul/inventory')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var el=document.getElementById('ro-inv-cards');
+      if(!el||!d.ok)return;
+      el.innerHTML=d.inventory.map(function(item){
+        var cs=item.btl_per_case||6,cases=Math.floor(item.qty_bottles/cs),low=item.qty_bottles<cs*2;
+        var cls=RO_COLORS[item.sku]||'ro-blanco';
+        return '<div class="ro-inv-card '+cls+(low?' ro-low':'')+'">'
+          +'<div class="ro-sku">'+item.sku+(low?' <span style="color:#f87171">LOW</span>':'')+'</div>'
+          +'<div class="ro-qty">'+item.qty_bottles+'</div>'
+          +'<div class="ro-unit">bottles</div>'
+          +'<div class="ro-cs">'+cases+' cases</div>'
+          +'<div style="font-size:9px;color:#64748b;margin-top:2px">MSRP $'+item.msrp+'</div>'
+          +'</div>';
+      }).join('');
+      var upd=document.getElementById('ro-inv-updated');
+      if(upd)upd.textContent=new Date().toLocaleTimeString();
+    }).catch(function(){
+      var el=document.getElementById('ro-inv-cards');
+      if(el)el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#f87171;font-size:10px;padding:12px">Network error — retry</div>';
+    });
+}
+function roLogLoad(){
+  var out=document.getElementById('ro-log-out');
+  if(out)out.innerHTML='<div style="text-align:center;color:#64748b;font-size:10px;padding:8px">Loading...</div>';
+  fetch(RO_BE+'/api/don-azul/inventory/log')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var out=document.getElementById('ro-log-out');
+      if(!out||!d.ok)return;
+      out.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:10px">'
+        +'<thead><tr>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Time</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">SKU</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Type</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Change</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">After</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Agent</th>'
+        +'</tr></thead><tbody>'
+        +d.log.slice(0,50).map(function(l){
+          var chg=l.qty_change>0?'+'+l.qty_change:l.qty_change;
+          var cc=l.qty_change>0?'#10b759':'#f87171';
+          return '<tr><td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#64748b">'+new Date(l.created_at).toLocaleString()+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#e2e8f0;font-weight:700">'+l.sku+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="padding:1px 6px;border-radius:10px;font-size:8px;font-weight:700;background:rgba(201,165,92,0.1);color:#C9A55C">'+l.change_type+'</span></td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:800;color:'+cc+'">'+chg+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#e8c87a">'+(l.qty_after!=null?l.qty_after:'—')+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8">'+(l.agent||'—')+'</td>'
+            +'</tr>';
+        }).join('')
+        +'</tbody></table>';
+    }).catch(function(){var out=document.getElementById('ro-log-out');if(out)out.innerHTML='<div style="text-align:center;color:#f87171;font-size:10px;padding:8px">Error loading log</div>';});
+}
+</script>
+
+
+<!-- DON AZUL TAB -->
+<div id="tab-tequila" class="sec" style="display:none">
+  <div class="sec-hdr" style="background:linear-gradient(135deg,rgba(201,165,92,0.15),rgba(4,8,15,0));border-left:3px solid #C9A55C">
+    DON AZUL TEQUILA — SALES COMMAND
+    <div style="font-size:8px;color:var(--txt3,rgba(240,244,248,0.28));font-weight:400;margin-top:3px">Pricing · Commission · Territory · Routes · Email</div>
+  </div>
+  <div style="display:flex;gap:6px;padding:8px 0;border-bottom:1px solid rgba(201,165,92,0.2);margin-bottom:12px;flex-wrap:wrap">
+    <button onclick="datTab('pricing')" id="dt-pricing" class="dt-btn dt-on">PRICING</button>
+    <button onclick="datTab('commission')" id="dt-commission" class="dt-btn">COMMISSION</button>
+    <button onclick="datTab('territory')" id="dt-territory" class="dt-btn">TERRITORY</button>
+    <button onclick="datTab('routes')" id="dt-routes" class="dt-btn">ROUTES</button>
+    <button onclick="datTab('email')" id="dt-email" class="dt-btn">EMAIL</button>
+    <button onclick="datTab('inventory')" id="dt-inventory" class="dt-btn" style="color:#10b759;border-color:rgba(16,183,89,0.3)">INVENTORY</button>
+  </div>
+  <style>
+    .dt-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:6px;color:rgba(240,244,248,0.28);font-size:10px;font-weight:700;letter-spacing:1px;padding:6px 14px;cursor:pointer;text-transform:uppercase}
+    .dt-btn.dt-on{background:rgba(201,165,92,0.15);border-color:#C9A55C;color:#C9A55C}
+    .dat-sec{display:none}.dat-sec.dat-on{display:block}
+    .pt{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px}
+    .pt th{font-size:9px;color:rgba(240,244,248,0.28);text-transform:uppercase;letter-spacing:1px;padding:6px 8px;border-bottom:1px solid rgba(201,165,92,0.2);text-align:left}
+    .pt td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#f0f4f8;vertical-align:top}
+  </style>
+  <!-- PRICING -->
+  <div id="datsec-pricing" class="dat-sec dat-on">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">DON AZUL PREMIUM — Plant #1, Amatitan, Jalisco</div>
+    <table class="pt">
+      <thead><tr><th>SKU</th><th>Vol</th><th>Btl/Case</th><th>Dist $/Btl</th><th>MSRP</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td>DA-BLN-750</td><td>750ml</td><td>6</td><td>$28.00</td><td>$49.99</td><td>44%</td></tr>
+        <tr><td>DA-REP-750</td><td>750ml</td><td>6</td><td>$32.00</td><td>$54.99</td><td>42%</td></tr>
+        <tr><td>DA-ANE-750</td><td>750ml</td><td>6</td><td>$42.00</td><td>$69.99</td><td>40%</td></tr>
+        <tr><td>DA-EXT-750</td><td>750ml</td><td>6</td><td>$58.00</td><td>$94.99</td><td>39%</td></tr>
+        <tr><td>DA-BLN-1L</td><td>1L</td><td>6</td><td>$34.00</td><td>$59.99</td><td>43%</td></tr>
+        <tr><td>DA-REP-1L</td><td>1L</td><td>6</td><td>$38.00</td><td>$64.99</td><td>42%</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:9px;color:rgba(240,244,248,0.3);margin-top:4px">FOB Guadalajara · Min order 5 cases · Net 30 terms available</div>
+  </div>
+  <!-- COMMISSION -->
+  <div id="datsec-commission" class="dat-sec">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">COMMISSION STRUCTURE</div>
+    <table class="pt">
+      <thead><tr><th>Volume / Month</th><th>Commission</th><th>Bonus</th></tr></thead>
+      <tbody>
+        <tr><td>1–20 cases</td><td>8%</td><td>—</td></tr>
+        <tr><td>21–50 cases</td><td>10%</td><td>—</td></tr>
+        <tr><td>51–100 cases</td><td>12%</td><td>+$200 bonus</td></tr>
+        <tr><td>101–200 cases</td><td>14%</td><td>+$500 bonus</td></tr>
+        <tr><td>200+ cases</td><td>16%</td><td>+$1,000 bonus</td></tr>
+      </tbody>
+    </table>
+    <div style="padding:10px;background:rgba(15,123,65,0.08);border:1px solid rgba(15,123,65,0.2);border-radius:8px;font-size:10px;color:rgba(240,244,248,0.6);margin-top:10px">
+      Commissions paid monthly via Mexausa Food Group, Inc. Wire or ACH. Must submit invoice by last business day of month.
+    </div>
+  </div>
+  <!-- TERRITORY -->
+  <div id="datsec-territory" class="dat-sec">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">TERRITORY MAP</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="padding:10px;background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#C9A55C;font-weight:700;margin-bottom:6px">BAJA CALIFORNIA</div>
+        <div style="font-size:10px;color:#f0f4f8;line-height:1.7">Ensenada · Tijuana · Rosarito · Tecate · Mexicali</div>
+      </div>
+      <div style="padding:10px;background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#60a5fa;font-weight:700;margin-bottom:6px">CALIFORNIA</div>
+        <div style="font-size:10px;color:#f0f4f8;line-height:1.7">San Diego · LA Metro · Orange County · Coachella Valley</div>
+      </div>
+      <div style="padding:10px;background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#a78bfa;font-weight:700;margin-bottom:6px">JALISCO / SONORA</div>
+        <div style="font-size:10px;color:#f0f4f8;line-height:1.7">Guadalajara · Puerto Vallarta · Hermosillo · Nogales</div>
+      </div>
+      <div style="padding:10px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#22c55e;font-weight:700;margin-bottom:6px">EXPANSION</div>
+        <div style="font-size:10px;color:#f0f4f8;line-height:1.7">LATAM · Central America · Texas · Arizona</div>
+      </div>
+    </div>
+  </div>
+  <!-- ROUTES -->
+  <div id="datsec-routes" class="dat-sec">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">ROUTE PLANNER</div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.15);border-radius:8px;margin-bottom:10px">
+      <div style="font-size:9px;color:rgba(240,244,248,0.4);margin-bottom:6px">ROUTE A — BAJA NORTE WEEKLY</div>
+      <div style="font-size:10px;color:#f0f4f8;line-height:1.8">Ensenada → Rosarito → Tijuana → Tecate → Mexicali</div>
+      <div style="font-size:9px;color:rgba(201,165,92,0.6);margin-top:4px">~420 km · Est. 6 hrs · Monday recommended</div>
+    </div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(96,165,250,0.15);border-radius:8px;margin-bottom:10px">
+      <div style="font-size:9px;color:rgba(240,244,248,0.4);margin-bottom:6px">ROUTE B — CALIFORNIA CORRIDOR</div>
+      <div style="font-size:10px;color:#f0f4f8;line-height:1.8">San Diego → Chula Vista → National City → LA Metro</div>
+      <div style="font-size:9px;color:rgba(96,165,250,0.6);margin-top:4px">~200 km · Est. 3 hrs · Wednesday/Friday</div>
+    </div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(167,139,250,0.15);border-radius:8px">
+      <div style="font-size:9px;color:rgba(240,244,248,0.4);margin-bottom:6px">ROUTE C — JALISCO DISTRIBUTION</div>
+      <div style="font-size:10px;color:#f0f4f8;line-height:1.8">Amatitan (Plant) → Guadalajara → Puerto Vallarta</div>
+      <div style="font-size:9px;color:rgba(167,139,250,0.6);margin-top:4px">~340 km · Est. 4 hrs · Tuesday/Thursday</div>
+    </div>
+  </div>
+  <!-- EMAIL -->
+  <div id="datsec-email" class="dat-sec">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">EMAIL TEMPLATES</div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.15);border-radius:8px;margin-bottom:8px">
+      <div style="font-size:9px;color:#C9A55C;font-weight:700;margin-bottom:6px">INTRO / FIRST CONTACT</div>
+      <div style="font-size:10px;color:rgba(240,244,248,0.7);line-height:1.7">Subject: Don Azul Premium Tequila — Exclusive Distribution Opportunity<br><br>Hi [Name], I'm reaching out on behalf of Mexausa Food Group regarding Don Azul Premium Tequila, produced at Plant #1 in Amatitan, Jalisco. We are actively expanding distribution in your region and would love to schedule a tasting...</div>
+      <button onclick="navigator.clipboard.writeText('Subject: Don Azul Premium Tequila — Exclusive Distribution Opportunity
+
+Hi [Name], I'm reaching out on behalf of Mexausa Food Group regarding Don Azul Premium Tequila, produced at Plant #1 in Amatitan, Jalisco. We are actively expanding distribution in your region and would love to schedule a tasting.').then(function(){alert('Copied!')})" style="margin-top:8px;padding:5px 12px;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.3);border-radius:6px;color:#C9A55C;font-size:9px;font-weight:700;cursor:pointer">Copy Template</button>
+    </div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.15);border-radius:8px">
+      <div style="font-size:9px;color:#C9A55C;font-weight:700;margin-bottom:6px">FOLLOW UP</div>
+      <div style="font-size:10px;color:rgba(240,244,248,0.7);line-height:1.7">Subject: Follow Up — Don Azul Tequila Pricing & Samples<br><br>Hi [Name], following up on Don Azul Premium. I have pricing sheets and can arrange samples. Distributor margin runs 39-44% depending on SKU. Min 5 cases to start. Let me know a good time to connect.</div>
+      <button onclick="navigator.clipboard.writeText('Subject: Follow Up — Don Azul Tequila Pricing & Samples
+
+Hi [Name], following up on Don Azul Premium. I have pricing sheets and can arrange samples. Distributor margin runs 39-44% depending on SKU. Min 5 cases to start. Let me know a good time to connect.').then(function(){alert('Copied!')})" style="margin-top:8px;padding:5px 12px;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.3);border-radius:6px;color:#C9A55C;font-size:9px;font-weight:700;cursor:pointer">Copy Template</button>
+    </div>
+  </div>
+  <!-- INVENTORY -->
+  <div id="datsec-inventory" class="dat-sec">
+    <div style="font-size:10px;color:#10b759;font-weight:800;letter-spacing:2px;margin-bottom:10px">LIVE INVENTORY</div>
+    <div id="il-cards" style="font-size:11px;color:rgba(240,244,248,0.4);padding:8px 0">Loading...</div>
+    <button onclick="loadDonAzulInventory()" style="padding:7px 16px;background:rgba(16,183,89,0.15);border:1px solid rgba(16,183,89,0.3);border-radius:7px;color:#10b759;font-size:10px;font-weight:700;cursor:pointer;margin-top:8px">Refresh Inventory</button>
+  </div>
+</div>
+
+<script>
+function datTab(t){
+  document.querySelectorAll('.dat-sec').forEach(function(s){s.classList.remove('dat-on');});
+  document.querySelectorAll('.dt-btn').forEach(function(b){b.classList.remove('dt-on');});
+  var sec=document.getElementById('datsec-'+t);
+  var btn=document.getElementById('dt-'+t);
+  if(sec)sec.classList.add('dat-on');
+  if(btn)btn.classList.add('dt-on');
+  if(t==='inventory')loadDonAzulInventory();
+}
+var IL_BE='https://auditdna-backend-1-production.up.railway.app';
+function loadDonAzulInventory(){
+  var el=document.getElementById('il-cards');if(!el)return;
+  el.innerHTML='<div style="padding:8px;color:rgba(240,244,248,0.4)">Loading inventory...</div>';
+  fetch(IL_BE+'/api/don-azul/inventory')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d.ok){el.innerHTML='<div style="color:#f87171;padding:8px">'+d.error+'</div>';return;}
+      if(!d.inventory||!d.inventory.length){el.innerHTML='<div style="color:rgba(240,244,248,0.4);padding:8px">No inventory data yet.</div>';return;}
+      el.innerHTML=d.inventory.map(function(item){
+        var cs=item.btl_per_case||6;
+        return '<div style="padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.12);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">'
+          +'<div><div style="font-size:11px;font-weight:700;color:#f0f4f8">'+item.sku+'</div>'
+          +'<div style="font-size:9px;color:rgba(240,244,248,0.4)">'+item.description+'</div></div>'
+          +'<div style="text-align:right"><div style="font-size:12px;font-weight:800;color:#C9A55C">'+item.cases_available+' cs</div>'
+          +'<div style="font-size:8px;color:rgba(240,244,248,0.3)">'+(item.cases_available*cs)+' btl</div></div>'
+          +'</div>';
+      }).join('');
+    }).catch(function(){el.innerHTML='<div style="color:rgba(240,244,248,0.3);padding:8px">Inventory offline.</div>';});
+}
+function renderEmb(){
+  var el=document.getElementById('emb-list');if(!el)return;
+  var reg=(document.getElementById('emb-reg')||{}).value||'ALL';
+  var pri=(document.getElementById('emb-pri')||{}).value||'ALL';
+  var DATA=[
+    {n:'USDA Agricultural Marketing Service',e:'ams.py@usda.gov',p:'+1-202-720-8998',c:'USA',r:'TA',pv:'HIGH',role:'Produce Market News & Grading'},
+    {n:'USDA APHIS — Plant Health',e:'aphis.web@usda.gov',p:'+1-844-820-2234',c:'USA',r:'TA',pv:'HIGH',role:'Import/Export Plant Health'},
+    {n:'FDA — Food Safety / FSMA 204',e:'fdaemergency@fda.hhs.gov',p:'+1-866-300-4374',c:'USA',r:'TA',pv:'HIGH',role:'FSMA 204 Compliance'},
+    {n:'US Customs & Border Protection',e:'cbp_info@cbp.dhs.gov',p:'+1-877-227-5511',c:'USA',r:'TA',pv:'HIGH',role:'Import Clearance'},
+    {n:'SENASICA — Mexico',e:'senasica@senasica.gob.mx',p:'+52-800-751-9100',c:'Mexico',r:'TA',pv:'HIGH',role:'Phytosanitary Cert MX'},
+    {n:'SADER — Ministry of Agriculture MX',e:'contacto@sader.gob.mx',p:'+52-800-727-0700',c:'Mexico',r:'TA',pv:'HIGH',role:'Ag Ministry Mexico'},
+    {n:'ProMexico Trade Commission',e:'contacto@promexico.gob.mx',p:'+52-55-5447-7000',c:'Mexico',r:'TA',pv:'MED',role:'Trade & Investment MX'},
+    {n:'Guatemala — MAGA',e:'info@maga.gob.gt',p:'+502-2413-7000',c:'Guatemala',r:'CA',pv:'HIGH',role:'Ag Ministry Guatemala'},
+    {n:'Costa Rica — MAG',e:'despacho.mag@mag.go.cr',p:'+506-2231-2344',c:'Costa Rica',r:'CA',pv:'HIGH',role:'Ag Ministry Costa Rica'},
+    {n:'El Salvador — MAG',e:'info@mag.gob.sv',p:'+503-2210-1700',c:'El Salvador',r:'CA',pv:'MED',role:'Ag Ministry El Salvador'},
+    {n:'Honduras — SAG',e:'info@sag.gob.hn',p:'+504-2235-7695',c:'Honduras',r:'CA',pv:'MED',role:'Ag Ministry Honduras'},
+    {n:'Panama — MIDA',e:'info@mida.gob.pa',p:'+507-507-0600',c:'Panama',r:'CA',pv:'MED',role:'Ag Ministry Panama'},
+    {n:'Nicaragua — MAGFOR',e:'webmaster@magfor.gob.ni',p:'+505-2276-0200',c:'Nicaragua',r:'CA',pv:'LOW',role:'Ag Ministry Nicaragua'},
+    {n:'Peru — SENASA',e:'contacto@senasa.gob.pe',p:'+51-1-313-3300',c:'Peru',r:'SA',pv:'HIGH',role:'Phytosanitary Peru'},
+    {n:'Chile — SAG',e:'sag@sag.gob.cl',p:'+56-2-2345-1100',c:'Chile',r:'SA',pv:'HIGH',role:'Ag & Livestock Chile'},
+    {n:'Colombia — ICA',e:'contactenos@ica.gov.co',p:'+57-1-648-0000',c:'Colombia',r:'SA',pv:'HIGH',role:'Agriculture Institute Colombia'},
+    {n:'Ecuador — AGROCALIDAD',e:'agrocalidad@agrocalidad.gob.ec',p:'+593-2-256-5346',c:'Ecuador',r:'SA',pv:'MED',role:'Phytosanitary Ecuador'},
+    {n:'Brazil — MAPA',e:'ouvidoria@agricultura.gov.br',p:'+55-61-3218-2828',c:'Brazil',r:'SA',pv:'HIGH',role:'Ag Ministry Brazil'},
+  ];
+  var f=DATA.filter(function(d){return(reg==='ALL'||d.r===reg)&&(pri==='ALL'||d.pv===pri);});
+  if(!f.length){el.innerHTML='<div style="color:rgba(240,244,248,0.4);padding:8px">No contacts for filter.</div>';return;}
+  var pc={'HIGH':'rgba(244,63,94,0.12)','MED':'rgba(245,158,11,0.10)','LOW':'rgba(100,116,139,0.10)'};
+  var tc={'HIGH':'#f43f5e','MED':'#f59e0b','LOW':'#64748b'};
+  el.innerHTML=f.map(function(d){
+    return '<div style="padding:9px 11px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(192,200,216,0.1);margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px">'
+      +'<div style="flex:1">'
+      +'<div style="font-size:11px;font-weight:700;color:#f0f4f8;margin-bottom:2px">'+d.n+'</div>'
+      +'<div style="font-size:9px;color:rgba(240,244,248,0.35);margin-bottom:5px">'+d.c+' · '+d.role+'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+      +'<button onclick="navigator.clipboard.writeText(''+d.e+'').then(function(){alert('Copied!')})" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:5px;color:#C9A55C;font-size:9px;padding:3px 8px;cursor:pointer">'+d.e+'</button>'
+      +'<a href="tel:'+d.p+'" style="background:rgba(192,200,216,0.07);border:1px solid rgba(192,200,216,0.15);border-radius:5px;color:rgba(192,200,216,0.7);font-size:9px;padding:3px 8px;text-decoration:none">'+d.p+'</a>'
+      +'</div></div>'
+      +'<span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:99px;background:'+pc[d.pv]+';color:'+tc[d.pv]+';white-space:nowrap">'+d.pv+'</span>'
+      +'</div>';
+  }).join('');
+}
+function copyAllEmb(){
+  renderEmb();
+  setTimeout(function(){
+    var btns=document.querySelectorAll('#emb-list button');
+    var emails=[];
+    btns.forEach(function(b){var t=b.textContent.trim();if(t.indexOf('@')>0)emails.push(t);});
+    if(!emails.length){alert('No emails loaded.');return;}
+    navigator.clipboard.writeText(emails.join(', ')).then(function(){alert('Copied '+emails.length+' emails!');}).catch(function(){prompt('Emails:',emails.join(', '));});
+  },300);
+}
+</script>
+
+<div id="loaf-feature-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:8px 10px;display:flex;gap:5px;align-items:center">
+  <a href="/mfginc-loaf.html" style="flex:1;text-align:center;text-decoration:none"><div style="font-size:7px;font-weight:900;color:#C9A55C;letter-spacing:1px">LOAF</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','welink')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(15,123,65,0.12);border:1px solid rgba(15,123,65,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#4ade80;line-height:1.4">WE<br>LINK</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','wesource')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#C9A55C;line-height:1.4">WE<br>SOURCE</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','aglab')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#60a5fa;line-height:1.4">AG<br>LAB</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','factor')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#a78bfa;line-height:1.4">FACTOR<br>PO</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','aiagents')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#fbbf24;line-height:1.4">AI<br>AGENTS</div></a>
+</div>
+</body>
+</html>

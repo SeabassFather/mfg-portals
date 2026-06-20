@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>DACK Trading — Export Intelligence Command</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#020912;--bg2:#0d1117;--card:#161b22;--gold:#C9A55C;--blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--orange:#f97316;--txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;--border:rgba(201,165,92,0.15)}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;overflow-x:hidden}
+
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:24px}
+.g-logo{font-size:24px;font-weight:900;color:var(--gold);letter-spacing:3px;margin-bottom:2px}
+.g-sub{font-size:9px;color:var(--txt3);letter-spacing:3px;margin-bottom:4px}
+.g-tagline{font-size:10px;color:var(--txt2);margin-bottom:28px;text-align:center;line-height:1.6}
+.g-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:320px;text-align:center}
+.g-lbl{font-size:9px;color:var(--txt3);letter-spacing:2px;font-weight:700;margin-bottom:14px}
+.dots{display:flex;gap:8px;justify-content:center;margin-bottom:18px}
+.dot{width:11px;height:11px;border-radius:50%;border:2px solid rgba(201,165,92,0.25);background:transparent;transition:.15s}
+.dot.on{background:var(--gold);border-color:var(--gold)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.nk{padding:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;font-size:18px;font-weight:500;cursor:pointer;user-select:none}
+.nk:active{background:rgba(201,165,92,0.15);border-color:var(--gold)}
+.g-err{font-size:10px;color:var(--red);height:14px;margin-top:4px}
+.g-hint{font-size:9px;color:var(--txt3);margin-top:10px}
+
+#app{display:none;min-height:100vh;padding-bottom:80px}
+
+.hdr{background:linear-gradient(135deg,#060e1e,#0a1628);border-bottom:2px solid var(--gold);padding:14px 16px 10px}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.hdr-brand{font-size:18px;font-weight:900;color:var(--gold);letter-spacing:2px}
+.tier-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:8px;font-weight:700;letter-spacing:1px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);color:var(--purple);margin-left:6px}
+.hdr-badge{font-size:8px;font-weight:700;color:var(--bg);background:var(--gold);padding:3px 9px;border-radius:10px;letter-spacing:1px}
+.hdr-sub{font-size:9px;color:var(--txt3)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center}
+.stat-n{font-size:19px;font-weight:900;color:var(--gold)}
+.stat-l{font-size:7px;color:var(--txt3);font-weight:700;letter-spacing:.5px;margin-top:2px}
+
+.tabnav{display:flex;overflow-x:auto;padding:0 16px;gap:6px;margin-bottom:12px;scrollbar-width:none}
+.tabnav::-webkit-scrollbar{display:none}
+.tn{flex-shrink:0;padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:20px;font-size:10px;font-weight:700;color:var(--txt2);cursor:pointer;white-space:nowrap}
+.tn.act{background:rgba(201,165,92,0.12);border-color:var(--gold);color:var(--gold)}
+
+.sec{display:none;padding:0 16px}
+.sec.on{display:block}
+.sh{font-size:9px;font-weight:800;color:var(--gold);letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sh::after{content:'';flex:1;height:1px;background:rgba(201,165,92,0.12)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.ch{font-size:9px;font-weight:800;color:var(--gold);letter-spacing:2px;margin-bottom:10px}
+
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{background:rgba(10,22,40,1);padding:7px 8px;text-align:left;font-size:8px;color:var(--gold);font-weight:700;letter-spacing:1px;border-bottom:1px solid rgba(201,165,92,0.15)}
+.tbl td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt2)}
+.tbl td:first-child{color:var(--txt);font-weight:600}
+.tbl tr:hover td{background:rgba(201,165,92,0.03)}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.5px}
+.b-hot{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.b-warm{background:rgba(201,165,92,0.12);color:var(--gold);border:1px solid rgba(201,165,92,0.2)}
+.b-cold{background:rgba(100,116,139,0.12);color:var(--txt3);border:1px solid rgba(100,116,139,0.2)}
+.b-green{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.b-blue{background:rgba(74,143,212,0.12);color:var(--blue);border:1px solid rgba(74,143,212,0.2)}
+.b-purple{background:rgba(167,139,250,0.12);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
+.b-orange{background:rgba(249,115,22,0.12);color:var(--orange);border:1px solid rgba(249,115,22,0.2)}
+
+.inp{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 10px;color:var(--txt);font-size:12px;outline:none;font-family:inherit;margin-bottom:8px}
+.inp:focus{border-color:rgba(201,165,92,0.4)}
+select.inp option{background:#0d1117}
+.ir{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.il{font-size:9px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-bottom:3px}
+.btn{padding:9px 18px;border:none;border-radius:8px;font-size:10px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:1px}
+.btn-gold{background:var(--gold);color:var(--bg)}
+.btn-ghost{background:rgba(201,165,92,0.08);border:1px solid rgba(201,165,92,0.25);color:var(--gold)}
+.btn-red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.btn-blue{background:rgba(74,143,212,0.1);border:1px solid rgba(74,143,212,0.2);color:var(--blue)}
+.btn-sm{padding:4px 10px;font-size:9px}
+
+.bc{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;margin-bottom:8px}
+.bn{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.bs{font-size:10px;color:var(--blue);margin-bottom:6px}
+.bm{display:flex;gap:6px;flex-wrap:wrap}
+.bt{font-size:8px;color:var(--txt3);background:rgba(255,255,255,0.04);border-radius:4px;padding:2px 6px}
+
+.pipe-bar{height:5px;border-radius:3px;background:rgba(255,255,255,0.06);margin:3px 0 8px;overflow:hidden}
+.pipe-fill{height:100%;border-radius:3px}
+
+.msg-bubble{padding:9px 12px;border-radius:12px;max-width:82%;margin-bottom:6px;font-size:11px;line-height:1.4}
+.msg-out{background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.2);color:var(--txt);margin-left:auto;border-radius:12px 12px 2px 12px}
+.msg-in{background:var(--bg2);border:1px solid rgba(255,255,255,0.06);color:var(--txt2);border-radius:12px 12px 12px 2px}
+#chat-area{height:240px;overflow-y:auto;padding:8px;background:rgba(0,0,0,0.2);border-radius:10px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05)}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:10px}
+.cd{text-align:center;padding:6px 2px;font-size:10px;border-radius:6px;cursor:pointer;position:relative}
+.cd.ch2{font-size:8px;color:var(--txt3);font-weight:700;padding:4px 2px;cursor:default}
+.cd.today{background:rgba(201,165,92,0.15);color:var(--gold);font-weight:700}
+.cd.hev::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--green)}
+.cd:hover:not(.ch2){background:rgba(255,255,255,0.05)}
+.cev{display:flex;align-items:flex-start;gap:8px;padding:8px;background:rgba(255,255,255,0.02);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;margin-bottom:6px}
+
+.fl-drop{border:2px dashed rgba(201,165,92,0.25);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px}
+.fl-drop:hover{border-color:var(--gold);background:rgba(201,165,92,0.04)}
+.fl-item{display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.05)}
+
+.gps-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,0.2);display:inline-block;margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.2)}50%{box-shadow:0 0 0 8px rgba(34,197,94,0.05)}}
+.sloc{display:flex;align-items:center;padding:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:6px}
+
+.ur{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:6px}
+.ua{width:34px;height:34px;border-radius:50%;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--gold);flex-shrink:0}
+
+.price-box{background:rgba(10,22,40,1);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px}
+.pr{display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.pr:last-child{border:none}
+.comm-big{font-size:32px;font-weight:900;color:var(--green);text-align:center;margin:8px 0 2px}
+.cr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:11px}
+.cr:last-child{border:none}
+
+#smsg{font-size:10px;color:var(--green);font-weight:700;margin-left:8px;display:none}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="g-logo">DACK TRADING</div>
+  <div class="g-sub">EXPORT INTELLIGENCE COMMAND</div>
+  <div class="g-tagline">Physical Commodity Trading &nbsp;|&nbsp; 60+ Markets<br>LATAM &nbsp;|&nbsp; Asia &nbsp;|&nbsp; Europe &nbsp;|&nbsp; Flatiron, New York</div>
+  <div class="g-card">
+    <div class="g-lbl">ENTER YOUR PIN</div>
+    <div class="dots" id="dots">
+      </div>
+    <div class="numpad">
+      <div class="nk" onclick="np(1)">1</div><div class="nk" onclick="np(2)">2</div><div class="nk" onclick="np(3)">3</div>
+      <div class="nk" onclick="np(4)">4</div><div class="nk" onclick="np(5)">5</div><div class="nk" onclick="np(6)">6</div>
+      <div class="nk" onclick="np(7)">7</div><div class="nk" onclick="np(8)">8</div><div class="nk" onclick="np(9)">9</div>
+      <div class="nk btn-ghost" onclick="nd()" style="font-size:13px">DEL</div>
+      <div class="nk" onclick="np(0)">0</div>
+      <div class="nk btn-gold" onclick="checkPin()" style="font-size:13px">OK</div>
+    </div>
+    <div class="g-err" id="gerr"></div>
+    <div class="g-hint">Trader PIN: 4321 &nbsp;|&nbsp; Director PIN: 9999</div>
+  </div>
+
+<div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0"></div><div class="pd" id="d1"></div><div class="pd" id="d2"></div><div class="pd" id="d3"></div></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:192px;">
+<button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">1</button>
+<button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">2</button>
+<button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">3</button>
+<button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">4</button>
+<button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">5</button>
+<button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">6</button>
+<button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">7</button>
+<button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">8</button>
+<button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">9</button>
+<button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">&#9003;</button>
+<button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">0</button>
+<button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;border:none;cursor:pointer;">OK</button>
+</div>
+<div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:12px;font-weight:600;"></div>
+</div>
+
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-top">
+      <div>
+        <div class="hdr-brand">DACK TRADING LLC <span class="tier-pill">TIER 2</span></div>
+        <div class="hdr-sub">Export Sales Intelligence &nbsp;|&nbsp; Flatiron, New York</div>
+      </div>
+      <div style="text-align:right">
+        <div class="hdr-badge" id="hdr-role">TRADER</div>
+        <div style="font-size:8px;color:var(--txt3);margin-top:3px" id="hdr-user">Export Sales Team</div>
+      </div>
+    </div>
+    <div style="font-size:9px;color:var(--txt3);margin-top:4px">Grains &nbsp;|&nbsp; Pulses &nbsp;|&nbsp; Animal Feed &nbsp;|&nbsp; Dairy &nbsp;|&nbsp; Sugar &nbsp;|&nbsp; Nuts &nbsp;|&nbsp; 60+ Markets</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n">62</div><div class="stat-l">MARKETS</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--blue)" id="s-pipe">$4.8M</div><div class="stat-l">PIPELINE</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--green)" id="s-buyers">18</div><div class="stat-l">BUYERS</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--gold)" id="s-comm">$0</div><div class="stat-l">COMMISSION</div></div>
+  </div>
+
+  <div class="tabnav">
+    <div class="tn act" onclick="goTab('dashboard')">Dashboard</div>
+    <div class="tn" onclick="goTab('buyers')">Buyers</div>
+    <div class="tn" onclick="goTab('pipeline')">Pipeline</div>
+    <div class="tn" onclick="goTab('pricing')">Pricing</div>
+    <div class="tn" onclick="goTab('commission')">Commission</div>
+    <div class="tn" onclick="goTab('calendar')">Calendar</div>
+    <div class="tn" onclick="goTab('messenger')">Messenger</div>
+    <div class="tn" onclick="goTab('gps')">GPS / Team</div>
+    <div class="tn" onclick="goTab('files')">Files</div>
+    <div class="tn" onclick="goTab('email')">Email</div>
+    <div class="tn" onclick="goTab('docs')">Export Docs</div>
+    <div class="tn" onclick="goTab('users')">Users</div>
+    <div class="tn" onclick="goTab('produce')">Produce</div>
+    <div class="tn" onclick="goTab('reports')">Reports</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="sec on" id="tab-dashboard">
+    <div class="sh">THIS WEEK — COMMAND VIEW</div>
+    <div class="card" style="border-color:rgba(239,68,68,0.2)">
+      <div class="ch" style="color:var(--red)">HOT BUYERS — QUOTE / CLOSE NOW</div>
+      <div class="bc">
+        <div class="bn">Grupo Comercial Hermes</div>
+        <div class="bs">Mexico City, MX &mdash; Grains + Pulses</div>
+        <div class="bm"><span class="badge b-hot">HOT</span><span class="bt">500MT Yellow Corn</span><span class="bt">CIF Veracruz</span><span class="bt">Quote due Thu</span></div>
+      </div>
+      <div class="bc">
+        <div class="bn">Alimentos del Pacifico S.A.</div>
+        <div class="bs">Guadalajara, MX &mdash; Animal Feed + Soy</div>
+        <div class="bm"><span class="badge b-hot">HOT</span><span class="bt">1,000MT Soybean Meal</span><span class="bt">FOB Gulf</span><span class="bt">LC ready</span></div>
+      </div>
+      <div class="bc">
+        <div class="bn">Importadora Andina</div>
+        <div class="bs">Bogota, CO &mdash; Sugar + Dairy</div>
+        <div class="bm"><span class="badge b-warm">WARM</span><span class="bt">200MT Sugar ICUMSA 45</span><span class="bt">CFR Cartagena</span><span class="bt">Negotiating</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">PIPELINE BY REGION</div>
+      <div style="font-size:10px;color:var(--txt2);display:flex;justify-content:space-between;margin-bottom:3px"><span>Latin America</span><span style="color:var(--gold)">$2.6M</span></div>
+      <div class="pipe-bar"><div class="pipe-fill" style="width:78%;background:var(--gold)"></div></div>
+      <div style="font-size:10px;color:var(--txt2);display:flex;justify-content:space-between;margin-bottom:3px"><span>Asia Pacific</span><span style="color:var(--blue)">$1.4M</span></div>
+      <div class="pipe-bar"><div class="pipe-fill" style="width:42%;background:var(--blue)"></div></div>
+      <div style="font-size:10px;color:var(--txt2);display:flex;justify-content:space-between;margin-bottom:3px"><span>Europe</span><span style="color:var(--green)">$800K</span></div>
+      <div class="pipe-bar"><div class="pipe-fill" style="width:24%;background:var(--green)"></div></div>
+    </div>
+    <div class="card">
+      <div class="ch">ACTIVE SHIPMENTS</div>
+      <table class="tbl">
+        <thead><tr><th>BUYER</th><th>COMMODITY</th><th>VOL.</th><th>TERM</th><th>STATUS</th></tr></thead>
+        <tbody>
+          <tr><td>Hermes MX</td><td style="color:var(--txt3)">Yellow Corn</td><td style="color:var(--txt3)">500MT</td><td style="color:var(--txt3)">CIF</td><td><span class="badge b-warm">QUOTING</span></td></tr>
+          <tr><td>Alimentos Pac.</td><td style="color:var(--txt3)">Soy Meal</td><td style="color:var(--txt3)">1,000MT</td><td style="color:var(--txt3)">FOB</td><td><span class="badge b-green">LC RCVD</span></td></tr>
+          <tr><td>Andina CO</td><td style="color:var(--txt3)">Sugar 45</td><td style="color:var(--txt3)">200MT</td><td style="color:var(--txt3)">CFR</td><td><span class="badge b-hot">NEGOTIATING</span></td></tr>
+          <tr><td>Asia Grains Ltd</td><td style="color:var(--txt3)">Wheat</td><td style="color:var(--txt3)">2,000MT</td><td style="color:var(--txt3)">CIF</td><td><span class="badge b-blue">IN TRANSIT</span></td></tr>
+          <tr><td>Euro Dairy B.V.</td><td style="color:var(--txt3)">SMP</td><td style="color:var(--txt3)">50MT</td><td style="color:var(--txt3)">DAP</td><td><span class="badge b-green">DELIVERED</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ch">TEAM ACTIVITY</div>
+      <div id="dash-act"></div>
+    </div>
+  </div>
+
+  <!-- BUYERS -->
+  <div class="sec" id="tab-buyers">
+    <div class="sh">BUYER NETWORK</div>
+    <div class="card">
+      <div class="ch">ADD BUYER</div>
+      <div class="ir">
+        <div><div class="il">COMPANY</div><input class="inp" id="b-co" placeholder="Buyer company"/></div>
+        <div><div class="il">CONTACT</div><input class="inp" id="b-name" placeholder="Name"/></div>
+      </div>
+      <div class="ir">
+        <div><div class="il">REGION</div>
+          <select class="inp" id="b-region">
+            <option value="">Select...</option>
+            <option>Mexico</option><option>Central America</option><option>South America</option>
+            <option>Caribbean</option><option>Asia Pacific</option><option>Europe</option><option>Middle East / Africa</option>
+          </select>
+        </div>
+        <div><div class="il">COMMODITY</div>
+          <select class="inp" id="b-comm">
+            <option value="">Select...</option>
+            <option>Grains (Corn, Wheat, Sorghum)</option><option>Pulses (Chickpeas, Lentils, Beans)</option>
+            <option>Animal Feed / Soy</option><option>Dairy (SMP, WMP, Butter)</option>
+            <option>Sugar (ICUMSA 45)</option><option>Nuts (Almonds, Walnuts)</option><option>Multiple</option>
+          </select>
+        </div>
+      </div>
+      <div class="ir">
+        <div><div class="il">INCOTERM</div>
+          <select class="inp" id="b-inco"><option>FOB</option><option>CIF</option><option>CFR</option><option>DAP</option><option>EXW</option></select>
+        </div>
+        <div><div class="il">PAYMENT</div>
+          <select class="inp" id="b-pay">
+            <option>Letter of Credit</option><option>TT in Advance</option><option>D/P</option><option>Open Account</option>
+          </select>
+        </div>
+      </div>
+      <div class="ir">
+        <div><div class="il">TYPICAL VOLUME</div><input class="inp" id="b-vol" placeholder="e.g. 500MT/shipment"/></div>
+        <div><div class="il">ASSIGNED TO</div>
+          <select class="inp" id="b-assign">
+            <option>Export Rep 1</option><option>Export Rep 2</option><option>Export Rep 3</option><option>Director</option>
+          </select>
+        </div>
+      </div>
+      <div><div class="il">NOTES / CERTIFICATIONS</div><textarea class="inp" id="b-notes" rows="2" placeholder="Organic cert, halal, special requirements, referral source..."></textarea></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn btn-gold" onclick="addBuyer()">ADD BUYER</button>
+        <span id="smsg">Saved!</span>
+      </div>
+    </div>
+    <div id="buyer-list"></div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="sec" id="tab-pipeline">
+    <div class="sh">SALES PIPELINE</div>
+    <div class="card">
+      <div class="ch">STAGE OVERVIEW</div>
+      <table class="tbl">
+        <thead><tr><th>STAGE</th><th>DEALS</th><th>VALUE</th><th>PROB.</th></tr></thead>
+        <tbody>
+          <tr><td>Prospecting</td><td style="color:var(--txt3)">12</td><td style="color:var(--txt3)">$980K</td><td><span class="badge b-cold">10%</span></td></tr>
+          <tr><td>Quoting</td><td style="color:var(--txt3)">6</td><td style="color:var(--txt3)">$1.2M</td><td><span class="badge b-warm">30%</span></td></tr>
+          <tr><td>Negotiating</td><td style="color:var(--txt3)">4</td><td style="color:var(--txt3)">$860K</td><td><span class="badge b-warm">60%</span></td></tr>
+          <tr><td>LC / Payment Rcvd</td><td style="color:var(--txt3)">3</td><td style="color:var(--txt3)">$1.1M</td><td><span class="badge b-hot">90%</span></td></tr>
+          <tr><td>Shipped / Closed</td><td style="color:var(--green)">11</td><td style="color:var(--green)">$3.2M</td><td><span class="badge b-green">DONE</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ch">LOG DEAL</div>
+      <div class="ir">
+        <div><div class="il">BUYER</div><input class="inp" id="d-buyer" placeholder="Buyer name"/></div>
+        <div><div class="il">COMMODITY</div><input class="inp" id="d-comm" placeholder="e.g. Yellow Corn"/></div>
+      </div>
+      <div class="ir">
+        <div><div class="il">VOLUME (MT)</div><input class="inp" id="d-vol" type="number" placeholder="MT"/></div>
+        <div><div class="il">VALUE ($)</div><input class="inp" id="d-val" type="number" placeholder="USD"/></div>
+      </div>
+      <div class="ir">
+        <div><div class="il">INCOTERM</div>
+          <select class="inp" id="d-inco"><option>FOB</option><option>CIF</option><option>CFR</option><option>DAP</option></select>
+        </div>
+        <div><div class="il">STAGE</div>
+          <select class="inp" id="d-stage">
+            <option>Prospecting</option><option>Quoting</option><option>Negotiating</option><option>LC / Payment Rcvd</option><option>Shipped / Closed</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-gold" onclick="addDeal()">LOG DEAL</button>
+      <div id="deal-list" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="sec" id="tab-pricing">
+    <div class="sh">LANDED COST CALCULATOR</div>
+    <div class="card">
+      <div class="ch">QUOTE BUILDER</div>
+      <div class="il">COMMODITY</div>
+      <select class="inp" id="q-comm" onchange="calcQ()">
+        <option value="">Select commodity...</option>
+        <option value="330">Yellow Corn No.2 ($/MT FOB)</option>
+        <option value="420">Wheat SRW ($/MT FOB)</option>
+        <option value="480">Soybean Meal ($/MT FOB)</option>
+        <option value="290">Sorghum ($/MT FOB)</option>
+        <option value="620">Chickpeas Kabuli ($/MT)</option>
+        <option value="590">Lentils Green ($/MT)</option>
+        <option value="850">Almonds Nonpareil ($/MT)</option>
+        <option value="1200">SMP Dairy ($/MT)</option>
+        <option value="680">Sugar ICUMSA 45 ($/MT)</option>
+      </select>
+      <div class="ir">
+        <div><div class="il">VOLUME (MT)</div><input class="inp" id="q-vol" type="number" placeholder="MT" oninput="calcQ()"/></div>
+        <div><div class="il">INCOTERM ADD-ON</div>
+          <select class="inp" id="q-inco" onchange="calcQ()">
+            <option value="0">FOB Gulf (Base)</option>
+            <option value="28">CFR (+$28/MT)</option>
+            <option value="35">CIF (+$35/MT)</option>
+            <option value="45">DAP (+$45/MT)</option>
+          </select>
+        </div>
+      </div>
+      <div class="ir">
+        <div><div class="il">BASIS / PREMIUM ($/MT)</div><input class="inp" id="q-prem" type="number" placeholder="Basis adj" oninput="calcQ()"/></div>
+        <div><div class="il">MARGIN TARGET ($/MT)</div><input class="inp" id="q-margin" type="number" placeholder="$/MT target" oninput="calcQ()"/></div>
+      </div>
+      <div id="q-result" style="display:none">
+        <div style="background:rgba(10,22,40,1);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:4px">
+          <div class="comm-big" id="q-total">$0</div>
+          <div style="font-size:10px;color:var(--txt3);text-align:center;margin-bottom:10px" id="q-sub">Total shipment value</div>
+          <div class="cr"><span style="color:var(--txt2)">Base FOB Price</span><span style="color:var(--gold);font-weight:700" id="q-base">$0/MT</span></div>
+          <div class="cr"><span style="color:var(--txt2)">Freight / Incoterm</span><span style="color:var(--gold);font-weight:700" id="q-fr">$0/MT</span></div>
+          <div class="cr"><span style="color:var(--txt2)">Basis Adjustment</span><span style="color:var(--gold);font-weight:700" id="q-pr">$0/MT</span></div>
+          <div class="cr"><span style="color:var(--txt2)">Margin</span><span style="color:var(--gold);font-weight:700" id="q-mg">$0/MT</span></div>
+          <div class="cr" style="border-top:1px solid rgba(201,165,92,0.2);margin-top:4px;padding-top:10px"><span style="color:var(--txt);font-weight:700">OFFER PRICE / MT</span><span style="color:var(--txt);font-weight:900;font-size:14px" id="q-pmt">$0</span></div>
+          <div class="cr"><span style="color:var(--txt);font-weight:700">GROSS MARGIN</span><span style="color:var(--green);font-weight:900" id="q-gm">$0</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">COMMODITY REFERENCE — INDICATIVE</div>
+      <div class="price-box">
+        <div style="font-size:10px;font-weight:800;color:var(--txt);margin-bottom:2px">GRAINS — FOB GULF</div>
+        <div style="font-size:9px;color:var(--txt3);margin-bottom:8px">US basis indicative</div>
+        <div class="pr"><span style="color:var(--txt2)">Yellow Corn No.2</span><span style="color:var(--gold);font-weight:700">$328-335/MT</span></div>
+        <div class="pr"><span style="color:var(--txt2)">Wheat SRW</span><span style="color:var(--gold);font-weight:700">$415-428/MT</span></div>
+        <div class="pr"><span style="color:var(--txt2)">Sorghum</span><span style="color:var(--gold);font-weight:700">$285-295/MT</span></div>
+        <div class="pr"><span style="color:var(--txt2)">Soybeans</span><span style="color:var(--gold);font-weight:700">$468-480/MT</span></div>
+      </div>
+      <div class="price-box">
+        <div style="font-size:10px;font-weight:800;color:var(--txt);margin-bottom:2px">PULSES &amp; SPECIALTY</div>
+        <div style="font-size:9px;color:var(--txt3);margin-bottom:8px">US origin indicative</div>
+        <div class="pr"><span style="color:var(--txt2)">Chickpeas (Kabuli)</span><span style="color:var(--gold);font-weight:700">$610-640/MT</span></div>
+        <div class="pr"><span style="color:var(--txt2)">Lentils (Green)</span><span style="color:var(--gold);font-weight:700">$575-600/MT</span></div>
+        <div class="pr"><span style="color:var(--txt2)">Black Beans</span><span style="color:var(--gold);font-weight:700">$920-960/MT</span></div>
+        <div class="pr"><span style="color:var(--txt2)">Almonds (Nonpareil)</span><span style="color:var(--gold);font-weight:700">$840-870/MT</span></div>
+      </div>
+      <div class="price-box">
+        <div style="font-size:10px;font-weight:800;color:var(--txt);margin-bottom:2px">DAIRY &amp; SUGAR</div>
+        <div style="font-size:9px;color:var(--txt3);margin-bottom:8px">Spot indicative</div>
+        <div class="pr"><span style="color:var(--txt2)">SMP (Skim Milk Powder)</span><span style="color:var(--gold);font-weight:700">$1,180-1,220/MT</span></div>
+        <div class="pr"><span style="color:var(--txt2)">WMP (Whole Milk Powder)</span><span style="color:var(--gold);font-weight:700">$3,200-3,400/MT</span></div>
+        <div class="pr"><span style="color:var(--txt2)">Sugar ICUMSA 45</span><span style="color:var(--gold);font-weight:700">$670-690/MT</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMISSION -->
+  <div class="sec" id="tab-commission">
+    <div class="sh">COMMISSION TRACKER</div>
+    <div class="card">
+      <div class="ch">CALCULATOR</div>
+      <div class="il">DEAL VALUE ($)</div>
+      <input class="inp" id="c-val" type="number" placeholder="Total shipment value" oninput="calcC()" style="font-size:16px"/>
+      <div class="il">COMMISSION RATE</div>
+      <select class="inp" id="c-rate" onchange="calcC()">
+        <option value="0.005">0.5% — Standard grain</option>
+        <option value="0.01">1.0% — Specialty / pulses</option>
+        <option value="0.015">1.5% — Dairy / nuts</option>
+        <option value="0.02">2.0% — Custom</option>
+      </select>
+      <div class="comm-big" id="c-res">$0</div>
+      <div style="font-size:10px;color:var(--txt3);text-align:center;margin-bottom:10px" id="c-sub">Enter deal value above</div>
+      <div id="c-breakdown"></div>
+    </div>
+    <div class="card">
+      <div class="ch">LOG CLOSED DEAL</div>
+      <div class="ir">
+        <div><div class="il">DEAL VALUE ($)</div><input class="inp" id="cl-val" type="number" placeholder="USD"/></div>
+        <div><div class="il">RATE</div>
+          <select class="inp" id="cl-rate">
+            <option value="0.005">0.5%</option><option value="0.01">1.0%</option>
+            <option value="0.015">1.5%</option><option value="0.02">2.0%</option>
+          </select>
+        </div>
+      </div>
+      <div><div class="il">COMMODITY / BUYER NOTE</div><input class="inp" id="cl-note" placeholder="e.g. Corn 500MT — Grupo Hermes MX"/></div>
+      <button class="btn btn-gold" onclick="logDeal()">LOG DEAL</button>
+      <div id="cl-list" style="margin-top:10px"></div>
+    </div>
+    <div class="card">
+      <div class="ch">YTD EARNINGS</div>
+      <div class="cr"><span style="color:var(--txt2)">Base + Uncapped Commission</span><span style="color:var(--gold);font-weight:700">Competitive</span></div>
+      <div class="cr"><span style="color:var(--txt2)">Commission Earned YTD</span><span style="color:var(--green);font-weight:700" id="ytd-c">$0</span></div>
+      <div class="cr"><span style="color:var(--txt2)">Deals Closed</span><span style="color:var(--gold);font-weight:700" id="ytd-n">0</span></div>
+      <div class="cr"><span style="color:var(--txt2)">Total Volume Traded</span><span style="color:var(--gold);font-weight:700" id="ytd-v">$0</span></div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="sec" id="tab-calendar">
+    <div class="sh">TEAM CALENDAR</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <button class="btn btn-ghost btn-sm" onclick="calNav(-1)">&#8592;</button>
+        <div style="font-size:13px;font-weight:800;color:var(--txt)" id="cal-lbl">June 2026</div>
+        <button class="btn btn-ghost btn-sm" onclick="calNav(1)">&#8594;</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div style="font-size:9px;color:var(--txt3);margin-bottom:8px" id="cal-day-lbl">Today</div>
+      <div id="cal-evs"></div>
+    </div>
+    <div class="card">
+      <div class="ch">ADD EVENT</div>
+      <div class="ir">
+        <div><div class="il">TITLE</div><input class="inp" id="ev-t" placeholder="Meeting, call, shipment..."/></div>
+        <div><div class="il">DATE</div><input class="inp" id="ev-d" type="date"/></div>
+      </div>
+      <div class="ir">
+        <div><div class="il">TIME</div><input class="inp" id="ev-tm" type="time"/></div>
+        <div><div class="il">ASSIGN</div>
+          <select class="inp" id="ev-a">
+            <option>All Team</option><option>Export Rep 1</option><option>Export Rep 2</option><option>Director</option>
+          </select>
+        </div>
+      </div>
+      <div><div class="il">NOTES</div><input class="inp" id="ev-n" placeholder="Buyer, commodity, LC deadline, shipment date..."/></div>
+      <button class="btn btn-gold" onclick="addEvent()">ADD EVENT</button>
+    </div>
+  </div>
+
+  <!-- MESSENGER -->
+  <div class="sec" id="tab-messenger">
+    <div class="sh">TEAM MESSENGER</div>
+    <div class="card">
+      <div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px">
+        <button class="btn btn-gold btn-sm" onclick="setCh('Trading Floor')">Trading Floor</button>
+        <button class="btn btn-ghost btn-sm" onclick="setCh('LATAM')">LATAM</button>
+        <button class="btn btn-ghost btn-sm" onclick="setCh('Asia')">Asia</button>
+        <button class="btn btn-ghost btn-sm" onclick="setCh('Europe')">Europe</button>
+        <button class="btn btn-ghost btn-sm" onclick="setCh('Logistics')">Logistics</button>
+        <button class="btn btn-ghost btn-sm" onclick="setCh('Director')">Director</button>
+      </div>
+      <div style="font-size:9px;color:var(--txt3);margin-bottom:6px" id="ch-lbl">Channel: Trading Floor</div>
+      <div id="chat-area"></div>
+      <div style="display:flex;gap:8px">
+        <input class="inp" id="msg-inp" placeholder="Message..." style="margin:0;flex:1" onkeydown="if(event.key==='Enter')sendMsg()"/>
+        <button class="btn btn-gold" onclick="sendMsg()">Send</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">QUICK UPDATES</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn btn-ghost" onclick="qMsg('LC received — shipment confirmed, notifying logistics')">LC received — shipment confirmed</button>
+        <button class="btn btn-ghost" onclick="qMsg('Quote submitted to buyer — awaiting response')">Quote submitted — awaiting response</button>
+        <button class="btn btn-ghost" onclick="qMsg('Contract signed — deal closed')">Contract signed — deal closed</button>
+        <button class="btn btn-ghost" onclick="qMsg('Buyer requesting revised pricing — on it')">Buyer requesting revised pricing</button>
+        <button class="btn btn-ghost" onclick="qMsg('Shipment in transit — ETA updated')">Shipment in transit — ETA updated</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GPS -->
+  <div class="sec" id="tab-gps">
+    <div class="sh">TEAM GPS &amp; LOCATION</div>
+    <div class="card">
+      <div class="ch">MY LOCATION</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="chkIn()">Check In</button>
+        <button class="btn btn-red" onclick="chkOut()">Check Out</button>
+        <button class="btn btn-blue" onclick="getGPS()">Get My Location</button>
+      </div>
+      <div id="my-loc" style="font-size:11px;color:var(--txt2);padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.05)">Location not captured yet.</div>
+    </div>
+    <div class="card">
+      <div class="ch">TEAM STATUS</div>
+      <div class="sloc"><span class="gps-dot"></span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Export Rep 1</div><div style="font-size:10px;color:var(--txt3)">Flatiron Office &nbsp;|&nbsp; In 9:02am</div></div><span class="badge b-green">IN OFFICE</span></div>
+      <div class="sloc"><span class="gps-dot" style="background:var(--blue);box-shadow:0 0 0 3px rgba(74,143,212,0.2)"></span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Export Rep 2</div><div style="font-size:10px;color:var(--txt3)">Client meeting — Midtown</div></div><span class="badge b-blue">FIELD</span></div>
+      <div class="sloc"><span class="gps-dot" style="background:var(--txt3);box-shadow:none;animation:none"></span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Export Rep 3</div><div style="font-size:10px;color:var(--txt3)">Last seen: yesterday 6:14pm</div></div><span class="badge b-cold">OFFLINE</span></div>
+      <div id="gps-log" style="margin-top:8px;font-size:10px;color:var(--txt3)"></div>
+    </div>
+    <div class="card">
+      <div class="ch">LOG FIELD ACTIVITY</div>
+      <input class="inp" id="fl-note" placeholder="e.g. Arrived buyer meeting — Grupo Hermes rep / Mexico City call"/>
+      <button class="btn btn-gold" onclick="logField()">LOG WITH TIMESTAMP</button>
+      <div id="fl-log" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <!-- FILES -->
+  <div class="sec" id="tab-files">
+    <div class="sh">FILE VAULT</div>
+    <div class="card">
+      <div class="ch">UPLOAD</div>
+      <div class="fl-drop" onclick="document.getElementById('fl-inp').click()">
+        <div style="font-size:28px;margin-bottom:6px">&#128194;</div>
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:4px">Tap to upload from phone or desktop</div>
+        <div style="font-size:9px;color:var(--txt3)">Contracts, LCs, BLs, phyto certs, proposals, photos</div>
+        <input type="file" id="fl-inp" multiple style="display:none" onchange="handleFiles(this.files)"/>
+      </div>
+      <div id="file-list"></div>
+    </div>
+    <div class="card">
+      <div class="ch">SHARED DOCUMENTS</div>
+      <div class="fl-item"><div style="font-size:20px">&#128196;</div><div><div style="font-size:11px;font-weight:700;color:var(--txt)">DACK Trading — Master Service Agreement 2026.pdf</div><div style="font-size:9px;color:var(--txt3)">Director &nbsp;|&nbsp; 1.8 MB</div></div></div>
+      <div class="fl-item"><div style="font-size:20px">&#128200;</div><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Q2 2026 Pipeline Report.xlsx</div><div style="font-size:9px;color:var(--txt3)">Export Rep 1 &nbsp;|&nbsp; 340 KB</div></div></div>
+      <div class="fl-item"><div style="font-size:20px">&#128196;</div><div><div style="font-size:11px;font-weight:700;color:var(--txt)">RXR — Letter of Credit DRAFT.pdf</div><div style="font-size:9px;color:var(--txt3)">Export Rep 2 &nbsp;|&nbsp; 890 KB</div></div></div>
+      <div class="fl-item"><div style="font-size:20px">&#128196;</div><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Incoterms 2020 Reference Guide.pdf</div><div style="font-size:9px;color:var(--txt3)">Director &nbsp;|&nbsp; 2.2 MB</div></div></div>
+    </div>
+  </div>
+
+  <!-- EMAIL -->
+  <div class="sec" id="tab-email">
+    <div class="sh">EMAIL FROM PORTAL</div>
+    <div class="card">
+      <div class="ch">COMPOSE</div>
+      <div style="background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.15);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:10px;color:var(--txt2)">From: <b>sales@dacktrading.com</b> &nbsp;|&nbsp; DACK Trading LLC</div>
+      <div><div class="il">TO</div><input class="inp" id="em-to" placeholder="Buyer / contact email(s)"/></div>
+      <div><div class="il">CC</div><input class="inp" id="em-cc" placeholder="CC internal team (optional)"/></div>
+      <div><div class="il">SUBJECT</div><input class="inp" id="em-subj" placeholder="Subject line"/></div>
+      <div><div class="il">BODY</div><textarea class="inp" id="em-body" rows="5" placeholder="Message body..."></textarea></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn btn-ghost btn-sm" onclick="eTmpl('intro')">Intro Template</button>
+        <button class="btn btn-ghost btn-sm" onclick="eTmpl('quote')">Quote Delivery</button>
+        <button class="btn btn-ghost btn-sm" onclick="eTmpl('followup')">Follow-Up</button>
+        <button class="btn btn-ghost btn-sm" onclick="eTmpl('lc')">LC Instructions</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-gold" onclick="sendEmail()">SEND EMAIL</button>
+        <button class="btn btn-ghost" onclick="saveDraft()">SAVE DRAFT</button>
+      </div>
+      <div id="em-st" style="font-size:10px;color:var(--green);margin-top:8px;display:none"></div>
+    </div>
+    <div class="card">
+      <div class="ch">SENT LOG</div>
+      <div id="sent-log"><div style="font-size:11px;color:var(--txt3)">No emails sent this session.</div></div>
+    </div>
+  </div>
+
+  <!-- EXPORT DOCS -->
+  <div class="sec" id="tab-docs">
+    <div class="sh">EXPORT DOCUMENTATION</div>
+    <div class="card">
+      <div class="ch">INCOTERMS 2020</div>
+      <table class="tbl">
+        <thead><tr><th>TERM</th><th>SELLER PAYS TO</th><th>RISK TRANSFER</th><th>USE</th></tr></thead>
+        <tbody>
+          <tr><td>EXW</td><td style="color:var(--txt3)">Origin only</td><td style="color:var(--txt3)">At origin</td><td><span class="badge b-cold">RARE</span></td></tr>
+          <tr><td>FOB</td><td style="color:var(--txt3)">Port / vessel rail</td><td style="color:var(--txt3)">On vessel</td><td><span class="badge b-green">COMMON</span></td></tr>
+          <tr><td>CFR</td><td style="color:var(--txt3)">Dest. port freight</td><td style="color:var(--txt3)">On vessel</td><td><span class="badge b-green">COMMON</span></td></tr>
+          <tr><td>CIF</td><td style="color:var(--txt3)">Dest. port + ins.</td><td style="color:var(--txt3)">On vessel</td><td><span class="badge b-green">COMMON</span></td></tr>
+          <tr><td>DAP</td><td style="color:var(--txt3)">Named destination</td><td style="color:var(--txt3)">At destination</td><td><span class="badge b-warm">SPECIALTY</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ch">PAYMENT METHODS</div>
+      <table class="tbl">
+        <thead><tr><th>METHOD</th><th>SELLER RISK</th><th>TIMING</th><th>TYPICAL USE</th></tr></thead>
+        <tbody>
+          <tr><td>Letter of Credit</td><td style="color:var(--green)">LOW</td><td style="color:var(--txt3)">On doc presentation</td><td style="color:var(--txt3)">New buyers, large deals</td></tr>
+          <tr><td>TT in Advance</td><td style="color:var(--green)">LOWEST</td><td style="color:var(--txt3)">Before shipment</td><td style="color:var(--txt3)">Trusted buyers</td></tr>
+          <tr><td>D/P</td><td style="color:var(--gold)">MEDIUM</td><td style="color:var(--txt3)">Doc release</td><td style="color:var(--txt3)">Established buyers</td></tr>
+          <tr><td>Open Account</td><td style="color:var(--red)">HIGH</td><td style="color:var(--txt3)">30-60 days</td><td style="color:var(--txt3)">Long-term relationships</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ch">SHIPMENT CHECKLIST</div>
+      <div id="doc-chk" style="display:flex;flex-direction:column;gap:8px">
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Commercial Invoice</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Bill of Lading (OBL or Telex)</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Packing List</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Certificate of Origin (COO)</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Phytosanitary Certificate</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Fumigation Certificate</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Weight / Quality Cert (SGS or equiv.)</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Insurance Certificate (CIF only)</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> Letter of Credit (if applicable)</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> USDA Export Certificate (grain)</label>
+        <label style="font-size:11px;color:var(--txt2);display:flex;gap:8px;align-items:center"><input type="checkbox"> FDA Prior Notice (food imports to US)</label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">LATAM IMPORT REQUIREMENTS</div>
+      <table class="tbl">
+        <thead><tr><th>COUNTRY</th><th>AGENCY</th><th>KEY REQUIREMENT</th></tr></thead>
+        <tbody>
+          <tr><td>Mexico</td><td style="color:var(--txt3)">SENASICA</td><td style="color:var(--txt3)">Phyto cert + fumigation</td></tr>
+          <tr><td>Colombia</td><td style="color:var(--txt3)">ICA</td><td style="color:var(--txt3)">Prior import permit required</td></tr>
+          <tr><td>Brazil</td><td style="color:var(--txt3)">MAPA</td><td style="color:var(--txt3)">Complex — verify duties</td></tr>
+          <tr><td>Peru</td><td style="color:var(--txt3)">SENASA</td><td style="color:var(--txt3)">Generally open</td></tr>
+          <tr><td>Chile</td><td style="color:var(--txt3)">SAG</td><td style="color:var(--txt3)">Strict phyto — no pests</td></tr>
+          <tr><td>Guatemala</td><td style="color:var(--txt3)">MAGA</td><td style="color:var(--txt3)">DR-CAFTA benefits</td></tr>
+          <tr><td>Dominican Rep.</td><td style="color:var(--txt3)">CODOPESCA</td><td style="color:var(--txt3)">DR-CAFTA benefits</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="sec" id="tab-users">
+    <div class="sh">USER MANAGEMENT</div>
+    <div class="card">
+      <div class="ch">TEAM ROSTER</div>
+      <div id="user-list">
+        <div class="ur"><div class="ua">D</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Director</div><div style="font-size:9px;color:var(--txt3)">Trading Director &nbsp;|&nbsp; Full Access &nbsp;|&nbsp; PIN: 9999</div></div><span class="badge b-purple">DIRECTOR</span></div>
+        <div class="ur"><div class="ua">R1</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Export Rep 1</div><div style="font-size:9px;color:var(--txt3)">LATAM Focus &nbsp;|&nbsp; Trader Access</div></div><span class="badge b-blue">TRADER</span></div>
+        <div class="ur"><div class="ua">R2</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Export Rep 2</div><div style="font-size:9px;color:var(--txt3)">Asia / Europe Focus &nbsp;|&nbsp; Trader Access</div></div><span class="badge b-blue">TRADER</span></div>
+        <div class="ur"><div class="ua">R3</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Export Rep 3</div><div style="font-size:9px;color:var(--txt3)">Grains Specialist &nbsp;|&nbsp; Trader Access</div></div><span class="badge b-cold">INACTIVE</span></div>
+        <div class="ur"><div class="ua">T</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Trading Support</div><div style="font-size:9px;color:var(--txt3)">Docs &amp; Logistics &nbsp;|&nbsp; Read Only</div></div><span class="badge b-green">SUPPORT</span></div>
+      </div>
+    </div>
+    <div class="card" id="add-user-card">
+      <div class="ch">ADD TEAM MEMBER</div>
+      <div class="ir">
+        <div><div class="il">NAME</div><input class="inp" id="u-name" placeholder="Full name"/></div>
+        <div><div class="il">ROLE / FOCUS</div><input class="inp" id="u-title" placeholder="e.g. LATAM Rep"/></div>
+      </div>
+      <div class="ir">
+        <div><div class="il">ACCESS</div>
+          <select class="inp" id="u-role"><option>Support</option><option>Trader</option><option>Director</option></select>
+        </div>
+        <div><div class="il">PIN (4 digits)</div><input class="inp" id="u-pin" placeholder="PIN" maxlength="4" type="tel"/></div>
+      </div>
+      <button class="btn btn-gold" onclick="addUser()">ADD USER</button>
+    </div>
+    <div id="owner-only" style="display:none">
+      <div class="card" style="border-color:rgba(167,139,250,0.25)">
+        <div class="ch" style="color:var(--purple)">DIRECTOR SETTINGS</div>
+        <table class="tbl">
+          <thead><tr><th>SETTING</th><th>VALUE</th></tr></thead>
+          <tbody>
+            <tr><td>Company</td><td style="color:var(--txt3)">DACK Trading LLC</td></tr>
+            <tr><td>Portal Tier</td><td><span class="badge b-purple">TIER 2 — $999/mo</span></td></tr>
+            <tr><td>Active Users</td><td style="color:var(--txt3)">5 of 5 seats</td></tr>
+            <tr><td>Data Access</td><td><span class="badge b-cold">Portal Only</span></td></tr>
+            <tr><td>Next Billing</td><td style="color:var(--txt3)">July 1, 2026</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px;padding:12px;background:rgba(201,165,92,0.06);border-radius:8px;border:1px solid rgba(201,165,92,0.2)">
+          <div style="font-size:9px;color:var(--gold);font-weight:800;letter-spacing:1px;margin-bottom:6px">UPGRADE TO TIER 3 — $5,000/mo</div>
+          <div style="font-size:10px;color:var(--txt2);line-height:1.8">
+            <b style="color:var(--gold)">LOAF Marketplace Access</b><br>
+            Buy-side and sell-side. Match your buyers to verified US and Mexico growers posting live product availability. Close deals faster — supply and demand in one platform.<br><br>
+            <b style="color:var(--gold)">WeSource Grower Network</b><br>
+            65,000+ verified contacts across growers, packers, and shippers in the US-Mexico-LATAM corridor. Your reps source product in the field in real time.<br><br>
+            <b style="color:var(--gold)">P3 Invoice Factoring</b><br>
+            Grower needs payment before shipment? LOAF&#39;s P3 engine advances against the invoice. Deal moves. You don&#39;t tie up capital. 1% facilitation fee on transactions.<br><br>
+            <b style="color:var(--gold)">Purchase Order Finance</b><br>
+            LC in hand, cargo to buy? PO finance covers the gap between contract and payment. 0.5% facilitation fee. Only pay when you close.<br><br>
+            <b style="color:var(--gold)">Year-Round Produce Programs</b><br>
+            Avocado (Michoacan, CA year-round) &nbsp;|&nbsp; Strawberry (Watsonville, Baja, Sinaloa) &nbsp;|&nbsp; Leafy Greens (Salinas, Yuma, Baja corridor). Weekly supply. FSMA 204 traceability. Cold chain certified.<br><br>
+            <b style="color:var(--gold)">200 Automated Outreach Emails/mo</b><br>
+            Targeted by commodity and region from AuditDNA&#39;s LATAM buyer database. We build the templates, you approve, we execute.<br><br>
+            <b style="color:var(--gold)">Monthly Market Intelligence Report</b><br>
+            Commodity price movements, LATAM import volumes, buyer activity signals — delivered to your inbox.<br><br>
+            Unlimited users. Dedicated account manager.
+          </div>
+          <button class="btn btn-ghost" style="margin-top:10px" onclick="alert('Contact sgarcia@mexausafg.com or +1-831-251-3116 to upgrade to Tier 3.')">REQUEST TIER 3 UPGRADE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PRODUCE PROGRAMS -->
+  <div class="sec" id="tab-produce">
+    <div class="sh">YEAR-ROUND PRODUCE PROGRAMS</div>
+
+    <div class="card" style="border-color:rgba(34,197,94,0.25)">
+      <div class="ch" style="color:var(--green)">AVOCADO PROGRAM — YEAR ROUND</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--green)">52</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">WEEKS/YEAR</div>
+        </div>
+        <div style="background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--gold)">Hass</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">PRIMARY VAR.</div>
+        </div>
+        <div style="background:rgba(74,143,212,0.06);border:1px solid rgba(74,143,212,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--blue)">FOB</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">OR CIF</div>
+        </div>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>ORIGIN</th><th>SEASON</th><th>VOLUME</th><th>CERT.</th></tr></thead>
+        <tbody>
+          <tr><td>Michoacan, MX</td><td style="color:var(--txt3)">Year Round (peak Oct-Mar)</td><td style="color:var(--txt3)">40lb boxes, full loads</td><td><span class="badge b-green">GlobalGAP</span></td></tr>
+          <tr><td>Jalisco, MX</td><td style="color:var(--txt3)">Year Round</td><td style="color:var(--txt3)">Custom volumes</td><td><span class="badge b-green">FSMA 204</span></td></tr>
+          <tr><td>Guerrero, MX</td><td style="color:var(--txt3)">Apr-Sep peak</td><td style="color:var(--txt3)">Full containers</td><td><span class="badge b-blue">Organic avail.</span></td></tr>
+          <tr><td>San Diego / Ventura, CA</td><td style="color:var(--txt3)">Mar-Sep</td><td style="color:var(--txt3)">Retail + foodservice</td><td><span class="badge b-green">USDA Certified</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding:10px;background:rgba(34,197,94,0.04);border-radius:8px;border:1px solid rgba(34,197,94,0.1);font-size:10px;color:var(--txt2);line-height:1.7">
+        Cold-chain certified &nbsp;|&nbsp; FSMA 204 traceability documentation included &nbsp;|&nbsp; WeSource grower matching available &nbsp;|&nbsp; Invoice factoring via LOAF P3 &nbsp;|&nbsp; Buyers: Mexico City, Bogota, San Jose, Lima, Santiago
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(239,68,68,0.25)">
+      <div class="ch" style="color:var(--red)">STRAWBERRY PROGRAM — YEAR ROUND</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--red)">52</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">WEEKS/YEAR</div>
+        </div>
+        <div style="background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:14px;font-weight:900;color:var(--gold)">Conv + Org</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">PROGRAMS</div>
+        </div>
+        <div style="background:rgba(74,143,212,0.06);border:1px solid rgba(74,143,212,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--blue)">FOB</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">OR CIF</div>
+        </div>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>ORIGIN</th><th>PEAK SEASON</th><th>PACK</th><th>PROGRAM</th></tr></thead>
+        <tbody>
+          <tr><td>Watsonville, CA</td><td style="color:var(--txt3)">Mar-Nov</td><td style="color:var(--txt3)">8x1lb, 12x1lb, flat</td><td><span class="badge b-green">Conv + Organic</span></td></tr>
+          <tr><td>Oxnard / Santa Maria, CA</td><td style="color:var(--txt3)">Jan-May</td><td style="color:var(--txt3)">Custom retail packs</td><td><span class="badge b-green">USDA Certified</span></td></tr>
+          <tr><td>Baja California, MX</td><td style="color:var(--txt3)">Oct-Mar</td><td style="color:var(--txt3)">Full load programs</td><td><span class="badge b-blue">FSMA 204</span></td></tr>
+          <tr><td>Sinaloa, MX</td><td style="color:var(--txt3)">Nov-Apr</td><td style="color:var(--txt3)">Export grade</td><td><span class="badge b-blue">GlobalGAP avail.</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding:10px;background:rgba(239,68,68,0.04);border-radius:8px;border:1px solid rgba(239,68,68,0.1);font-size:10px;color:var(--txt2);line-height:1.7">
+        Rotating origins ensure year-round supply &nbsp;|&nbsp; Cold chain certified &nbsp;|&nbsp; FSMA 204 &nbsp;|&nbsp; Weekly availability updates via WeSource &nbsp;|&nbsp; Target markets: Guatemala, Dominican Republic, Colombia, Costa Rica, Europe
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(74,143,212,0.25)">
+      <div class="ch" style="color:var(--blue)">LEAFY GREENS PROGRAM — YEAR ROUND</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:rgba(74,143,212,0.06);border:1px solid rgba(74,143,212,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:14px;font-weight:900;color:var(--blue)">Salinas</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">HOME BASE</div>
+        </div>
+        <div style="background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:14px;font-weight:900;color:var(--gold)">6+</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">VARIETIES</div>
+        </div>
+        <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:14px;font-weight:900;color:var(--green)">52wk</div>
+          <div style="font-size:8px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-top:2px">YEAR ROUND</div>
+        </div>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>VARIETY</th><th>ORIGIN / SEASON</th><th>FORMAT</th><th>MARKET</th></tr></thead>
+        <tbody>
+          <tr><td>Romaine / Iceberg</td><td style="color:var(--txt3)">Salinas (Apr-Nov) / Yuma (Nov-Apr)</td><td style="color:var(--txt3)">24ct carton, bulk</td><td><span class="badge b-blue">Retail + FS</span></td></tr>
+          <tr><td>Spinach</td><td style="color:var(--txt3)">Salinas / Baja Year Round</td><td style="color:var(--txt3)">10lb, 20lb bulk</td><td><span class="badge b-green">Foodservice</span></td></tr>
+          <tr><td>Kale</td><td style="color:var(--txt3)">Salinas Year Round</td><td style="color:var(--txt3)">Bunch, clamshell</td><td><span class="badge b-green">Retail</span></td></tr>
+          <tr><td>Mixed Greens</td><td style="color:var(--txt3)">Salinas / Baja Year Round</td><td style="color:var(--txt3)">5lb, 10lb, custom</td><td><span class="badge b-blue">Retail + FS</span></td></tr>
+          <tr><td>Green Onion / Celery</td><td style="color:var(--txt3)">Salinas / Baja Year Round</td><td style="color:var(--txt3)">48ct, bulk</td><td><span class="badge b-blue">Foodservice</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding:10px;background:rgba(74,143,212,0.04);border-radius:8px;border:1px solid rgba(74,143,212,0.1);font-size:10px;color:var(--txt2);line-height:1.7">
+        Salinas Valley + Yuma corridor + Baja California &nbsp;|&nbsp; Rotating origins = zero supply gaps &nbsp;|&nbsp; FSMA 204 traceability &nbsp;|&nbsp; Cold chain certified &nbsp;|&nbsp; Target: LATAM foodservice distributors, hotel chains, retail importers
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(201,165,92,0.3)">
+      <div class="ch">LOAF + WESOURCE + FINANCE — HOW IT WORKS IN THE FIELD</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+          <div style="font-size:18px;font-weight:900;color:var(--gold);min-width:24px">1</div>
+          <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Find the buyer</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">Your LATAM buyer needs avocados, strawberries, or greens. You log them in the Buyers tab with volume, spec, and incoterm preference.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+          <div style="font-size:18px;font-weight:900;color:var(--gold);min-width:24px">2</div>
+          <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Source the supply via WeSource</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">Pull live grower availability from the AuditDNA network. Match spec, volume, and origin. Confirm FOB pricing on the spot.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+          <div style="font-size:18px;font-weight:900;color:var(--gold);min-width:24px">3</div>
+          <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Finance the deal via LOAF P3 + PO Finance</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">Grower needs advance payment? P3 factoring covers it (1% fee). Need to buy the cargo before LC clears? PO finance covers the gap (0.5% fee). Deal moves without tying up your capital.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+          <div style="font-size:18px;font-weight:900;color:var(--gold);min-width:24px">4</div>
+          <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Close the deal through DACK</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">DACK executes the physical trade. Documentation, logistics, and shipment run through your existing operation. The platform supported the deal — you owned it.</div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:12px;background:rgba(201,165,92,0.06);border-radius:8px;border:1px solid rgba(201,165,92,0.2);text-align:center">
+        <div style="font-size:10px;color:var(--gold);font-weight:800;letter-spacing:1px;margin-bottom:4px">THIS IS TIER 3 — $5,000/mo</div>
+        <div style="font-size:10px;color:var(--txt2);margin-bottom:10px">Unlimited users &nbsp;|&nbsp; Full LOAF + WeSource access &nbsp;|&nbsp; P3 factoring &nbsp;|&nbsp; PO finance &nbsp;|&nbsp; 200 outreach emails/mo &nbsp;|&nbsp; Dedicated account manager</div>
+        <button class="btn btn-gold" onclick="alert('Contact sgarcia@mexausafg.com or +1-831-251-3116 to activate Tier 3.')">ACTIVATE TIER 3 — CONTACT US</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="sec" id="tab-reports">
+    <div class="sh">REPORTS</div>
+    <div class="card">
+      <div class="ch">TRADER PERFORMANCE — JUNE 2026</div>
+      <table class="tbl">
+        <thead><tr><th>REP</th><th>BUYERS</th><th>DEALS</th><th>CLOSED</th><th>VOLUME</th></tr></thead>
+        <tbody>
+          <tr><td>Export Rep 1</td><td style="color:var(--txt3)">8</td><td style="color:var(--txt3)">5</td><td style="color:var(--green)">3</td><td style="color:var(--gold)">$1.4M</td></tr>
+          <tr><td>Export Rep 2</td><td style="color:var(--txt3)">6</td><td style="color:var(--txt3)">3</td><td style="color:var(--green)">2</td><td style="color:var(--gold)">$980K</td></tr>
+          <tr><td>Export Rep 3</td><td style="color:var(--txt3)">4</td><td style="color:var(--txt3)">2</td><td style="color:var(--green)">1</td><td style="color:var(--gold)">$620K</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ch">SHARE WITH TRADING LEADERSHIP</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Generate a read-only snapshot for senior traders or investors. No login required — 7-day link.</div>
+      <button class="btn btn-gold" onclick="genShare()">GENERATE SHARE LINK</button>
+      <div id="share-out" style="margin-top:10px;display:none">
+        <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:10px">
+          <div style="font-size:9px;color:var(--green);font-weight:700;letter-spacing:1px;margin-bottom:4px">LINK READY</div>
+          <div style="font-size:10px;color:var(--txt2)">mexausafg.com/dack-trading-export.html (share with management)</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="navigator.clipboard.writeText('https://mexausafg.com/dack-trading-export.html').then(function(){alert('Copied!');})">Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+var pin=''; var PINS={'4321':'demo','0609051974':'owner'};
+function updateDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+function np(v){if(v==='del')pin=pin.slice(0,-1);else if(v==='ok'){checkPin();return;}else if(pin.length<4)pin+=v;updateDots();if(PINS[pin])setTimeout(checkPin,120);}
+function checkPin(){if(PINS[pin]){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';window._paFire&&window._paFire('login',PINS[pin]);goTab('dashboard');}else{var e=document.getElementById('g-err');if(e){e.textContent='Incorrect PIN';setTimeout(function(){e.textContent='';},2000);}pin='';updateDots();}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';pin='';updateDots();}
+
+
+var role='',entered='',PLEN=4;
+
+
+function nd(){entered=entered.slice(0,-1);updD();}
+function updD(){for(var i=0;i<PLEN;i++){var e=document.getElementById('d'+i);if(e)e.className='dot'+(i<entered.length?' on':'');}}
+
+function unlock(name,r){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('hdr-role').textContent=role==='director'?'DIRECTOR':'TRADER';
+  document.getElementById('hdr-user').textContent=name;
+  if(role==='director')document.getElementById('owner-only').style.display='block';
+  loadAll();
+}
+
+function goTab(id){
+  document.querySelectorAll('.sec').forEach(function(s){s.className='sec';});
+  document.querySelectorAll('.tn').forEach(function(t){t.classList.remove('act');});
+  var s=document.getElementById('tab-'+id);if(s)s.className='sec on';
+  document.querySelectorAll('.tn').forEach(function(b){if(b.getAttribute('onclick')==="goTab('"+id+"')")b.classList.add('act');});
+  if(id==='calendar')renderCal();
+  if(id==='messenger')renderChat();
+}
+
+// BUYERS
+var buyers=JSON.parse(localStorage.getItem('dt_buyers')||'[]');
+function addBuyer(){
+  var co=document.getElementById('b-co').value.trim();if(!co)return;
+  buyers.unshift({co:co,name:document.getElementById('b-name').value.trim(),region:document.getElementById('b-region').value,comm:document.getElementById('b-comm').value,inco:document.getElementById('b-inco').value,pay:document.getElementById('b-pay').value,vol:document.getElementById('b-vol').value.trim(),assign:document.getElementById('b-assign').value,notes:document.getElementById('b-notes').value.trim(),ts:new Date().toLocaleDateString()});
+  localStorage.setItem('dt_buyers',JSON.stringify(buyers));
+  ['b-co','b-name','b-vol','b-notes'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('b-region').value='';document.getElementById('b-comm').value='';
+  var m=document.getElementById('smsg');m.style.display='inline';setTimeout(function(){m.style.display='none';},2000);
+  renderBuyers();addAct('Buyer added: '+co,'var(--blue)');
+  document.getElementById('s-buyers').textContent=18+buyers.length;
+}
+function renderBuyers(){
+  var el=document.getElementById('buyer-list');if(!el)return;
+  el.innerHTML=buyers.map(function(b,i){
+    return '<div class="bc"><div style="display:flex;justify-content:space-between"><div><div class="bn">'+b.co+'</div><div class="bs">'+(b.region||'')+(b.name?' &mdash; '+b.name:'')+'</div></div><button class="btn btn-red btn-sm" onclick="delB('+i+')">DEL</button></div><div class="bm" style="margin-top:6px">'+(b.comm?'<span class="bt">'+b.comm+'</span>':'')+(b.inco?'<span class="bt">'+b.inco+'</span>':'')+(b.pay?'<span class="bt">'+b.pay+'</span>':'')+(b.vol?'<span class="bt">'+b.vol+'</span>':'')+(b.assign?'<span class="bt">'+b.assign+'</span>':'')+'</div>'+(b.notes?'<div style="font-size:10px;color:var(--txt3);margin-top:6px">'+b.notes+'</div>':'')+'</div>';
+  }).join('')||'<div style="font-size:11px;color:var(--txt3);padding:10px">No buyers yet.</div>';
+}
+function delB(i){buyers.splice(i,1);localStorage.setItem('dt_buyers',JSON.stringify(buyers));renderBuyers();}
+
+// DEALS
+var deals=JSON.parse(localStorage.getItem('dt_deals')||'[]');
+function addDeal(){
+  var b=document.getElementById('d-buyer').value.trim();if(!b)return;
+  deals.unshift({buyer:b,comm:document.getElementById('d-comm').value.trim(),vol:document.getElementById('d-vol').value,val:document.getElementById('d-val').value,inco:document.getElementById('d-inco').value,stage:document.getElementById('d-stage').value,ts:new Date().toLocaleDateString()});
+  localStorage.setItem('dt_deals',JSON.stringify(deals));
+  ['d-buyer','d-comm','d-vol','d-val'].forEach(function(id){document.getElementById(id).value='';});
+  renderDeals();addAct('Deal logged: '+b+' — '+deals[0].stage,'var(--gold)');
+}
+function renderDeals(){
+  var el=document.getElementById('deal-list');if(!el)return;
+  var sc={Prospecting:'b-cold',Quoting:'b-warm',Negotiating:'b-hot','LC / Payment Rcvd':'b-green','Shipped / Closed':'b-green'};
+  el.innerHTML=deals.map(function(d){return '<div class="bc"><div class="bn">'+d.buyer+(d.comm?' &mdash; '+d.comm:'')+'</div><div class="bm" style="margin-top:4px"><span class="badge '+(sc[d.stage]||'b-cold')+'">'+d.stage+'</span>'+(d.vol?'<span class="bt">'+d.vol+'MT</span>':'')+(d.val?'<span class="bt">$'+Number(d.val).toLocaleString()+'</span>':'')+(d.inco?'<span class="bt">'+d.inco+'</span>':'')+'<span class="bt">'+d.ts+'</span></div></div>';}).join('')||'';
+}
+
+// PRICING
+function calcQ(){
+  var base=parseFloat(document.getElementById('q-comm').value)||0;
+  var vol=parseFloat(document.getElementById('q-vol').value)||0;
+  var fr=parseFloat(document.getElementById('q-inco').value)||0;
+  var pr=parseFloat(document.getElementById('q-prem').value)||0;
+  var mg=parseFloat(document.getElementById('q-margin').value)||0;
+  if(!base||!vol){document.getElementById('q-result').style.display='none';return;}
+  document.getElementById('q-result').style.display='block';
+  var pmt=base+fr+pr+mg;
+  var total=pmt*vol;
+  var gm=mg*vol;
+  document.getElementById('q-total').textContent='$'+total.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('q-sub').textContent=vol+'MT total value';
+  document.getElementById('q-base').textContent='$'+base+'/MT';
+  document.getElementById('q-fr').textContent='$'+fr+'/MT';
+  document.getElementById('q-pr').textContent='$'+pr+'/MT';
+  document.getElementById('q-mg').textContent='$'+mg+'/MT';
+  document.getElementById('q-pmt').textContent='$'+pmt.toLocaleString(undefined,{maximumFractionDigits:2})+'/MT';
+  document.getElementById('q-gm').textContent='$'+gm.toLocaleString(undefined,{maximumFractionDigits:0});
+}
+
+// COMMISSION
+function calcC(){
+  var val=parseFloat(document.getElementById('c-val').value)||0;
+  var rate=parseFloat(document.getElementById('c-rate').value)||0.005;
+  var c=val*rate;
+  document.getElementById('c-res').textContent='$'+c.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('c-sub').textContent='On $'+val.toLocaleString()+' @ '+(rate*100)+'%';
+  document.getElementById('c-breakdown').innerHTML='<div class="cr"><span style="color:var(--txt2)">Deal Value</span><span style="color:var(--gold);font-weight:700">$'+val.toLocaleString()+'</span></div><div class="cr"><span style="color:var(--txt2)">Rate</span><span style="color:var(--gold);font-weight:700">'+(rate*100)+'%</span></div><div class="cr"><span style="color:var(--txt2)">Commission</span><span style="color:var(--green);font-weight:700">$'+c.toLocaleString(undefined,{maximumFractionDigits:0})+'</span></div>';
+}
+var closed=JSON.parse(localStorage.getItem('dt_closed')||'[]');
+function logDeal(){
+  var val=parseFloat(document.getElementById('cl-val').value)||0;if(!val)return;
+  var rate=parseFloat(document.getElementById('cl-rate').value)||0.005;
+  var note=document.getElementById('cl-note').value.trim();
+  closed.unshift({val:val,rate:rate,comm:val*rate,note:note,ts:new Date().toLocaleDateString()});
+  localStorage.setItem('dt_closed',JSON.stringify(closed));
+  document.getElementById('cl-val').value='';document.getElementById('cl-note').value='';
+  renderClosed();updateYTD();addAct('Commission logged: $'+(val*rate).toLocaleString(undefined,{maximumFractionDigits:0}),'var(--green)');
+}
+function renderClosed(){
+  var el=document.getElementById('cl-list');if(!el)return;
+  el.innerHTML=closed.slice(0,8).map(function(d){return '<div class="cr"><span style="color:var(--txt2)">'+d.note+'<br><span style="font-size:9px;color:var(--txt3)">$'+d.val.toLocaleString()+' @ '+(d.rate*100)+'%</span></span><span style="color:var(--green);font-weight:700">+$'+d.comm.toLocaleString(undefined,{maximumFractionDigits:0})+'</span></div>';}).join('');
+}
+function updateYTD(){
+  var tc=closed.reduce(function(a,d){return a+d.comm;},0);
+  var tv=closed.reduce(function(a,d){return a+d.val;},0);
+  document.getElementById('ytd-c').textContent='$'+tc.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('ytd-n').textContent=closed.length;
+  document.getElementById('ytd-v').textContent='$'+tv.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('s-comm').textContent='$'+Math.round(tc/1000)+'K';
+}
+
+// CALENDAR
+var calEvs=JSON.parse(localStorage.getItem('dt_events')||'[]');
+var cY=new Date().getFullYear(),cM=new Date().getMonth(),cD=new Date().getDate();
+function calNav(d){cM+=d;if(cM>11){cM=0;cY++;}if(cM<0){cM=11;cY--;}renderCal();}
+function renderCal(){
+  var mn=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-lbl').textContent=mn[cM]+' '+cY;
+  var days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  var first=new Date(cY,cM,1).getDay(),total=new Date(cY,cM+1,0).getDate(),td=new Date();
+  var html=days.map(function(d){return '<div class="cd ch2">'+d+'</div>';}).join('');
+  for(var i=0;i<first;i++)html+='<div class="cd"></div>';
+  for(var d=1;d<=total;d++){
+    var isT=(d===td.getDate()&&cM===td.getMonth()&&cY===td.getFullYear());
+    var hev=calEvs.some(function(e){var ed=new Date(e.date);return ed.getDate()===d&&ed.getMonth()===cM&&ed.getFullYear()===cY;});
+    html+='<div class="cd'+(isT?' today':'')+(hev?' hev':'')+'" onclick="selDay('+d+')">'+d+'</div>';
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  renderDayEvs(cD);
+}
+function selDay(d){cD=d;document.getElementById('cal-day-lbl').textContent=cM+'/'+d+'/'+cY;renderDayEvs(d);}
+function renderDayEvs(d){
+  var el=document.getElementById('cal-evs');if(!el)return;
+  var evs=calEvs.filter(function(e){var ed=new Date(e.date);return ed.getDate()===d&&ed.getMonth()===cM&&ed.getFullYear()===cY;});
+  el.innerHTML=evs.length?evs.map(function(e){return '<div class="cev"><div style="font-size:9px;color:var(--gold);font-weight:700;white-space:nowrap;min-width:40px">'+(e.tm||'All day')+'</div><div><div style="font-size:11px;color:var(--txt);font-weight:700">'+e.t+'</div><div style="font-size:9px;color:var(--txt3)">'+(e.a||'All Team')+(e.n?' &mdash; '+e.n:'')+'</div></div></div>';}).join(''):'<div style="font-size:11px;color:var(--txt3);padding:8px">No events.</div>';
+}
+function addEvent(){
+  var t=document.getElementById('ev-t').value.trim(),dt=document.getElementById('ev-d').value;
+  if(!t||!dt)return;
+  calEvs.unshift({t:t,date:dt,tm:document.getElementById('ev-tm').value,a:document.getElementById('ev-a').value,n:document.getElementById('ev-n').value.trim()});
+  localStorage.setItem('dt_events',JSON.stringify(calEvs));
+  ['ev-t','ev-d','ev-tm','ev-n'].forEach(function(id){document.getElementById(id).value='';});
+  renderCal();addAct('Event: '+t,'var(--purple)');
+}
+
+// MESSENGER
+var ch='Trading Floor',msgs=JSON.parse(localStorage.getItem('dt_msgs')||'[]');
+function setCh(c){ch=c;document.getElementById('ch-lbl').textContent='Channel: '+c;document.querySelectorAll('#tab-messenger .btn').forEach(function(b){b.className='btn btn-ghost btn-sm';});event.target.className='btn btn-gold btn-sm';renderChat();}
+function sendMsg(){var t=document.getElementById('msg-inp').value.trim();if(!t)return;msgs.push({t:t,ch:ch,from:role==='director'?'Director':'Trader',ts:new Date().toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})});if(msgs.length>100)msgs=msgs.slice(-100);localStorage.setItem('dt_msgs',JSON.stringify(msgs));document.getElementById('msg-inp').value='';renderChat();}
+function qMsg(t){document.getElementById('msg-inp').value=t;sendMsg();}
+function renderChat(){
+  var el=document.getElementById('chat-area');if(!el)return;
+  var f=msgs.filter(function(m){return m.ch===ch||ch==='Trading Floor';}).slice(-30);
+  el.innerHTML=f.map(function(m){var out=(m.from==='Director'&&role==='director')||(m.from==='Trader'&&role==='trader');return '<div style="display:flex;flex-direction:column;align-items:'+(out?'flex-end':'flex-start')+'"><div style="font-size:8px;color:var(--txt3);margin-bottom:2px">'+(out?'You':'Team')+' '+m.ts+'</div><div class="msg-bubble '+(out?'msg-out':'msg-in')+'">'+m.t+'</div></div>';}).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+// GPS
+function getGPS(){var el=document.getElementById('my-loc');el.textContent='Getting location...';if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(p){var la=p.coords.latitude.toFixed(5),ln=p.coords.longitude.toFixed(5);el.innerHTML='<b style="color:var(--green)">Location captured</b><br>Lat: '+la+' | Lng: '+ln+'<br><a href="https://maps.google.com/?q='+la+','+ln+'" target="_blank" style="color:var(--blue);font-size:10px">View on Google Maps</a>';addGPSLog('Location: '+la+', '+ln);},function(){el.textContent='Location access denied.';});}else{el.textContent='Not supported.';}}
+function chkIn(){var t=new Date().toLocaleTimeString();addGPSLog('Checked IN at '+t);document.getElementById('my-loc').textContent='Checked in at '+t;}
+function chkOut(){var t=new Date().toLocaleTimeString();addGPSLog('Checked OUT at '+t);document.getElementById('my-loc').textContent='Checked out at '+t;}
+var gpsLog=JSON.parse(localStorage.getItem('dt_gps')||'[]');
+function addGPSLog(t){gpsLog.unshift({t:t,ts:new Date().toLocaleString()});localStorage.setItem('dt_gps',JSON.stringify(gpsLog));renderGPS();}
+function renderGPS(){var el=document.getElementById('gps-log');if(!el)return;el.innerHTML=gpsLog.slice(0,4).map(function(g){return '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:10px;color:var(--txt2)">'+g.t+' <span style="color:var(--txt3)">'+g.ts+'</span></div>';}).join('');}
+var flLog=JSON.parse(localStorage.getItem('dt_fl')||'[]');
+function logField(){var n=document.getElementById('fl-note').value.trim();if(!n)return;flLog.unshift({n:n,ts:new Date().toLocaleString()});localStorage.setItem('dt_fl',JSON.stringify(flLog));document.getElementById('fl-note').value='';renderField();}
+function renderField(){var el=document.getElementById('fl-log');if(!el)return;el.innerHTML=flLog.slice(0,6).map(function(f){return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="font-size:11px;color:var(--txt)">'+f.n+'</div><div style="font-size:9px;color:var(--txt3)">'+f.ts+'</div></div>';}).join('');}
+
+// FILES
+var files=JSON.parse(localStorage.getItem('dt_files')||'[]');
+function handleFiles(fl){Array.from(fl).forEach(function(f){files.unshift({name:f.name,size:(f.size/1024).toFixed(0)+' KB',ts:new Date().toLocaleDateString(),by:role==='director'?'Director':'Trader'});});if(files.length>20)files=files.slice(0,20);localStorage.setItem('dt_files',JSON.stringify(files));renderFiles();addAct('File uploaded: '+fl[0].name,'var(--green)');}
+function renderFiles(){var el=document.getElementById('file-list');if(!el)return;var ic={pdf:'&#128196;',xlsx:'&#128200;',jpg:'&#128247;',png:'&#128247;',docx:'&#128196;',zip:'&#128230;'};el.innerHTML=files.map(function(f){var ext=f.name.split('.').pop().toLowerCase();return '<div class="fl-item"><div style="font-size:20px">'+(ic[ext]||'&#128196;')+'</div><div><div style="font-size:11px;font-weight:700;color:var(--txt)">'+f.name+'</div><div style="font-size:9px;color:var(--txt3)">'+f.by+' &nbsp;|&nbsp; '+f.size+' &nbsp;|&nbsp; '+f.ts+'</div></div></div>';}).join('');}
+
+// EMAIL
+var sentE=JSON.parse(localStorage.getItem('dt_sent')||'[]');
+var eTmpls={
+  intro:'Subject: Physical Commodity Supply — DACK Trading LLC\n\nDear [Name],\n\nMy name is [Rep] with DACK Trading LLC, a US-based physical commodity trading company.\n\nWe source and export grains, pulses, animal feed, dairy, sugar, and nuts to 60+ markets worldwide. I am reaching out to explore whether we can supply [Company] on competitive terms.\n\nWould you have 15 minutes this week?\n\nBest regards,\n[Rep] | DACK Trading LLC',
+  quote:'Subject: Price Indication — [Commodity] [Volume]MT [Incoterm] [Destination]\n\nDear [Name],\n\nThank you for your inquiry. Please find below our indicative price:\n\nCommodity: [Commodity]\nVolume: [Volume] MT\nOrigin: USA\nIncoterm: [Incoterm]\nPrice: $[Price]/MT\nValidity: 24 hours from issue\nPayment: Letter of Credit at sight\n\nPlease confirm your interest and we will proceed with the formal contract.\n\nBest,\n[Rep] | DACK Trading LLC',
+  followup:'Subject: Following Up — DACK Trading\n\nDear [Name],\n\nI wanted to follow up on my previous message. We continue to have competitive supply in [Commodity] and would welcome the opportunity to discuss your import requirements.\n\nAre you in the market for the coming months?\n\nBest,\n[Rep] | DACK Trading LLC',
+  lc:'Subject: LC Instructions — [Commodity] Shipment\n\nDear [Name],\n\nThank you for confirming. Please find below the Letter of Credit instructions for this shipment:\n\nBeneficiary: DACK Trading LLC\nAddress: [Address]\nBank: [Bank]\nAccount: [Account]\nSWIFT: [SWIFT]\n\nLC must be irrevocable and confirmed. Please send draft for our review before issuance.\n\nBest,\n[Rep] | DACK Trading LLC'
+};
+function eTmpl(t){var tmpl=eTmpls[t]||'';var lines=tmpl.split('\n');document.getElementById('em-subj').value=lines[0].replace('Subject: ','');document.getElementById('em-body').value=lines.slice(2).join('\n');}
+function sendEmail(){var to=document.getElementById('em-to').value.trim(),subj=document.getElementById('em-subj').value.trim();if(!to||!subj)return;sentE.unshift({to:to,subj:subj,ts:new Date().toLocaleString()});localStorage.setItem('dt_sent',JSON.stringify(sentE));var st=document.getElementById('em-st');st.textContent='Logged. Send via your email client using sales@dacktrading.com.';st.style.display='block';setTimeout(function(){st.style.display='none';},4000);renderSent();addAct('Email to: '+to,'var(--gold)');document.getElementById('em-to').value='';document.getElementById('em-subj').value='';document.getElementById('em-body').value='';}
+function saveDraft(){alert('Draft saved.');}
+function renderSent(){var el=document.getElementById('sent-log');if(!el)return;el.innerHTML=sentE.slice(0,8).map(function(e){return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="font-size:11px;color:var(--txt)">To: '+e.to+'</div><div style="font-size:10px;color:var(--txt2)">'+e.subj+'</div><div style="font-size:9px;color:var(--txt3)">'+e.ts+'</div></div>';}).join('');}
+
+// USERS
+var users=JSON.parse(localStorage.getItem('dt_users')||'[]');
+function addUser(){if(role!=='director'){alert('Director access required.');return;}var n=document.getElementById('u-name').value.trim(),pin=document.getElementById('u-pin').value.trim();if(!n||pin.length!==4)return;users.unshift({n:n,title:document.getElementById('u-title').value.trim(),role:document.getElementById('u-role').value,pin:pin});localStorage.setItem('dt_users',JSON.stringify(users));['u-name','u-title','u-pin'].forEach(function(id){document.getElementById(id).value='';});renderUsers();}
+function renderUsers(){var el=document.getElementById('user-list');if(!el)return;var base='<div class="ur"><div class="ua">D</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Director</div><div style="font-size:9px;color:var(--txt3)">Trading Director &nbsp;|&nbsp; Full Access &nbsp;|&nbsp; PIN: 9999</div></div><span class="badge b-purple">DIRECTOR</span></div>';el.innerHTML=base+users.map(function(u){var rc={Support:'b-green',Trader:'b-blue',Director:'b-purple'};return '<div class="ur"><div class="ua">'+u.n.charAt(0).toUpperCase()+'</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+u.n+'</div><div style="font-size:9px;color:var(--txt3)">'+u.title+' &nbsp;|&nbsp; '+(role==='director'?'PIN: '+u.pin:'PIN hidden')+'</div></div><span class="badge '+(rc[u.role]||'b-green')+'">'+u.role.toUpperCase()+'</span></div>';}).join('');}
+
+// REPORTS
+function genShare(){document.getElementById('share-out').style.display='block';}
+
+// ACTIVITY LOG
+var actLog=JSON.parse(localStorage.getItem('dt_actlog')||'[]');
+function addAct(t,c){actLog.unshift({t:t,c:c||'var(--gold)',ts:new Date().toLocaleString()});if(actLog.length>50)actLog=actLog.slice(0,50);localStorage.setItem('dt_actlog',JSON.stringify(actLog));renderAct();}
+function renderAct(){var el=document.getElementById('dash-act');if(!el)return;el.innerHTML=actLog.slice(0,8).map(function(a){return '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:flex-start"><div style="width:7px;height:7px;border-radius:50%;background:'+a.c+';flex-shrink:0;margin-top:4px"></div><div><div style="font-size:11px;color:var(--txt)">'+a.t+'</div><div style="font-size:9px;color:var(--txt3)">'+a.ts+'</div></div></div>';}).join('')||'<div style="font-size:11px;color:var(--txt3);padding:8px">No activity yet.</div>';}
+
+function loadAll(){renderBuyers();renderDeals();renderClosed();renderSent();renderGPS();renderField();renderFiles();renderAct();updateYTD();renderUsers();renderCal();}
+</script>
+</body>
+</html>

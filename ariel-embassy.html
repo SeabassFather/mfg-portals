@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Ariel Bolio — Embassy Outreach · MFG</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0a0c14;--bg2:#0f1220;--bg3:#060810;--card:rgba(255,255,255,0.04);--border:rgba(192,200,216,0.20);--border2:rgba(192,200,216,0.10);--txt:#e2e8f0;--txt2:rgba(226,232,240,0.55);--txt3:rgba(226,232,240,0.28);--silver:#c0c8d8;--gold:#C9A55C;--green:#22c55e;--red:#f87171}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;overflow-x:hidden}
+@keyframes pls{0%,100%{opacity:.9;transform:scale(1)}50%{opacity:.2;transform:scale(1.8)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:32px 24px}
+.g-logo{width:72px;height:72px;background:linear-gradient(135deg,var(--silver),#8090a8);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#0a0c14;margin-bottom:16px}
+.g-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-bottom:3px}
+.g-sub{font-size:11px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.g-name{font-size:13px;color:var(--silver);font-weight:600;margin-bottom:32px}
+.pin-row{display:flex;gap:10px;margin-bottom:22px;justify-content:center}
+.pin-dot{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(192,200,216,0.35);background:transparent;transition:background .15s}
+.pin-dot.filled{background:var(--silver);border-color:var(--silver)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:280px}
+.num-btn{padding:17px 0;background:var(--card);border:1px solid var(--border2);border-radius:12px;font-size:22px;font-weight:600;color:var(--txt);cursor:pointer;text-align:center;transition:all .1s;user-select:none}
+.num-btn:active{background:rgba(192,200,216,0.14);border-color:var(--silver);transform:scale(0.96)}
+.num-sub{font-size:8px;color:var(--txt3);letter-spacing:1px;display:block;margin-top:2px;font-weight:400}
+.del-btn{background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.22);color:var(--red);font-size:18px}
+.g-err{font-size:11px;color:var(--red);height:16px;text-align:center;margin-top:8px}
+
+/* APP */
+#app{display:none;min-height:100vh;animation:fadeIn .4s ease}
+.topbar{background:rgba(6,8,16,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border2);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tb-l{display:flex;align-items:center;gap:10px}
+.tb-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--silver),#8090a8);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#0a0c14;flex-shrink:0}
+.tb-name{font-size:12px;font-weight:700;color:#fff;letter-spacing:.3px}
+.tb-sub{font-size:9px;color:var(--txt3);margin-top:1px}
+.live{display:flex;align-items:center;gap:4px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pls 1.8s ease-in-out infinite}
+.live-t{font-size:9px;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+.lock-btn{padding:4px 12px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.22);border-radius:99px;font-size:9px;color:var(--red);cursor:pointer}
+
+/* FILTER BAR */
+.filter-bar{padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fsel{padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--silver);font-size:10px;font-family:inherit;cursor:pointer}
+.fbtn{padding:5px 14px;border:1px solid var(--border);border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.fbtn.gold{background:rgba(201,165,92,0.10);border-color:rgba(201,165,92,0.30);color:var(--gold)}
+.fbtn.silver{background:rgba(192,200,216,0.08);border-color:rgba(192,200,216,0.22);color:var(--silver)}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border2)}
+.sr{padding:10px 12px;border-right:1px solid var(--border2)}
+.sr:last-child{border-right:none}
+.sr-n{font-size:20px;font-weight:700;letter-spacing:-.3px;line-height:1}
+.sr-l{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);margin-top:3px}
+
+/* TIER LEGEND */
+.tier-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 14px;border-bottom:1px solid var(--border2);background:var(--bg2)}
+.tr{border:1px solid;border-radius:6px;padding:7px 9px}
+
+/* EMBASSY LIST */
+.list{padding:10px 14px;display:flex;flex-direction:column;gap:7px}
+.ec{background:var(--card);border:1px solid var(--border2);border-radius:11px;padding:12px 14px;transition:border-color .15s}
+.ec:active{border-color:var(--silver)}
+.ec-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+.ec-country{font-size:14px;font-weight:700;color:#fff}
+.ec-type{font-size:8px;padding:2px 7px;background:rgba(192,200,216,0.08);border:1px solid rgba(192,200,216,0.15);border-radius:99px;color:var(--silver)}
+.ec-city{font-size:10px;color:var(--txt3);margin-bottom:3px}
+.ec-comm{font-size:10px;color:var(--txt2);margin-bottom:7px}
+.ec-email{font-size:10px;color:var(--gold);font-family:monospace;margin-bottom:8px;word-break:break-all}
+.ec-btns{display:flex;gap:6px;flex-wrap:wrap}
+.ec-btn{padding:5px 12px;border-radius:5px;font-size:9.5px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid;transition:all .15s}
+.ec-btn:active{transform:scale(0.97)}
+.ec-btn.c{background:rgba(201,165,92,0.10);border-color:rgba(201,165,92,0.28);color:var(--gold)}
+.ec-btn.m{background:rgba(192,200,216,0.06);border-color:rgba(192,200,216,0.18);color:var(--silver)}
+.ec-btn.w{background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.22);color:var(--green)}
+
+/* BADGE PILLS */
+.badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:8px;font-weight:700;letter-spacing:.5px;border:1px solid}
+
+/* COMPOSE OVERLAY */
+#compose{display:none;position:fixed;inset:0;background:rgba(6,8,16,0.96);backdrop-filter:blur(16px);z-index:100;padding:16px;overflow-y:auto}
+.cmp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cmp-title{font-size:15px;font-weight:700;color:#fff}
+.cmp-close{padding:5px 14px;background:rgba(248,113,113,0.10);border:1px solid rgba(248,113,113,0.25);border-radius:6px;font-size:10px;color:var(--red);cursor:pointer}
+.cmp-field{margin-bottom:10px}
+.cmp-label{font-size:9px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.cmp-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--txt);font-size:12px;outline:none;font-family:inherit}
+.cmp-input:focus{border-color:var(--silver)}
+.cmp-ta{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--txt);font-size:11px;outline:none;font-family:inherit;resize:vertical;min-height:220px;line-height:1.6}
+.cmp-ta:focus{border-color:var(--silver)}
+.cmp-btn-row{display:flex;gap:8px;margin-top:12px}
+.cmp-send{flex:1;padding:12px;background:linear-gradient(135deg,var(--silver),#8090a8);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#0a0c14;cursor:pointer;font-family:inherit}
+.cmp-copy{flex:1;padding:12px;background:rgba(201,165,92,0.12);border:1px solid rgba(201,165,92,0.30);border-radius:8px;font-size:12px;font-weight:700;color:var(--gold);cursor:pointer;font-family:inherit}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--silver);color:#0a0c14;padding:9px 20px;border-radius:8px;font-size:11px;font-weight:700;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+
+<script>
+var _lang=(localStorage.getItem('AB_EMB_lang')||'es');
+var _ES={
+  pageTitle:'Ariel Bolio — Embajada MFG',
+  subTitle:'Director Regional · Baja California · Mexausa Food Group',
+  lock:'Salir',
+  welcomeMsg:'Bienvenido, Ariel.',
+  loafBtn:'Abrir Portal LOAF',
+  auditdnaBtn:'AuditDNA — Plataforma',
+  enjoybajaBtn:'EnjoyBaja — Bienes Raíces',
+  welinkBtn:'WE LINK — Conectar',
+  contactHdr:'CONTACTOS RÁPIDOS',
+  saulName:'Saul Garcia',saulRole:'Director General · MFG',
+  toastCopy:'¡Copiado!',
+};
+var _EN={
+  pageTitle:'Ariel Bolio — MFG Embassy',
+  subTitle:'Regional Director · Baja California · Mexausa Food Group',
+  lock:'Lock',
+  welcomeMsg:'Welcome, Ariel.',
+  loafBtn:'Open LOAF Portal',
+  auditdnaBtn:'AuditDNA — Platform',
+  enjoybajaBtn:'EnjoyBaja — Real Estate',
+  welinkBtn:'WE LINK — Connect',
+  contactHdr:'QUICK CONTACTS',
+  saulName:'Saul Garcia',saulRole:'CEO · Mexausa Food Group',
+  toastCopy:'Copied!',
+};
+function _T(k){return (_lang==='es'?_ES:_EN)[k]||_EN[k]||'';}
+function _setLang(l){
+  _lang=l;
+  localStorage.setItem('AB_EMB_lang',l);
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    el.textContent=l==='es'?(el.getAttribute('data-es')||el.getAttribute('data-en')):el.getAttribute('data-en');
+  });
+  var en=document.getElementById('_lt_en'),es=document.getElementById('_lt_es');
+  if(en){en.style.fontWeight=l==='en'?'900':'400';en.style.color=l==='en'?'#C9A55C':'rgba(255,255,255,0.4)';}
+  if(es){es.style.fontWeight=l==='es'?'900':'400';es.style.color=l==='es'?'#C9A55C':'rgba(255,255,255,0.4)';}
+}
+window.addEventListener('DOMContentLoaded',function(){_setLang(_lang);});
+</script>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="g-logo">A</div>
+  <div class="g-title">Embassy Outreach</div>
+  <div class="g-sub">Mexausa Food Group, Inc.</div>
+  <div class="g-name">Ariel Bolio — Regional Director, Baja California</div>
+  <div class="pin-row">
+    <div class="pin-dot" id="p0"></div><div class="pin-dot" id="p1"></div>
+    <div class="pin-dot" id="p2"></div><div class="pin-dot" id="p3"></div>
+  </div>
+  <div class="numpad">
+    <button class="num-btn" onclick="numPress('1')">1</button>
+    <button class="num-btn" onclick="numPress('2')">2<span class="num-sub">ABC</span></button>
+    <button class="num-btn" onclick="numPress('3')">3<span class="num-sub">DEF</span></button>
+    <button class="num-btn" onclick="numPress('4')">4<span class="num-sub">GHI</span></button>
+    <button class="num-btn" onclick="numPress('5')">5<span class="num-sub">JKL</span></button>
+    <button class="num-btn" onclick="numPress('6')">6<span class="num-sub">MNO</span></button>
+    <button class="num-btn" onclick="numPress('7')">7<span class="num-sub">PQRS</span></button>
+    <button class="num-btn" onclick="numPress('8')">8<span class="num-sub">TUV</span></button>
+    <button class="num-btn" onclick="numPress('9')">9<span class="num-sub">WXYZ</span></button>
+    <button class="num-btn" style="visibility:hidden"></button>
+    <button class="num-btn" onclick="numPress('0')">0</button>
+    <button class="num-btn del-btn" onclick="numDel()">⌫</button>
+  </div>
+  <div class="g-err" id="g-err"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-l">
+      <div class="tb-mark">A</div>
+      <div>
+        <div class="tb-name">Ariel Bolio — Embassy Outreach</div>
+        <div class="tb-sub">AuditDNA Agricultural Intelligence · LATAM</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="live"><span class="live-dot"></span><span class="live-t">Live</span></div>
+      <button class="lock-btn" onclick="lock()">Lock</button>
+    </div>
+  </div>
+
+  <div class="stats-row" id="stats-row"></div>
+
+  <div class="tier-row">
+    <div class="tr" style="border-color:rgba(34,197,94,0.25);background:rgba(34,197,94,0.06)"><div style="font-size:9px;font-weight:700;color:#22c55e;letter-spacing:1px">T2 — Premium</div><div style="font-size:8px;color:#5a7a5a;margin-top:2px">Mexico · Chile · Argentina · Brazil</div></div>
+    <div class="tr" style="border-color:rgba(96,165,250,0.25);background:rgba(96,165,250,0.06)"><div style="font-size:9px;font-weight:700;color:#60a5fa;letter-spacing:1px">T3 — Andean</div><div style="font-size:8px;color:#3a5a7a;margin-top:2px">Colombia · Peru · Ecuador · Panama</div></div>
+    <div class="tr" style="border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)"><div style="font-size:9px;font-weight:700;color:#f59e0b;letter-spacing:1px">T4 — Central</div><div style="font-size:8px;color:#7a5a3a;margin-top:2px">Guatemala · Honduras · El Salvador</div></div>
+    <div class="tr" style="border-color:rgba(168,85,247,0.25);background:rgba(168,85,247,0.06)"><div style="font-size:9px;font-weight:700;color:#c084fc;letter-spacing:1px">Trade Agencies</div><div style="font-size:8px;color:#5a3a7a;margin-top:2px">ProColombia · PromPeru · ProChile</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <select class="fsel" id="f-reg" onchange="renderList()">
+      <option value="ALL">All Regions</option>
+      <option value="CA">Central America</option>
+      <option value="SA">South America</option>
+      <option value="TA">Trade Agencies</option>
+    </select>
+    <select class="fsel" id="f-pri" onchange="renderList()">
+      <option value="ALL">All Priority</option>
+      <option value="HIGH">High Priority</option>
+      <option value="MED">Medium</option>
+      <option value="LOW">Low</option>
+    </select>
+    <button class="fbtn gold" onclick="copyAll()">Copy All Emails</button>
+    <button class="fbtn silver" onclick="showCompose(null)">New Message</button>
+  </div>
+
+  <div class="list" id="list"></div>
+</div>
+
+<!-- COMPOSE OVERLAY -->
+<div id="compose">
+  <div class="cmp-hdr">
+    <div class="cmp-title">Compose Embassy Email</div>
+    <button class="cmp-close" onclick="closeCompose()">Close ✕</button>
+  </div>
+  <div class="cmp-field"><div class="cmp-label">To</div><input class="cmp-input" id="cmp-to" placeholder="embassy@example.com"/></div>
+  <div class="cmp-field"><div class="cmp-label">Subject</div><input class="cmp-input" id="cmp-sub" value="Official Invitation: AuditDNA Agricultural Intelligence — Americas Corridor Trade Platform"/></div>
+  <div class="cmp-field"><div class="cmp-label">Message</div><textarea class="cmp-ta" id="cmp-body"></textarea></div>
+  <div class="cmp-btn-row">
+    <button class="cmp-send" onclick="sendEmail()">Send via Gmail →</button>
+    <button class="cmp-copy" onclick="copyMsg()">Copy Message</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var PIN='4892'; // Ariel Bolio PIN — change via Railway psql or owner request
+var entered='';
+
+var EMBASSIES=[
+  {country:'Guatemala',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.guatemalacity@fas.usda.gov',city:'Guatemala City',tier:'T4',tc:'#f59e0b',commodity:'Bananas, Coffee, Cardamom, Palm Oil',priority:'HIGH',pc:'#22c55e'},
+  {country:'Costa Rica',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.sanjose@fas.usda.gov',city:'San José',tier:'T3',tc:'#60a5fa',commodity:'Pineapples, Melons, Bananas',priority:'HIGH',pc:'#22c55e'},
+  {country:'Honduras',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.tegucigalpa@fas.usda.gov',city:'Tegucigalpa',tier:'T4',tc:'#f59e0b',commodity:'Bananas, Coffee, Shrimp',priority:'MED',pc:'#f59e0b'},
+  {country:'El Salvador',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.sansalvador@fas.usda.gov',city:'San Salvador',tier:'T4',tc:'#f59e0b',commodity:'Coffee, Sugar, Vegetables',priority:'MED',pc:'#f59e0b'},
+  {country:'Panama',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.panama@fas.usda.gov',city:'Panama City',tier:'T3',tc:'#60a5fa',commodity:'Transit Hub, Logistics Node',priority:'MED',pc:'#f59e0b'},
+  {country:'Nicaragua',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.managua@fas.usda.gov',city:'Managua',tier:'T4',tc:'#f59e0b',commodity:'Coffee, Beef, Sugar, Peanuts',priority:'LOW',pc:'#94a3b8'},
+  {country:'Colombia',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.bogota@fas.usda.gov',city:'Bogotá',tier:'T3',tc:'#60a5fa',commodity:'Flowers, Coffee, Bananas, Avocados',priority:'HIGH',pc:'#22c55e'},
+  {country:'Peru',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.lima@fas.usda.gov',city:'Lima',tier:'T3',tc:'#60a5fa',commodity:'Asparagus, Avocados, Blueberries, Grapes',priority:'HIGH',pc:'#22c55e'},
+  {country:'Ecuador',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.quito@fas.usda.gov',city:'Quito',tier:'T3',tc:'#60a5fa',commodity:'Bananas, Roses, Shrimp',priority:'HIGH',pc:'#22c55e'},
+  {country:'Chile',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.santiago@fas.usda.gov',city:'Santiago',tier:'T2',tc:'#22c55e',commodity:'Grapes, Cherries, Blueberries, Salmon',priority:'HIGH',pc:'#22c55e'},
+  {country:'Brazil',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.brasilia@fas.usda.gov',city:'Brasília',tier:'T2',tc:'#22c55e',commodity:'Soybeans, Coffee, Orange Juice, Beef',priority:'MED',pc:'#f59e0b'},
+  {country:'Argentina',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.buenosaires@fas.usda.gov',city:'Buenos Aires',tier:'T2',tc:'#22c55e',commodity:'Soybeans, Beef, Wine, Citrus',priority:'MED',pc:'#f59e0b'},
+  {country:'Bolivia',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.lapaz@fas.usda.gov',city:'La Paz',tier:'T4',tc:'#f59e0b',commodity:'Quinoa, Soybeans, Brazil Nuts',priority:'LOW',pc:'#94a3b8'},
+  {country:'Paraguay',type:'USDA FAS',contact:'Agricultural Attaché',email:'fas.asuncion@fas.usda.gov',city:'Asunción',tier:'T4',tc:'#f59e0b',commodity:'Soybeans, Beef, Stevia',priority:'LOW',pc:'#94a3b8'},
+  {country:'Colombia (ProColombia)',type:'Trade Agency',contact:'US Representative',email:'miami@procolombia.co',city:'Miami, FL',tier:'T3',tc:'#c084fc',commodity:'Flowers, Coffee, Avocados',priority:'HIGH',pc:'#22c55e'},
+  {country:'Peru (PromPeru)',type:'Trade Agency',contact:'US Representative',email:'promperu@promperu.gob.pe',city:'Washington DC',tier:'T3',tc:'#c084fc',commodity:'Asparagus, Blueberries, Grapes',priority:'HIGH',pc:'#22c55e'},
+  {country:'Chile (ProChile)',type:'Trade Agency',contact:'US Representative',email:'prochile.la@prochile.gob.cl',city:'Los Angeles, CA',tier:'T2',tc:'#c084fc',commodity:'Grapes, Cherries, Blueberries',priority:'HIGH',pc:'#22c55e'},
+  {country:'Ecuador (ProEcuador)',type:'Trade Agency',contact:'US Representative',email:'proecuador@proecuador.gob.ec',city:'New York, NY',tier:'T3',tc:'#c084fc',commodity:'Bananas, Roses, Shrimp',priority:'MED',pc:'#f59e0b'},
+  {country:'Costa Rica (PROCOMER)',type:'Trade Agency',contact:'US Representative',email:'procomer@procomer.com',city:'San José',tier:'T3',tc:'#c084fc',commodity:'Pineapples, Melons',priority:'MED',pc:'#f59e0b'},
+];
+
+var DEFAULT_BODY=`Dear Agricultural Attaché,
+
+Greetings from Mexausa Food Group, Inc. My name is Ariel Bolio, Regional Director for Baja California, and I am writing on behalf of Saul Garcia, our Chief Executive Officer.
+
+We would like to formally introduce AuditDNA Agricultural Intelligence — the first AI-powered agricultural intelligence and cross-border trade platform purpose-built for the Americas corridor between the United States, Mexico, and Latin America.
+
+AuditDNA connects growers, buyers, packers, shippers, and wholesalers across the Americas with:
+
+• Live USDA pricing on 500+ agricultural commodities
+• Verified network of 3,000+ active growers
+• FSMA 204 lot-level traceability — field to delivery
+• AI-powered supply and demand matching
+• Invoice factoring — payment in 24 to 72 hours
+• Compliance intelligence: FDA, CBP, SENASICA, APHIS, GlobalGAP
+• Platform demo: mexausafg.com/demo.html
+
+We would welcome the opportunity to schedule a 30-minute video call to present the platform and explore collaboration opportunities for agricultural producers in your country.
+
+Please feel free to contact us at your convenience.
+
+Sincerely,
+
+Ariel Bolio
+Regional Director, Baja California
+Mexausa Food Group, Inc. | AuditDNA Agricultural Intelligence
+ariel@mexausafg.com | +52 (646) 340-2686
+mexausafg.com | enjoybaja.com
+
+Saul Garcia — Chief Executive Officer
+saul@mexausafg.com | +1 (831) 251-3116`;
+
+function numPress(d){
+  if(entered.length>=PIN.length)return;
+  entered+=d;updateDots();
+  if(entered.length===PIN.length){
+    if(entered===PIN){
+      document.getElementById('gate').style.display='none';
+      document.getElementById('app').style.display='block';
+      localStorage.setItem('ab_emb_auth','1');
+      renderStats();renderList();
+    }else{
+      document.getElementById('g-err').textContent='Incorrect PIN';
+      setTimeout(()=>{entered='';updateDots();document.getElementById('g-err').textContent='';},800);
+    }
+  }
+}
+function numDel(){entered=entered.slice(0,-1);updateDots();}
+function updateDots(){for(var i=0;i<PIN.length;i++){var d=document.getElementById('p'+i);if(d)d.className='pin-dot'+(i<entered.length?' filled':'');}}
+function lock(){localStorage.removeItem('ab_emb_auth');entered='';updateDots();document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';}
+
+function renderStats(){
+  var high=EMBASSIES.filter(e=>e.priority==='HIGH').length;
+  var ca=EMBASSIES.filter(e=>['Guatemala','Costa Rica','Honduras','El Salvador','Panama','Nicaragua'].includes(e.country)).length;
+  var sa=EMBASSIES.filter(e=>['Colombia','Peru','Ecuador','Chile','Brazil','Argentina','Bolivia','Paraguay'].includes(e.country)).length;
+  document.getElementById('stats-row').innerHTML=`
+    <div class="sr"><div class="sr-n" style="color:#c0c8d8">${EMBASSIES.length}</div><div class="sr-l">Total Contacts</div></div>
+    <div class="sr"><div class="sr-n" style="color:#22c55e">${high}</div><div class="sr-l">High Priority</div></div>
+    <div class="sr"><div class="sr-n" style="color:#60a5fa">${ca}</div><div class="sr-l">Central America</div></div>
+    <div class="sr"><div class="sr-n" style="color:#f59e0b">${sa}</div><div class="sr-l">South America</div></div>`;
+}
+
+function renderList(){
+  var reg=document.getElementById('f-reg')?.value||'ALL';
+  var pri=document.getElementById('f-pri')?.value||'ALL';
+  var list=EMBASSIES;
+  if(reg==='CA')list=list.filter(e=>['Guatemala','Costa Rica','Honduras','El Salvador','Panama','Nicaragua'].includes(e.country));
+  if(reg==='SA')list=list.filter(e=>['Colombia','Peru','Ecuador','Chile','Brazil','Argentina','Bolivia','Paraguay'].includes(e.country));
+  if(reg==='TA')list=list.filter(e=>e.type==='Trade Agency');
+  if(pri!=='ALL')list=list.filter(e=>e.priority===pri);
+  document.getElementById('list').innerHTML=list.map(function(e){return`
+    <div class="ec">
+      <div class="ec-top">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+            <span class="ec-country">${e.country}</span>
+            <span class="badge" style="color:${e.tc};border-color:${e.tc}44;background:${e.tc}14">${e.tier}</span>
+            <span class="badge" style="color:${e.pc};border-color:${e.pc}44;background:${e.pc}12">${e.priority}</span>
+          </div>
+          <div class="ec-city">${e.city} · ${e.contact} · ${e.type}</div>
+        </div>
+      </div>
+      <div class="ec-comm">${e.commodity}</div>
+      <div class="ec-email">${e.email}</div>
+      <div class="ec-btns">
+        <button class="ec-btn c" onclick="copyEmail('${e.email}')">Copy Email</button>
+        <button class="ec-btn m" onclick="showCompose('${e.email}','${e.country}')">Compose</button>
+        <button class="ec-btn w" onclick="openWhatsApp('${e.country}')">WhatsApp Script</button>
+      </div>
+    </div>`;}).join('');
+}
+
+function copyEmail(email){
+  navigator.clipboard.writeText(email).then(()=>toast('Copied: '+email));
+}
+function copyAll(){
+  var all=EMBASSIES.map(e=>e.email).join(', ');
+  navigator.clipboard.writeText(all).then(()=>toast('Copied all '+EMBASSIES.length+' email addresses'));
+}
+function showCompose(email,country){
+  document.getElementById('cmp-to').value=email||'';
+  document.getElementById('cmp-sub').value='Official Invitation: AuditDNA Agricultural Intelligence — Americas Corridor Trade Platform';
+  document.getElementById('cmp-body').value=DEFAULT_BODY;
+  document.getElementById('compose').style.display='block';
+  document.getElementById('compose').scrollTop=0;
+}
+function closeCompose(){document.getElementById('compose').style.display='none';}
+function sendEmail(){
+  var to=document.getElementById('cmp-to').value;
+  var sub=encodeURIComponent(document.getElementById('cmp-sub').value);
+  var body=encodeURIComponent(document.getElementById('cmp-body').value);
+  if(!to){toast('Enter recipient email');return;}
+  window.open('mailto:'+to+'?subject='+sub+'&body='+body,'_blank');
+  toast('Opening email client...');
+}
+function copyMsg(){
+  var msg=document.getElementById('cmp-sub').value+'\n\n'+document.getElementById('cmp-body').value;
+  navigator.clipboard.writeText(msg).then(()=>toast('Message copied to clipboard'));
+}
+function openWhatsApp(country){
+  var msg=encodeURIComponent('Hola, le contacto de parte de Mexausa Food Group, Inc. para presentarle AuditDNA Agricultural Intelligence, plataforma de inteligencia agricola para el corredor Americas. Demo: mexausafg.com/demo.html — Ariel Bolio, Director Regional Baja California');
+  window.open('https://wa.me/526463402686?text='+msg,'_blank');
+}
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+window.addEventListener('DOMContentLoaded',function(){
+  updateDots();
+  if(localStorage.getItem('ab_emb_auth')==='1'){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    renderStats();renderList();
+  }
+});
+</script>
+
+<div id="_lang_toggle" style="position:fixed;top:10px;right:10px;z-index:10000;display:flex;gap:3px;background:rgba(2,9,18,0.92);border:1px solid rgba(201,165,92,0.3);border-radius:20px;padding:3px 8px">
+  <button id="_lt_en" onclick="_setLang('en')" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:10px;font-weight:400;cursor:pointer;padding:2px 5px">EN</button>
+  <span style="color:rgba(255,255,255,0.2);font-size:10px;line-height:1.8">|</span>
+  <button id="_lt_es" onclick="_setLang('es')" style="background:none;border:none;color:#C9A55C;font-size:10px;font-weight:900;cursor:pointer;padding:2px 5px">ES</button>
+</div>
+</body>
+</html>

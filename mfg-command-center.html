@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MFG Command Center</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#020912;--card:#161b22;--gold:#C9A55C;--blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--purple:#a855f7;--text:#e2e8f0;--dim:#94a3b8;--muted:#64748b;--border:rgba(255,255,255,0.07)}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+#gate{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gate-logo{font-size:10px;letter-spacing:4px;color:var(--gold);font-weight:700;margin-bottom:6px;text-transform:uppercase}
+.gate-title{font-size:24px;font-weight:700;color:#fff;margin-bottom:4px}
+.gate-sub{font-size:12px;color:var(--muted);margin-bottom:28px}
+.gate-box{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);padding:28px 32px;max-width:320px;width:100%}
+.pin-display{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
+.pin-dot{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(201,165,92,0.4);background:transparent;transition:background .15s}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.key{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);font-size:16px;font-weight:600;padding:14px;cursor:pointer;font-family:inherit;transition:background .1s}
+.key:hover{background:rgba(201,165,92,0.15)}
+#gate-err{color:var(--red);font-size:11px;text-align:center;height:14px}
+#app{display:none}
+nav{background:rgba(10,14,20,0.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;height:52px;position:sticky;top:0;z-index:100;overflow-x:auto}
+.brand{display:flex;flex-direction:column;margin-right:16px;flex-shrink:0}
+.brand-name{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:2px}
+.brand-tag{font-size:8px;color:var(--muted);letter-spacing:1px}
+.nav-tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,0.4);font-size:9px;font-weight:700;padding:0 10px;height:52px;cursor:pointer;font-family:inherit;white-space:nowrap;letter-spacing:0.5px;text-transform:uppercase;transition:all .15s}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.nav-tab.p1{color:var(--amber)}
+.nav-tab.p1.active{color:var(--gold);border-bottom-color:var(--gold)}
+.nav-user{margin-left:auto;font-size:10px;color:var(--dim);flex-shrink:0;display:flex;align-items:center;gap:8px}
+.logout-btn{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red);font-size:9px;font-weight:700;padding:4px 8px;cursor:pointer;font-family:inherit}
+.page{display:none;padding:20px;max-width:1400px;margin:0 auto}
+.page.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);padding:16px;margin-bottom:14px}
+.card-hdr{font-size:9px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:768px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.metric{background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:12px;text-align:center}
+.metric-val{font-size:22px;font-weight:800;color:var(--gold)}
+.metric-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;letter-spacing:0.5px;text-transform:uppercase}
+.badge-live{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
+.badge-pitch{background:rgba(74,143,212,0.15);color:var(--blue);border:1px solid rgba(74,143,212,0.3)}
+.badge-p1{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.3)}
+.btn{background:var(--gold);color:#000;border:none;font-size:10px;font-weight:800;padding:8px 16px;cursor:pointer;font-family:inherit;letter-spacing:0.5px;text-transform:uppercase}
+.btn:hover{background:#d4b06a}
+.btn-outline{background:none;border:1px solid rgba(201,165,92,0.4);color:var(--gold);font-size:10px;font-weight:700;padding:7px 14px;cursor:pointer;font-family:inherit;letter-spacing:0.5px}
+.btn-outline:hover{background:rgba(201,165,92,0.1)}
+.btn-blue{background:var(--blue);color:#fff;border:none;font-size:10px;font-weight:800;padding:8px 16px;cursor:pointer;font-family:inherit}
+label{display:block;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+input,select,textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:8px 10px;font-size:12px;font-family:inherit;outline:none;margin-bottom:10px}
+input:focus,select:focus,textarea:focus{border-color:rgba(201,165,92,0.4)}
+textarea{resize:vertical}
+.agent-card{background:rgba(74,143,212,0.05);border:1px solid rgba(74,143,212,0.2);padding:12px;margin-bottom:10px}
+.agent-name{font-size:9px;font-weight:800;color:var(--blue);letter-spacing:1px}
+.agent-status{font-size:11px;color:var(--text);margin-top:6px;line-height:1.6}
+.agent-action{font-size:10px;color:var(--amber);margin-top:6px;font-weight:700}
+.cal-item{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;gap:8px}
+.cal-date{color:var(--gold);font-weight:700;font-size:10px;flex-shrink:0;width:72px}
+.cal-task{color:var(--text);flex:1}
+.cal-type{font-size:9px;padding:2px 6px;font-weight:700;flex-shrink:0}
+.prop-stat{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px}
+.prop-stat-label{color:var(--muted)}
+.prop-stat-val{color:var(--text);font-weight:600;text-align:right;max-width:60%}
+.prop-stat-val.gold{color:var(--gold)}
+.prop-stat-val.green{color:var(--green)}
+.page-hdr{margin-bottom:18px}
+.page-hdr-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.page-hdr-title{font-size:20px;font-weight:800;color:#fff}
+.page-hdr-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.banner{background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.25);padding:8px 14px;font-size:11px;color:var(--amber);margin-bottom:14px;font-weight:600}
+.tpl-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--dim);font-size:10px;padding:5px 10px;cursor:pointer;font-family:inherit;margin:2px;display:inline-block;transition:all .1s}
+.tpl-btn:hover,.tpl-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,165,92,0.08)}
+.feed-item{padding:9px 0;border-bottom:1px solid var(--border)}
+.feed-time{font-size:9px;color:var(--muted)}
+.feed-msg{font-size:11px;color:var(--text);margin-top:3px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-logo">AuditDNA Intelligence by MFG, INC.</div>
+  <div class="gate-title">Master Command Center</div>
+  <div class="gate-sub">Saul Garcia -- Owner</div>
+  <div class="gate-box">
+    <div class="pin-display">
+      <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
+    </div>
+    <div class="numpad">
+      <button class="key" data-n="1">1</button><button class="key" data-n="2">2</button><button class="key" data-n="3">3</button>
+      <button class="key" data-n="4">4</button><button class="key" data-n="5">5</button><button class="key" data-n="6">6</button>
+      <button class="key" data-n="7">7</button><button class="key" data-n="8">8</button><button class="key" data-n="9">9</button>
+      <button class="key" style="font-size:12px;color:var(--dim)" data-n="del">DEL</button>
+      <button class="key" data-n="0">0</button>
+      <button class="key" style="font-size:10px;color:var(--gold);font-weight:700" data-n="ok">OK</button>
+    </div>
+    <div id="gate-err"></div>
+  </div>
+</div>
+
+<div id="app">
+<nav>
+  <div class="brand"><div class="brand-name">MFG COMMAND</div><div class="brand-tag">OWNER ACCESS</div></div>
+  <button class="nav-tab active" onclick="showPage('dash',this)">Overview</button>
+  <button class="nav-tab p1" onclick="showPage('tuntan',this)">TunTan P1</button>
+  <button class="nav-tab p1" onclick="showPage('colonet',this)">Colonet P2</button>
+  <button class="nav-tab" onclick="showPage('reu',this)">REU</button>
+  <button class="nav-tab" onclick="showPage('hvac',this)">HVAC Portal</button>
+  <button class="nav-tab" onclick="showPage('she',this)">SHE-504</button>
+  <button class="nav-tab" onclick="showPage('eb',this)">EnjoyBaja</button>
+  <button class="nav-tab" onclick="showPage('da',this)">Don Azul</button>
+  <button class="nav-tab" onclick="showPage('loaf',this)">LOAF</button>
+  <button class="nav-tab" onclick="showPage('fact',this)">Factoring</button>
+  <button class="nav-tab" onclick="showPage('fl',this)">FinanceLend</button>
+  <button class="nav-tab" onclick="showPage('cal',this)">Calendar</button>
+  <div class="nav-user"><span id="nav-time"></span><button class="logout-btn" onclick="doLogout()">LOGOUT</button></div>
+</nav>
+
+<!-- OVERVIEW -->
+<div class="page active" id="page-dash">
+  <div class="page-hdr">
+    <div class="page-hdr-label">AuditDNA Intelligence by MFG, INC.</div>
+    <div class="page-hdr-title">Master Command Center</div>
+    <div class="page-hdr-sub" id="dash-date"></div>
+  </div>
+  <div class="banner">PRIORITY: TunTan Lots (P1) + Colonet Lots (P2) -- Owned inventory -- Market aggressively now</div>
+  <div class="g4" style="margin-bottom:14px">
+    <div class="metric"><div class="metric-val" style="color:var(--amber)">2</div><div class="metric-label">Priority Assets</div></div>
+    <div class="metric"><div class="metric-val">10</div><div class="metric-label">Active Projects</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--green)">$10.2M</div><div class="metric-label">Portfolio Value</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--blue)">84</div><div class="metric-label">TunTan Buyers</div></div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card"><div class="card-hdr">Asset Status Board</div><div id="asset-board"></div></div>
+      <div class="card"><div class="card-hdr">AI Agent Feed</div><div id="agent-feed"></div></div>
+    </div>
+    <div>
+      <div class="card"><div class="card-hdr">Today -- Scheduled Actions</div><div id="today-list"></div></div>
+      <div class="card">
+        <div class="card-hdr">Quick Blast</div>
+        <div style="margin-bottom:8px"><label>Asset</label>
+          <select id="qb-asset">
+            <option value="tuntan_1">TunTan -- Cash Buyer Pitch</option>
+            <option value="tuntan_2">TunTan -- Finance Pitch</option>
+            <option value="colonet_1">Colonet -- Investor Pitch</option>
+            <option value="colonet_2">Colonet -- US Expat Pitch</option>
+            <option value="hvac_1">HVAC Portal -- Direct</option>
+            <option value="eb_1">EnjoyBaja -- Bundle</option>
+            <option value="da_1">Don Azul -- Distribution</option>
+          </select>
+        </div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="qb-to" placeholder="recipient@email.com"></div>
+        <button class="btn" style="width:100%" onclick="quickBlast()">Load + Open Email</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TUNTAN -->
+<div class="page" id="page-tuntan">
+  <div class="page-hdr">
+    <div class="page-hdr-label">Priority 1 -- Owned Inventory -- Sell Now</div>
+    <div class="page-hdr-title">TUN TAN -- Eréndira, Baja California</div>
+    <div class="page-hdr-sub">200 lots -- 250m2 -- 1KM from Pacific -- 40 min south of Ensenada</div>
+  </div>
+  <div class="banner">84 buyers in system. $37K cash / $40K financed / $10K down. Commission on every close. Market aggressively.</div>
+  <div class="g3" style="margin-bottom:14px">
+    <div class="metric"><div class="metric-val">200</div><div class="metric-label">Lots Available</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--green)">$37K</div><div class="metric-label">Cash Price USD</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--blue)">84</div><div class="metric-label">Active Buyers</div></div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Property Intel</div>
+        <div class="prop-stat"><span class="prop-stat-label">Location</span><span class="prop-stat-val">Eréndira, Baja California</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Beach Distance</span><span class="prop-stat-val gold">1 KM from Pacific</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">From Ensenada</span><span class="prop-stat-val">40 min south</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Lot Size</span><span class="prop-stat-val">250 m2 (821 sq ft)</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Cash Price</span><span class="prop-stat-val gold">$37,000 USD</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Financed Price</span><span class="prop-stat-val gold">$40,000 USD</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Down Payment</span><span class="prop-stat-val">$10,000 USD</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Team</span><span class="prop-stat-val">Monica, Sara, Ariel</span></div>
+        <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn" onclick="win('https://mexausafg.com/monica-tuntan.html')">Monica Portal</button>
+          <button class="btn-outline" onclick="win('https://mexausafg.com/sara-portal.html')">Sara Portal</button>
+          <button class="btn-outline" onclick="win('https://mexausafg.com/ariel-command.html')">Ariel Portal</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">AI Agent -- TunTan Sales</div>
+        <div class="agent-card">
+          <div class="agent-name">AGENT-TT01 -- TUNTAN INTELLIGENCE</div>
+          <div class="agent-status" id="tt-status">Analyzing buyer pipeline...</div>
+          <div class="agent-action" id="tt-action"></div>
+        </div>
+        <button class="btn-blue" style="width:100%" onclick="runAgent('tuntan','tt')">Run Agent</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr">Marketing Calendar</div>
+        <div id="tt-cal"></div>
+        <button class="btn-outline" style="width:100%;margin-top:10px" onclick="gcal('TunTan Lots -- Follow Up','Email all 84 buyers with pricing and availability. WhatsApp non-responders.')">Add to Google Calendar</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Templates</div>
+        <div style="margin-bottom:8px">
+          <span class="tpl-btn active" onclick="loadTpl('tt','tuntan_1',this)">Cash Buyer</span>
+          <span class="tpl-btn" onclick="loadTpl('tt','tuntan_2',this)">Finance Pitch</span>
+          <span class="tpl-btn" onclick="loadTpl('tt','tuntan_3',this)">Follow-Up</span>
+          <span class="tpl-btn" onclick="loadTpl('tt','tuntan_4',this)">Urgency Close</span>
+        </div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="tt-to" placeholder="buyer@email.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="tt-subject"></div>
+        <div style="margin-bottom:8px"><label>Body</label><textarea id="tt-body" rows="12"></textarea></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn" onclick="sendMail('tt')">Send Email</button>
+          <button class="btn-outline" onclick="wa('tuntan')">WhatsApp</button>
+          <button class="btn-outline" onclick="sched('tuntan')">Schedule Follow-Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COLONET -->
+<div class="page" id="page-colonet">
+  <div class="page-hdr">
+    <div class="page-hdr-label">Priority 2 -- Owned Inventory -- Sell Now</div>
+    <div class="page-hdr-title">Colonet Bachicha -- Baja California</div>
+    <div class="page-hdr-sub">28 oceanfront lots -- $100,000 USD each -- $2.8M total inventory</div>
+  </div>
+  <div class="banner">28 lots at $100K = $2.8M total. Target HNW buyers, US expats, and real estate investors. Bundle with EnjoyBaja financing.</div>
+  <div class="g3" style="margin-bottom:14px">
+    <div class="metric"><div class="metric-val">28</div><div class="metric-label">Lots Available</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--green)">$100K</div><div class="metric-label">Per Lot USD</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--gold)">$2.8M</div><div class="metric-label">Total Value</div></div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Property Intel</div>
+        <div class="prop-stat"><span class="prop-stat-label">Location</span><span class="prop-stat-val">Colonet Bachicha, BC</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Type</span><span class="prop-stat-val gold">True Oceanfront</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Lots</span><span class="prop-stat-val">28 available</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Price Each</span><span class="prop-stat-val gold">$100,000 USD</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Total Value</span><span class="prop-stat-val gold">$2,800,000 USD</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Target</span><span class="prop-stat-val">HNW, US Expats, Investors</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Financing</span><span class="prop-stat-val">American 1st Partners available</span></div>
+        <div style="margin-top:12px;display:flex;gap:6px">
+          <button class="btn" onclick="win('https://enjoybaja.com')">EnjoyBaja Listing</button>
+          <button class="btn-outline" onclick="win('https://loaf.mexausafg.com')">LOAF Portal</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">AI Agent -- Colonet Sales</div>
+        <div class="agent-card">
+          <div class="agent-name">AGENT-CL01 -- COLONET INTELLIGENCE</div>
+          <div class="agent-status" id="cl-status">Scanning HNW and expat investor pipeline...</div>
+          <div class="agent-action" id="cl-action"></div>
+        </div>
+        <button class="btn-blue" style="width:100%" onclick="runAgent('colonet','cl')">Run Agent</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr">Marketing Calendar</div>
+        <div id="cl-cal"></div>
+        <button class="btn-outline" style="width:100%;margin-top:10px" onclick="gcal('Colonet Lots -- Outreach','Send Colonet oceanfront pitch to HNW and expat contact list.')">Add to Google Calendar</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Templates</div>
+        <div style="margin-bottom:8px">
+          <span class="tpl-btn active" onclick="loadTpl('cl','colonet_1',this)">Investor Pitch</span>
+          <span class="tpl-btn" onclick="loadTpl('cl','colonet_2',this)">US Expat</span>
+          <span class="tpl-btn" onclick="loadTpl('cl','colonet_3',this)">Luxury Buyer</span>
+        </div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="cl-to" placeholder="investor@email.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="cl-subject"></div>
+        <div style="margin-bottom:8px"><label>Body</label><textarea id="cl-body" rows="12"></textarea></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn" onclick="sendMail('cl')">Send Email</button>
+          <button class="btn-outline" onclick="wa('colonet')">WhatsApp</button>
+          <button class="btn-outline" onclick="sched('colonet')">Schedule Follow-Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REU -->
+<div class="page" id="page-reu">
+  <div class="page-hdr">
+    <div class="page-hdr-label">AuditDNA Intelligence by MFG, INC.</div>
+    <div class="page-hdr-title">Real Estate Underwriter (REU)</div>
+    <div class="page-hdr-sub">ARV, rehab estimation, deal scoring -- by Saul Garcia -- mexausafg.com</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Asset Status</div>
+        <div class="prop-stat"><span class="prop-stat-label">Status</span><span class="prop-stat-val"><span class="badge badge-live">LIVE</span></span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Platform</span><span class="prop-stat-val">mexausafg.com</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Revenue Model</span><span class="prop-stat-val">Per report fee / subscription</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Target</span><span class="prop-stat-val">Investors, flippers, RE agents, lenders</span></div>
+        <div style="margin-top:12px"><button class="btn" onclick="win('https://mexausafg.com')">Open Platform</button></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">AI Agent -- REU Outreach</div>
+        <div class="agent-card">
+          <div class="agent-name">AGENT-REU01 -- REU INTELLIGENCE</div>
+          <div class="agent-status" id="reu-status">Identifying RE investor leads in CRM...</div>
+          <div class="agent-action" id="reu-action"></div>
+        </div>
+        <button class="btn-blue" style="width:100%" onclick="runAgent('reu','reu')">Run Agent</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Template -- REU Pitch</div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="reu-to" placeholder="investor@email.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="reu-subject" value="AI-Powered Real Estate Underwriting -- Know Your Numbers Before You Buy"></div>
+        <div style="margin-bottom:8px"><label>Body</label>
+        <textarea id="reu-body" rows="12">Hi [First Name],
+
+Before you make your next real estate investment, do you actually know the numbers?
+
+AuditDNA Real Estate Underwriter by Saul Garcia gives you an instant professional property analysis -- ARV, rehab estimate, deal score, cash-on-cash return, and exit strategy -- in minutes, not days.
+
+Built for investors, flippers, agents, and lenders who need real numbers fast.
+
+One report can save you from a six-figure mistake.
+
+I would love to run a free demo report on any property you are evaluating right now.
+
+Saul Garcia
+AuditDNA Intelligence by MFG, INC.
++1-831-251-3116 | mexausafg.com</textarea></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" onclick="sendMail('reu')">Send Email</button>
+          <button class="btn-outline" onclick="sched('reu')">Schedule Follow-Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HVAC -->
+<div class="page" id="page-hvac">
+  <div class="page-hdr">
+    <div class="page-hdr-label">AuditDNA Intelligence by MFG, INC. -- Pitch / Concept</div>
+    <div class="page-hdr-title">HVAC Field Operations Portal</div>
+    <div class="page-hdr-sub">Live demo at hvac.mexausafg.com -- license to HVAC contractors</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Asset Status</div>
+        <div class="prop-stat"><span class="prop-stat-label">Status</span><span class="prop-stat-val"><span class="badge badge-live">LIVE DEMO</span></span></div>
+        <div class="prop-stat"><span class="prop-stat-label">URL</span><span class="prop-stat-val">hvac.mexausafg.com</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Backend</span><span class="prop-stat-val">hvac-field-ops-production.up.railway.app</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Starter</span><span class="prop-stat-val gold">$149/month (5 users)</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Professional</span><span class="prop-stat-val gold">$299/month (15 users)</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Enterprise</span><span class="prop-stat-val gold">$599/mo or $4,999 one-time</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Target</span><span class="prop-stat-val">HVAC contractors, property managers</span></div>
+        <div style="margin-top:12px"><button class="btn" onclick="win('https://hvac.mexausafg.com')">Open Live Demo</button></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">AI Agent -- HVAC Sales</div>
+        <div class="agent-card">
+          <div class="agent-name">AGENT-HV01 -- HVAC PITCH AGENT</div>
+          <div class="agent-status" id="hv-status">Scanning CRM for HVAC contractor contacts...</div>
+          <div class="agent-action" id="hv-action"></div>
+        </div>
+        <button class="btn-blue" style="width:100%" onclick="runAgent('hvac','hv')">Run Agent</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Templates</div>
+        <div style="margin-bottom:8px">
+          <span class="tpl-btn active" onclick="loadTpl('hv','hvac_1',this)">Direct Pitch</span>
+          <span class="tpl-btn" onclick="loadTpl('hv','hvac_2',this)">Relationship Open</span>
+        </div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="hv-to" placeholder="contractor@hvac.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="hv-subject"></div>
+        <div style="margin-bottom:8px"><label>Body</label><textarea id="hv-body" rows="12"></textarea></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" onclick="sendMail('hv')">Send Email</button>
+          <button class="btn-outline" onclick="sched('hvac')">Schedule Follow-Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHE -->
+<div class="page" id="page-she">
+  <div class="page-hdr">
+    <div class="page-hdr-label">AuditDNA Intelligence by MFG, INC. -- Pitch / Concept</div>
+    <div class="page-hdr-title">SHE-USDA 504 Loan Portal</div>
+    <div class="page-hdr-sub">Government loan processing -- pitch to credit unions, CDFIs, rural lenders</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Asset Status</div>
+        <div class="prop-stat"><span class="prop-stat-label">Status</span><span class="prop-stat-val"><span class="badge badge-live">LIVE BACKEND</span></span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Backend</span><span class="prop-stat-val">Railway -- PostgreSQL wired</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Revenue Model</span><span class="prop-stat-val">SaaS license per institution</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Target</span><span class="prop-stat-val">Credit unions, CDFIs, rural lenders</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Loan Officers</span><span class="prop-stat-val">Rick Gonzales, Sintia Puckett, Grace Carrasco</span></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">AI Agent -- SHE Outreach</div>
+        <div class="agent-card">
+          <div class="agent-name">AGENT-SHE01 -- GOVERNMENT LOAN AGENT</div>
+          <div class="agent-status" id="she-status">Identifying CDFI and credit union targets in CA...</div>
+          <div class="agent-action" id="she-action"></div>
+        </div>
+        <button class="btn-blue" style="width:100%" onclick="runAgent('she','she')">Run Agent</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Template -- SHE Pitch</div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="she-to" placeholder="director@creditunion.org"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="she-subject" value="USDA 504 Loan Processing Portal -- Automated, Compliant, Ready to Deploy"></div>
+        <div style="margin-bottom:8px"><label>Body</label>
+        <textarea id="she-body" rows="12">Hi [First Name],
+
+If your institution processes USDA 504 or rural housing loans, we built a fully automated intake and processing portal that routes applications by county, manages document compliance, and communicates with borrowers and loan officers in real time.
+
+Already wired and running. Zero IT build time on your end. Ready to white-label under your institution name.
+
+I would love to schedule a 20-minute demo.
+
+Saul Garcia
+AuditDNA Intelligence by MFG, INC.
++1-831-251-3116</textarea></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" onclick="sendMail('she')">Send Email</button>
+          <button class="btn-outline" onclick="sched('she')">Schedule Follow-Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENJOYBAJA -->
+<div class="page" id="page-eb">
+  <div class="page-hdr">
+    <div class="page-hdr-label">Daily Passive -- enjoybaja.com</div>
+    <div class="page-hdr-title">EnjoyBaja RE + American 1st Partners Mortgage</div>
+    <div class="page-hdr-sub">Cross-border Baja California real estate + mortgage bundle -- NMLS #337526 / #1773303</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Asset Status</div>
+        <div class="prop-stat"><span class="prop-stat-label">Status</span><span class="prop-stat-val"><span class="badge badge-live">LIVE</span></span></div>
+        <div class="prop-stat"><span class="prop-stat-label">URL</span><span class="prop-stat-val">enjoybaja.com</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">MLO NMLS</span><span class="prop-stat-val">Saul Garcia #337526</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Partner</span><span class="prop-stat-val">American 1st Partners #1773303</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">San Antonio Estate</span><span class="prop-stat-val gold">$2,200,000 USD</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">FinanceLend.me</span><span class="prop-stat-val green">150 lenders -- active</span></div>
+        <div style="margin-top:12px"><button class="btn" onclick="win('https://enjoybaja.com')">Open Platform</button></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">AI Agent -- EnjoyBaja</div>
+        <div class="agent-card">
+          <div class="agent-name">AGENT-EB01 -- ENJOYBAJA AGENT</div>
+          <div class="agent-status" id="eb-status">Monitoring mortgage pipeline and RE inquiry queue...</div>
+          <div class="agent-action" id="eb-action"></div>
+        </div>
+        <button class="btn-blue" style="width:100%" onclick="runAgent('enjoybaja','eb')">Run Agent</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Template -- EnjoyBaja Bundle</div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="eb-to" placeholder="buyer@email.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="eb-subject" value="Own Property in Baja California -- Cross-Border RE + Financing Under One Roof"></div>
+        <div style="margin-bottom:8px"><label>Body</label>
+        <textarea id="eb-body" rows="12">Hi [First Name],
+
+If you have ever thought about owning property in Baja California, we make the entire process simple -- from property selection to cross-border financing under one roof.
+
+EnjoyBaja.com -- Baja California real estate, exclusively curated.
+American 1st Partners -- US mortgage financing for Mexico acquisitions.
+
+Current listings include oceanfront lots in Colonet ($100K), a vineyard estate in Valle de Guadalupe ($2.2M), and TunTan beach lots from $37K.
+
+We handle both sides of the transaction so you do not have to coordinate between two countries on your own.
+
+Available for a call this week?
+
+Saul Garcia
+EnjoyBaja.com | American 1st Partners NMLS #1773303
++1-831-251-3116 | Equal Housing Lender</textarea></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" onclick="sendMail('eb')">Send Email</button>
+          <button class="btn-outline" onclick="sched('enjoybaja')">Schedule Follow-Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DON AZUL -->
+<div class="page" id="page-da">
+  <div class="page-hdr">
+    <div class="page-hdr-label">Daily Passive -- Strategic Capital Representative</div>
+    <div class="page-hdr-title">Don Azul Tequila</div>
+    <div class="page-hdr-sub">9 SKUs -- US + Mexico corridor distribution</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Asset Status</div>
+        <div class="prop-stat"><span class="prop-stat-label">Role</span><span class="prop-stat-val">Strategic Capital Representative</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">SKUs</span><span class="prop-stat-val">9 active</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Territory</span><span class="prop-stat-val">US + Mexico corridor</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Revenue</span><span class="prop-stat-val">Commission per sale + distribution</span></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">AI Agent -- Don Azul</div>
+        <div class="agent-card">
+          <div class="agent-name">AGENT-DA01 -- TEQUILA DISTRIBUTION AGENT</div>
+          <div class="agent-status" id="da-status">Scanning restaurant, bar, and distributor contacts...</div>
+          <div class="agent-action" id="da-action"></div>
+        </div>
+        <button class="btn-blue" style="width:100%" onclick="runAgent('donazul','da')">Run Agent</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Template -- Don Azul Pitch</div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="da-to" placeholder="buyer@restaurant.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="da-subject" value="Don Azul Tequila -- Premium Mexican Tequila -- Wholesale Inquiry"></div>
+        <div style="margin-bottom:8px"><label>Body</label>
+        <textarea id="da-body" rows="12">Hi [First Name],
+
+I represent Don Azul Tequila as Strategic Capital Representative for the US and Mexico corridor.
+
+Don Azul is a premium authentic Mexican tequila with 9 SKUs ranging from Blanco to Extra Anejo. We are actively expanding our distribution network and looking for serious retail, restaurant, and bar partners.
+
+Pricing, samples, and distribution terms available on request.
+
+Saul Garcia
+Strategic Capital Representative -- Don Azul Tequila
+AuditDNA Intelligence by MFG, INC.
++1-831-251-3116</textarea></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" onclick="sendMail('da')">Send Email</button>
+          <button class="btn-outline" onclick="sched('donazul')">Schedule Follow-Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOAF -->
+<div class="page" id="page-loaf">
+  <div class="page-hdr">
+    <div class="page-hdr-label">Daily Passive -- AuditDNA Agriculture</div>
+    <div class="page-hdr-title">LOAF -- Live Open Agriculture Feed</div>
+    <div class="page-hdr-sub">Grower-buyer blind marketplace -- loaf.mexausafg.com -- WhatsApp +52-646-340-2686</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Asset Status</div>
+        <div class="prop-stat"><span class="prop-stat-label">Status</span><span class="prop-stat-val"><span class="badge badge-live">LIVE</span></span></div>
+        <div class="prop-stat"><span class="prop-stat-label">URL</span><span class="prop-stat-val">loaf.mexausafg.com</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">WhatsApp Bot</span><span class="prop-stat-val">+52-646-340-2686</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Growers</span><span class="prop-stat-val green">3,200+</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Buyers</span><span class="prop-stat-val green">3,000+</span></div>
+        <div style="margin-top:12px"><button class="btn" onclick="win('https://loaf.mexausafg.com')">Open LOAF</button></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Template -- Grower Invite</div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="loaf-to" placeholder="grower@farm.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="loaf-subject" value="Post Your Produce -- Connect with 3,000+ Verified Buyers -- Free"></div>
+        <div style="margin-bottom:8px"><label>Body</label>
+        <textarea id="loaf-body" rows="10">Hi [First Name],
+
+LOAF -- Live Open Agriculture Feed -- connects growers directly with verified buyers across the US-Mexico corridor.
+
+Post your produce via WhatsApp (+52-646-340-2686) or at loaf.mexausafg.com. Our system matches your offer to the right buyer automatically.
+
+No fees to post. No middlemen. Real buyers, real prices.
+
+Mexausa Food Group, Inc.
+loaf.mexausafg.com | +52-646-340-2686</textarea></div>
+        <div><button class="btn" onclick="sendMail('loaf')">Send Email</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FACTORING -->
+<div class="page" id="page-fact">
+  <div class="page-hdr">
+    <div class="page-hdr-label">Daily Passive -- AuditDNA</div>
+    <div class="page-hdr-title">AuditDNA Factoring</div>
+    <div class="page-hdr-sub">Invoice factoring and working capital -- mexausafg.com</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Asset Status</div>
+        <div class="prop-stat"><span class="prop-stat-label">Status</span><span class="prop-stat-val"><span class="badge badge-live">LIVE</span></span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Target</span><span class="prop-stat-val">Produce shippers, growers, importers</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Finance Partner</span><span class="prop-stat-val">LCG first + 10-partner waterfall</span></div>
+        <div style="margin-top:12px"><button class="btn" onclick="win('https://mexausafg.com')">Open Platform</button></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Template -- Factoring Pitch</div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="fact-to" placeholder="owner@produce.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="fact-subject" value="Get Paid on Your Invoices in 24 Hours -- AuditDNA Factoring"></div>
+        <div style="margin-bottom:8px"><label>Body</label>
+        <textarea id="fact-body" rows="10">Hi [First Name],
+
+If you ship produce or agricultural products and wait 30-60 days to get paid, AuditDNA Factoring can advance funds on your invoices within 24 hours.
+
+No long-term contracts. We fund based on your buyer's credit, not yours.
+
+Saul Garcia
+AuditDNA Intelligence by MFG, INC.
++1-831-251-3116 | mexausafg.com</textarea></div>
+        <div><button class="btn" onclick="sendMail('fact')">Send Email</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FINANCELEND -->
+<div class="page" id="page-fl">
+  <div class="page-hdr">
+    <div class="page-hdr-label">Daily Passive -- EnjoyBaja</div>
+    <div class="page-hdr-title">FinanceLend.me</div>
+    <div class="page-hdr-sub">150 lenders -- CA referral resource -- 30-day trial -- financelend.me</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr">Asset Status</div>
+        <div class="prop-stat"><span class="prop-stat-label">Status</span><span class="prop-stat-val"><span class="badge badge-live">LIVE</span></span></div>
+        <div class="prop-stat"><span class="prop-stat-label">URL</span><span class="prop-stat-val">financelend.me</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Lenders</span><span class="prop-stat-val green">150</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Trial</span><span class="prop-stat-val">30-day free trial</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Target</span><span class="prop-stat-val">CA real estate agents</span></div>
+        <div class="prop-stat"><span class="prop-stat-label">Note</span><span class="prop-stat-val">Agents = referral source only, no NMLS needed</span></div>
+        <div style="margin-top:12px"><button class="btn" onclick="win('https://financelend.me')">Open Platform</button></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Email Template -- Agent Pitch</div>
+        <div style="margin-bottom:8px"><label>To</label><input type="email" id="fl-to" placeholder="agent@realty.com"></div>
+        <div style="margin-bottom:8px"><label>Subject</label><input type="text" id="fl-subject" value="150 Lenders. One Platform. Free 30-Day Trial for CA Agents."></div>
+        <div style="margin-bottom:8px"><label>Body</label>
+        <textarea id="fl-body" rows="10">Hi [First Name],
+
+FinanceLend.me gives California real estate agents access to 150 lenders in one platform -- so you can refer your clients to the right financing without doing the legwork yourself.
+
+No NMLS required on your end. You are simply a referral source.
+
+Free 30-day trial. No credit card needed.
+
+Saul Garcia
+American 1st Partners NMLS #1773303
+financelend.me | +1-831-251-3116</textarea></div>
+        <div><button class="btn" onclick="sendMail('fl')">Send Email</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div class="page" id="page-cal">
+  <div class="page-hdr">
+    <div class="page-hdr-label">AuditDNA Intelligence by MFG, INC.</div>
+    <div class="page-hdr-title">Master Marketing Calendar</div>
+    <div class="page-hdr-sub">All assets -- follow-ups, campaigns, and Google Calendar sync</div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr">Full Schedule</div>
+      <div id="master-cal"></div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hdr">Add Follow-Up</div>
+        <div style="margin-bottom:8px"><label>Asset</label>
+          <select id="cal-asset">
+            <option value="tuntan">TunTan Lots</option>
+            <option value="colonet">Colonet Lots</option>
+            <option value="reu">REU</option>
+            <option value="hvac">HVAC Portal</option>
+            <option value="she">SHE-USDA504</option>
+            <option value="enjoybaja">EnjoyBaja</option>
+            <option value="donazul">Don Azul</option>
+            <option value="loaf">LOAF</option>
+          </select>
+        </div>
+        <div style="margin-bottom:8px"><label>Action</label><input type="text" id="cal-action" placeholder="e.g. Follow up with buyer, Send pitch email..."></div>
+        <div style="margin-bottom:8px"><label>Date</label><input type="date" id="cal-date"></div>
+        <div style="margin-bottom:8px"><label>Contact</label><input type="text" id="cal-contact" placeholder="Name or email"></div>
+        <button class="btn" style="width:100%" onclick="addCalItem()">Add + Sync Google Calendar</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr">Google Calendar -- Quick Add</div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Each button opens Google Calendar pre-filled. One tap saves to your phone.</p>
+        <button class="btn-outline" style="width:100%;margin-bottom:6px" onclick="gcal('TunTan -- Buyer Blast Today','Email all 84 TunTan buyers. WhatsApp non-responders. Priority 1.')">TunTan -- Buyer Blast</button>
+        <button class="btn-outline" style="width:100%;margin-bottom:6px" onclick="gcal('Colonet -- HNW Outreach','Send Colonet oceanfront pitch to HNW and expat contact list. Priority 2.')">Colonet -- HNW Outreach</button>
+        <button class="btn-outline" style="width:100%;margin-bottom:6px" onclick="gcal('HVAC Portal -- Contractor Pitch','Send HVAC portal pitch to 50 contractor contacts in CRM.')">HVAC -- Contractor Pitch</button>
+        <button class="btn-outline" style="width:100%" onclick="gcal('Weekly Asset Review -- All Projects','Review status of all 10 active projects. Update priorities and follow-ups.')">Weekly Asset Review</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end app -->
+
+<script>
+var PIN = '0609051974';
+var entered = '';
+var calItems = JSON.parse(localStorage.getItem('mfg_cal2')||'[]');
+
+var DEFAULT_CAL = [
+  {date:'2026-06-10',asset:'tuntan',action:'Email blast -- all 84 active TunTan buyers',type:'email'},
+  {date:'2026-06-10',asset:'colonet',action:'Send Colonet pitch to top HNW contacts',type:'email'},
+  {date:'2026-06-11',asset:'tuntan',action:'WhatsApp follow-up -- non-responders',type:'whatsapp'},
+  {date:'2026-06-11',asset:'colonet',action:'Colonet social post -- photo + WhatsApp CTA',type:'social'},
+  {date:'2026-06-12',asset:'hvac',action:'Send HVAC pitch to 50 HVAC contractor contacts',type:'email'},
+  {date:'2026-06-13',asset:'enjoybaja',action:'EnjoyBaja bundle email -- Colonet + San Antonio + financing',type:'email'},
+  {date:'2026-06-14',asset:'tuntan',action:'Follow up all TunTan inquiries from week',type:'call'},
+  {date:'2026-06-17',asset:'reu',action:'REU pitch to RE investor segment in CRM',type:'email'},
+  {date:'2026-06-18',asset:'she',action:'SHE-504 pitch -- 10 California credit unions',type:'email'},
+  {date:'2026-06-20',asset:'tuntan',action:'TunTan weekly review -- Monica, Sara, Ariel',type:'meeting'},
+  {date:'2026-06-21',asset:'colonet',action:'Colonet follow-up -- all prospects contacted this week',type:'call'},
+  {date:'2026-06-24',asset:'donazul',action:'Don Azul pitch -- restaurant and bar contacts in CRM',type:'email'},
+  {date:'2026-06-27',asset:'tuntan',action:'TunTan monthly buyer status + new blast',type:'email'},
+];
+
+var ASSET_COLORS = {tuntan:'#f59e0b',colonet:'#f59e0b',reu:'#22c55e',hvac:'#4a8fd4',she:'#4a8fd4',enjoybaja:'#22c55e',donazul:'#a855f7',loaf:'#22c55e',factoring:'#22c55e',financelend:'#22c55e'};
+
+var ASSETS_LIST = [
+  {id:'tuntan',name:'TunTan Lots',priority:'P1',status:'FOR SALE',value:'200 lots -- $37K-$40K'},
+  {id:'colonet',name:'Colonet Bachicha',priority:'P2',status:'FOR SALE',value:'28 lots -- $100K each'},
+  {id:'reu',name:'REU Underwriter',priority:'',status:'LIVE',value:'Service revenue'},
+  {id:'hvac',name:'HVAC Portal',priority:'',status:'LIVE DEMO',value:'$149-$599/mo'},
+  {id:'she',name:'SHE-USDA504',priority:'',status:'PITCH',value:'SaaS license'},
+  {id:'enjoybaja',name:'EnjoyBaja RE/Mortgage',priority:'',status:'LIVE',value:'Commission + mortgage'},
+  {id:'donazul',name:'Don Azul Tequila',priority:'',status:'ACTIVE',value:'Distribution commission'},
+  {id:'loaf',name:'LOAF',priority:'',status:'LIVE',value:'loaf.mexausafg.com'},
+  {id:'factoring',name:'AuditDNA Factoring',priority:'',status:'LIVE',value:'Invoice advances'},
+  {id:'financelend',name:'FinanceLend.me',priority:'',status:'LIVE',value:'150 lenders -- CA agents'},
+];
+
+var TEMPLATES = {
+  tuntan_1:{subject:'TUN TAN Lots -- $37,000 USD Cash -- Pacific Coast Baja California',body:'Hi [First Name],\n\nIf you have been looking for an affordable lot on the Pacific coast in Baja California, TUN TAN in Eréndira is it.\n\n250 m2 lots -- 1 KM from the beach -- 40 minutes south of Ensenada.\n\n$37,000 USD cash. $40,000 USD financed with only $10,000 down.\n\n200 lots available. These will not last.\n\nReply or WhatsApp me at +52-646-340-2686 to reserve yours today.\n\nSaul Garcia\nAuditDNA Intelligence by MFG, INC.\n+1-831-251-3116'},
+  tuntan_2:{subject:'Own a Baja California Beach Lot for $10,000 Down -- TUN TAN',body:'Hi [First Name],\n\nTUN TAN lots in Eréndira, Baja California are now available with financing.\n\n$10,000 down. $40,000 total. 250 m2. 1 KM from the Pacific.\n\nPerfect for a vacation home, Airbnb rental, or long-term investment. Surf, fish, build.\n\nLimited availability. Contact me today.\n\nSaul Garcia\nAuditDNA Intelligence by MFG, INC.\n+1-831-251-3116\nWhatsApp: +52-646-340-2686'},
+  tuntan_3:{subject:'Following Up -- TUN TAN Lots -- Baja California',body:'Hi [First Name],\n\nJust following up on the TUN TAN lots.\n\nWe still have availability at $37K cash or $40K financed. The lots move fast and I want to make sure you get yours.\n\nLet me know if you have questions or are ready to move forward.\n\nSaul Garcia\n+1-831-251-3116 | WhatsApp: +52-646-340-2686'},
+  tuntan_4:{subject:'Last Chance -- TUN TAN Lots Moving Fast -- Reserve Yours Today',body:'Hi [First Name],\n\nLots are being reserved at TUN TAN. At $37K cash and $10K down to finance, this is one of the last affordable beachside opportunities on the Baja coast.\n\nIf you are serious, now is the time.\n\nSaul Garcia\nAuditDNA Intelligence by MFG, INC.\n+1-831-251-3116'},
+  colonet_1:{subject:'Colonet Bachicha -- Oceanfront Lots $100,000 USD -- Baja California',body:'Hi [First Name],\n\nWe have 28 oceanfront lots available in Colonet Bachicha, Baja California at $100,000 USD each.\n\nTrue oceanfront -- not ocean view. The Pacific is at your door.\n\nAt this price point on Baja oceanfront, this is rare. I can send photos, GPS, and full details on request.\n\nSaul Garcia\nEnjoyBaja.com | AuditDNA Intelligence by MFG, INC.\n+1-831-251-3116'},
+  colonet_2:{subject:'Baja California Oceanfront -- US Financing Available -- $100K',body:'Hi [First Name],\n\nIf you are a US buyer looking for oceanfront property in Mexico, I have something worth your attention.\n\n28 lots in Colonet Bachicha, Baja California at $100,000 USD each. True oceanfront. US financing options available through American 1st Partners.\n\nWe handle the entire transaction -- US side and Mexico side -- under one roof.\n\nAvailable for a call this week?\n\nSaul Garcia\nEnjoyBaja.com | American 1st Partners NMLS #1773303\n+1-831-251-3116'},
+  colonet_3:{subject:'Exclusive Oceanfront Investment -- Colonet Bachicha -- Baja California',body:'Hi [First Name],\n\nFor the discerning buyer looking for true oceanfront in Baja California, Colonet Bachicha represents one of the last available opportunities at this price point.\n\n28 lots. Pacific oceanfront. $100,000 USD.\n\nI am happy to arrange a site visit or provide a full property package on request.\n\nSaul Garcia\nEnjoyBaja.com | +1-831-251-3116'},
+  hvac_1:{subject:'Your Team. One Screen. Everything Connected.',body:'Hi [First Name],\n\nIf you run a team in the field, you already know the problem -- calls get missed, photos live on someone\'s phone, and nobody really knows where anyone is until something goes wrong.\n\nWe built a private operations portal specifically for HVAC contractors that keeps your entire operation visible and connected in real time. Your techs log in from the field, you see who is on site, what is happening, and every job update, photo, and note lands in one place the moment it is posted.\n\nThree simple plans:\n\nStarter -- $149/month -- Up to 5 users\nProfessional -- $299/month -- Up to 15 users\nEnterprise -- $599/month or $4,999 one-time -- Unlimited users\n\nAll plans include a live demo and a 30-day trial.\n\nSaul Garcia\nAuditDNA Intelligence by MFG, INC.\n+1-831-251-3116\nhvac.mexausafg.com'},
+  hvac_2:{subject:'Keeping Your Field Team Accountable Has Never Been This Simple',body:'Hi [First Name],\n\nRunning field crews is tough. Communication between the office and the field is where jobs fall apart.\n\nAt AuditDNA Intelligence by MFG, INC. we put together a private operations portal for HVAC companies that solves exactly that. Your team logs in, you see them in real time, every update and job photo is captured automatically.\n\nThree plans starting at $149/month, with a 30-day trial.\n\nSaul Garcia\nAuditDNA Intelligence by MFG, INC.\n+1-831-251-3116'},
+  eb_1:{subject:'Own Property in Baja California -- Cross-Border RE + Financing Under One Roof',body:'Hi [First Name],\n\nEnjoyBaja.com and American 1st Partners make owning property in Baja California simple -- from property selection to financing under one roof.\n\nCurrent listings: Colonet oceanfront ($100K), Valle de Guadalupe vineyard estate ($2.2M), TunTan beach lots from $37K.\n\nSaul Garcia\nEnjoyBaja.com | American 1st Partners NMLS #1773303\n+1-831-251-3116 | Equal Housing Lender'},
+  da_1:{subject:'Don Azul Tequila -- Premium Mexican Tequila -- Wholesale Inquiry',body:'Hi [First Name],\n\nI represent Don Azul Tequila as Strategic Capital Representative for the US and Mexico corridor.\n\nDon Azul is a premium authentic Mexican tequila with 9 SKUs. We are actively expanding our distribution network.\n\nPricing, samples, and distribution terms available on request.\n\nSaul Garcia\nStrategic Capital Representative -- Don Azul Tequila\n+1-831-251-3116'},
+};
+
+var AGENT_PROMPTS = {
+  tuntan:'You are a sales agent for TunTan beach lots in Erendira Baja California. 250m2 lots, $37K cash or $40K financed, $10K down, 84 buyers in system. Give ONE specific action the owner should take TODAY to close a sale. Direct, 2 sentences max.',
+  colonet:'You are a sales agent for 28 oceanfront lots in Colonet Bachicha Baja California at $100K each. Target HNW buyers and US expats. Give ONE specific action for today to move a lot. 2 sentences max.',
+  reu:'You are a marketing agent for a real estate underwriting tool targeting investors and flippers. Give ONE outreach action for today. 2 sentences max.',
+  hvac:'You are a sales agent for an HVAC operations portal at $149-$599/mo. Target HVAC contractors. Give ONE specific sales action for today. 2 sentences max.',
+  she:'You are a marketing agent for a USDA 504 government loan portal. Target CDFIs and credit unions in California. Give ONE outreach action. 2 sentences max.',
+  enjoybaja:'You are a marketing agent for cross-border Baja California real estate and mortgage. Give ONE lead generation action for today. 2 sentences max.',
+  donazul:'You are a sales agent for Don Azul Tequila targeting restaurants, bars, and distributors. Give ONE sales action for today. 2 sentences max.',
+};
+
+// PIN
+document.querySelectorAll('.key').forEach(function(b){
+  b.addEventListener('click',function(){
+    var n=b.getAttribute('data-n');
+    if(n==='del'){entered=entered.slice(0,-1);}
+    else if(n==='ok'){checkPin();return;}
+    else{if(entered.length>=4)return;entered+=n;if(entered.length===4)setTimeout(checkPin,150);}
+    updateDots();
+  });
+});
+function updateDots(){for(var i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<entered.length);}
+function checkPin(){
+  if(entered===PIN){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    init();
+  } else {
+    document.getElementById('gate-err').textContent='Incorrect PIN';
+    entered='';updateDots();
+    setTimeout(function(){document.getElementById('gate-err').textContent='';},2000);
+  }
+}
+function doLogout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('gate').style.display='flex';
+  entered='';updateDots();
+}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function win(url){window.open(url,'_blank');}
+
+function init(){
+  var now=new Date();
+  document.getElementById('dash-date').textContent=now.toLocaleDateString([],{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  setInterval(function(){document.getElementById('nav-time').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});},1000);
+  document.getElementById('cal-date').value=now.toISOString().split('T')[0];
+  renderAssetBoard();
+  renderAgentFeed();
+  renderTodayList();
+  renderAllCals();
+  loadTpl('tt','tuntan_1',null);
+  loadTpl('cl','colonet_1',null);
+  loadTpl('hv','hvac_1',null);
+  setTimeout(function(){runAgent('tuntan','tt');},500);
+  setTimeout(function(){runAgent('colonet','cl');},1500);
+}
+
+function renderAssetBoard(){
+  var el=document.getElementById('asset-board');
+  el.innerHTML=ASSETS_LIST.map(function(a){
+    var p1=a.priority?'<span class="badge badge-p1" style="margin-right:4px">'+a.priority+'</span>':'';
+    var sc=a.status==='FOR SALE'?'badge-p1':a.status.includes('LIVE')?'badge-live':a.status==='ACTIVE'?'badge-live':'badge-pitch';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">'
+      +'<div>'+p1+'<span style="font-weight:700">'+a.name+'</span></div>'
+      +'<div style="display:flex;gap:8px;align-items:center"><span style="color:var(--muted);font-size:10px">'+a.value+'</span><span class="badge '+sc+'">'+a.status+'</span></div></div>';
+  }).join('');
+}
+
+function renderAgentFeed(){
+  var el=document.getElementById('agent-feed');
+  var now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  var msgs=[
+    {asset:'TUNTAN',msg:'84 buyers in system. Recommend email blast today. Follow up with non-responders via WhatsApp.'},
+    {asset:'COLONET',msg:'28 oceanfront lots. High-value target. Send investor pitch to HNW list this week.'},
+    {asset:'HVAC',msg:'Live demo at hvac.mexausafg.com. Pitch to 50 HVAC contractors in CRM today.'},
+    {asset:'SHE-504',msg:'Backend wired and ready. Identify 10 California CDFIs to pitch this week.'},
+  ];
+  el.innerHTML=msgs.map(function(m){
+    return '<div class="feed-item"><div class="feed-time">AGENT-'+m.asset+' -- '+now+'</div><div class="feed-msg">'+m.msg+'</div></div>';
+  }).join('');
+}
+
+function renderTodayList(){
+  var el=document.getElementById('today-list');
+  var today=new Date().toISOString().split('T')[0];
+  var all=DEFAULT_CAL.concat(calItems).filter(function(x){return x.date===today;});
+  if(!all.length){el.innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px 0">No actions scheduled for today. Add items in Calendar tab.</div>';return;}
+  el.innerHTML=all.map(function(x){
+    var c=ASSET_COLORS[x.asset]||'#94a3b8';
+    return '<div class="cal-item"><span class="cal-date" style="color:'+c+'">TODAY</span><span class="cal-task"><strong>'+x.asset.toUpperCase()+':</strong> '+x.action+'</span></div>';
+  }).join('');
+}
+
+function renderAllCals(){
+  renderCal('tt-cal','tuntan');
+  renderCal('cl-cal','colonet');
+  renderMasterCal();
+}
+
+function renderCal(elId,assetId){
+  var el=document.getElementById(elId);
+  if(!el)return;
+  var items=DEFAULT_CAL.concat(calItems).filter(function(x){return x.asset===assetId;});
+  if(!items.length){el.innerHTML='<div style="font-size:11px;color:var(--muted)">No scheduled actions.</div>';return;}
+  el.innerHTML=items.map(function(x){
+    var tc=x.type==='email'?'#4a8fd4':x.type==='call'?'#22c55e':x.type==='whatsapp'?'#25d366':x.type==='meeting'?'#a855f7':'#94a3b8';
+    return '<div class="cal-item"><span class="cal-date">'+x.date+'</span><span class="cal-task">'+x.action+'</span><span class="cal-type" style="background:rgba(0,0,0,0.2);color:'+tc+';border:1px solid '+tc+'40">'+x.type.toUpperCase()+'</span></div>';
+  }).join('');
+}
+
+function renderMasterCal(){
+  var el=document.getElementById('master-cal');
+  if(!el)return;
+  var all=DEFAULT_CAL.concat(calItems).sort(function(a,b){return a.date.localeCompare(b.date);});
+  el.innerHTML=all.map(function(x){
+    var c=ASSET_COLORS[x.asset]||'#94a3b8';
+    return '<div class="cal-item"><span class="cal-date" style="color:'+c+'">'+x.date+'</span><span class="cal-task"><strong style="color:'+c+'">'+x.asset.toUpperCase()+'</strong> -- '+x.action+'</span></div>';
+  }).join('');
+}
+
+function addCalItem(){
+  var item={date:document.getElementById('cal-date').value,asset:document.getElementById('cal-asset').value,action:document.getElementById('cal-action').value,contact:document.getElementById('cal-contact').value,type:'followup'};
+  if(!item.date||!item.action){alert('Enter date and action');return;}
+  calItems.push(item);
+  localStorage.setItem('mfg_cal2',JSON.stringify(calItems));
+  renderAllCals();renderTodayList();
+  gcal('MFG: '+item.asset.toUpperCase()+' -- '+item.action,'Contact: '+(item.contact||'TBD'));
+  document.getElementById('cal-action').value='';
+  document.getElementById('cal-contact').value='';
+}
+
+function gcal(title,details,dateStr){
+  var d=(dateStr||new Date().toISOString().split('T')[0]).replace(/-/g,'');
+  var url='https://calendar.google.com/calendar/render?action=TEMPLATE'
+    +'&text='+encodeURIComponent(title)
+    +'&dates='+d+'T090000/'+d+'T093000'
+    +'&details='+encodeURIComponent(details+'\n\nAuditDNA Intelligence by MFG, INC.\nSaul Garcia +1-831-251-3116');
+  window.open(url,'_blank');
+}
+
+function loadTpl(prefix,tplKey,btnEl){
+  var t=TEMPLATES[tplKey];
+  if(!t)return;
+  var sEl=document.getElementById(prefix+'-subject');
+  var bEl=document.getElementById(prefix+'-body');
+  if(sEl)sEl.value=t.subject;
+  if(bEl)bEl.value=t.body;
+  if(btnEl){
+    var parent=btnEl.parentNode;
+    parent.querySelectorAll('.tpl-btn').forEach(function(b){b.classList.remove('active');});
+    btnEl.classList.add('active');
+  }
+}
+
+function sendMail(prefix){
+  var to=(document.getElementById(prefix+'-to')||{}).value||'';
+  var subject=(document.getElementById(prefix+'-subject')||{}).value||'';
+  var body=(document.getElementById(prefix+'-body')||{}).value||'';
+  if(!to){alert('Enter recipient email');return;}
+  window.location.href='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+}
+
+function quickBlast(){
+  var tplKey=document.getElementById('qb-asset').value;
+  var to=document.getElementById('qb-to').value;
+  var t=TEMPLATES[tplKey];
+  if(!t){alert('Template not found');return;}
+  window.location.href='mailto:'+(to||'')+'?subject='+encodeURIComponent(t.subject)+'&body='+encodeURIComponent(t.body);
+}
+
+function wa(assetId){
+  var msgs={tuntan:'Hola! I am interested in TUN TAN lots in Erendira, Baja California. Please send more info about pricing and availability.',colonet:'Hola! I am interested in the Colonet Bachicha oceanfront lots at $100,000 USD. Please send more information.'};
+  window.open('https://wa.me/526463402686?text='+encodeURIComponent(msgs[assetId]||'Hola! Please send more information.'),'_blank');
+}
+
+function sched(assetId){
+  var d=new Date();d.setDate(d.getDate()+3);
+  document.getElementById('cal-asset').value=assetId;
+  document.getElementById('cal-date').value=d.toISOString().split('T')[0];
+  document.getElementById('cal-action').value='Follow-up: '+assetId.toUpperCase()+' outreach';
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('page-cal').classList.add('active');
+  document.querySelector('[onclick="showPage(\'cal\',this)"]').classList.add('active');
+}
+
+function runAgent(assetId,prefix){
+  var sEl=document.getElementById(prefix+'-status');
+  var aEl=document.getElementById(prefix+'-action');
+  if(sEl)sEl.textContent='Agent running analysis...';
+  if(aEl)aEl.textContent='';
+
+  var prompt=AGENT_PROMPTS[assetId]||'Give one specific marketing action for '+assetId+' today. 2 sentences max.';
+
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:120,messages:[{role:'user',content:prompt}]})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var txt=data.content&&data.content[0]?data.content[0].text:'Agent standing by.';
+    var parts=txt.split('. ');
+    if(sEl)sEl.textContent=parts[0]+(parts[1]?'. '+parts[1]:'');
+    if(aEl)aEl.textContent=parts[2]?'NEXT: '+parts[2]:'ACTION: Send outreach email now.';
+  })
+  .catch(function(){
+    var fallbacks={tuntan:'84 buyers in system. Send email blast today and WhatsApp all non-responders.',colonet:'28 lots at $100K. Call your top 5 HNW contacts today and send the investor pitch.',reu:'Identify 10 RE investors in CRM and send the REU pitch today.',hvac:'Send HVAC demo link to 20 HVAC contractors in your area today.'};
+    if(sEl)sEl.textContent=fallbacks[assetId]||'Agent standing by. Send outreach today.';
+    if(aEl)aEl.textContent='ACTION: Open email template and blast contacts now.';
+  });
+}
+</script>
+</body>
+</html>

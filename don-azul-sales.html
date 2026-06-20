@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Don Azul Tequila — Sales Office</title>
+<style>
+  :root{
+    --bg:#04080F;
+    --bg2:#080E1A;
+    --card:rgba(255,255,255,0.04);
+    --border:rgba(201,165,92,0.25);
+    --gold:#C9A55C;
+    --gold2:#e8c87a;
+    --txt:#e2e8f0;
+    --txt2:#94a3b8;
+    --txt3:#64748b;
+    --green:#0F7B41;
+    --green2:#10b759;
+    --red:#ef4444;
+    --blue:#3b82f6;
+    --purple:#8b5cf6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+
+  /* LOGIN */
+  #login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+  .login-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:48px 40px;width:360px;text-align:center}
+  .login-logo{font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:4px;text-transform:uppercase}
+  .login-title{font-size:28px;font-weight:800;color:var(--gold2);margin-bottom:4px;letter-spacing:1px}
+  .login-sub{font-size:11px;color:var(--txt3);margin-bottom:32px;letter-spacing:2px;text-transform:uppercase}
+  .login-label{font-size:10px;color:var(--txt3);text-align:left;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+  .login-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--txt);font-size:14px;margin-bottom:16px;outline:none}
+  .login-input:focus{border-color:var(--gold)}
+  .login-btn{width:100%;background:linear-gradient(135deg,var(--gold),#a07830);color:#000;font-weight:800;font-size:14px;letter-spacing:1px;padding:13px;border:none;border-radius:8px;cursor:pointer;text-transform:uppercase;margin-top:8px}
+  .login-btn:hover{background:linear-gradient(135deg,var(--gold2),var(--gold))}
+  .login-err{color:var(--red);font-size:12px;margin-top:12px;display:none}
+
+  /* APP */
+  #app{display:none}
+  .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .topbar-left{display:flex;align-items:center;gap:12px}
+  .topbar-logo{font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+  .topbar-title{font-size:16px;font-weight:800;color:var(--gold2);letter-spacing:1px}
+  .topbar-user{font-size:11px;color:var(--txt3);background:rgba(201,165,92,0.1);border:1px solid var(--border);border-radius:20px;padding:4px 12px}
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .logout-btn{font-size:11px;color:var(--txt3);cursor:pointer;padding:4px 10px;border:1px solid rgba(255,255,255,0.1);border-radius:6px}
+  .logout-btn:hover{color:var(--red);border-color:var(--red)}
+
+  /* NAV TABS */
+  .nav-tabs{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:4px}
+  .nav-tab{padding:12px 18px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+  .nav-tab:hover{color:var(--txt)}
+  .nav-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+  /* MAIN */
+  .main{padding:24px;max-width:1400px;margin:0 auto}
+  .section{display:none}
+  .section.active{display:block}
+
+  /* CARDS */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+  .stat-val{font-size:28px;font-weight:900;color:var(--gold2)}
+  .stat-label{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+  .stat-sub{font-size:11px;color:var(--green2);margin-top:4px}
+
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+  .panel-title{font-size:12px;font-weight:800;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+
+  /* TABLE */
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}
+  .tbl th{text-align:left;font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;padding:8px 12px;border-bottom:1px solid var(--border)}
+  .tbl td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt)}
+  .tbl tr:hover td{background:rgba(201,165,92,0.04)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase}
+  .badge-green{background:rgba(15,123,65,0.2);color:var(--green2);border:1px solid rgba(15,123,65,0.4)}
+  .badge-gold{background:rgba(201,165,92,0.15);color:var(--gold);border:1px solid var(--border)}
+  .badge-red{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3)}
+  .badge-blue{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3)}
+
+  /* FORM */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .form-group{display:flex;flex-direction:column;gap:5px}
+  .form-label{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px}
+  .form-input,.form-select{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:13px;outline:none}
+  .form-input:focus,.form-select:focus{border-color:var(--gold)}
+  .form-select option{background:var(--bg2)}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),#a07830);color:#000;font-weight:800;font-size:12px;letter-spacing:1px;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;text-transform:uppercase}
+  .btn-gold:hover{opacity:0.9}
+  .btn-outline{background:transparent;color:var(--gold);font-weight:700;font-size:12px;letter-spacing:1px;padding:9px 18px;border:1px solid var(--border);border-radius:8px;cursor:pointer;text-transform:uppercase}
+  .btn-outline:hover{background:rgba(201,165,92,0.08)}
+  .btn-red{background:rgba(239,68,68,0.15);color:#f87171;font-weight:700;font-size:11px;padding:6px 12px;border:1px solid rgba(239,68,68,0.3);border-radius:6px;cursor:pointer}
+
+  /* INVENTORY */
+  .inv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
+  .inv-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;position:relative;overflow:hidden}
+  .inv-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .inv-blanco::before{background:linear-gradient(90deg,#c0c0c0,#e8e8e8)}
+  .inv-reposado::before{background:linear-gradient(90deg,#8B0000,#cc2222)}
+  .inv-anejo::before{background:linear-gradient(90deg,#00008B,#2244cc)}
+  .inv-reserva::before{background:linear-gradient(90deg,#111,#444)}
+  .inv-name{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .inv-blanco .inv-name{color:#d0d0d0}
+  .inv-reposado .inv-name{color:#cc4444}
+  .inv-anejo .inv-name{color:#4466cc}
+  .inv-reserva .inv-name{color:#aaa}
+  .inv-count{font-size:36px;font-weight:900;color:var(--gold2);line-height:1}
+  .inv-unit{font-size:10px;color:var(--txt3);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+  .inv-price{font-size:12px;color:var(--green2);margin-top:8px;font-weight:700}
+  .inv-actions{display:flex;gap:8px;margin-top:12px}
+  .inv-btn{flex:1;padding:6px;font-size:11px;font-weight:700;border-radius:6px;cursor:pointer;border:none;text-transform:uppercase}
+  .inv-add{background:rgba(15,123,65,0.2);color:var(--green2)}
+  .inv-sub{background:rgba(239,68,68,0.15);color:#f87171}
+
+  .notice{background:rgba(201,165,92,0.08);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--txt2);margin-bottom:16px}
+
+  /* TIMELINE */
+  .timeline{display:flex;flex-direction:column;gap:10px}
+  .tl-item{display:flex;gap:12px;align-items:flex-start}
+  .tl-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:4px;flex-shrink:0}
+  .tl-content{flex:1}
+  .tl-title{font-size:12px;font-weight:700;color:var(--txt)}
+  .tl-meta{font-size:10px;color:var(--txt3);margin-top:2px}
+
+  /* ACCOUNT SUMMARY */
+  .acct-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .acct-label{font-size:12px;color:var(--txt2)}
+  .acct-val{font-size:13px;font-weight:700;color:var(--txt)}
+  .acct-val.positive{color:var(--green2)}
+  .acct-val.negative{color:#f87171}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+
+  @media(max-width:768px){
+    .form-grid,.form-grid-3,.two-col,.three-col{grid-template-columns:1fr}
+    .inv-grid{grid-template-columns:1fr 1fr}
+    .stat-grid{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Mexausa Food Group</div>
+    <div class="login-title">DON AZUL</div>
+    <div class="login-sub">Tequila — Sales Office</div>
+    <div class="login-label">Agent ID</div>
+    <input class="login-input" id="l-id" placeholder="DAT-XX" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="login-label">PIN</div>
+    <input class="login-input" id="l-pin" type="password" placeholder="••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">Enter</button>
+    <div class="login-err" id="l-err">Invalid credentials</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;">
+  <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:6px;">DON AZUL SALES</div>
+  <div style="font-size:11px;color:#64748b;margin-bottom:28px;letter-spacing:1px;">SECURE ACCESS — ENTER PIN</div>
+  <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+  <div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+  <div style="font-size:9px;color:#1e3a4a;margin-top:20px;">Powered by AuditDNA Intelligence</div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-logo">Mexausa Food Group</div>
+        <div class="topbar-title">DON AZUL TEQUILA</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user" id="user-badge"></div>
+      <div class="logout-btn" onclick="doLogout()">Logout</div>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showTab('dashboard')">Dashboard</div>
+    <div class="nav-tab" onclick="showTab('inventory')">Inventory</div>
+    <div class="nav-tab" onclick="showTab('sales')">Sales Log</div>
+    <div class="nav-tab" onclick="showTab('invoices')">Invoices</div>
+    <div class="nav-tab" onclick="showTab('accounts')">Accounts</div>
+    <div class="nav-tab" onclick="showTab('deposits')">Deposits</div>
+    <div class="nav-tab owner-only" onclick="showTab('admin')" style="display:none">Admin</div>
+    <div class="nav-tab owner-only" onclick="showTab('delivery')" style="display:none">Delivery</div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="dash-total-sales">$0</div>
+          <div class="stat-label">Total Sales</div>
+          <div class="stat-sub" id="dash-sales-count">0 transactions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="dash-pending">$0</div>
+          <div class="stat-label">Pending Collection</div>
+          <div class="stat-sub" id="dash-pending-count">0 open invoices</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="dash-deposited">$0</div>
+          <div class="stat-label">Deposited</div>
+          <div class="stat-sub" id="dash-dep-count">0 deposits</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="dash-bottles">0</div>
+          <div class="stat-label">Bottles in Stock</div>
+          <div class="stat-sub" id="dash-sku-count">4 SKUs</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-title">Recent Activity</div>
+          <div class="timeline" id="activity-feed">
+            <div style="color:var(--txt3);font-size:12px;text-align:center;padding:20px">No activity yet</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Quick Sale</div>
+          <div class="form-group" style="margin-bottom:12px">
+            <div class="form-label">Product</div>
+            <select class="form-select" id="qs-product">
+              <option value="">Select SKU</option>
+              <option value="Blanco">Don Azul Blanco — $45 / btl</option>
+              <option value="Reposado">Don Azul Reposado — $55 / btl</option>
+              <option value="Anejo">Don Azul Anejo — $75 / btl</option>
+              <option value="Reposado Reserva">Don Azul Reposado Reserva — $95 / btl</option>
+            </select>
+          </div>
+          <div class="form-grid" style="margin-bottom:12px">
+            <div class="form-group">
+              <div class="form-label">Qty (bottles)</div>
+              <input class="form-input" id="qs-qty" type="number" min="1" value="1" oninput="calcQS()"/>
+            </div>
+            <div class="form-group">
+              <div class="form-label">Unit Price ($)</div>
+              <input class="form-input" id="qs-price" type="number" step="0.01" oninput="calcQS()"/>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <div class="form-label">Client Name</div>
+            <input class="form-input" id="qs-client" placeholder="Bar / Restaurant / Individual"/>
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <div class="form-label">Payment Method</div>
+            <select class="form-select" id="qs-payment">
+              <option value="Cash">Cash</option>
+              <option value="Transfer">Bank Transfer</option>
+              <option value="Check">Check</option>
+              <option value="Credit">Credit (Net 30)</option>
+            </select>
+          </div>
+          <div style="background:rgba(201,165,92,0.08);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3);margin-bottom:4px">TOTAL</div>
+            <div style="font-size:28px;font-weight:900;color:var(--gold2)" id="qs-total">$0.00</div>
+          </div>
+          <button class="btn-gold" style="width:100%" onclick="recordSale()">Record Sale</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="section" id="sec-inventory">
+      <div class="notice">Inventory is updated automatically when sales are recorded. Owner and Admin can manually adjust stock levels.</div>
+      <div class="inv-grid">
+        <div class="inv-card inv-blanco">
+          <div class="inv-name">Blanco</div>
+          <div class="inv-count" id="inv-Blanco">0</div>
+          <div class="inv-unit">bottles</div>
+          <div class="inv-price">MSRP $45 / Dist $28</div>
+          <div class="inv-actions">
+            <button class="inv-btn inv-add" onclick="adjInv('Blanco',1)">+ Add</button>
+            <button class="inv-btn inv-sub" onclick="adjInv('Blanco',-1)">- Remove</button>
+          </div>
+        </div>
+        <div class="inv-card inv-reposado">
+          <div class="inv-name">Reposado</div>
+          <div class="inv-count" id="inv-Reposado">0</div>
+          <div class="inv-unit">bottles</div>
+          <div class="inv-price">MSRP $55 / Dist $34</div>
+          <div class="inv-actions">
+            <button class="inv-btn inv-add" onclick="adjInv('Reposado',1)">+ Add</button>
+            <button class="inv-btn inv-sub" onclick="adjInv('Reposado',-1)">- Remove</button>
+          </div>
+        </div>
+        <div class="inv-card inv-anejo">
+          <div class="inv-name">Anejo</div>
+          <div class="inv-count" id="inv-Anejo">0</div>
+          <div class="inv-unit">bottles</div>
+          <div class="inv-price">MSRP $75 / Dist $46</div>
+          <div class="inv-actions">
+            <button class="inv-btn inv-add" onclick="adjInv('Anejo',1)">+ Add</button>
+            <button class="inv-btn inv-sub" onclick="adjInv('Anejo',-1)">- Remove</button>
+          </div>
+        </div>
+        <div class="inv-card inv-reserva">
+          <div class="inv-name">Reposado Reserva</div>
+          <div class="inv-count" id="inv-Reposado Reserva">0</div>
+          <div class="inv-unit">bottles</div>
+          <div class="inv-price">MSRP $95 / Dist $58</div>
+          <div class="inv-actions">
+            <button class="inv-btn inv-add" onclick="adjInv('Reposado Reserva',1)">+ Add</button>
+            <button class="inv-btn inv-sub" onclick="adjInv('Reposado Reserva',-1)">- Remove</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Stock Adjustment Log</div>
+        <table class="tbl">
+          <thead><tr><th>Date</th><th>SKU</th><th>Change</th><th>Qty</th><th>Agent</th><th>Note</th></tr></thead>
+          <tbody id="inv-log"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SALES LOG -->
+    <div class="section" id="sec-sales">
+      <div class="panel">
+        <div class="panel-title">New Sale Entry</div>
+        <div class="form-grid-3" style="margin-bottom:14px">
+          <div class="form-group">
+            <div class="form-label">Date</div>
+            <input class="form-input" id="ns-date" type="date"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Client</div>
+            <input class="form-input" id="ns-client" placeholder="Client name"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Product</div>
+            <select class="form-select" id="ns-product">
+              <option value="Blanco">Blanco</option>
+              <option value="Reposado">Reposado</option>
+              <option value="Anejo">Anejo</option>
+              <option value="Reposado Reserva">Reposado Reserva</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid-3" style="margin-bottom:14px">
+          <div class="form-group">
+            <div class="form-label">Qty (bottles)</div>
+            <input class="form-input" id="ns-qty" type="number" min="1" value="1"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Unit Price ($)</div>
+            <input class="form-input" id="ns-price" type="number" step="0.01"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Payment</div>
+            <select class="form-select" id="ns-payment">
+              <option value="Cash">Cash</option>
+              <option value="Transfer">Bank Transfer</option>
+              <option value="Check">Check</option>
+              <option value="Credit">Credit (Net 30)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <div class="form-label">Notes</div>
+          <input class="form-input" id="ns-notes" placeholder="Optional notes"/>
+        </div>
+        <button class="btn-gold" onclick="addSale()">Add Sale</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Sales Log</div>
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Date</th><th>Client</th><th>Product</th><th>Qty</th><th>Unit $</th><th>Total</th><th>Payment</th><th>Agent</th><th>Status</th><th></th></tr></thead>
+          <tbody id="sales-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- INVOICES -->
+    <div class="section" id="sec-invoices">
+      <div class="panel">
+        <div class="panel-title">Create Invoice</div>
+        <div class="form-grid" style="margin-bottom:14px">
+          <div class="form-group">
+            <div class="form-label">Client / Company</div>
+            <input class="form-input" id="inv-client" placeholder="Client name"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Invoice Date</div>
+            <input class="form-input" id="inv-date" type="date"/>
+          </div>
+        </div>
+        <div class="form-grid" style="margin-bottom:14px">
+          <div class="form-group">
+            <div class="form-label">Due Date</div>
+            <input class="form-input" id="inv-due" type="date"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Product</div>
+            <select class="form-select" id="inv-product">
+              <option value="Blanco">Blanco</option>
+              <option value="Reposado">Reposado</option>
+              <option value="Anejo">Anejo</option>
+              <option value="Reposado Reserva">Reposado Reserva</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid" style="margin-bottom:14px">
+          <div class="form-group">
+            <div class="form-label">Qty (bottles)</div>
+            <input class="form-input" id="inv-qty" type="number" min="1" value="1"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Unit Price ($)</div>
+            <input class="form-input" id="inv-price" type="number" step="0.01"/>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <div class="form-label">Notes / Terms</div>
+          <input class="form-input" id="inv-notes" placeholder="Payment terms, delivery notes, etc."/>
+        </div>
+        <button class="btn-gold" onclick="createInvoice()">Create Invoice</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Invoices</div>
+        <table class="tbl">
+          <thead><tr><th>Invoice #</th><th>Date</th><th>Due</th><th>Client</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Agent</th><th></th></tr></thead>
+          <tbody id="inv-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="section" id="sec-accounts">
+      <div class="three-col" style="margin-bottom:20px">
+        <div class="panel" style="margin-bottom:0">
+          <div class="panel-title">Account Summary</div>
+          <div class="acct-row"><div class="acct-label">Gross Sales</div><div class="acct-val positive" id="acct-gross">$0.00</div></div>
+          <div class="acct-row"><div class="acct-label">Collected</div><div class="acct-val positive" id="acct-collected">$0.00</div></div>
+          <div class="acct-row"><div class="acct-label">Pending (Net 30)</div><div class="acct-val" id="acct-pending">$0.00</div></div>
+          <div class="acct-row"><div class="acct-label">Total Deposited</div><div class="acct-val positive" id="acct-deposited">$0.00</div></div>
+          <div class="acct-row" style="border:none"><div class="acct-label" style="font-weight:800;color:var(--gold)">Net Balance</div><div class="acct-val positive" style="font-size:18px;color:var(--gold2)" id="acct-net">$0.00</div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="panel-title">Sales by SKU</div>
+          <div id="sku-breakdown">
+            <div style="color:var(--txt3);font-size:12px;text-align:center;padding:20px">No sales recorded</div>
+          </div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="panel-title">Sales by Agent</div>
+          <div id="agent-breakdown">
+            <div style="color:var(--txt3);font-size:12px;text-align:center;padding:20px">No sales recorded</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Client Accounts</div>
+        <table class="tbl">
+          <thead><tr><th>Client</th><th>Total Orders</th><th>Total Value</th><th>Paid</th><th>Outstanding</th><th>Last Order</th><th>Status</th></tr></thead>
+          <tbody id="client-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DEPOSITS -->
+    <div class="section" id="sec-deposits">
+      <div class="panel">
+        <div class="panel-title">Record Deposit</div>
+        <div class="form-grid" style="margin-bottom:14px">
+          <div class="form-group">
+            <div class="form-label">Date</div>
+            <input class="form-input" id="dep-date" type="date"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Amount ($)</div>
+            <input class="form-input" id="dep-amount" type="number" step="0.01" placeholder="0.00"/>
+          </div>
+        </div>
+        <div class="form-grid" style="margin-bottom:14px">
+          <div class="form-group">
+            <div class="form-label">Method</div>
+            <select class="form-select" id="dep-method">
+              <option value="Cash Deposit">Cash Deposit</option>
+              <option value="Wire Transfer">Wire Transfer</option>
+              <option value="Check Deposit">Check Deposit</option>
+              <option value="Zelle">Zelle</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Reference / Confirmation #</div>
+            <input class="form-input" id="dep-ref" placeholder="Optional reference number"/>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <div class="form-label">Notes</div>
+          <input class="form-input" id="dep-notes" placeholder="Optional notes"/>
+        </div>
+        <button class="btn-gold" onclick="recordDeposit()">Record Deposit</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Deposit Log</div>
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Date</th><th>Amount</th><th>Method</th><th>Reference</th><th>Agent</th><th>Notes</th></tr></thead>
+          <tbody id="dep-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADMIN (Owner only) -->
+    <div class="section" id="sec-admin">
+      <div class="panel">
+        <div class="panel-title">Agent Roster — Don Azul Sales Team</div>
+        <table class="tbl">
+          <thead><tr><th>ID</th><th>Name</th><th>Title</th><th>Role</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-gold">DAT-01</span></td><td>Saul Garcia</td><td>Owner / MFG Inc.</td><td>Owner</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td><span class="badge badge-gold">DAT-02</span></td><td>Dr. Luis Lopez Oliva</td><td>Sr. Distribution Partner</td><td>Partner</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td><span class="badge badge-gold">DAT-03</span></td><td>Rudy Jacinto</td><td>Sr. Administrator of Operations</td><td>Admin</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td><span class="badge badge-gold">DAT-04</span></td><td>Israel Salazar</td><td>Sales Agent — Coach</td><td>Agent</td><td><span class="badge badge-green">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Full Data Export</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn-outline" onclick="exportData('sales')">Export Sales CSV</button>
+          <button class="btn-outline" onclick="exportData('invoices')">Export Invoices CSV</button>
+          <button class="btn-outline" onclick="exportData('deposits')">Export Deposits CSV</button>
+          <button class="btn-gold" onclick="exportData('all')">Export All</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Inventory Reset (Owner Only)</div>
+        <div class="form-grid-3" style="margin-bottom:14px">
+          <div class="form-group">
+            <div class="form-label">Blanco (bottles)</div>
+            <input class="form-input" id="set-Blanco" type="number" min="0" value="0"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Reposado (bottles)</div>
+            <input class="form-input" id="set-Reposado" type="number" min="0" value="0"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Anejo (bottles)</div>
+            <input class="form-input" id="set-Anejo" type="number" min="0" value="0"/>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;max-width:300px">
+          <div class="form-label">Reposado Reserva (bottles)</div>
+          <input class="form-input" id="set-Reposado Reserva" type="number" min="0" value="0"/>
+        </div>
+        <button class="btn-gold" onclick="setInventory()">Set Inventory Levels</button>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- DELIVERY COMMAND — BOSS ONLY                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="main" style="max-width:1400px">
+    <div class="section" id="sec-delivery">
+
+      <!-- DELIVERY STATS -->
+      <div class="stat-grid" style="margin-bottom:20px">
+        <div class="stat-card"><div class="stat-val" id="del-pending-n">0</div><div class="stat-label">Pending Deliveries</div><div class="stat-sub" id="del-pending-vol">0 cases</div></div>
+        <div class="stat-card"><div class="stat-val" id="del-today-n">0</div><div class="stat-label">Today's Deliveries</div><div class="stat-sub" id="del-today-cod">$0 COD to collect</div></div>
+        <div class="stat-card"><div class="stat-val" id="del-done-n">0</div><div class="stat-label">Completed</div><div class="stat-sub" id="del-done-rev">$0 collected</div></div>
+        <div class="stat-card"><div class="stat-val" id="del-vol-total">0</div><div class="stat-label">Total Cases Scheduled</div><div class="stat-sub">all open deliveries</div></div>
+      </div>
+
+      <!-- VOLUME RULES BANNER -->
+      <div style="background:rgba(201,165,92,0.08);border:1px solid rgba(201,165,92,0.3);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:11px;color:var(--txt2);line-height:1.8">
+        <span style="color:var(--gold);font-weight:800;letter-spacing:1px">DELIVERY RULES — BOSS COORDINATES ALL</span><br>
+        1-2 cases = Same-day agent handoff (no schedule needed) &nbsp;|&nbsp;
+        3-5 cases = Next business day delivery &nbsp;|&nbsp;
+        6-11 cases = Within 2 business days &nbsp;|&nbsp;
+        12+ cases (1+ pallet) = Scheduled delivery window, confirm 24h ahead &nbsp;|&nbsp;
+        COD = Saul Garcia collects on delivery &nbsp;|&nbsp;
+        Net 30 = Invoice follows delivery
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+        <!-- SCHEDULE NEW DELIVERY -->
+        <div class="panel">
+          <div class="panel-title">Schedule Delivery</div>
+          <div class="form-group">
+            <div class="form-label">Client / Store</div>
+            <input class="form-input" id="del-client" placeholder="Store or restaurant name"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Address</div>
+            <input class="form-input" id="del-addr" placeholder="Full delivery address"/>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group">
+              <div class="form-label">Product</div>
+              <select class="form-select" id="del-sku">
+                <option value="Blanco Premium,39.99,79.99,6">Blanco Premium</option>
+                <option value="Reposado Premium,44.99,99.99,6">Reposado Premium</option>
+                <option value="Anejo Premium,58.99,129.99,6">Anejo Premium</option>
+                <option value="Reposado Reserva,76.99,139.99,6">Reposado Reserva</option>
+                <option value="G-XXI Blanco Org,40.89,69.99,6">G-XXI Blanco Org</option>
+                <option value="G-XXI Reposado Org,47.99,81.99,6">G-XXI Reposado Org</option>
+                <option value="G-XXI Anejo Org,58.99,98.99,6">G-XXI Anejo Org</option>
+                <option value="Maya Blanco,18.99,33.99,12">Maya Blanco</option>
+                <option value="Maya Reposado,19.99,35.99,12">Maya Reposado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <div class="form-label">Cases</div>
+              <input class="form-input" id="del-cases" type="number" min="1" value="1" oninput="calcDelivery()"/>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group">
+              <div class="form-label">Payment</div>
+              <select class="form-select" id="del-pay" onchange="calcDelivery()">
+                <option value="COD">COD — Boss Collects</option>
+                <option value="Cash">Cash Pre-paid</option>
+                <option value="Transfer">Bank Transfer</option>
+                <option value="Credit Net30">Credit Net 30</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <div class="form-label">Preferred Delivery Date</div>
+              <input class="form-input" id="del-prefdate" type="date"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Time Window</div>
+            <select class="form-select" id="del-window">
+              <option value="Morning 9AM-12PM">Morning 9AM–12PM</option>
+              <option value="Afternoon 12PM-4PM">Afternoon 12PM–4PM</option>
+              <option value="Evening 4PM-7PM">Evening 4PM–7PM</option>
+              <option value="Flexible">Flexible — Call Ahead</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Agent Who Made Sale</div>
+            <select class="form-select" id="del-agent">
+              <option value="Saul Garcia">Saul Garcia (Boss)</option>
+              <option value="Dr. Luis Lopez Oliva">Dr. Luis Lopez Oliva (DAT-02)</option>
+              <option value="Rudy Jacinto">Rudy Jacinto (DAT-03)</option>
+              <option value="Israel Salazar">Israel Salazar / Coach (DAT-04)</option>
+              <option value="Ariel Bolio">Ariel Bolio</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Notes / Instructions</div>
+            <input class="form-input" id="del-notes" placeholder="Gate code, contact person, special instructions..."/>
+          </div>
+
+          <!-- DELIVERY CALC -->
+          <div style="background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.2);border-radius:8px;padding:12px;margin-bottom:14px" id="del-calc-box">
+            <div style="font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Delivery Summary</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <div><div style="font-size:9px;color:var(--txt3)">Cases</div><div style="font-size:18px;font-weight:900;color:var(--gold2)" id="dc-cases">1</div></div>
+              <div><div style="font-size:9px;color:var(--txt3)">Bottles</div><div style="font-size:18px;font-weight:900;color:var(--gold2)" id="dc-btls">6</div></div>
+              <div><div style="font-size:9px;color:var(--txt3)">Order Value</div><div style="font-size:18px;font-weight:900;color:var(--gold2)" id="dc-val">$0</div></div>
+              <div><div style="font-size:9px;color:var(--txt3)">COD Amount</div><div style="font-size:18px;font-weight:900;color:var(--green2)" id="dc-cod">—</div></div>
+              <div><div style="font-size:9px;color:var(--txt3)">3-Case Disc</div><div style="font-size:18px;font-weight:900;color:#10b981" id="dc-disc">—</div></div>
+              <div><div style="font-size:9px;color:var(--txt3)">Sched. Date</div><div style="font-size:14px;font-weight:900;color:var(--txt)" id="dc-date">—</div></div>
+            </div>
+          </div>
+
+          <button class="btn-gold" onclick="scheduleDelivery()" style="width:100%">Schedule Delivery</button>
+        </div>
+
+        <!-- DELIVERY QUEUE -->
+        <div class="panel">
+          <div class="panel-title" style="display:flex;justify-content:space-between;align-items:center">
+            <span>Delivery Queue</span>
+            <div style="display:flex;gap:6px">
+              <button onclick="filterDel('all')" class="btn-outline" style="padding:4px 10px;font-size:10px">All</button>
+              <button onclick="filterDel('pending')" class="btn-outline" style="padding:4px 10px;font-size:10px">Pending</button>
+              <button onclick="filterDel('today')" class="btn-gold" style="padding:4px 10px;font-size:10px">Today</button>
+            </div>
+          </div>
+          <div id="del-queue" style="max-height:520px;overflow-y:auto"></div>
+        </div>
+
+      </div>
+
+      <!-- DELIVERY CALENDAR -->
+      <div class="panel" style="margin-top:4px">
+        <div class="panel-title">Delivery Schedule — Weekly View</div>
+        <div id="del-calendar" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px"></div>
+      </div>
+
+      <!-- BOSS ROUTE FOR TODAY -->
+      <div class="panel">
+        <div class="panel-title">Boss Delivery Route — Today</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <button onclick="buildBossRoute()" class="btn-gold">Build Today's Route</button>
+          <button onclick="openBossRoute()" class="btn-outline">Open in Google Maps</button>
+        </div>
+        <iframe id="boss-route-map" src="https://www.google.com/maps/embed/v1/search?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&q=El+Cajon+CA&zoom=12" style="width:100%;height:300px;border-radius:8px;border:1px solid var(--border)" allowfullscreen loading="lazy"></iframe>
+        <div id="boss-route-stops" style="margin-top:10px"></div>
+      </div>
+
+      <!-- COD LOG -->
+      <div class="panel">
+        <div class="panel-title">COD Collection Log — Boss</div>
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Date</th><th>Client</th><th>Product</th><th>Cases</th><th>Amount</th><th>Collected By</th><th>Status</th><th></th></tr></thead>
+          <tbody id="cod-log"></tbody>
+        </table>
+      </div>
+
+    </div><!-- /sec-delivery -->
+  </div>
+
+<style>
+  .del-card{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.15);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+  .del-card.urgent{border-left:3px solid var(--red)}
+  .del-card.today{border-left:3px solid var(--green2)}
+  .del-card.pending{border-left:3px solid var(--gold)}
+  .del-card.done{border-left:3px solid var(--txt3);opacity:.7}
+  .del-name{font-size:12px;font-weight:700;color:var(--txt)}
+  .del-meta{font-size:10px;color:var(--txt3);margin-top:2px}
+  .del-vol{font-size:11px;color:var(--gold2);font-weight:700;margin-top:4px}
+  .del-pay{font-size:11px;color:var(--green2);font-weight:700}
+  .del-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .del-btn{font-size:10px;font-weight:700;padding:4px 10px;border-radius:5px;cursor:pointer;border:none;font-family:inherit;text-transform:uppercase}
+  .db-green{background:rgba(15,123,65,0.2);color:var(--green2)}
+  .db-gold{background:rgba(201,165,92,0.2);color:var(--gold)}
+  .db-red{background:rgba(239,68,68,0.15);color:#f87171}
+  .db-blue{background:rgba(59,130,246,0.15);color:#60a5fa}
+  .cal-day{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:10px;min-height:120px}
+  .cal-day-hdr{font-size:10px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+  .cal-item{background:rgba(201,165,92,0.1);border-radius:4px;padding:3px 6px;font-size:9px;color:var(--txt);margin-bottom:3px;font-weight:600}
+  .cal-item.cod{background:rgba(15,123,65,0.15);color:var(--green2)}
+  .cal-item.heavy{background:rgba(239,68,68,0.1);color:#f87171}
+</style>
+
+<script>
+var PIN='4321',PLEN=4,entered='';
+function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
+function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
+
+// ── DELIVERY STATE ────────────────────────────────────────────────────────────
+var DEL_STATE={deliveries:[],codLog:[],nextDel:1};
+(function(){try{var s=localStorage.getItem('dat_delivery');if(s)DEL_STATE=JSON.parse(s);}catch(e){}})();
+function saveDel(){try{localStorage.setItem('dat_delivery',JSON.stringify(DEL_STATE));}catch(e){}}
+
+var CASE_BTLS={'Blanco Premium':6,'Reposado Premium':6,'Anejo Premium':6,'Reposado Reserva':6,'G-XXI Blanco Org':6,'G-XXI Reposado Org':6,'G-XXI Anejo Org':6,'Maya Blanco':12,'Maya Reposado':12};
+
+// Auto-schedule date based on volume
+function schedDate(cases){
+  var d=new Date();
+  if(cases<=2){return d.toISOString().split('T')[0];} // same day
+  else if(cases<=5){d.setDate(d.getDate()+1);}
+  else if(cases<=11){d.setDate(d.getDate()+2);}
+  else{d.setDate(d.getDate()+3);}
+  // skip Sunday
+  if(d.getDay()===0)d.setDate(d.getDate()+1);
+  return d.toISOString().split('T')[0];
+}
+
+function calcDelivery(){
+  var skuParts=(document.getElementById('del-sku')||{}).value||'Blanco Premium,39.99,79.99,6';
+  var parts=skuParts.split(',');
+  var skuName=parts[0],dist=parseFloat(parts[1])||0,msrp=parseFloat(parts[2])||0,btlCase=parseInt(parts[3])||6;
+  var cases=parseFloat((document.getElementById('del-cases')||{}).value)||1;
+  var pay=(document.getElementById('del-pay')||{}).value||'COD';
+  var btls=cases*btlCase;
+  var val=msrp*btls;
+  var disc=cases>=3?dist*0.05*btls:0;
+  var prefDate=(document.getElementById('del-prefdate')||{}).value||schedDate(cases);
+  var autoDate=schedDate(cases);
+  var useDate=prefDate||autoDate;
+  document.getElementById('dc-cases').textContent=cases;
+  document.getElementById('dc-btls').textContent=btls;
+  document.getElementById('dc-val').textContent=fmt(val);
+  document.getElementById('dc-cod').textContent=pay==='COD'?fmt(val):'—';
+  document.getElementById('dc-disc').textContent=cases>=3?'-'+fmt(disc):'—';
+  document.getElementById('dc-date').textContent=useDate+' ('+scheduleLabel(cases)+')';
+}
+
+function scheduleLabel(cases){
+  if(cases<=2)return 'Same Day';
+  if(cases<=5)return 'Next Day';
+  if(cases<=11)return '2 Days';
+  return '3 Days / Confirm 24h';
+}
+
+function scheduleDelivery(){
+  var skuParts=(document.getElementById('del-sku').value||'').split(',');
+  var skuName=skuParts[0],dist=parseFloat(skuParts[1])||0,msrp=parseFloat(skuParts[2])||0,btlCase=parseInt(skuParts[3])||6;
+  var client=document.getElementById('del-client').value.trim();
+  var addr=document.getElementById('del-addr').value.trim();
+  var cases=parseFloat(document.getElementById('del-cases').value)||1;
+  var pay=document.getElementById('del-pay').value;
+  var prefDate=document.getElementById('del-prefdate').value||schedDate(cases);
+  var window_=document.getElementById('del-window').value;
+  var agent=document.getElementById('del-agent').value;
+  var notes=document.getElementById('del-notes').value.trim();
+  if(!client||!addr){alert('Enter client name and address');return;}
+  var btls=cases*btlCase,val=msrp*btls,disc=cases>=3?dist*0.05*btls:0;
+  var del={
+    id:DEL_STATE.nextDel++,
+    client,addr,sku:skuName,cases,btls,val,pay,
+    disc:cases>=3?disc:0,
+    date:prefDate,window:window_,agent,notes,
+    status:'Pending',
+    created:new Date().toISOString().split('T')[0],
+    cod:pay==='COD'?val:0,
+    label:scheduleLabel(cases)
+  };
+  DEL_STATE.deliveries.unshift(del);
+  saveDel();
+  refreshDelivery();
+  // Clear form
+  document.getElementById('del-client').value='';
+  document.getElementById('del-addr').value='';
+  document.getElementById('del-cases').value=1;
+  document.getElementById('del-notes').value='';
+}
+
+function markDelivered(id){
+  var d=DEL_STATE.deliveries.find(function(x){return x.id===id;});
+  if(!d)return;
+  d.status='Delivered';
+  d.deliveredDate=new Date().toISOString().split('T')[0];
+  if(d.pay==='COD'||d.pay==='Cash'){
+    DEL_STATE.codLog.unshift({id:DEL_STATE.nextDel++,date:d.deliveredDate,client:d.client,sku:d.sku,cases:d.cases,amount:d.val,collector:'Saul Garcia',status:'Collected'});
+  }
+  saveDel();refreshDelivery();
+}
+
+function markCODCollected(id){
+  var c=DEL_STATE.codLog.find(function(x){return x.id===id;});
+  if(c)c.status='Collected';
+  saveDel();refreshDelivery();
+}
+
+function cancelDel(id){
+  var d=DEL_STATE.deliveries.find(function(x){return x.id===id;});
+  if(d)d.status='Cancelled';
+  saveDel();refreshDelivery();
+}
+
+function filterDel(f){
+  var today_=new Date().toISOString().split('T')[0];
+  var list=DEL_STATE.deliveries;
+  if(f==='pending')list=list.filter(function(d){return d.status==='Pending';});
+  else if(f==='today')list=list.filter(function(d){return d.date===today_&&d.status==='Pending';});
+  renderDelQueue(list);
+}
+
+function renderDelQueue(list){
+  var today_=new Date().toISOString().split('T')[0];
+  var el=document.getElementById('del-queue');
+  if(!el)return;
+  if(!list||!list.length){el.innerHTML='<div style="text-align:center;color:var(--txt3);font-size:11px;padding:20px">No deliveries</div>';return;}
+  el.innerHTML=list.map(function(d){
+    var isToday=d.date===today_;
+    var cls=d.status==='Cancelled'||d.status==='Delivered'?'done':isToday?'today':d.cases>=12?'urgent':'pending';
+    return '<div class="del-card '+cls+'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+      +'<div class="del-name">'+d.client+'</div>'
+      +'<span class="badge '+(d.status==='Delivered'?'badge-green':d.status==='Cancelled'?'badge-red':isToday?'badge-green':'badge-gold')+'">'+d.status+'</span>'
+      +'</div>'
+      +'<div class="del-meta">'+d.addr+'</div>'
+      +'<div class="del-meta">'+d.date+' | '+d.window+' | Agent: '+d.agent+'</div>'
+      +'<div class="del-vol">'+d.sku+' — '+d.cases+' cases ('+d.btls+' btls) | '+fmt(d.val)+(d.disc>0?' | <span style="color:#10b981">-'+fmt(d.disc)+' disc</span>':'')+'</div>'
+      +'<div class="del-pay">'+(d.pay==='COD'?'COD: '+fmt(d.cod)+' — Boss collects':d.pay)+'</div>'
+      +(d.notes?'<div class="del-meta" style="margin-top:3px">Note: '+d.notes+'</div>':'')
+      +'<div class="del-actions">'
+      +(d.status==='Pending'?'<button class="del-btn db-green" onclick="markDelivered('+d.id+')">Mark Delivered</button>':'')
+      +(d.status==='Pending'?'<a href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(d.addr)+'" target="_blank" class="del-btn db-blue" style="text-decoration:none">Navigate</a>':'')
+      +(d.status==='Pending'?'<button class="del-btn db-red" onclick="cancelDel('+d.id+')">Cancel</button>':'')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function refreshDelivery(){
+  var today_=new Date().toISOString().split('T')[0];
+  var pending=DEL_STATE.deliveries.filter(function(d){return d.status==='Pending';});
+  var todayDels=pending.filter(function(d){return d.date===today_;});
+  var done=DEL_STATE.deliveries.filter(function(d){return d.status==='Delivered';});
+  var pendVol=pending.reduce(function(a,d){return a+d.cases;},0);
+  var todayCOD=todayDels.reduce(function(a,d){return a+(d.cod||0);},0);
+  var doneRev=done.reduce(function(a,d){return a+d.val;},0);
+  var totalCases=DEL_STATE.deliveries.filter(function(d){return d.status!=='Cancelled';}).reduce(function(a,d){return a+d.cases;},0);
+  document.getElementById('del-pending-n').textContent=pending.length;
+  document.getElementById('del-pending-vol').textContent=pendVol+' cases';
+  document.getElementById('del-today-n').textContent=todayDels.length;
+  document.getElementById('del-today-cod').textContent=fmt(todayCOD)+' COD to collect';
+  document.getElementById('del-done-n').textContent=done.length;
+  document.getElementById('del-done-rev').textContent=fmt(doneRev)+' collected';
+  document.getElementById('del-vol-total').textContent=totalCases;
+  renderDelQueue(DEL_STATE.deliveries);
+  renderCalendar();
+  renderCODLog();
+}
+
+function renderCalendar(){
+  var cal=document.getElementById('del-calendar');
+  if(!cal)return;
+  var days=['MON','TUE','WED','THU','FRI'];
+  var now=new Date();
+  var monday=new Date(now);
+  monday.setDate(now.getDate()-((now.getDay()+6)%7));
+  cal.innerHTML=days.map(function(day,i){
+    var d=new Date(monday);d.setDate(monday.getDate()+i);
+    var ds=d.toISOString().split('T')[0];
+    var dels=DEL_STATE.deliveries.filter(function(x){return x.date===ds&&x.status==='Pending';});
+    var totalCases=dels.reduce(function(a,x){return a+x.cases;},0);
+    var totalCOD=dels.reduce(function(a,x){return a+(x.cod||0);},0);
+    var isToday=ds===new Date().toISOString().split('T')[0];
+    return '<div class="cal-day" style="'+(isToday?'border-color:var(--green2);':'')+'"><div class="cal-day-hdr" style="'+(isToday?'color:var(--green2);':'')+'">'+day+' '+d.getDate()+'</div>'
+      +(dels.length===0?'<div style="font-size:9px;color:var(--txt3)">No deliveries</div>':'')
+      +dels.map(function(x){
+        var cls=x.cases>=12?'heavy':x.pay==='COD'?'cod':'';
+        return '<div class="cal-item '+cls+'">'+x.client.slice(0,18)+(x.client.length>18?'...':'')+' · '+x.cases+'cs</div>';
+      }).join('')
+      +(dels.length>0?'<div style="font-size:9px;color:var(--txt3);margin-top:4px">'+dels.length+' stops · '+totalCases+' cases'+(totalCOD>0?' · COD: '+fmt(totalCOD):'')+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+function renderCODLog(){
+  var tbody=document.getElementById('cod-log');
+  if(!tbody)return;
+  tbody.innerHTML=DEL_STATE.codLog.map(function(c){
+    return '<tr><td style="color:var(--txt3)">#'+c.id+'</td><td>'+c.date+'</td><td>'+c.client+'</td><td>'+c.sku+'</td><td>'+c.cases+'</td><td style="color:var(--green2);font-weight:700">'+fmt(c.amount)+'</td><td>'+c.collector+'</td><td><span class="badge badge-green">'+c.status+'</span></td><td></td></tr>';
+  }).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--txt3);padding:16px">No COD collections yet</td></tr>';
+}
+
+function buildBossRoute(){
+  var today_=new Date().toISOString().split('T')[0];
+  var stops=DEL_STATE.deliveries.filter(function(d){return d.date===today_&&d.status==='Pending';});
+  if(!stops.length){alert('No deliveries scheduled for today.');return;}
+  var addrs=stops.slice(0,9).map(function(s){return encodeURIComponent(s.addr);});
+  var f=document.getElementById('boss-route-map');
+  if(f&&addrs.length>0){
+    if(addrs.length===1){f.src='https://www.google.com/maps/embed/v1/search?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&q='+addrs[0];}
+    else{f.src='https://www.google.com/maps/embed/v1/directions?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&origin='+addrs[0]+'&destination='+addrs[addrs.length-1]+'&waypoints='+addrs.slice(1,-1).join('|')+'&mode=driving';}
+  }
+  var el=document.getElementById('boss-route-stops');
+  if(el){
+    el.innerHTML=stops.map(function(s,i){
+      return '<div style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)">'
+        +'<div style="width:20px;height:20px;border-radius:50%;background:var(--gold);color:#000;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</div>'
+        +'<div style="flex:1">'
+        +'<div style="font-size:12px;font-weight:700;color:var(--txt)">'+s.client+'</div>'
+        +'<div style="font-size:10px;color:var(--txt3)">'+s.addr+'</div>'
+        +'<div style="font-size:11px;color:var(--gold2);font-weight:700">'+s.sku+' · '+s.cases+' cases · '+fmt(s.val)+'</div>'
+        +'<div style="font-size:11px;color:var(--green2);font-weight:700">'+(s.pay==='COD'?'COD: '+fmt(s.cod)+' — COLLECT ON DELIVERY':s.pay)+'</div>'
+        +(s.window?'<div style="font-size:10px;color:var(--txt3)">Window: '+s.window+'</div>':'')
+        +(s.notes?'<div style="font-size:10px;color:var(--txt3)">Note: '+s.notes+'</div>':'')
+        +'</div>'
+        +'<div style="display:flex;flex-direction:column;gap:4px">'
+        +'<a href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(s.addr)+'" target="_blank" style="font-size:9px;font-weight:700;padding:4px 8px;background:rgba(59,130,246,0.2);color:#60a5fa;border-radius:4px;text-decoration:none">Navigate</a>'
+        +'<button onclick="markDelivered('+s.id+')" style="font-size:9px;font-weight:700;padding:4px 8px;background:rgba(15,123,65,0.2);color:var(--green2);border:none;border-radius:4px;cursor:pointer;font-family:inherit">Done</button>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+  }
+}
+
+function openBossRoute(){
+  var today_=new Date().toISOString().split('T')[0];
+  var stops=DEL_STATE.deliveries.filter(function(d){return d.date===today_&&d.status==='Pending';});
+  if(!stops.length){alert('No deliveries scheduled for today.');return;}
+  var url='https://www.google.com/maps/dir/'+stops.map(function(s){return encodeURIComponent(s.addr);}).join('/');
+  window.open(url,'_blank');
+}
+
+// Wire delivery tab init
+var _origShowTab=showTab;
+showTab=function(t){
+  _origShowTab(t);
+  if(t==='delivery'){refreshDelivery();calcDelivery();}
+};
+
+// Wire up del-sku change
+document.addEventListener('DOMContentLoaded',function(){
+  var sk=document.getElementById('del-sku');
+  if(sk)sk.addEventListener('change',calcDelivery);
+  var pd=document.getElementById('del-prefdate');
+  if(pd)pd.addEventListener('change',calcDelivery);
+});
+</script>
+
+<script>
+// ── TEAM ──────────────────────────────────────────────────────────────────────
+const TEAM = {
+  'DAT-01': { pin:'060905', name:'Saul Garcia', title:'Owner / MFG Inc.', role:'owner' },
+  'DAT-02': { pin:'4477',   name:'Dr. Luis Lopez Oliva', title:'Sr. Distribution Partner', role:'partner' },
+  'DAT-03': { pin:'8823',   name:'Rudy Jacinto', title:'Sr. Administrator of Operations', role:'admin' },
+  'DAT-04': { pin:'3301',   name:'Israel Salazar', title:'Sales Agent — Coach', role:'agent' }
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let STATE = {
+  sales:[],
+  invoices:[],
+  deposits:[],
+  inventory:{ Blanco:0, Reposado:0, Anejo:0, 'Reposado Reserva':0 },
+  invLog:[],
+  nextSale:1,
+  nextInv:1001,
+  nextDep:1
+};
+let CURRENT_USER = null;
+
+const PRICES = { Blanco:45, Reposado:55, Anejo:75, 'Reposado Reserva':95 };
+
+function loadState(){
+  try{ const s=localStorage.getItem('dat_state'); if(s) STATE=JSON.parse(s); }catch(e){}
+}
+function saveState(){
+  try{ localStorage.setItem('dat_state',JSON.stringify(STATE)); }catch(e){}
+}
+function fmt(n){ return '$'+parseFloat(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function ts(){ return new Date().toLocaleString(); }
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+function doLogin(){
+  const id=document.getElementById('l-id').value.trim().toUpperCase();
+  const pin=document.getElementById('l-pin').value.trim();
+  const u=TEAM[id];
+  if(u && u.pin===pin){
+    CURRENT_USER={id,...u};
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('user-badge').textContent=u.name+' — '+u.title;
+    if(u.role==='owner'){
+      document.querySelectorAll('.owner-only').forEach(el=>el.style.display='');
+    }
+    loadState();
+    refreshAll();
+    // set default dates
+    document.getElementById('qs-date') && (document.getElementById('qs-date').value=today());
+    document.getElementById('ns-date').value=today();
+    document.getElementById('inv-date').value=today();
+    document.getElementById('dep-date').value=today();
+    // default due date +30
+    const d=new Date(); d.setDate(d.getDate()+30);
+    document.getElementById('inv-due').value=d.toISOString().split('T')[0];
+  } else {
+    const err=document.getElementById('l-err');
+    err.style.display='block';
+    err.textContent='Invalid credentials';
+    setTimeout(()=>err.style.display='none',3000);
+  }
+}
+function doLogout(){
+  CURRENT_USER=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('l-pin').value='';
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function showTab(t){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+t).classList.add('active');
+  event.target.classList.add('active');
+  refreshAll();
+}
+
+// ── QUICK SALE CALC ───────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('qs-product').addEventListener('change',function(){
+    const p=PRICES[this.value]||0;
+    document.getElementById('qs-price').value=p;
+    calcQS();
+  });
+});
+function calcQS(){
+  const qty=parseFloat(document.getElementById('qs-qty').value)||0;
+  const price=parseFloat(document.getElementById('qs-price').value)||0;
+  document.getElementById('qs-total').textContent=fmt(qty*price);
+}
+
+// ── RECORD SALE (quick) ───────────────────────────────────────────────────────
+function recordSale(){
+  const product=document.getElementById('qs-product').value;
+  const qty=parseInt(document.getElementById('qs-qty').value)||0;
+  const price=parseFloat(document.getElementById('qs-price').value)||0;
+  const client=document.getElementById('qs-client').value.trim()||'Walk-in';
+  const payment=document.getElementById('qs-payment').value;
+  if(!product||qty<1||price<=0){ alert('Select product, qty and price'); return; }
+  const total=qty*price;
+  const sale={id:STATE.nextSale++,date:today(),client,product,qty,price,total,payment,agent:CURRENT_USER.name,status:'Paid'};
+  STATE.sales.unshift(sale);
+  STATE.inventory[product]=Math.max(0,(STATE.inventory[product]||0)-qty);
+  STATE.invLog.unshift({date:today(),sku:product,change:'Sale',qty:-qty,agent:CURRENT_USER.name,note:'Sale #'+(sale.id)});
+  addActivity('Sale recorded — '+client+' / '+product+' x'+qty+' / '+fmt(total));
+  saveState();
+  refreshAll();
+  document.getElementById('qs-client').value='';
+  document.getElementById('qs-qty').value=1;
+  document.getElementById('qs-total').textContent='$0.00';
+}
+
+// ── ADD SALE (sales tab) ──────────────────────────────────────────────────────
+function addSale(){
+  const date=document.getElementById('ns-date').value||today();
+  const client=document.getElementById('ns-client').value.trim()||'Walk-in';
+  const product=document.getElementById('ns-product').value;
+  const qty=parseInt(document.getElementById('ns-qty').value)||0;
+  const price=parseFloat(document.getElementById('ns-price').value)||0;
+  const payment=document.getElementById('ns-payment').value;
+  const notes=document.getElementById('ns-notes').value.trim();
+  if(qty<1||price<=0){ alert('Enter qty and price'); return; }
+  const total=qty*price;
+  const sale={id:STATE.nextSale++,date,client,product,qty,price,total,payment,agent:CURRENT_USER.name,status:payment==='Credit'?'Pending':'Paid',notes};
+  STATE.sales.unshift(sale);
+  STATE.inventory[product]=Math.max(0,(STATE.inventory[product]||0)-qty);
+  STATE.invLog.unshift({date,sku:product,change:'Sale',qty:-qty,agent:CURRENT_USER.name,note:'Sale #'+sale.id});
+  addActivity('Sale — '+client+' / '+product+' x'+qty+' / '+fmt(total));
+  saveState();
+  refreshAll();
+  document.getElementById('ns-client').value='';
+  document.getElementById('ns-qty').value=1;
+  document.getElementById('ns-price').value='';
+  document.getElementById('ns-notes').value='';
+}
+
+// ── CREATE INVOICE ────────────────────────────────────────────────────────────
+function createInvoice(){
+  const client=document.getElementById('inv-client').value.trim();
+  const date=document.getElementById('inv-date').value||today();
+  const due=document.getElementById('inv-due').value;
+  const product=document.getElementById('inv-product').value;
+  const qty=parseInt(document.getElementById('inv-qty').value)||0;
+  const price=parseFloat(document.getElementById('inv-price').value)||0;
+  const notes=document.getElementById('inv-notes').value.trim();
+  if(!client||qty<1||price<=0){ alert('Fill all fields'); return; }
+  const total=qty*price;
+  const inv={id:STATE.nextInv++,date,due,client,product,qty,price,total,agent:CURRENT_USER.name,status:'Unpaid',notes};
+  STATE.invoices.unshift(inv);
+  addActivity('Invoice #'+inv.id+' created — '+client+' / '+fmt(total));
+  saveState();
+  refreshAll();
+  document.getElementById('inv-client').value='';
+  document.getElementById('inv-qty').value=1;
+  document.getElementById('inv-price').value='';
+  document.getElementById('inv-notes').value='';
+}
+function markPaid(id){
+  const inv=STATE.invoices.find(i=>i.id===id);
+  if(inv){ inv.status='Paid'; addActivity('Invoice #'+id+' marked PAID'); saveState(); refreshAll(); }
+}
+function voidInvoice(id){
+  const inv=STATE.invoices.find(i=>i.id===id);
+  if(inv){ inv.status='Void'; saveState(); refreshAll(); }
+}
+
+// ── RECORD DEPOSIT ────────────────────────────────────────────────────────────
+function recordDeposit(){
+  const date=document.getElementById('dep-date').value||today();
+  const amount=parseFloat(document.getElementById('dep-amount').value)||0;
+  const method=document.getElementById('dep-method').value;
+  const ref=document.getElementById('dep-ref').value.trim();
+  const notes=document.getElementById('dep-notes').value.trim();
+  if(amount<=0){ alert('Enter amount'); return; }
+  const dep={id:STATE.nextDep++,date,amount,method,ref,agent:CURRENT_USER.name,notes};
+  STATE.deposits.unshift(dep);
+  addActivity('Deposit recorded — '+fmt(amount)+' / '+method);
+  saveState();
+  refreshAll();
+  document.getElementById('dep-amount').value='';
+  document.getElementById('dep-ref').value='';
+  document.getElementById('dep-notes').value='';
+}
+
+// ── INVENTORY ADJUST ──────────────────────────────────────────────────────────
+function adjInv(sku,delta){
+  const n=parseInt(prompt((delta>0?'Add to':'Remove from')+' '+sku+' (current: '+STATE.inventory[sku]+')\nQuantity:'))||0;
+  if(n<1) return;
+  STATE.inventory[sku]=Math.max(0,(STATE.inventory[sku]||0)+(delta*n));
+  STATE.invLog.unshift({date:today(),sku,change:delta>0?'Add':'Remove',qty:delta*n,agent:CURRENT_USER.name,note:'Manual adjustment'});
+  addActivity((delta>0?'Added':'Removed')+' '+n+' x '+sku);
+  saveState();
+  refreshAll();
+}
+function setInventory(){
+  ['Blanco','Reposado','Anejo','Reposado Reserva'].forEach(sku=>{
+    const el=document.getElementById('set-'+sku);
+    if(el){
+      const n=parseInt(el.value)||0;
+      STATE.invLog.unshift({date:today(),sku,change:'Reset',qty:n,agent:CURRENT_USER.name,note:'Owner reset to '+n});
+      STATE.inventory[sku]=n;
+    }
+  });
+  saveState();
+  refreshAll();
+}
+
+// ── ACTIVITY ──────────────────────────────────────────────────────────────────
+const activityLog=[];
+function addActivity(msg){
+  activityLog.unshift({msg,time:ts()});
+  if(activityLog.length>20) activityLog.pop();
+}
+
+// ── REFRESH ALL ───────────────────────────────────────────────────────────────
+function refreshAll(){
+  refreshDashboard();
+  refreshInventory();
+  refreshSales();
+  refreshInvoices();
+  refreshAccounts();
+  refreshDeposits();
+}
+
+function refreshDashboard(){
+  const totalSales=STATE.sales.reduce((a,s)=>a+s.total,0);
+  const pending=STATE.invoices.filter(i=>i.status==='Unpaid').reduce((a,i)=>a+i.total,0);
+  const deposited=STATE.deposits.reduce((a,d)=>a+d.amount,0);
+  const bottles=Object.values(STATE.inventory).reduce((a,v)=>a+v,0);
+  document.getElementById('dash-total-sales').textContent=fmt(totalSales);
+  document.getElementById('dash-sales-count').textContent=STATE.sales.length+' transactions';
+  document.getElementById('dash-pending').textContent=fmt(pending);
+  document.getElementById('dash-pending-count').textContent=STATE.invoices.filter(i=>i.status==='Unpaid').length+' open invoices';
+  document.getElementById('dash-deposited').textContent=fmt(deposited);
+  document.getElementById('dash-dep-count').textContent=STATE.deposits.length+' deposits';
+  document.getElementById('dash-bottles').textContent=bottles;
+  // activity
+  const feed=document.getElementById('activity-feed');
+  if(activityLog.length===0){ feed.innerHTML='<div style="color:var(--txt3);font-size:12px;text-align:center;padding:20px">No activity yet</div>'; return; }
+  feed.innerHTML=activityLog.slice(0,8).map(a=>`
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-title">${a.msg}</div>
+        <div class="tl-meta">${a.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function refreshInventory(){
+  ['Blanco','Reposado','Anejo','Reposado Reserva'].forEach(sku=>{
+    const el=document.getElementById('inv-'+sku);
+    if(el) el.textContent=STATE.inventory[sku]||0;
+  });
+  const tbody=document.getElementById('inv-log');
+  if(!tbody) return;
+  tbody.innerHTML=STATE.invLog.slice(0,30).map(l=>`
+    <tr>
+      <td>${l.date}</td>
+      <td>${l.sku}</td>
+      <td><span class="badge ${l.qty>0?'badge-green':'badge-red'}">${l.change}</span></td>
+      <td>${l.qty>0?'+':''}${l.qty}</td>
+      <td>${l.agent}</td>
+      <td style="color:var(--txt3)">${l.note||''}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--txt3);padding:20px">No adjustments</td></tr>';
+}
+
+function refreshSales(){
+  const tbody=document.getElementById('sales-tbody');
+  if(!tbody) return;
+  tbody.innerHTML=STATE.sales.map(s=>`
+    <tr>
+      <td style="color:var(--txt3)">#${s.id}</td>
+      <td>${s.date}</td>
+      <td>${s.client}</td>
+      <td>${s.product}</td>
+      <td>${s.qty}</td>
+      <td>${fmt(s.price)}</td>
+      <td style="font-weight:700;color:var(--gold2)">${fmt(s.total)}</td>
+      <td>${s.payment}</td>
+      <td style="color:var(--txt3)">${s.agent}</td>
+      <td><span class="badge ${s.status==='Paid'?'badge-green':s.status==='Pending'?'badge-gold':'badge-red'}">${s.status}</span></td>
+      <td></td>
+    </tr>`).join('')||'<tr><td colspan="11" style="text-align:center;color:var(--txt3);padding:20px">No sales recorded</td></tr>';
+}
+
+function refreshInvoices(){
+  const tbody=document.getElementById('inv-tbody');
+  if(!tbody) return;
+  tbody.innerHTML=STATE.invoices.map(i=>`
+    <tr>
+      <td style="color:var(--gold)">#${i.id}</td>
+      <td>${i.date}</td>
+      <td>${i.due}</td>
+      <td>${i.client}</td>
+      <td>${i.product}</td>
+      <td>${i.qty}</td>
+      <td style="font-weight:700;color:var(--gold2)">${fmt(i.total)}</td>
+      <td><span class="badge ${i.status==='Paid'?'badge-green':i.status==='Unpaid'?'badge-gold':'badge-red'}">${i.status}</span></td>
+      <td style="color:var(--txt3)">${i.agent}</td>
+      <td style="display:flex;gap:6px">
+        ${i.status==='Unpaid'?`<button class="btn-gold" style="padding:4px 10px;font-size:10px" onclick="markPaid(${i.id})">Mark Paid</button>`:''}
+        ${i.status!=='Void'&&CURRENT_USER&&CURRENT_USER.role==='owner'?`<button class="btn-red" onclick="voidInvoice(${i.id})">Void</button>`:''}
+      </td>
+    </tr>`).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--txt3);padding:20px">No invoices</td></tr>';
+}
+
+function refreshAccounts(){
+  const gross=STATE.sales.reduce((a,s)=>a+s.total,0);
+  const collected=STATE.sales.filter(s=>s.status==='Paid').reduce((a,s)=>a+s.total,0);
+  const pending=STATE.invoices.filter(i=>i.status==='Unpaid').reduce((a,i)=>a+i.total,0);
+  const deposited=STATE.deposits.reduce((a,d)=>a+d.amount,0);
+  document.getElementById('acct-gross').textContent=fmt(gross);
+  document.getElementById('acct-collected').textContent=fmt(collected);
+  document.getElementById('acct-pending').textContent=fmt(pending);
+  document.getElementById('acct-deposited').textContent=fmt(deposited);
+  document.getElementById('acct-net').textContent=fmt(collected-deposited);
+
+  // SKU breakdown
+  const skuMap={};
+  STATE.sales.forEach(s=>{ skuMap[s.product]=(skuMap[s.product]||0)+s.total; });
+  const skuEl=document.getElementById('sku-breakdown');
+  if(Object.keys(skuMap).length===0){ skuEl.innerHTML='<div style="color:var(--txt3);font-size:12px;text-align:center;padding:20px">No sales recorded</div>'; }
+  else { skuEl.innerHTML=Object.entries(skuMap).map(([k,v])=>`<div class="acct-row"><div class="acct-label">${k}</div><div class="acct-val positive">${fmt(v)}</div></div>`).join(''); }
+
+  // Agent breakdown
+  const agentMap={};
+  STATE.sales.forEach(s=>{ agentMap[s.agent]=(agentMap[s.agent]||0)+s.total; });
+  const agEl=document.getElementById('agent-breakdown');
+  if(Object.keys(agentMap).length===0){ agEl.innerHTML='<div style="color:var(--txt3);font-size:12px;text-align:center;padding:20px">No sales recorded</div>'; }
+  else { agEl.innerHTML=Object.entries(agentMap).map(([k,v])=>`<div class="acct-row"><div class="acct-label">${k}</div><div class="acct-val positive">${fmt(v)}</div></div>`).join(''); }
+
+  // Client accounts
+  const clientMap={};
+  STATE.sales.forEach(s=>{
+    if(!clientMap[s.client]) clientMap[s.client]={orders:0,total:0,paid:0,last:s.date};
+    clientMap[s.client].orders++;
+    clientMap[s.client].total+=s.total;
+    if(s.status==='Paid') clientMap[s.client].paid+=s.total;
+    if(s.date>clientMap[s.client].last) clientMap[s.client].last=s.date;
+  });
+  const ctbody=document.getElementById('client-tbody');
+  if(!ctbody) return;
+  ctbody.innerHTML=Object.entries(clientMap).map(([k,v])=>`
+    <tr>
+      <td style="font-weight:700">${k}</td>
+      <td>${v.orders}</td>
+      <td style="color:var(--gold2)">${fmt(v.total)}</td>
+      <td style="color:var(--green2)">${fmt(v.paid)}</td>
+      <td style="color:${v.total-v.paid>0?'#f87171':'var(--txt3)'}">${fmt(v.total-v.paid)}</td>
+      <td style="color:var(--txt3)">${v.last}</td>
+      <td><span class="badge ${v.total-v.paid>0?'badge-gold':'badge-green'}">${v.total-v.paid>0?'Has Balance':'Clear'}</span></td>
+    </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--txt3);padding:20px">No clients</td></tr>';
+}
+
+function refreshDeposits(){
+  const tbody=document.getElementById('dep-tbody');
+  if(!tbody) return;
+  tbody.innerHTML=STATE.deposits.map(d=>`
+    <tr>
+      <td style="color:var(--txt3)">#${d.id}</td>
+      <td>${d.date}</td>
+      <td style="font-weight:700;color:var(--green2)">${fmt(d.amount)}</td>
+      <td>${d.method}</td>
+      <td style="color:var(--txt3)">${d.ref||'—'}</td>
+      <td style="color:var(--txt3)">${d.agent}</td>
+      <td style="color:var(--txt3)">${d.notes||'—'}</td>
+    </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--txt3);padding:20px">No deposits</td></tr>';
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function exportData(type){
+  let csv='',fn='';
+  if(type==='sales'||type==='all'){
+    csv+='SALES\nID,Date,Client,Product,Qty,Unit Price,Total,Payment,Agent,Status\n';
+    STATE.sales.forEach(s=>{ csv+=`${s.id},${s.date},${s.client},${s.product},${s.qty},${s.price},${s.total},${s.payment},${s.agent},${s.status}\n`; });
+    fn='don_azul_sales.csv';
+  }
+  if(type==='invoices'||type==='all'){
+    csv+='\nINVOICES\nID,Date,Due,Client,Product,Qty,Total,Status,Agent\n';
+    STATE.invoices.forEach(i=>{ csv+=`${i.id},${i.date},${i.due},${i.client},${i.product},${i.qty},${i.total},${i.status},${i.agent}\n`; });
+    fn='don_azul_invoices.csv';
+  }
+  if(type==='deposits'||type==='all'){
+    csv+='\nDEPOSITS\nID,Date,Amount,Method,Reference,Agent,Notes\n';
+    STATE.deposits.forEach(d=>{ csv+=`${d.id},${d.date},${d.amount},${d.method},${d.ref||''},${d.agent},${d.notes||''}\n`; });
+    fn='don_azul_deposits.csv';
+  }
+  if(type==='all') fn='don_azul_full_export.csv';
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click();
+}
+</script>
+
+<!-- DON AZUL TAB -->
+<div id="tab-tequila" class="sec" style="display:none">
+  <div class="sec-hdr" style="background:linear-gradient(135deg,rgba(201,165,92,0.15),rgba(4,8,15,0));border-left:3px solid #C9A55C">
+    DON AZUL TEQUILA — SALES COMMAND
+    <div style="font-size:8px;color:var(--txt3,rgba(240,244,248,0.28));font-weight:400;margin-top:3px">Pricing · Commission · Territory · Routes · Email</div>
+  </div>
+  <div style="display:flex;gap:6px;padding:8px 0;border-bottom:1px solid rgba(201,165,92,0.2);margin-bottom:12px;flex-wrap:wrap">
+    <button onclick="datTab('pricing')" id="dt-pricing" class="dt-btn dt-on">PRICING</button>
+    <button onclick="datTab('commission')" id="dt-commission" class="dt-btn">COMMISSION</button>
+    <button onclick="datTab('territory')" id="dt-territory" class="dt-btn">TERRITORY</button>
+    <button onclick="datTab('routes')" id="dt-routes" class="dt-btn">ROUTES</button>
+    <button onclick="datTab('email')" id="dt-email" class="dt-btn">EMAIL</button>
+    <button onclick="datTab('inventory')" id="dt-inventory" class="dt-btn" style="color:#10b759;border-color:rgba(16,183,89,0.3)">INVENTORY</button>
+  </div>
+  <style>
+    .dt-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:6px;color:rgba(240,244,248,0.28);font-size:10px;font-weight:700;letter-spacing:1px;padding:6px 14px;cursor:pointer;text-transform:uppercase}
+    .dt-btn.dt-on{background:rgba(201,165,92,0.15);border-color:#C9A55C;color:#C9A55C}
+    .dat-sec{display:none}.dat-sec.dat-on{display:block}
+    .pt{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px}
+    .pt th{font-size:9px;color:rgba(240,244,248,0.28);text-transform:uppercase;letter-spacing:1px;padding:6px 8px;border-bottom:1px solid rgba(201,165,92,0.2);text-align:left}
+    .pt td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#f0f4f8;vertical-align:top}
+  </style>
+  <!-- PRICING -->
+  <div id="datsec-pricing" class="dat-sec dat-on">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">DON AZUL PREMIUM — Plant #1, Amatitan, Jalisco</div>
+    <table class="pt">
+      <thead><tr><th>SKU</th><th>Vol</th><th>Btl/Case</th><th>Dist $/Btl</th><th>MSRP</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td>DA-BLN-750</td><td>750ml</td><td>6</td><td>$28.00</td><td>$49.99</td><td>44%</td></tr>
+        <tr><td>DA-REP-750</td><td>750ml</td><td>6</td><td>$32.00</td><td>$54.99</td><td>42%</td></tr>
+        <tr><td>DA-ANE-750</td><td>750ml</td><td>6</td><td>$42.00</td><td>$69.99</td><td>40%</td></tr>
+        <tr><td>DA-EXT-750</td><td>750ml</td><td>6</td><td>$58.00</td><td>$94.99</td><td>39%</td></tr>
+        <tr><td>DA-BLN-1L</td><td>1L</td><td>6</td><td>$34.00</td><td>$59.99</td><td>43%</td></tr>
+        <tr><td>DA-REP-1L</td><td>1L</td><td>6</td><td>$38.00</td><td>$64.99</td><td>42%</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:9px;color:rgba(240,244,248,0.3);margin-top:4px">FOB Guadalajara · Min order 5 cases · Net 30 terms available</div>
+  </div>
+  <!-- COMMISSION -->
+  <div id="datsec-commission" class="dat-sec">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">COMMISSION STRUCTURE</div>
+    <table class="pt">
+      <thead><tr><th>Volume / Month</th><th>Commission</th><th>Bonus</th></tr></thead>
+      <tbody>
+        <tr><td>1–20 cases</td><td>8%</td><td>—</td></tr>
+        <tr><td>21–50 cases</td><td>10%</td><td>—</td></tr>
+        <tr><td>51–100 cases</td><td>12%</td><td>+$200 bonus</td></tr>
+        <tr><td>101–200 cases</td><td>14%</td><td>+$500 bonus</td></tr>
+        <tr><td>200+ cases</td><td>16%</td><td>+$1,000 bonus</td></tr>
+      </tbody>
+    </table>
+    <div style="padding:10px;background:rgba(15,123,65,0.08);border:1px solid rgba(15,123,65,0.2);border-radius:8px;font-size:10px;color:rgba(240,244,248,0.6);margin-top:10px">
+      Commissions paid monthly via Mexausa Food Group, Inc. Wire or ACH. Must submit invoice by last business day of month.
+    </div>
+  </div>
+  <!-- TERRITORY -->
+  <div id="datsec-territory" class="dat-sec">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">TERRITORY MAP</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="padding:10px;background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#C9A55C;font-weight:700;margin-bottom:6px">BAJA CALIFORNIA</div>
+        <div style="font-size:10px;color:#f0f4f8;line-height:1.7">Ensenada · Tijuana · Rosarito · Tecate · Mexicali</div>
+      </div>
+      <div style="padding:10px;background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#60a5fa;font-weight:700;margin-bottom:6px">CALIFORNIA</div>
+        <div style="font-size:10px;color:#f0f4f8;line-height:1.7">San Diego · LA Metro · Orange County · Coachella Valley</div>
+      </div>
+      <div style="padding:10px;background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#a78bfa;font-weight:700;margin-bottom:6px">JALISCO / SONORA</div>
+        <div style="font-size:10px;color:#f0f4f8;line-height:1.7">Guadalajara · Puerto Vallarta · Hermosillo · Nogales</div>
+      </div>
+      <div style="padding:10px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:8px">
+        <div style="font-size:9px;color:#22c55e;font-weight:700;margin-bottom:6px">EXPANSION</div>
+        <div style="font-size:10px;color:#f0f4f8;line-height:1.7">LATAM · Central America · Texas · Arizona</div>
+      </div>
+    </div>
+  </div>
+  <!-- ROUTES -->
+  <div id="datsec-routes" class="dat-sec">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">ROUTE PLANNER</div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.15);border-radius:8px;margin-bottom:10px">
+      <div style="font-size:9px;color:rgba(240,244,248,0.4);margin-bottom:6px">ROUTE A — BAJA NORTE WEEKLY</div>
+      <div style="font-size:10px;color:#f0f4f8;line-height:1.8">Ensenada → Rosarito → Tijuana → Tecate → Mexicali</div>
+      <div style="font-size:9px;color:rgba(201,165,92,0.6);margin-top:4px">~420 km · Est. 6 hrs · Monday recommended</div>
+    </div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(96,165,250,0.15);border-radius:8px;margin-bottom:10px">
+      <div style="font-size:9px;color:rgba(240,244,248,0.4);margin-bottom:6px">ROUTE B — CALIFORNIA CORRIDOR</div>
+      <div style="font-size:10px;color:#f0f4f8;line-height:1.8">San Diego → Chula Vista → National City → LA Metro</div>
+      <div style="font-size:9px;color:rgba(96,165,250,0.6);margin-top:4px">~200 km · Est. 3 hrs · Wednesday/Friday</div>
+    </div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(167,139,250,0.15);border-radius:8px">
+      <div style="font-size:9px;color:rgba(240,244,248,0.4);margin-bottom:6px">ROUTE C — JALISCO DISTRIBUTION</div>
+      <div style="font-size:10px;color:#f0f4f8;line-height:1.8">Amatitan (Plant) → Guadalajara → Puerto Vallarta</div>
+      <div style="font-size:9px;color:rgba(167,139,250,0.6);margin-top:4px">~340 km · Est. 4 hrs · Tuesday/Thursday</div>
+    </div>
+  </div>
+  <!-- EMAIL -->
+  <div id="datsec-email" class="dat-sec">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">EMAIL TEMPLATES</div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.15);border-radius:8px;margin-bottom:8px">
+      <div style="font-size:9px;color:#C9A55C;font-weight:700;margin-bottom:6px">INTRO / FIRST CONTACT</div>
+      <div style="font-size:10px;color:rgba(240,244,248,0.7);line-height:1.7">Subject: Don Azul Premium Tequila — Exclusive Distribution Opportunity<br><br>Hi [Name], I'm reaching out on behalf of Mexausa Food Group regarding Don Azul Premium Tequila, produced at Plant #1 in Amatitan, Jalisco. We are actively expanding distribution in your region and would love to schedule a tasting...</div>
+      <button onclick="navigator.clipboard.writeText('Subject: Don Azul Premium Tequila — Exclusive Distribution Opportunity
+
+Hi [Name], I'm reaching out on behalf of Mexausa Food Group regarding Don Azul Premium Tequila, produced at Plant #1 in Amatitan, Jalisco. We are actively expanding distribution in your region and would love to schedule a tasting.').then(function(){alert('Copied!')})" style="margin-top:8px;padding:5px 12px;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.3);border-radius:6px;color:#C9A55C;font-size:9px;font-weight:700;cursor:pointer">Copy Template</button>
+    </div>
+    <div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.15);border-radius:8px">
+      <div style="font-size:9px;color:#C9A55C;font-weight:700;margin-bottom:6px">FOLLOW UP</div>
+      <div style="font-size:10px;color:rgba(240,244,248,0.7);line-height:1.7">Subject: Follow Up — Don Azul Tequila Pricing & Samples<br><br>Hi [Name], following up on Don Azul Premium. I have pricing sheets and can arrange samples. Distributor margin runs 39-44% depending on SKU. Min 5 cases to start. Let me know a good time to connect.</div>
+      <button onclick="navigator.clipboard.writeText('Subject: Follow Up — Don Azul Tequila Pricing & Samples
+
+Hi [Name], following up on Don Azul Premium. I have pricing sheets and can arrange samples. Distributor margin runs 39-44% depending on SKU. Min 5 cases to start. Let me know a good time to connect.').then(function(){alert('Copied!')})" style="margin-top:8px;padding:5px 12px;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.3);border-radius:6px;color:#C9A55C;font-size:9px;font-weight:700;cursor:pointer">Copy Template</button>
+    </div>
+  </div>
+  <!-- INVENTORY -->
+  <div id="datsec-inventory" class="dat-sec">
+    <div style="font-size:10px;color:#10b759;font-weight:800;letter-spacing:2px;margin-bottom:10px">LIVE INVENTORY</div>
+    <div id="il-cards" style="font-size:11px;color:rgba(240,244,248,0.4);padding:8px 0">Loading...</div>
+    <button onclick="loadDonAzulInventory()" style="padding:7px 16px;background:rgba(16,183,89,0.15);border:1px solid rgba(16,183,89,0.3);border-radius:7px;color:#10b759;font-size:10px;font-weight:700;cursor:pointer;margin-top:8px">Refresh Inventory</button>
+  </div>
+</div>
+
+<script>
+function datTab(t){
+  document.querySelectorAll('.dat-sec').forEach(function(s){s.classList.remove('dat-on');});
+  document.querySelectorAll('.dt-btn').forEach(function(b){b.classList.remove('dt-on');});
+  var sec=document.getElementById('datsec-'+t);
+  var btn=document.getElementById('dt-'+t);
+  if(sec)sec.classList.add('dat-on');
+  if(btn)btn.classList.add('dt-on');
+  if(t==='inventory')loadDonAzulInventory();
+}
+var IL_BE='https://auditdna-backend-1-production.up.railway.app';
+function loadDonAzulInventory(){
+  var el=document.getElementById('il-cards');if(!el)return;
+  el.innerHTML='<div style="padding:8px;color:rgba(240,244,248,0.4)">Loading inventory...</div>';
+  fetch(IL_BE+'/api/don-azul/inventory')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d.ok){el.innerHTML='<div style="color:#f87171;padding:8px">'+d.error+'</div>';return;}
+      if(!d.inventory||!d.inventory.length){el.innerHTML='<div style="color:rgba(240,244,248,0.4);padding:8px">No inventory data yet.</div>';return;}
+      el.innerHTML=d.inventory.map(function(item){
+        var cs=item.btl_per_case||6;
+        return '<div style="padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.12);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">'
+          +'<div><div style="font-size:11px;font-weight:700;color:#f0f4f8">'+item.sku+'</div>'
+          +'<div style="font-size:9px;color:rgba(240,244,248,0.4)">'+item.description+'</div></div>'
+          +'<div style="text-align:right"><div style="font-size:12px;font-weight:800;color:#C9A55C">'+item.cases_available+' cs</div>'
+          +'<div style="font-size:8px;color:rgba(240,244,248,0.3)">'+(item.cases_available*cs)+' btl</div></div>'
+          +'</div>';
+      }).join('');
+    }).catch(function(){el.innerHTML='<div style="color:rgba(240,244,248,0.3);padding:8px">Inventory offline.</div>';});
+}
+function renderEmb(){
+  var el=document.getElementById('emb-list');if(!el)return;
+  var reg=(document.getElementById('emb-reg')||{}).value||'ALL';
+  var pri=(document.getElementById('emb-pri')||{}).value||'ALL';
+  var DATA=[
+    {n:'USDA Agricultural Marketing Service',e:'ams.py@usda.gov',p:'+1-202-720-8998',c:'USA',r:'TA',pv:'HIGH',role:'Produce Market News & Grading'},
+    {n:'USDA APHIS — Plant Health',e:'aphis.web@usda.gov',p:'+1-844-820-2234',c:'USA',r:'TA',pv:'HIGH',role:'Import/Export Plant Health'},
+    {n:'FDA — Food Safety / FSMA 204',e:'fdaemergency@fda.hhs.gov',p:'+1-866-300-4374',c:'USA',r:'TA',pv:'HIGH',role:'FSMA 204 Compliance'},
+    {n:'US Customs & Border Protection',e:'cbp_info@cbp.dhs.gov',p:'+1-877-227-5511',c:'USA',r:'TA',pv:'HIGH',role:'Import Clearance'},
+    {n:'SENASICA — Mexico',e:'senasica@senasica.gob.mx',p:'+52-800-751-9100',c:'Mexico',r:'TA',pv:'HIGH',role:'Phytosanitary Cert MX'},
+    {n:'SADER — Ministry of Agriculture MX',e:'contacto@sader.gob.mx',p:'+52-800-727-0700',c:'Mexico',r:'TA',pv:'HIGH',role:'Ag Ministry Mexico'},
+    {n:'ProMexico Trade Commission',e:'contacto@promexico.gob.mx',p:'+52-55-5447-7000',c:'Mexico',r:'TA',pv:'MED',role:'Trade & Investment MX'},
+    {n:'Guatemala — MAGA',e:'info@maga.gob.gt',p:'+502-2413-7000',c:'Guatemala',r:'CA',pv:'HIGH',role:'Ag Ministry Guatemala'},
+    {n:'Costa Rica — MAG',e:'despacho.mag@mag.go.cr',p:'+506-2231-2344',c:'Costa Rica',r:'CA',pv:'HIGH',role:'Ag Ministry Costa Rica'},
+    {n:'El Salvador — MAG',e:'info@mag.gob.sv',p:'+503-2210-1700',c:'El Salvador',r:'CA',pv:'MED',role:'Ag Ministry El Salvador'},
+    {n:'Honduras — SAG',e:'info@sag.gob.hn',p:'+504-2235-7695',c:'Honduras',r:'CA',pv:'MED',role:'Ag Ministry Honduras'},
+    {n:'Panama — MIDA',e:'info@mida.gob.pa',p:'+507-507-0600',c:'Panama',r:'CA',pv:'MED',role:'Ag Ministry Panama'},
+    {n:'Nicaragua — MAGFOR',e:'webmaster@magfor.gob.ni',p:'+505-2276-0200',c:'Nicaragua',r:'CA',pv:'LOW',role:'Ag Ministry Nicaragua'},
+    {n:'Peru — SENASA',e:'contacto@senasa.gob.pe',p:'+51-1-313-3300',c:'Peru',r:'SA',pv:'HIGH',role:'Phytosanitary Peru'},
+    {n:'Chile — SAG',e:'sag@sag.gob.cl',p:'+56-2-2345-1100',c:'Chile',r:'SA',pv:'HIGH',role:'Ag & Livestock Chile'},
+    {n:'Colombia — ICA',e:'contactenos@ica.gov.co',p:'+57-1-648-0000',c:'Colombia',r:'SA',pv:'HIGH',role:'Agriculture Institute Colombia'},
+    {n:'Ecuador — AGROCALIDAD',e:'agrocalidad@agrocalidad.gob.ec',p:'+593-2-256-5346',c:'Ecuador',r:'SA',pv:'MED',role:'Phytosanitary Ecuador'},
+    {n:'Brazil — MAPA',e:'ouvidoria@agricultura.gov.br',p:'+55-61-3218-2828',c:'Brazil',r:'SA',pv:'HIGH',role:'Ag Ministry Brazil'},
+  ];
+  var f=DATA.filter(function(d){return(reg==='ALL'||d.r===reg)&&(pri==='ALL'||d.pv===pri);});
+  if(!f.length){el.innerHTML='<div style="color:rgba(240,244,248,0.4);padding:8px">No contacts for filter.</div>';return;}
+  var pc={'HIGH':'rgba(244,63,94,0.12)','MED':'rgba(245,158,11,0.10)','LOW':'rgba(100,116,139,0.10)'};
+  var tc={'HIGH':'#f43f5e','MED':'#f59e0b','LOW':'#64748b'};
+  el.innerHTML=f.map(function(d){
+    return '<div style="padding:9px 11px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(192,200,216,0.1);margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px">'
+      +'<div style="flex:1">'
+      +'<div style="font-size:11px;font-weight:700;color:#f0f4f8;margin-bottom:2px">'+d.n+'</div>'
+      +'<div style="font-size:9px;color:rgba(240,244,248,0.35);margin-bottom:5px">'+d.c+' · '+d.role+'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+      +'<button data-email="'+d.e+'" onclick="copyEmail(this)" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:5px;color:#C9A55C;font-size:9px;padding:3px 8px;cursor:pointer">'+d.e+'</button>'
+      +'<a href="tel:'+d.p+'" style="background:rgba(192,200,216,0.07);border:1px solid rgba(192,200,216,0.15);border-radius:5px;color:rgba(192,200,216,0.7);font-size:9px;padding:3px 8px;text-decoration:none">'+d.p+'</a>'
+      +'</div></div>'
+      +'<span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:99px;background:'+pc[d.pv]+';color:'+tc[d.pv]+';white-space:nowrap">'+d.pv+'</span>'
+      +'</div>';
+  }).join('');
+}
+function copyAllEmb(){
+  renderEmb();
+  setTimeout(function(){
+    var btns=document.querySelectorAll('#emb-list button');
+    var emails=[];
+    btns.forEach(function(b){var t=b.textContent.trim();if(t.indexOf('@')>0)emails.push(t);});
+    if(!emails.length){alert('No emails loaded.');return;}
+    navigator.clipboard.writeText(emails.join(', ')).then(function(){alert('Copied '+emails.length+' emails!');}).catch(function(){prompt('Emails:',emails.join(', '));});
+  },300);
+}
+
+
+function copyEmail(btn){var em=btn.getAttribute('data-email');if(navigator.clipboard){navigator.clipboard.writeText(em).then(function(){var t=btn.textContent;btn.textContent='Copied!';setTimeout(function(){btn.textContent=t;},1500);});}}</script>
+
+<div id="loaf-feature-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:8px 10px;display:flex;gap:5px;align-items:center">
+  <a href="/mfginc-loaf.html" style="flex:1;text-align:center;text-decoration:none"><div style="font-size:7px;font-weight:900;color:#C9A55C;letter-spacing:1px">LOAF</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','welink')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(15,123,65,0.12);border:1px solid rgba(15,123,65,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#4ade80;line-height:1.4">WE<br>LINK</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','wesource')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#C9A55C;line-height:1.4">WE<br>SOURCE</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','aglab')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#60a5fa;line-height:1.4">AG<br>LAB</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','factor')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#a78bfa;line-height:1.4">FACTOR<br>PO</div></a>
+  <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','aiagents')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#fbbf24;line-height:1.4">AI<br>AGENTS</div></a>
+</div>
+</body>
+</html>

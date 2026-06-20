@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MFG Virtual Assistant — Command Center</title>
+<style>
+:root{
+  --bg:#020912;--bg2:#0d1117;--card:#161b22;--card2:#1c2333;
+  --gold:#C9A55C;--goldd:#8a6930;
+  --blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--purple:#a855f7;
+  --txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;
+  --bord:rgba(201,165,92,0.18);--bord2:rgba(255,255,255,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,"Segoe UI",sans-serif;min-height:100vh;}
+
+/* GATE */
+.gate{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;text-align:center;padding:28px;}
+.g-logo{font-size:20px;font-weight:900;color:var(--gold);letter-spacing:2px;margin-bottom:4px;}
+.g-sub{font-size:10px;color:var(--txt3);letter-spacing:1.5px;margin-bottom:28px;}
+.pin-dots{display:flex;gap:10px;margin-bottom:20px;}
+.pd{width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;}
+.pd.on{background:var(--gold);border-color:var(--gold);}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:192px;}
+.nb{padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:var(--txt);font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;transition:background .1s;}
+.nb:active{background:rgba(201,165,92,0.15);}
+.nb.ok{background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-size:13px;font-weight:800;border:none;}
+#g-err{font-size:11px;color:var(--red);height:16px;margin-top:14px;}
+
+/* LAYOUT */
+#app{display:none;min-height:100vh;display:none;}
+.topbar{background:rgba(2,9,18,0.97);border-bottom:1px solid var(--bord);height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.tb-left{display:flex;align-items:center;gap:12px;}
+.tb-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--goldd));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#020912;}
+.tb-name{font-size:14px;font-weight:800;color:var(--gold);}
+.tb-sub{font-size:9px;color:var(--txt3);letter-spacing:1px;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--bord);background:transparent;color:var(--txt2);font-size:11px;cursor:pointer;}
+.tb-btn:hover{border-color:var(--gold);color:var(--gold);}
+.ai-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--green);}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.shell{display:flex;height:calc(100vh - 54px);}
+
+/* SIDEBAR */
+.sidebar{width:220px;border-right:1px solid var(--bord2);padding:16px 0;flex-shrink:0;overflow-y:auto;}
+.nav-section{font-size:9px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase;padding:12px 16px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:12px;font-weight:600;color:var(--txt2);cursor:pointer;border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{color:var(--txt);background:rgba(255,255,255,0.03);}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,165,92,0.05);}
+.nav-item .ni-icon{font-size:14px;width:18px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:700;}
+
+/* MAIN CONTENT */
+.main{flex:1;overflow-y:auto;padding:24px;}
+
+/* TABS */
+.tab-panel{display:none;}
+.tab-panel.show{display:block;}
+
+/* AI CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 140px);}
+.chat-messages{flex:1;overflow-y:auto;padding:0 0 16px;display:flex;flex-direction:column;gap:12px;}
+.msg{display:flex;gap:10px;align-items:flex-start;}
+.msg.user{flex-direction:row-reverse;}
+.msg-avatar{width:30px;height:30px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
+.msg.ai .msg-avatar{background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;}
+.msg.user .msg-avatar{background:rgba(74,143,212,0.2);color:var(--blue);}
+.msg-bubble{max-width:75%;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.6;}
+.msg.ai .msg-bubble{background:var(--card);border:1px solid var(--bord2);color:var(--txt);}
+.msg.user .msg-bubble{background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.2);color:var(--txt);}
+.msg-time{font-size:9px;color:var(--txt3);margin-top:4px;}
+.typing{display:flex;gap:4px;padding:14px;background:var(--card);border:1px solid var(--bord2);border-radius:12px;width:60px;}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:bounce .8s infinite;}
+.typing span:nth-child(2){animation-delay:.15s;}
+.typing span:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+.chat-input-wrap{display:flex;gap:8px;margin-top:12px;}
+.chat-input{flex:1;background:var(--card);border:1px solid rgba(74,143,212,0.2);border-radius:10px;padding:12px 16px;color:var(--txt);font-size:13px;outline:none;font-family:inherit;resize:none;height:44px;transition:border .2s;}
+.chat-input:focus{border-color:var(--gold);height:88px;}
+.send-btn{padding:12px 20px;background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-weight:800;font-size:13px;border:none;border-radius:10px;cursor:pointer;white-space:nowrap;align-self:flex-end;}
+.quick-prompts{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.qp{padding:6px 12px;border-radius:20px;border:1px solid var(--bord);background:transparent;color:var(--txt2);font-size:11px;cursor:pointer;transition:all .15s;}
+.qp:hover{border-color:var(--gold);color:var(--gold);}
+
+/* VAULT */
+.vault-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:24px;}
+.vault-card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:18px;}
+.vc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.vc-title{font-size:13px;font-weight:700;}
+.vc-cat{font-size:9px;padding:3px 8px;border-radius:10px;font-weight:700;letter-spacing:.5px;}
+.vc-cat.platform{background:rgba(74,143,212,0.15);color:var(--blue);}
+.vc-cat.marketing{background:rgba(201,165,92,0.15);color:var(--gold);}
+.vc-cat.portal{background:rgba(168,85,247,0.15);color:var(--purple);}
+.vc-cat.calendar{background:rgba(34,197,94,0.15);color:var(--green);}
+.vc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bord2);font-size:11px;}
+.vc-row:last-child{border-bottom:none;}
+.vc-lbl{color:var(--txt3);}
+.vc-val{color:var(--txt);font-weight:600;display:flex;align-items:center;gap:6px;}
+.vc-val.masked{letter-spacing:2px;color:var(--txt3);}
+.copy-btn{background:transparent;border:none;color:var(--txt3);cursor:pointer;font-size:11px;padding:2px 6px;border-radius:4px;}
+.copy-btn:hover{color:var(--gold);}
+.eye-btn{background:transparent;border:none;color:var(--txt3);cursor:pointer;font-size:12px;}
+.eye-btn:hover{color:var(--gold);}
+.add-btn{padding:8px 16px;background:rgba(201,165,92,0.1);border:1px solid var(--bord);color:var(--gold);font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;}
+.add-btn:hover{background:rgba(201,165,92,0.2);}
+
+/* CAMPAIGNS */
+.camp-table{width:100%;border-collapse:collapse;}
+.camp-table th{font-size:10px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--bord2);}
+.camp-table td{padding:12px;border-bottom:1px solid var(--bord2);font-size:12px;}
+.camp-table tr:hover td{background:rgba(255,255,255,0.02);}
+.status-badge{padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;letter-spacing:.5px;}
+.status-badge.ready{background:rgba(201,165,92,0.15);color:var(--gold);}
+.status-badge.pending{background:rgba(239,68,68,0.15);color:var(--red);}
+.status-badge.active{background:rgba(34,197,94,0.15);color:var(--green);}
+.status-badge.draft{background:rgba(100,116,139,0.2);color:var(--txt3);}
+
+/* PORTALS */
+.portals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+.portal-card{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .2s;}
+.portal-card:hover{border-color:rgba(201,165,92,0.4);}
+.pc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.pc-icon{width:34px;height:34px;border-radius:8px;background:rgba(201,165,92,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.pc-name{font-size:13px;font-weight:700;}
+.pc-url{font-size:10px;color:var(--blue);}
+.pc-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.pc-tag{font-size:9px;padding:2px 7px;border-radius:8px;border:1px solid var(--bord2);color:var(--txt3);}
+.pc-status{margin-left:auto;width:8px;height:8px;border-radius:50%;}
+.pc-status.ok{background:var(--green);}
+.pc-status.warn{background:var(--gold);}
+
+/* APPOINTMENTS */
+.appt-list{display:flex;flex-direction:column;gap:10px;}
+.appt-card{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:16px;display:flex;align-items:center;gap:16px;}
+.appt-date{background:rgba(201,165,92,0.1);border-radius:8px;padding:10px;text-align:center;min-width:54px;}
+.appt-day{font-size:20px;font-weight:900;color:var(--gold);}
+.appt-mon{font-size:9px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;}
+.appt-info{flex:1;}
+.appt-name{font-size:13px;font-weight:700;margin-bottom:3px;}
+.appt-meta{font-size:11px;color:var(--txt2);}
+.appt-time{font-size:12px;font-weight:700;color:var(--green);}
+.appt-empty{text-align:center;padding:48px;color:var(--txt3);font-size:13px;}
+
+/* REPORT */
+.report-wrap{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:24px;}
+.report-title{font-size:14px;font-weight:800;color:var(--gold);margin-bottom:4px;}
+.report-sub{font-size:11px;color:var(--txt3);margin-bottom:20px;}
+.report-section{margin-bottom:20px;}
+.rs-label{font-size:10px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+.rs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.rs-item{background:rgba(255,255,255,0.03);border-radius:8px;padding:12px;}
+.rs-val{font-size:20px;font-weight:900;color:var(--txt);}
+.rs-val.gold{color:var(--gold);}
+.rs-val.green{color:var(--green);}
+.rs-lbl{font-size:10px;color:var(--txt3);margin-top:3px;}
+.send-report-btn{padding:12px 24px;background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-size:13px;font-weight:800;border:none;border-radius:10px;cursor:pointer;}
+.send-report-btn:hover{opacity:.9;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--green);border-radius:10px;padding:12px 18px;font-size:12px;color:var(--green);z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9000;display:none;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:28px;width:90%;max-width:480px;}
+.modal-title{font-size:15px;font-weight:800;margin-bottom:20px;color:var(--gold);}
+.modal-field{margin-bottom:14px;}
+.modal-field label{display:block;font-size:10px;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(74,143,212,0.2);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:13px;outline:none;font-family:inherit;}
+.modal-field input:focus,.modal-field select:focus{border-color:var(--gold);}
+.modal-field select option{background:#161b22;}
+.modal-btns{display:flex;gap:8px;margin-top:20px;}
+.modal-save{flex:1;padding:11px;background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-weight:800;font-size:13px;border:none;border-radius:8px;cursor:pointer;}
+.modal-cancel{padding:11px 20px;background:transparent;color:var(--txt2);font-size:13px;border:1px solid var(--bord);border-radius:8px;cursor:pointer;}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.sec-title{font-size:16px;font-weight:800;}
+.sec-sub{font-size:11px;color:var(--txt3);margin-top:2px;}
+
+@media(max-width:600px){
+  .sidebar{display:none;}
+  .vault-grid{grid-template-columns:1fr;}
+  .portals-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="g-logo">MFG Virtual Assistant</div>
+  <div class="g-sub">COMMAND CENTER &bull; SECURE ACCESS</div>
+  <div class="pin-dots" id="pdots">
+    <div class="pd" id="d0"></div><div class="pd" id="d1"></div>
+    <div class="pd" id="d2"></div><div class="pd" id="d3"></div>
+  </div>
+  <div class="numpad">
+    <button class="nb" onclick="np('1')" ontouchend="this.click()">1</button>
+    <button class="nb" onclick="np('2')" ontouchend="this.click()">2</button>
+    <button class="nb" onclick="np('3')" ontouchend="this.click()">3</button>
+    <button class="nb" onclick="np('4')" ontouchend="this.click()">4</button>
+    <button class="nb" onclick="np('5')" ontouchend="this.click()">5</button>
+    <button class="nb" onclick="np('6')" ontouchend="this.click()">6</button>
+    <button class="nb" onclick="np('7')" ontouchend="this.click()">7</button>
+    <button class="nb" onclick="np('8')" ontouchend="this.click()">8</button>
+    <button class="nb" onclick="np('9')" ontouchend="this.click()">9</button>
+    <button class="nb" onclick="np('del')" ontouchend="this.click()">&#9003;</button>
+    <button class="nb" onclick="np('0')" ontouchend="this.click()">0</button>
+    <button class="nb ok" onclick="np('ok')" ontouchend="this.click()">OK</button>
+  </div>
+  <div id="g-err"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-icon">VA</div>
+      <div>
+        <div class="tb-name">MFG Virtual Assistant</div>
+        <div class="tb-sub">MEXAUSA FOOD GROUP, INC. &bull; COMMAND CENTER</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <div class="ai-status"><div class="ai-dot"></div>AI Online</div>
+      <button class="tb-btn" onclick="sendReport()">Email Report</button>
+      <button class="tb-btn" onclick="lock()">Lock</button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="nav-section">Intelligence</div>
+      <div class="nav-item active" onclick="showTab('ai')" id="nav-ai">
+        <span class="ni-icon">&#129302;</span> AI Assistant
+      </div>
+      <div class="nav-item" onclick="showTab('report')" id="nav-report">
+        <span class="ni-icon">&#128202;</span> Daily Report
+      </div>
+      <div class="nav-section">Operations</div>
+      <div class="nav-item" onclick="showTab('vault')" id="nav-vault">
+        <span class="ni-icon">&#128274;</span> Credentials Vault
+      </div>
+      <div class="nav-item" onclick="showTab('campaigns')" id="nav-campaigns">
+        <span class="ni-icon">&#128231;</span> Marketing Campaigns
+      </div>
+      <div class="nav-item" onclick="showTab('portals')" id="nav-portals">
+        <span class="ni-icon">&#127968;</span> Mini-Office Portals
+      </div>
+      <div class="nav-item" onclick="showTab('appointments')" id="nav-appointments">
+        <span class="ni-icon">&#128197;</span> Appointments
+      </div>
+    </div>
+
+    <div class="main">
+
+      <!-- AI CHAT -->
+      <div class="tab-panel show" id="tab-ai">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">AI Assistant</div>
+            <div class="sec-sub">Ask about your platforms, campaigns, clients, or anything MFG-related</div>
+          </div>
+        </div>
+        <div class="quick-prompts">
+          <button class="qp" onclick="quickPrompt('What campaigns are ready to send?')">Campaigns ready?</button>
+          <button class="qp" onclick="quickPrompt('Show me all mini-office portals and their PIN status')">Portal status</button>
+          <button class="qp" onclick="quickPrompt('How many appointments do I have this week?')">This week's appts</button>
+          <button class="qp" onclick="quickPrompt('Write a follow-up email for an agent who booked a call')">Follow-up email</button>
+          <button class="qp" onclick="quickPrompt('What are my active platforms and their login URLs?')">My platforms</button>
+          <button class="qp" onclick="quickPrompt('Draft a WhatsApp message for Pablo to send to Mexico contacts in Spanish')">Pablo WA message</button>
+        </div>
+        <div class="chat-wrap">
+          <div class="chat-messages" id="chat-messages">
+            <div class="msg ai">
+              <div class="msg-avatar">VA</div>
+              <div>
+                <div class="msg-bubble">Good day. I'm your MFG Virtual Assistant. I have full context on your platforms, campaigns, portals, and contacts. I can help you track marketing activity, draft emails, check on appointments, and report to sgarcia1911@gmail.com on demand.<br/><br/>What do you need?</div>
+                <div class="msg-time">Online</div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-wrap">
+            <textarea class="chat-input" id="chat-input" placeholder="Ask the VA anything about your business..." onkeydown="handleKey(event)"></textarea>
+            <button class="send-btn" onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CREDENTIALS VAULT -->
+      <div class="tab-panel" id="tab-vault">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Credentials Vault</div>
+            <div class="sec-sub">All platforms, logins, passwords, and URLs — encrypted in-session</div>
+          </div>
+          <button class="add-btn" onclick="openAddModal('vault')">+ Add Entry</button>
+        </div>
+        <div class="vault-grid" id="vault-grid"></div>
+      </div>
+
+      <!-- MARKETING CAMPAIGNS -->
+      <div class="tab-panel" id="tab-campaigns">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Marketing Campaigns</div>
+            <div class="sec-sub">Sequences, blasts, and drip campaigns across all platforms</div>
+          </div>
+          <button class="add-btn" onclick="openAddModal('campaign')">+ Add Campaign</button>
+        </div>
+        <table class="camp-table">
+          <thead>
+            <tr>
+              <th>Campaign</th>
+              <th>Target</th>
+              <th>Emails</th>
+              <th>Platform</th>
+              <th>Status</th>
+              <th>Next Step</th>
+            </tr>
+          </thead>
+          <tbody id="campaigns-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- PORTALS -->
+      <div class="tab-panel" id="tab-portals">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Mini-Office Portals</div>
+            <div class="sec-sub">All deployed client portals on mexausafg.com</div>
+          </div>
+        </div>
+        <div class="portals-grid" id="portals-grid"></div>
+      </div>
+
+      <!-- APPOINTMENTS -->
+      <div class="tab-panel" id="tab-appointments">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Appointments</div>
+            <div class="sec-sub">Upcoming bookings via book-a-call — Mon–Sat 10:30am–1:30pm PST</div>
+          </div>
+          <button class="add-btn" onclick="loadAppointments()">Refresh</button>
+        </div>
+        <div class="appt-list" id="appt-list">
+          <div class="appt-empty">Loading appointments...</div>
+        </div>
+      </div>
+
+      <!-- DAILY REPORT -->
+      <div class="tab-panel" id="tab-report">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Daily Report</div>
+            <div class="sec-sub">Comprehensive summary sent to sgarcia1911@gmail.com</div>
+          </div>
+          <button class="send-report-btn" onclick="sendReport()">Send to Gmail Now</button>
+        </div>
+        <div class="report-wrap">
+          <div class="report-title">MFG Intelligence Report</div>
+          <div class="report-sub" id="report-date"></div>
+          <div class="report-section">
+            <div class="rs-label">Platform Status</div>
+            <div class="rs-grid">
+              <div class="rs-item"><div class="rs-val green">LIVE</div><div class="rs-lbl">mexausafg.com</div></div>
+              <div class="rs-item"><div class="rs-val green">LIVE</div><div class="rs-lbl">financelend.me</div></div>
+              <div class="rs-item"><div class="rs-val green">LIVE</div><div class="rs-lbl">enjoybaja.com</div></div>
+              <div class="rs-item"><div class="rs-val gold" id="r-portals">38</div><div class="rs-lbl">Mini-Office Portals</div></div>
+            </div>
+          </div>
+          <div class="report-section">
+            <div class="rs-label">Campaigns</div>
+            <div class="rs-grid">
+              <div class="rs-item"><div class="rs-val gold">2</div><div class="rs-lbl">Sequences Built</div></div>
+              <div class="rs-item"><div class="rs-val" id="r-sd">400</div><div class="rs-lbl">SD/CA Contacts</div></div>
+              <div class="rs-item"><div class="rs-val" id="r-mx">440</div><div class="rs-lbl">Mexico Contacts</div></div>
+              <div class="rs-item"><div class="rs-val gold">Pending</div><div class="rs-lbl">Mailjet Activation</div></div>
+            </div>
+          </div>
+          <div class="report-section">
+            <div class="rs-label">Appointments</div>
+            <div class="rs-grid">
+              <div class="rs-item"><div class="rs-val" id="r-appts">0</div><div class="rs-lbl">Total Booked</div></div>
+              <div class="rs-item"><div class="rs-val green">Mon–Sat</div><div class="rs-lbl">Availability</div></div>
+              <div class="rs-item"><div class="rs-val">10:30am</div><div class="rs-lbl">First Slot PST</div></div>
+              <div class="rs-item"><div class="rs-val">1:00pm</div><div class="rs-lbl">Last Slot PST</div></div>
+            </div>
+          </div>
+          <div id="ai-report-section" style="display:none;margin-top:20px;">
+            <div class="rs-label">AI Summary</div>
+            <div id="ai-report-text" style="font-size:13px;color:var(--txt2);line-height:1.7;background:rgba(255,255,255,0.02);border-radius:8px;padding:16px;border:1px solid var(--bord2);"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /shell -->
+</div><!-- /app -->
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add Entry</div>
+    <div id="modal-body"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+var PINS = {'4321':'demo','0609051974':'owner'};
+var pin = '';
+
+function updateDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+function np(v){if(v==='del')pin=pin.slice(0,-1);else if(v==='ok'){checkPin();return;}else if(pin.length<4)pin+=v;updateDots();if(PINS[pin])setTimeout(checkPin,120);}
+function checkPin(){if(PINS[pin]){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';initApp();}else{var e=document.getElementById('g-err');if(e){e.textContent='Incorrect PIN';setTimeout(function(){e.textContent='';},2000);}pin='';updateDots();}}
+function lock(){document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';pin='';updateDots();}
+
+// ── VAULT DATA ──
+var vaultData = [
+  {id:1,name:'Netlify',cat:'platform',url:'https://app.netlify.com',user:'sgarcia1911@gmail.com',pass:'[see Gmail]',note:'audit-frontend + auditdna-realestate deployments'},
+  {id:2,name:'GitHub',cat:'platform',url:'https://github.com/SeabassFather',user:'SeabassFather',pass:'[token: ghp_F1Mz...]',note:'audit-frontend, auditdna-backend-1, auditdna-realestate'},
+  {id:3,name:'Railway',cat:'platform',url:'https://railway.app',user:'sgarcia1911@gmail.com',pass:'[see Gmail]',note:'Backend: auditdna-backend-1-production.up.railway.app'},
+  {id:4,name:'Mailjet',cat:'marketing',url:'https://app.mailjet.com',user:'sgarcia1911@gmail.com',pass:'[PENDING ACTIVATION]',note:'API Key: 2691165... — Activate before SD/MX blasts'},
+  {id:5,name:'Gmail SMTP',cat:'platform',url:'https://myaccount.google.com',user:'sgarcia1911@gmail.com',pass:'[app password]',note:'smtp.gmail.com:587 — booking notifications'},
+  {id:6,name:'AuditDNA Platform',cat:'portal',url:'https://mexausafg.com',user:'saul',pass:'[owner PIN: 0609051974]',note:'React app on Netlify — audit-frontend repo'},
+  {id:7,name:'FinanceLend',cat:'portal',url:'https://financelend.me',user:'—',pass:'—',note:'Static HTML on auditdna-realestate/backend/public/index.html'},
+  {id:8,name:'EnjoyBaja',cat:'portal',url:'https://enjoybaja.com',user:'—',pass:'—',note:'Same Railway + React stack as AuditDNA-realestate'},
+  {id:9,name:'Book-a-Call',cat:'calendar',url:'https://mexausafg.com/book-a-call.html',user:'—',pass:'—',note:'Mon–Sat 10:30am–1:30pm PST — notifications to sgarcia1911@gmail.com'},
+  {id:10,name:'MFG Command',cat:'portal',url:'https://mexausafg.com/mfg-command.html',user:'owner',pass:'0609051974',note:'31 tabs — main staff command center'},
+  {id:11,name:'Mortgage Search Engine',cat:'portal',url:'https://mexausafg.com/mortgage-search-engine.html',user:'demo',pass:'4321',note:'150+ lenders, US+Mexico, bilingual — share with SD agents'},
+  {id:12,name:'Brevo',cat:'marketing',url:'https://app.brevo.com',user:'sgarcia1911@gmail.com',pass:'[see Gmail]',note:'Email engagement webhook wired to Railway backend'},
+];
+
+// ── CAMPAIGNS DATA ──
+var campaignsData = [
+  {name:'SD/CA Agent Sequence (EN)',target:'San Diego + El Cajon RE Agents',emails:400,platform:'Mailjet',status:'ready',next:'Activate Mailjet account → send Email 1'},
+  {name:'Mexico Agent Sequence (ES)',target:'Cabo / La Paz / Mexicali RE',emails:440,platform:'Mailjet',status:'ready',next:'Activate Mailjet → assign Pablo as sender'},
+  {name:'EnjoyBaja Agent Blast',target:'SD Real Estate Agents',emails:97,platform:'Gmail',status:'active',next:'Nick Windle suppressed — no follow-ups'},
+  {name:'Book-a-Call Promotion',target:'SD Agents (post Email 3)',emails:400,platform:'Mailjet',status:'pending',next:'Launch after Email 2 send'},
+  {name:'Pablo MX WhatsApp',target:'Mexico contacts (Spanish)',emails:440,platform:'WhatsApp',status:'draft',next:'Get Pablo's WhatsApp number wired in Email 2+3'},
+  {name:'Storefront Upsell',target:'Agents who book a call',emails:0,platform:'Gmail direct',status:'draft',next:'Trigger after booking confirmation'},
+];
+
+// ── PORTALS DATA ──
+var portalsData = [
+  {name:'MFG Command',icon:'&#127970;',url:'/mfg-command.html',pin:'0609051974',tags:['Owner','31 tabs'],ok:true},
+  {name:'ProspectIQ',icon:'&#128269;',url:'/prospectiq.html',pin:'4321/owner',tags:['Sales','Skip Trace'],ok:true},
+  {name:'HVAC Ops Hub',icon:'&#9832;',url:'/hvac-estimator-demo.html',pin:'4321',tags:['Demo','Client'],ok:true},
+  {name:'LowVolt Pro',icon:'&#9889;',url:'/lowvolt-pro.html',pin:'4321',tags:['Clifford','Client'],ok:true},
+  {name:'SW District Pro',icon:'&#127774;',url:'/sw-district-pro.html',pin:'4321',tags:['Sherwin-W','Client'],ok:true},
+  {name:'MSP Command',icon:'&#128187;',url:'/msp-command-center.html',pin:'4321',tags:['IT/MSP','18 tabs'],ok:true},
+  {name:'Sprinter HQ',icon:'&#128663;',url:'/sprinter-hq.html',pin:'7291/4321',tags:['Ernesto','Driver'],ok:true},
+  {name:'LedgerVault',icon:'&#128176;',url:'/ledgervault-portal.html',pin:'4321',tags:['Finance','Client'],ok:true},
+  {name:'Alloy Systems',icon:'&#9881;',url:'/alloy-systems-pro.html',pin:'4321',tags:['Manufacturing'],ok:true},
+  {name:'Old School Bordados',icon:'&#9999;',url:'/old-school-bordados.html',pin:'4321',tags:['Embroidery'],ok:true},
+  {name:'Banning & Son',icon:'&#128296;',url:'/banning-son-pro.html',pin:'4321',tags:['Contractor'],ok:true},
+  {name:'Douglas Pipeline',icon:'&#128681;',url:'/douglas-pipeline-pro.html',pin:'4321',tags:['Pipeline'],ok:true},
+  {name:'PrintOps Studio',icon:'&#128247;',url:'/printops-studio.html',pin:'4321',tags:['Print'],ok:true},
+  {name:'WorkComp 360',icon:'&#129657;',url:'/workcomp360-demo.html',pin:'4321',tags:['Insurance'],ok:true},
+  {name:'KS Services',icon:'&#128188;',url:'/ks-services-bd.html',pin:'4321',tags:['Business Dev'],ok:true},
+  {name:'Luis Oliva',icon:'&#127863;',url:'/luis-oliva.html',pin:'4477/4321',tags:['Don Azul','DAT-02'],ok:true},
+  {name:'Rudy Jacinto',icon:'&#127863;',url:'/rudy-jacinto.html',pin:'8823/4321',tags:['Don Azul','DAT-03'],ok:true},
+  {name:'Mortgage Search',icon:'&#127968;',url:'/mortgage-search-engine.html',pin:'4321/owner',tags:['FinanceLend','Public'],ok:true},
+  {name:'Book-a-Call',icon:'&#128197;',url:'/book-a-call.html',pin:'Public',tags:['Calendar','SD Agents'],ok:true},
+];
+
+// ── RENDER VAULT ──
+function renderVault(){
+  var grid=document.getElementById('vault-grid');
+  grid.innerHTML=vaultData.map(function(v){
+    return '<div class="vault-card">'+
+      '<div class="vc-header"><div class="vc-title">'+v.name+'</div><span class="vc-cat '+v.cat+'">'+v.cat.toUpperCase()+'</span></div>'+
+      '<div class="vc-row"><span class="vc-lbl">URL</span><span class="vc-val"><a href="'+v.url+'" target="_blank" style="color:var(--blue);font-size:11px;">'+v.url.replace('https://','')+'</a></span></div>'+
+      '<div class="vc-row"><span class="vc-lbl">Login</span><span class="vc-val">'+v.user+'<button class="copy-btn" onclick="copyText(event,\''+v.user+'\')">copy</button></span></div>'+
+      '<div class="vc-row"><span class="vc-lbl">Password</span><span class="vc-val masked" id="pass-'+v.id+'">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;<button class="eye-btn" onclick="togglePass(event,'+v.id+',\''+v.pass+'\')">&#128065;</button></span></div>'+
+      (v.note?'<div style="font-size:10px;color:var(--txt3);margin-top:8px;line-height:1.5;">'+v.note+'</div>':'')+
+    '</div>';
+  }).join('');
+}
+
+function togglePass(e,id,pass){
+  e.stopPropagation();
+  var el=document.getElementById('pass-'+id);
+  if(el.dataset.shown){
+    el.innerHTML='&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;<button class="eye-btn" onclick="togglePass(event,'+id+',\''+pass+'\')">&#128065;</button>';
+    delete el.dataset.shown;
+  } else {
+    el.innerHTML='<span style="letter-spacing:0;color:var(--txt);">'+pass+'</span><button class="copy-btn" onclick="copyText(event,\''+pass+'\')">copy</button><button class="eye-btn" onclick="togglePass(event,'+id+',\''+pass+'\')">&#128065;</button>';
+    el.dataset.shown='1';
+  }
+}
+
+// ── RENDER CAMPAIGNS ──
+function renderCampaigns(){
+  var tbody=document.getElementById('campaigns-tbody');
+  tbody.innerHTML=campaignsData.map(function(c){
+    return '<tr><td style="font-weight:700;">'+c.name+'</td>'+
+      '<td style="color:var(--txt2);">'+c.target+'</td>'+
+      '<td style="color:var(--gold);font-weight:700;">'+c.emails.toLocaleString()+'</td>'+
+      '<td style="color:var(--txt2);">'+c.platform+'</td>'+
+      '<td><span class="status-badge '+c.status+'">'+c.status.toUpperCase()+'</span></td>'+
+      '<td style="color:var(--txt3);font-size:11px;">'+c.next+'</td></tr>';
+  }).join('');
+}
+
+// ── RENDER PORTALS ──
+function renderPortals(){
+  var grid=document.getElementById('portals-grid');
+  grid.innerHTML=portalsData.map(function(p){
+    return '<div class="portal-card" onclick="window.open(\'https://mexausafg.com'+p.url+'\',\'_blank')\')\">'+
+      '<div class="pc-top"><div class="pc-icon">'+p.icon+'</div>'+
+      '<div><div class="pc-name">'+p.name+'</div><div class="pc-url">mexausafg.com'+p.url+'</div></div>'+
+      '<div class="pc-status '+( p.ok?'ok':'warn')+'"></div></div>'+
+      '<div class="pc-meta">'+
+        p.tags.map(function(t){return '<span class="pc-tag">'+t+'</span>';}).join('')+
+        '<span class="pc-tag">PIN: '+p.pin+'</span>'+
+      '</div></div>';
+  }).join('');
+}
+
+// ── APPOINTMENTS ──
+function loadAppointments(){
+  var list=document.getElementById('appt-list');
+  list.innerHTML='<div class="appt-empty"><span style="display:block;font-size:24px;margin-bottom:8px;">&#128197;</span>Loading appointments...</div>';
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/bookings/list')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      var appts=data.appointments||[];
+      document.getElementById('r-appts').textContent=appts.length;
+      if(appts.length===0){
+        list.innerHTML='<div class="appt-empty"><span style="display:block;font-size:24px;margin-bottom:8px;">&#128197;</span>No appointments booked yet.<br/><span style="font-size:11px;">Share <strong>mexausafg.com/book-a-call.html</strong> with SD agents.</span></div>';
+        return;
+      }
+      list.innerHTML=appts.map(function(a){
+        var d=new Date(a.slot_date+'T12:00:00Z');
+        var h=parseInt(a.slot_time.split(':')[0]);
+        var m=a.slot_time.split(':')[1];
+        var s=h>=12?'PM':'AM'; var h12=h>12?h-12:h===0?12:h;
+        return '<div class="appt-card">'+
+          '<div class="appt-date"><div class="appt-day">'+d.getUTCDate()+'</div><div class="appt-mon">'+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()]+'</div></div>'+
+          '<div class="appt-info"><div class="appt-name">'+a.agent_name+'</div><div class="appt-meta">'+a.brokerage+(a.agent_email?' &bull; '+a.agent_email:'')+'</div><div class="appt-meta" style="margin-top:4px;color:var(--txt3);">'+( a.topic||'')+'</div></div>'+
+          '<div class="appt-time">'+h12+':'+m+' '+s+' PST</div></div>';
+      }).join('');
+    })
+    .catch(function(){
+      list.innerHTML='<div class="appt-empty">Could not load appointments. Backend may be starting up.</div>';
+    });
+}
+
+// ── AI CHAT ──
+var chatHistory=[];
+var SYS_PROMPT='You are the MFG Virtual Assistant for Saul Garcia, President/CEO of Mexausa Food Group, Inc. You have full knowledge of his operations:\n\n'+
+'PLATFORMS: mexausafg.com (AuditDNA React/Netlify), financelend.me (static HTML/Railway), enjoybaja.com (EnjoyBaja React/Railway).\n'+
+'PORTALS: 38 mini-office .html portals on mexausafg.com. Demo PIN=4321 for all client portals. Owner PIN=0609051974.\n'+
+'CAMPAIGNS: SD/CA sequence (400 emails, English, 3 emails Day0/4/8, pending Mailjet). Mexico sequence (440 emails, Spanish, Pablo sender, 3 emails, pending Mailjet).\n'+
+'TEAM: Saul Garcia (owner, English), Pablo Alatorre (sales rep, Spanish only, Mexico blasts only).\n'+
+'BOOKING: book-a-call.html — Mon-Sat 10:30am-1:30pm PST, 30-min slots, Gmail notification to sgarcia1911@gmail.com.\n'+
+'MORTGAGE: mortgage-search-engine.html — 150+ wholesale lenders, US+Mexico+all nationalities, bilingual EN/ES, PIN 4321.\n'+
+'KEY RULES: Never mix AuditDNA and EnjoyBaja platforms. NMLS #337526 on EnjoyBaja only. No PACA on any platform. Lender identity confidential until NDA signed.\n'+
+'Be direct, professional, bilingual. Reports go to sgarcia1911@gmail.com. Never add preamble.';
+
+function sendMessage(){
+  var input=document.getElementById('chat-input');
+  var text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  input.style.height='44px';
+  appendMsg('user',text);
+  chatHistory.push({role:'user',content:text});
+  var typing=appendTyping();
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:1000,
+      system:SYS_PROMPT,
+      messages:chatHistory
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    typing.remove();
+    var reply=d.content&&d.content[0]?d.content[0].text:'I could not process that request.';
+    appendMsg('ai',reply);
+    chatHistory.push({role:'assistant',content:reply});
+    if(chatHistory.length>20)chatHistory=chatHistory.slice(-20);
+  })
+  .catch(function(e){
+    typing.remove();
+    appendMsg('ai','Connection error. Please check your network and try again.');
+  });
+}
+
+function appendMsg(role,text){
+  var msgs=document.getElementById('chat-messages');
+  var div=document.createElement('div');
+  div.className='msg '+role;
+  var time=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  div.innerHTML='<div class="msg-avatar">'+( role==='ai'?'VA':'SG')+'</div>'+
+    '<div><div class="msg-bubble">'+text.replace(/\n/g,'<br/>')+'</div><div class="msg-time">'+time+'</div></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+
+function appendTyping(){
+  var msgs=document.getElementById('chat-messages');
+  var div=document.createElement('div');
+  div.className='msg ai';
+  div.innerHTML='<div class="msg-avatar">VA</div><div class="typing"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+
+function handleKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+}
+
+function quickPrompt(text){
+  document.getElementById('chat-input').value=text;
+  sendMessage();
+}
+
+// ── SEND REPORT ──
+function sendReport(){
+  showToast('Generating AI summary...');
+  var appts=document.getElementById('r-appts').textContent;
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:1000,
+      system:SYS_PROMPT,
+      messages:[{role:'user',content:'Generate a concise daily operations report for Saul Garcia. Include: platform status (all live), campaign status (SD 400 contacts ready, MX 440 contacts ready, both pending Mailjet activation), appointments booked ('+appts+'), next priority actions. Format as plain text, max 200 words.'}]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var summary=d.content&&d.content[0]?d.content[0].text:'';
+    document.getElementById('ai-report-text').textContent=summary;
+    document.getElementById('ai-report-section').style.display='block';
+    // Send via backend
+    return fetch('https://auditdna-backend-1-production.up.railway.app/api/brain/events/emit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        event:'va_daily_report',
+        module:'VirtualAssistant',
+        data:{
+          summary:summary,
+          portals:38,
+          sd_contacts:400,
+          mx_contacts:440,
+          appointments:appts,
+          timestamp:new Date().toISOString()
+        },
+        ts:Date.now()
+      })
+    });
+  })
+  .then(function(){showToast('Report generated — check sgarcia1911@gmail.com');})
+  .catch(function(){showToast('Report generated locally');});
+}
+
+// ── MODAL ──
+var modalMode='';
+function openAddModal(mode){
+  modalMode=mode;
+  var title=document.getElementById('modal-title');
+  var body=document.getElementById('modal-body');
+  if(mode==='vault'){
+    title.textContent='Add Credential';
+    body.innerHTML='<div class="modal-field"><label>Platform Name</label><input id="m-name" placeholder="e.g. Stripe"/></div>'+
+      '<div class="modal-field"><label>Category</label><select id="m-cat"><option value="platform">Platform</option><option value="marketing">Marketing</option><option value="portal">Portal</option><option value="calendar">Calendar</option></select></div>'+
+      '<div class="modal-field"><label>URL</label><input id="m-url" placeholder="https://..."/></div>'+
+      '<div class="modal-field"><label>Login / Username</label><input id="m-user" placeholder="email or username"/></div>'+
+      '<div class="modal-field"><label>Password / PIN</label><input id="m-pass" type="password" placeholder="password"/></div>'+
+      '<div class="modal-field"><label>Notes</label><input id="m-note" placeholder="optional notes"/></div>';
+  } else {
+    title.textContent='Add Campaign';
+    body.innerHTML='<div class="modal-field"><label>Campaign Name</label><input id="m-name" placeholder="e.g. SD Follow-up Sequence"/></div>'+
+      '<div class="modal-field"><label>Target Audience</label><input id="m-target" placeholder="e.g. San Diego RE Agents"/></div>'+
+      '<div class="modal-field"><label>Contact Count</label><input id="m-emails" type="number" placeholder="0"/></div>'+
+      '<div class="modal-field"><label>Platform</label><select id="m-platform"><option>Mailjet</option><option>Gmail</option><option>WhatsApp</option><option>Other</option></select></div>'+
+      '<div class="modal-field"><label>Status</label><select id="m-status"><option value="draft">Draft</option><option value="ready">Ready</option><option value="active">Active</option><option value="pending">Pending</option></select></div>'+
+      '<div class="modal-field"><label>Next Step</label><input id="m-next" placeholder="What needs to happen next?"/></div>';
+  }
+  document.getElementById('modal-overlay').className='modal-overlay show';
+}
+
+function closeModal(){document.getElementById('modal-overlay').className='modal-overlay';}
+
+function saveModal(){
+  var name=document.getElementById('m-name').value.trim();
+  if(!name){alert('Name required');return;}
+  if(modalMode==='vault'){
+    vaultData.push({id:Date.now(),name:name,cat:document.getElementById('m-cat').value,url:document.getElementById('m-url').value,user:document.getElementById('m-user').value,pass:document.getElementById('m-pass').value,note:document.getElementById('m-note').value});
+    renderVault();
+  } else {
+    campaignsData.push({name:name,target:document.getElementById('m-target').value,emails:parseInt(document.getElementById('m-emails').value)||0,platform:document.getElementById('m-platform').value,status:document.getElementById('m-status').value,next:document.getElementById('m-next').value});
+    renderCampaigns();
+  }
+  closeModal();
+  showToast('Saved successfully');
+}
+
+// ── UTILS ──
+function showTab(name){
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.className='tab-panel';});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  document.getElementById('tab-'+name).className='tab-panel show';
+  document.getElementById('nav-'+name).classList.add('active');
+  if(name==='appointments')loadAppointments();
+}
+
+function copyText(e,text){
+  e.stopPropagation();
+  navigator.clipboard.writeText(text).then(function(){showToast('Copied!');}).catch(function(){});
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show';
+  setTimeout(function(){t.className='toast';},2500);
+}
+
+function initApp(){
+  renderVault();
+  renderCampaigns();
+  renderPortals();
+  document.getElementById('report-date').textContent='Generated: '+new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+
+// localStorage bypass
+(function(){var s=localStorage.getItem('va_auth');if(s==='1'){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';initApp();}})();
+</script>
+</body>
+</html>

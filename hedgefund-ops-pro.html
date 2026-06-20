@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Hedge Fund Operations Intelligence Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#020912;color:#e2e8f0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+:root{--gold:#C9A55C;--dark:#020912;--navy:#0d1117;--card:#161b22;--bord:rgba(255,255,255,0.07);--txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;--green:#22c55e;--red:#ef4444;--blue:#4a8fd4;--purple:#8b5cf6;--teal:#14b8a6}
+#gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
+.gate-card{background:var(--card);border:1px solid rgba(201,165,92,0.3);border-radius:20px;padding:36px 28px;width:90%;max-width:340px;text-align:center;box-shadow:0 0 60px rgba(201,165,92,0.07)}
+.gate-logo{width:62px;height:62px;background:linear-gradient(135deg,#C9A55C,#8a6930);border-radius:15px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:12px;font-weight:900;color:#020912;letter-spacing:.5px}
+.gate-brand{font-size:15px;font-weight:900;color:#e2e8f0;margin-bottom:3px}
+.gate-title{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.gate-sub{font-size:10px;color:var(--muted);margin-bottom:22px;line-height:1.5}
+#dots{font-size:26px;letter-spacing:10px;color:var(--gold);min-height:34px;margin-bottom:8px}
+#g-err{font-size:11px;color:var(--red);min-height:16px;margin-bottom:10px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nb{background:#0d1117;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:15px 0;font-size:20px;font-weight:700;color:var(--txt);cursor:pointer;user-select:none;touch-action:manipulation;transition:background .15s}
+.nb:hover{background:#1e293b}
+.nb:active{background:rgba(201,165,92,0.2)}
+.nb.del{color:var(--red);font-size:14px}
+.powered{font-size:9px;color:#1a2744;margin-top:6px}
+#app{display:none;min-height:100vh}
+.topbar{background:#0d1117;border-bottom:1px solid var(--bord);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
+.logo-row{display:flex;align-items:center;gap:12px}
+.logo-sq{width:36px;height:36px;background:linear-gradient(135deg,#C9A55C,#8a6930);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#020912;flex-shrink:0}
+.co-name{font-size:13px;font-weight:900;color:var(--gold)}
+.co-sub{font-size:9px;color:var(--muted);letter-spacing:.8px;margin-top:1px}
+.tabs{display:flex;gap:4px;padding:10px 20px;background:#0d1117;border-bottom:1px solid var(--bord);overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{padding:7px 13px;border-radius:7px;font-size:10px;font-weight:800;letter-spacing:.5px;cursor:pointer;border:1px solid var(--bord);background:transparent;color:var(--muted);white-space:nowrap;transition:all .15s;touch-action:manipulation}
+.tab-btn.active{background:var(--gold);color:#020912;border-color:var(--gold)}
+.tab-btn:hover:not(.active){border-color:rgba(201,165,92,0.4);color:var(--gold)}
+.body{padding:20px;max-width:1300px;margin:0 auto}
+.section{display:none}.section.active{display:block}
+.card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-title{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px}
+.kpi-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.kpi-val{font-size:22px;font-weight:900;color:var(--gold)}
+.kpi-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 10px;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;border-bottom:1px solid var(--bord);text-transform:uppercase;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt)}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.badge-green{background:rgba(34,197,94,0.15);color:#22c55e}
+.badge-red{background:rgba(239,68,68,0.15);color:#ef4444}
+.badge-gold{background:rgba(201,165,92,0.15);color:#C9A55C}
+.badge-blue{background:rgba(74,143,212,0.15);color:#4a8fd4}
+.badge-purple{background:rgba(139,92,246,0.15);color:#8b5cf6}
+.badge-teal{background:rgba(20,184,166,0.15);color:#14b8a6}
+.btn{padding:10px 18px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:none;letter-spacing:.5px;transition:opacity .2s;touch-action:manipulation}
+.btn-gold{background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912}
+.btn-blue{background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.3);color:#4a8fd4}
+.btn-purple{background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);color:#8b5cf6}
+.btn-teal{background:rgba(20,184,166,0.15);border:1px solid rgba(20,184,166,0.3);color:#14b8a6}
+.btn:hover{opacity:.85}
+.progress-wrap{background:rgba(255,255,255,0.05);border-radius:4px;height:6px;margin-top:5px}
+.progress-bar{height:100%;border-radius:4px}
+.footer-bar{background:#0d1117;border-top:1px solid var(--bord);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:480px){.kpi-val{font-size:18px}.body{padding:12px}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">HF</div>
+    <div class="gate-brand">HEDGE FUND OPS INTELLIGENCE</div>
+    <div class="gate-title">Fund Operations Portal</div>
+    <div class="gate-sub">Month-End Close &bull; Investor Portal &bull; Waterfall &bull; NAV<br/>Secured by AuditDNA Intelligence &bull; Patent Pending</div>
+    <div id="dots"></div>
+    <div id="g-err"></div>
+    <div class="numpad">
+      <div class="nb" onclick="np('1')">1</div><div class="nb" onclick="np('2')">2</div><div class="nb" onclick="np('3')">3</div>
+      <div class="nb" onclick="np('4')">4</div><div class="nb" onclick="np('5')">5</div><div class="nb" onclick="np('6')">6</div>
+      <div class="nb" onclick="np('7')">7</div><div class="nb" onclick="np('8')">8</div><div class="nb" onclick="np('9')">9</div>
+      <div class="nb del" onclick="nd()">DEL</div><div class="nb" onclick="np('0')">0</div><div class="nb del" onclick="nc()">CLR</div>
+    </div>
+  </div>
+  <div class="powered">Powered by AuditDNA Intelligence &bull; Mexausa Food Group, Inc. &bull; Patent Pending</div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="logo-row">
+      <div class="logo-sq">HF</div>
+      <div>
+        <div class="co-name">HEDGE FUND OPERATIONS INTELLIGENCE</div>
+        <div class="co-sub">FUND OPS &bull; MONTH-END CLOSE &bull; INVESTOR PORTAL &bull; AUDITDNA INTELLIGENCE</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="badge badge-gold">FUND OPS</span>
+        <span class="badge badge-teal">NAV</span>
+        <span class="badge badge-purple">INVESTOR</span>
+      </div>
+      <div id="clock" style="font-size:10px;color:var(--muted)"></div>
+      <button class="btn" onclick="lock()" style="padding:7px 12px;font-size:10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--red)">LOCK</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="goTab('dashboard')">DASHBOARD</button>
+    <button class="tab-btn" onclick="goTab('monthend')">MONTH-END CLOSE</button>
+    <button class="tab-btn" onclick="goTab('nav')">NAV & P&L</button>
+    <button class="tab-btn" onclick="goTab('investors')">INVESTOR PORTAL</button>
+    <button class="tab-btn" onclick="goTab('waterfall')">WATERFALL</button>
+    <button class="tab-btn" onclick="goTab('capital')">CAPITAL ACTIVITY</button>
+    <button class="tab-btn" onclick="goTab('systems')">SYSTEMS</button>
+    <button class="tab-btn" onclick="goTab('reports')">REPORTS</button>
+    <button class="tab-btn" onclick="goTab('tasks')">TASKS</button>
+  </div>
+
+  <div class="body">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="section active">
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Fund AUM</div><div class="kpi-val">$284M</div><div class="kpi-sub">As of Jun 17</div></div>
+        <div class="kpi"><div class="kpi-lbl">NAV per Unit</div><div class="kpi-val" style="color:var(--green)">$1,284.72</div><div class="kpi-sub">+2.4% MTD</div></div>
+        <div class="kpi"><div class="kpi-lbl">YTD Return</div><div class="kpi-val" style="color:var(--green)">+8.4%</div><div class="kpi-sub">vs +6.2% benchmark</div></div>
+        <div class="kpi"><div class="kpi-lbl">Active Investors</div><div class="kpi-val" style="color:var(--blue)">42</div><div class="kpi-sub">LP + co-invest</div></div>
+        <div class="kpi"><div class="kpi-lbl">Pending Subscriptions</div><div class="kpi-val" style="color:var(--gold)">$4.2M</div><div class="kpi-sub">3 investors</div></div>
+        <div class="kpi"><div class="kpi-lbl">Pending Redemptions</div><div class="kpi-val" style="color:var(--red)">$1.8M</div><div class="kpi-sub">2 investors</div></div>
+        <div class="kpi"><div class="kpi-lbl">Month-End Close</div><div class="kpi-val" style="color:var(--gold)">74%</div><div class="kpi-sub">June 2026</div></div>
+        <div class="kpi"><div class="kpi-lbl">Open Items</div><div class="kpi-val" style="color:var(--red)">8</div><div class="kpi-sub">Blocking close</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Fund Performance Summary</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Fund/Vehicle</th><th>Strategy</th><th>AUM</th><th>MTD Return</th><th>YTD Return</th><th>Inception</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>[Fund Name] I</td><td>Long/Short Equity</td><td>$184M</td><td style="color:var(--green)">+2.4%</td><td style="color:var(--green)">+8.4%</td><td style="color:var(--green)">+42%</td><td><span class="badge badge-green">ACTIVE</span></td></tr>
+            <tr><td>[Fund Name] II</td><td>Credit Opportunities</td><td>$68M</td><td style="color:var(--green)">+1.2%</td><td style="color:var(--green)">+4.8%</td><td style="color:var(--green)">+18%</td><td><span class="badge badge-green">ACTIVE</span></td></tr>
+            <tr><td>[Co-Invest] A</td><td>Private Equity</td><td>$32M</td><td>--</td><td style="color:var(--green)">+12%</td><td style="color:var(--green)">+28%</td><td><span class="badge badge-teal">PRIVATE</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- MONTH-END CLOSE -->
+    <div id="tab-monthend" class="section">
+      <div class="card">
+        <div class="card-title">Month-End Close Checklist  June 2026</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px"><span class="badge badge-green">DONE</span><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Prime broker reconciliation -- Goldman, Morgan Stanley</div><div style="font-size:10px;color:var(--muted)">Completed Jun 15</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px"><span class="badge badge-green">DONE</span><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Position reconciliation -- all long/short positions confirmed</div><div style="font-size:10px;color:var(--muted)">Completed Jun 16</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px"><span class="badge badge-green">DONE</span><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Accrued income and expenses -- interest, dividends, management fees</div><div style="font-size:10px;color:var(--muted)">Completed Jun 16</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px"><span class="badge badge-gold">IN PROGRESS</span><div><div style="font-size:11px;font-weight:700;color:var(--txt)">NAV calculation -- pending OTC pricing from admin</div><div style="font-size:10px;color:var(--muted)">Due Jun 18</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px"><span class="badge badge-gold">IN PROGRESS</span><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Performance fee calculation -- high water mark check</div><div style="font-size:10px;color:var(--muted)">Due Jun 18</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px"><span class="badge badge-red">BLOCKED</span><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Fund admin confirmation -- awaiting final NAV from administrator</div><div style="font-size:10px;color:var(--muted)">Blocking investor statements</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px"><span class="badge badge-red">NOT DONE</span><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Investor statements -- send to all 42 LPs</div><div style="font-size:10px;color:var(--muted)">Due Jun 20 per LPA</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px"><span class="badge badge-red">NOT DONE</span><div><div style="font-size:11px;font-weight:700;color:var(--txt)">Management company books -- June P&L and balance sheet</div><div style="font-size:10px;color:var(--muted)">Due Jun 25</div></div></div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="progress-wrap" style="height:10px"><div class="progress-bar" style="width:74%;background:var(--gold)"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-size:10px;color:var(--muted)">Month-End Progress</span><span style="font-size:10px;color:var(--gold);font-weight:700">74% -- 5 of 8 items complete</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAV & P&L -->
+    <div id="tab-nav" class="section">
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">NAV per Unit</div><div class="kpi-val" style="color:var(--green)">$1,284.72</div><div class="kpi-sub">Estimated -- final pending</div></div>
+        <div class="kpi"><div class="kpi-lbl">Total Fund NAV</div><div class="kpi-val">$284M</div></div>
+        <div class="kpi"><div class="kpi-lbl">MTD P&L (Gross)</div><div class="kpi-val" style="color:var(--green)">+$6.8M</div></div>
+        <div class="kpi"><div class="kpi-lbl">MTD P&L (Net)</div><div class="kpi-val" style="color:var(--green)">+$5.6M</div><div class="kpi-sub">After fees</div></div>
+        <div class="kpi"><div class="kpi-lbl">Management Fee Accrual</div><div class="kpi-val" style="color:var(--red)">$473K</div><div class="kpi-sub">2% / 12 months</div></div>
+        <div class="kpi"><div class="kpi-lbl">Performance Fee Accrual</div><div class="kpi-val" style="color:var(--red)">$680K</div><div class="kpi-sub">20% above HWM</div></div>
+        <div class="kpi"><div class="kpi-lbl">High Water Mark</div><div class="kpi-val">$1,240.00</div><div class="kpi-sub">Previous HWM</div></div>
+        <div class="kpi"><div class="kpi-lbl">Above HWM by</div><div class="kpi-val" style="color:var(--green)">$44.72</div><div class="kpi-sub">3.6% above</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">P&L Attribution  June 2026</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Strategy</th><th>Gross P&L</th><th>Mgmt Fee</th><th>Perf Fee</th><th>Net P&L</th><th>Contribution</th></tr></thead>
+          <tbody>
+            <tr><td>Long/Short Equity</td><td style="color:var(--green)">+$4.8M</td><td style="color:var(--red)">-$307K</td><td style="color:var(--red)">-$480K</td><td style="color:var(--green)">+$4.013M</td><td style="color:var(--green)">+2.4%</td></tr>
+            <tr><td>Credit Opportunities</td><td style="color:var(--green)">+$816K</td><td style="color:var(--red)">-$113K</td><td style="color:var(--red)">-$163K</td><td style="color:var(--green)">+$540K</td><td style="color:var(--green)">+1.2%</td></tr>
+            <tr><td>Management Company</td><td style="color:var(--red)">-$1.24M</td><td>--</td><td>--</td><td style="color:var(--red)">-$1.24M</td><td style="color:var(--red)">-0.4%</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- INVESTOR PORTAL -->
+    <div id="tab-investors" class="section">
+      <div class="card">
+        <div class="card-title">Investor Ledger  Limited Partners</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Investor</th><th>Entity</th><th>Capital Account</th><th>Units</th><th>MTD Return</th><th>YTD Return</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>[Investor A]</td><td>LP</td><td style="color:var(--green)">$24.8M</td><td>19,300</td><td style="color:var(--green)">+2.4%</td><td style="color:var(--green)">+8.4%</td><td><span class="badge badge-green">ACTIVE</span></td></tr>
+            <tr><td>[Investor B]</td><td>LP</td><td style="color:var(--green)">$18.4M</td><td>14,320</td><td style="color:var(--green)">+2.4%</td><td style="color:var(--green)">+8.4%</td><td><span class="badge badge-green">ACTIVE</span></td></tr>
+            <tr><td>[Investor C]</td><td>Family Office</td><td style="color:var(--green)">$48.2M</td><td>37,520</td><td style="color:var(--green)">+2.4%</td><td style="color:var(--green)">+8.4%</td><td><span class="badge badge-green">ACTIVE</span></td></tr>
+            <tr><td>[Investor D]</td><td>Endowment</td><td style="color:var(--gold)">$12.4M</td><td>9,650</td><td style="color:var(--green)">+2.4%</td><td style="color:var(--green)">+8.4%</td><td><span class="badge badge-gold">REDEEMING</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Pending Capital Activity</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Investor</th><th>Type</th><th>Amount</th><th>Effective Date</th><th>Docs Received</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>[New Investor]</td><td><span class="badge badge-green">SUBSCRIPTION</span></td><td style="color:var(--green)">$2,400,000</td><td>Jul 1</td><td><span class="badge badge-green">COMPLETE</span></td><td><span class="badge badge-gold">PENDING WIRE</span></td></tr>
+            <tr><td>[New Investor]</td><td><span class="badge badge-green">SUBSCRIPTION</span></td><td style="color:var(--green)">$1,800,000</td><td>Jul 1</td><td><span class="badge badge-gold">PARTIAL</span></td><td><span class="badge badge-blue">DOCS NEEDED</span></td></tr>
+            <tr><td>[Investor D]</td><td><span class="badge badge-red">REDEMPTION</span></td><td style="color:var(--red)">$1,800,000</td><td>Jun 30</td><td><span class="badge badge-green">COMPLETE</span></td><td><span class="badge badge-gold">PROCESSING</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- WATERFALL -->
+    <div id="tab-waterfall" class="section">
+      <div class="card">
+        <div class="card-title">Distribution Waterfall Model</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="padding:12px;background:rgba(34,197,94,0.05);border-left:3px solid var(--green);border-radius:0 8px 8px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt)">Step 1  Return of Capital</div>
+              <span class="badge badge-green">SATISFIED</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted)">All LP capital returned before any carry distributions. $284M returned to date.</div>
+          </div>
+          <div style="padding:12px;background:rgba(34,197,94,0.05);border-left:3px solid var(--green);border-radius:0 8px 8px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt)">Step 2  Preferred Return (8% Hurdle)</div>
+              <span class="badge badge-green">SATISFIED</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted)">LPs receive 8% preferred return before GP carry. YTD return +8.4% exceeds hurdle.</div>
+          </div>
+          <div style="padding:12px;background:rgba(201,165,92,0.05);border-left:3px solid var(--gold);border-radius:0 8px 8px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt)">Step 3  GP Catch-Up (100%)</div>
+              <span class="badge badge-gold">IN PROGRESS</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted)">GP receives 100% of distributions until it has received 20% of total profits. $680K accrued.</div>
+          </div>
+          <div style="padding:12px;background:rgba(74,143,212,0.05);border-left:3px solid var(--blue);border-radius:0 8px 8px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt)">Step 4  Carried Interest Split (80/20)</div>
+              <span class="badge badge-blue">PENDING</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted)">80% to LPs, 20% carried interest to GP. Activates after catch-up is complete.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Carry Calculation  Current Position</div>
+        <table><tbody>
+          <tr><td style="color:var(--dim)">Total Fund Profits (Net)</td><td style="color:var(--green);text-align:right">$23.84M</td></tr>
+          <tr><td style="color:var(--dim)">Preferred Return Paid</td><td style="color:var(--red);text-align:right">-$19.52M</td></tr>
+          <tr><td style="color:var(--dim)">Profits Above Hurdle</td><td style="color:var(--green);text-align:right">$4.32M</td></tr>
+          <tr><td style="color:var(--dim)">GP Carry (20%)</td><td style="color:var(--gold);text-align:right">$864,000</td></tr>
+          <tr><td style="color:var(--dim)">LP Share (80%)</td><td style="color:var(--green);text-align:right">$3.456M</td></tr>
+          <tr style="border-top:1px solid var(--bord)"><td style="font-weight:900;padding-top:8px">Accrued Carry to Date</td><td style="color:var(--gold);font-weight:900;font-size:15px;text-align:right;padding-top:8px">$864,000</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- CAPITAL ACTIVITY -->
+    <div id="tab-capital" class="section">
+      <div class="card">
+        <div class="card-title">Capital Call & Distribution Log</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Date</th><th>Type</th><th>Investor</th><th>Amount</th><th>Purpose</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Jun 15</td><td><span class="badge badge-blue">CAPITAL CALL</span></td><td>[Investor]</td><td style="color:var(--green)">$2,400,000</td><td>New investment tranche</td><td><span class="badge badge-gold">PENDING WIRE</span></td></tr>
+            <tr><td>Jun 10</td><td><span class="badge badge-gold">DISTRIBUTION</span></td><td>All LPs</td><td style="color:var(--red)">$4,800,000</td><td>Q2 2026 distribution</td><td><span class="badge badge-green">WIRED</span></td></tr>
+            <tr><td>Apr 1</td><td><span class="badge badge-blue">CAPITAL CALL</span></td><td>[Investor]</td><td style="color:var(--green)">$1,800,000</td><td>Q2 drawdown</td><td><span class="badge badge-green">RECEIVED</span></td></tr>
+            <tr><td>Jan 1</td><td><span class="badge badge-gold">DISTRIBUTION</span></td><td>All LPs</td><td style="color:var(--red)">$3,200,000</td><td>Q4 2025 distribution</td><td><span class="badge badge-green">COMPLETE</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- SYSTEMS -->
+    <div id="tab-systems" class="section">
+      <div class="card">
+        <div class="card-title">Integrated Systems Status</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px;justify-content:space-between">
+            <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Prime Broker  Goldman Sachs</div><div style="font-size:10px;color:var(--muted)">Position + cash reconciliation daily</div></div>
+            <span class="badge badge-green">CONNECTED</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px;justify-content:space-between">
+            <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Fund Administrator  [Admin Name]</div><div style="font-size:10px;color:var(--muted)">NAV calculation, investor statements, K-1s</div></div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px;justify-content:space-between">
+            <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Portfolio Accounting  Allvue / Geneva</div><div style="font-size:10px;color:var(--muted)">Trade capture, P&L, position management</div></div>
+            <span class="badge badge-green">SYNCING</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px;justify-content:space-between">
+            <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Bloomberg Terminal Integration</div><div style="font-size:10px;color:var(--muted)">Market data, pricing, research</div></div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px;justify-content:space-between">
+            <div><div style="font-size:11px;font-weight:700;color:var(--txt)">AuditDNA Intelligence Layer</div><div style="font-size:10px;color:var(--muted)">Month-end automation, reconciliation, investor portal, reporting</div></div>
+            <span class="badge badge-gold">CONFIGURING</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px;justify-content:space-between">
+            <div><div style="font-size:11px;font-weight:700;color:var(--txt)">Investor Portal  Self-Service</div><div style="font-size:10px;color:var(--muted)">LP login, statements, capital activity, K-1 access</div></div>
+            <span class="badge badge-red">BUILDING</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="tab-reports" class="section">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Available Reports</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-gold" style="text-align:left">Monthly Investor Statement  All LPs</button>
+            <button class="btn btn-teal" style="text-align:left">NAV Report  June 2026</button>
+            <button class="btn btn-blue" style="text-align:left">P&L Attribution Report</button>
+            <button class="btn btn-blue" style="text-align:left">Capital Account Statement by LP</button>
+            <button class="btn btn-purple" style="text-align:left">Waterfall Distribution Schedule</button>
+            <button class="btn btn-blue" style="text-align:left">Capital Call / Distribution Log</button>
+            <button class="btn btn-blue" style="text-align:left">Management Company P&L</button>
+            <button class="btn btn-gold" style="text-align:left">Board / GP Reporting Package</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Month-End Close Progress</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">PB Reconciliation</span><span class="badge badge-green">DONE</span></div><div class="progress-wrap"><div class="progress-bar" style="width:100%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Position Reconciliation</span><span class="badge badge-green">DONE</span></div><div class="progress-wrap"><div class="progress-bar" style="width:100%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">NAV Calculation</span><span class="badge badge-gold">IN PROGRESS</span></div><div class="progress-wrap"><div class="progress-bar" style="width:60%;background:var(--gold)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Investor Statements</span><span class="badge badge-red">NOT STARTED</span></div><div class="progress-wrap"><div class="progress-bar" style="width:0%;background:var(--red)"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div id="tab-tasks" class="section">
+      <div class="card">
+        <div class="card-title">Operations Task Queue</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Chase fund admin for final NAV -- blocking month-end close and investor statements</div><div style="font-size:10px;color:var(--muted)">Due today -- statements due Jun 20 per LPA</div></div>
+            <span class="badge badge-red">URGENT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Collect missing subscription docs from [Investor B] -- $1.8M subscription blocked</div><div style="font-size:10px;color:var(--muted)">Wire cannot be accepted without complete docs</div></div>
+            <span class="badge badge-red">URGENT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Process [Investor D] redemption -- $1.8M -- calculate units at June NAV</div><div style="font-size:10px;color:var(--muted)">Effective Jun 30 -- wire within 10 business days per LPA</div></div>
+            <span class="badge badge-gold">HIGH</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Complete performance fee calculation -- high water mark verification</div><div style="font-size:10px;color:var(--muted)">Due Jun 18</div></div>
+            <span class="badge badge-gold">HIGH</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(74,143,212,0.05);border:1px solid rgba(74,143,212,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Configure AuditDNA investor portal -- 42 LP self-service statements</div><div style="font-size:10px;color:var(--muted)">Due Jun 25</div></div>
+            <span class="badge badge-blue">NORMAL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bar">
+    <div style="font-size:9px;color:var(--muted)">AuditDNA Intelligence &bull; Patent Pending &bull; Mexausa Food Group, Inc. &bull; Hedge Fund Operations Portal</div>
+    <div style="font-size:9px;color:var(--muted)">Saul Garcia &bull; NMLS #337526 &bull; (831) 251-3116 &bull; sgarcia1911@gmail.com</div>
+  </div>
+</div>
+
+<script>
+var entered='',PIN='3947';
+function updDots(){var d=document.getElementById('dots');d.textContent='';for(var i=0;i<entered.length;i++)d.textContent+='\u25CF ';}
+function np(v){if(entered.length>=6)return;entered+=v;updDots();if(entered.length===4)checkPin();}
+function nd(){entered=entered.slice(0,-1);updDots();}
+function nc(){entered='';updDots();}
+function checkPin(){
+  if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';startClock();}
+  else{var e=document.getElementById('g-err');e.textContent='Incorrect PIN. Try again.';entered='';updDots();setTimeout(function(){e.textContent='';},2000);}
+}
+function lock(){entered='';updDots();document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';}
+function goTab(t){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  var sec=document.getElementById('tab-'+t);if(sec)sec.classList.add('active');
+  event.target.classList.add('active');
+}
+function startClock(){
+  function tick(){var n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+  tick();setInterval(tick,1000);
+}
+</script>
+</body>
+</html>

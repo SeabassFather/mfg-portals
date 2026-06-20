@@ -1,0 +1,756 @@
+<!DOC
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:192px;margin:12px 0 8px;">
+<button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">1</button>
+<button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">2</button>
+<button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">3</button>
+<button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">4</button>
+<button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">5</button>
+<button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">6</button>
+<button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">7</button>
+<button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">8</button>
+<button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">9</button>
+<button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">&#9003;</button>
+<button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;">0</button>
+<button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;border:none;cursor:pointer;">OK</button>
+</div>
+<div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:8px;font-weight:600;"></div>
+</div>
+
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;">
+  <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:4px;">Old School Bordados</div>
+  <div style="font-size:10px;color:#64748b;margin-bottom:28px;letter-spacing:1.5px;">SECURE ACCESS — ENTER PIN</div>
+  <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0"></div><div class="pd" id="d1"></div><div class="pd" id="d2"></div><div class="pd" id="d3"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:192px;">
+    <button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">1</button>
+    <button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">2</button>
+    <button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">3</button>
+    <button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">4</button>
+    <button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">5</button>
+    <button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">6</button>
+    <button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">7</button>
+    <button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">8</button>
+    <button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">9</button>
+    <button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">&#9003;</button>
+    <button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">0</button>
+    <button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;border:none;cursor:pointer;">OK</button>
+  </div>
+  <div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+  <div style="font-size:9px;color:#1e3a4a;margin-top:20px;">Powered by AuditDNA Intelligence</div>
+</div>
+<div id="app" style="display:none">
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-os">Old School</div>
+      <div class="tb-b">BORDADOS · ENSENADA</div>
+    </div>
+    <div class="lang-toggle">
+      <div class="lt on" id="lt-es" onclick="setLang('es')">ES</div>
+      <div class="lt" id="lt-en" onclick="setLang('en')">EN</div>
+    </div>
+    <div class="tb-flex"></div>
+    <span class="tb-badge">LIVE</span>
+    <span class="tb-dot"></span>
+    <span class="lock-btn" onclick="lock()">LOCK</span>
+  </div>
+  <div class="tabnav">
+    <div class="tn on"  onclick="goTab('inicio')">Inicio</div>
+    <div class="tn" onclick="goTab('servicios')">Servicios</div>
+    <div class="tn" onclick="goTab('precios')">Precios</div>
+    <div class="tn" onclick="goTab('pedido')">Hacer Pedido</div>
+    <div class="tn" onclick="goTab('seguimiento')">Mis Pedidos</div>
+    <div class="tn" onclick="goTab('empresas')">Empresas / Uniformes</div>
+    <div class="tn" onclick="goTab('galeria')">Galeria</div>
+    <div class="tn" onclick="goTab('ai')">Asistente IA</div>
+    <div class="tn" onclick="goTab('admin')">Admin</div>
+  <div class="tn" onclick="goTab('inventario')">Inventario</div>
+  <div class="tn" onclick="goTab('reportes')">Reportes</div>
+  <div class="tn" onclick="goTab('cotizacion')">Cotizacion</div>
+  <div class="tn" onclick="goTab('seguimiento')">Seguimiento QR</div>
+  </div>
+
+  <!-- ══ INICIO ══ -->
+  <div id="tab-inicio" class="sec on">
+    <div class="hero">
+      <div class="hero-title">OLD SCHOOL</div>
+      <div style="font-size:28px;font-weight:900;letter-spacing:8px;color:var(--gold2);margin-bottom:6px">BORDADOS</div>
+      <div class="thread-bar">
+        <div class="tb-seg" style="background:#C9A55C"></div>
+        <div class="tb-seg" style="background:#e63946"></div>
+        <div class="tb-seg" style="background:#457b9d"></div>
+        <div class="tb-seg" style="background:#22c55e"></div>
+        <div class="tb-seg" style="background:#7c3aed"></div>
+      </div>
+      <div class="hero-services">
+        <span class="hs-tag">BORDADO</span>
+        <span class="hs-tag">DTF / TEXTIL</span>
+        <span class="hs-tag">GRABADO LASER</span>
+        <span class="hs-tag">CALCOMANIAS</span>
+        <span class="hs-tag">ETIQUETAS</span>
+        <span class="hs-tag">DESDE 1 PIEZA</span>
+      </div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:14px">Av. Diamante #1852, Col. Hidalgo, Ensenada BC &nbsp;·&nbsp; (646) 468-4771</div>
+      <div class="hero-cta">
+        <button class="btn btn-wa" onclick="openWA()">📱 WhatsApp (646) 117-0835</button>
+        <button class="btn btn-gold" onclick="goTab('pedido')">Hacer Pedido</button>
+        <button class="btn btn-ghost" onclick="goTab('precios')">Ver Precios</button>
+      </div>
+    </div>
+
+    <div class="grid4 mb16">
+      <div class="stat-card"><div class="stat-val">1</div><div class="stat-lbl">PIEZA MINIMO</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--green)">6</div><div class="stat-lbl">SERVICIOS</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--blue)">1,141</div><div class="stat-lbl">SEGUIDORES FB</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--gold)">ENS</div><div class="stat-lbl">BAJA CALIFORNIA</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card card-gold">
+        <div class="sec-hdr">CONTACTO DIRECTO</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button class="btn btn-wa" style="width:100%;text-align:left;padding:12px 14px" onclick="openWA()">
+            <div style="font-size:12px;font-weight:700">WhatsApp</div>
+            <div style="font-size:10px;opacity:.85">+52 (646) 117-0835</div>
+          </button>
+          <div style="font-size:11px;color:var(--txt2);line-height:1.9">
+            <div><span style="color:var(--gold);font-weight:700">Tel:</span> (646) 468-4771</div>
+            <div><span style="color:var(--gold);font-weight:700">Dirección:</span> Av. Diamante #1852, Col. Hidalgo</div>
+            <div><span style="color:var(--gold);font-weight:700">Ciudad:</span> Ensenada, Baja California, México</div>
+            <div><span style="color:var(--gold);font-weight:700">Instagram:</span> @oldschool.bordados</div>
+            <div><span style="color:var(--gold);font-weight:700">Facebook:</span> /oldschool.bordados</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr">PEDIDOS ACTIVOS</div>
+        <table class="tbl">
+          <tr><th>FOLIO</th><th>SERVICIO</th><th>PZAS</th><th>ESTADO</th></tr>
+          <tr><td class="txt-gold" style="color:var(--gold)">OSB-241</td><td>Bordado gorras</td><td>24</td><td><span class="badge bg">EN PROCESO</span></td></tr>
+          <tr><td style="color:var(--gold)">OSB-240</td><td>DTF camisas</td><td>50</td><td><span class="badge bo">LISTO</span></td></tr>
+          <tr><td style="color:var(--gold)">OSB-239</td><td>Grabado laser</td><td>10</td><td><span class="badge bb">ENVIADO</span></td></tr>
+          <tr><td style="color:var(--gold)">OSB-238</td><td>Calcomanias</td><td>100</td><td><span class="badge bg">ENTREGADO</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SERVICIOS ══ -->
+  <div id="tab-servicios" class="sec">
+    <div class="sec-hdr">SERVICIOS — DESDE 1 PIEZA</div>
+    <div class="svc-grid mb16">
+
+      <div class="svc-card" style="border-top-color:#C9A55C">
+        <div class="svc-icon">🧵</div>
+        <div class="svc-name">Bordado en Máquina</div>
+        <div class="svc-desc">Bordado computarizado de alta calidad en gorras, camisas, uniformes, mochilas, chamarras, toallas y más. Diseño digitalizado incluido.</div>
+        <div class="svc-tags">
+          <span class="svc-tag">Gorras</span><span class="svc-tag">Camisas</span><span class="svc-tag">Uniformes</span>
+          <span class="svc-tag">Chamarras</span><span class="svc-tag">Mochilas</span><span class="svc-tag">Toallas</span>
+        </div>
+        <div class="svc-price">Desde $45 MXN / pieza</div>
+      </div>
+
+      <div class="svc-card" style="border-top-color:#e63946">
+        <div class="svc-icon">🖨️</div>
+        <div class="svc-name">Impresión DTF</div>
+        <div class="svc-desc">Direct to Film — transferencia textil de alta definición. Colores vibrantes, lavable, sin límite de colores. Ideal para diseños complejos y fotografías.</div>
+        <div class="svc-tags">
+          <span class="svc-tag">Full Color</span><span class="svc-tag">Fotográfico</span><span class="svc-tag">Sin mínimo</span>
+          <span class="svc-tag">Alta Definición</span><span class="svc-tag">Resistente</span>
+        </div>
+        <div class="svc-price">Desde $35 MXN / transfer</div>
+      </div>
+
+      <div class="svc-card" style="border-top-color:#457b9d">
+        <div class="svc-icon">⚡</div>
+        <div class="svc-name">Grabado Láser</div>
+        <div class="svc-desc">Grabado de precisión en madera, acero, aluminio, cuero, acrílico y vidrio. Logos, nombres, fechas, diseños personalizados para regalos y empresas.</div>
+        <div class="svc-tags">
+          <span class="svc-tag">Madera</span><span class="svc-tag">Acero</span><span class="svc-tag">Acrilico</span>
+          <span class="svc-tag">Cuero</span><span class="svc-tag">Vidrio</span><span class="svc-tag">Aluminio</span>
+        </div>
+        <div class="svc-price">Desde $80 MXN / pieza</div>
+      </div>
+
+      <div class="svc-card" style="border-top-color:#22c55e">
+        <div class="svc-icon">🏷️</div>
+        <div class="svc-name">Calcomanías / Stickers</div>
+        <div class="svc-desc">Calcomanías en vinil para autos, cascos, ventanas, paredes y equipos. Corte exacto (die-cut), laminado UV, impresión a color. Resistente a la intemperie.</div>
+        <div class="svc-tags">
+          <span class="svc-tag">Die-Cut</span><span class="svc-tag">Vinil</span><span class="svc-tag">Full Color</span>
+          <span class="svc-tag">UV Laminado</span><span class="svc-tag">Exterior</span>
+        </div>
+        <div class="svc-price">Desde $25 MXN / pieza</div>
+      </div>
+
+      <div class="svc-card" style="border-top-color:#7c3aed">
+        <div class="svc-icon">🔖</div>
+        <div class="svc-name">Etiquetas</div>
+        <div class="svc-desc">Etiquetas tejidas, impresas o de vinil para ropa, productos y marcas. Etiquetas de tela bordadas, satín, transfer térmico y papel.</div>
+        <div class="svc-tags">
+          <span class="svc-tag">Tejidas</span><span class="svc-tag">Transfer</span><span class="svc-tag">Satín</span>
+          <span class="svc-tag">Troqueladas</span><span class="svc-tag">Para ropa</span>
+        </div>
+        <div class="svc-price">Desde $8 MXN / pieza</div>
+      </div>
+
+      <div class="svc-card" style="border-top-color:var(--gold)">
+        <div class="svc-icon">👕</div>
+        <div class="svc-name">Uniformes y Prendas</div>
+        <div class="svc-desc">Paquetes completos de uniformes empresariales, escolares y deportivos. Incluye bordado o estampado, corte y confección si se requiere.</div>
+        <div class="svc-tags">
+          <span class="svc-tag">Empresas</span><span class="svc-tag">Escuelas</span><span class="svc-tag">Deportivos</span>
+          <span class="svc-tag">Gorras</span><span class="svc-tag">Polos</span><span class="svc-tag">Camisas</span>
+        </div>
+        <div class="svc-price">Cotizar por volumen</div>
+      </div>
+
+    </div>
+    <div style="background:rgba(201,165,92,0.06);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center;font-size:11px;color:var(--txt2);line-height:1.8">
+      <strong style="color:var(--gold)">DESDE 1 PIEZA</strong> — No necesitas pedir por mayoreo. Atendemos pedidos de 1 a 10,000 piezas.<br>
+      Tiempo de entrega: <strong style="color:var(--gold)">3–7 días hábiles</strong> dependiendo del servicio y cantidad.
+    </div>
+  </div>
+
+  <!-- ══ PRECIOS ══ -->
+  <div id="tab-precios" class="sec">
+    <div class="sec-hdr">LISTA DE PRECIOS — APROXIMADOS</div>
+    <div style="font-size:10px;color:var(--txt2);margin-bottom:14px">Precios en MXN. Varían según diseño, tela y cantidad. Solicita cotización exacta por WhatsApp.</div>
+    <div class="price-grid mb16">
+
+      <div class="price-card featured">
+        <div class="price-service">🧵 Bordado en Gorra</div>
+        <div class="price-row"><span class="pr-qty">1–5 piezas</span><span class="pr-price">$90–120 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">6–24 piezas</span><span class="pr-price">$70–90 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">25–99 piezas</span><span class="pr-price">$55–70 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">100+ piezas</span><span class="pr-price">$45–55 MXN/ea</span></div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-service">🧵 Bordado en Camisa / Polo</div>
+        <div class="price-row"><span class="pr-qty">1–5 piezas</span><span class="pr-price">$80–110 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">6–24 piezas</span><span class="pr-price">$65–80 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">25–99 piezas</span><span class="pr-price">$50–65 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">100+ piezas</span><span class="pr-price">$40–50 MXN/ea</span></div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-service">🖨️ DTF — Transfer Textil</div>
+        <div class="price-row"><span class="pr-qty">1–5 piezas (A4)</span><span class="pr-price">$55–75 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">6–24 piezas (A4)</span><span class="pr-price">$40–55 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Aplicacion en prenda</span><span class="pr-price">$15–25 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Tamaño A3</span><span class="pr-price">+40% al precio</span></div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-service">⚡ Grabado Láser</div>
+        <div class="price-row"><span class="pr-qty">Llavero / chico</span><span class="pr-price">$80–120 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Tabla de madera</span><span class="pr-price">$150–300 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Placa acero/aluminio</span><span class="pr-price">$120–250 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Objeto cliente</span><span class="pr-price">Desde $80 MXN</span></div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-service">🏷️ Calcomanías / Stickers</div>
+        <div class="price-row"><span class="pr-qty">Chico (5x5cm)</span><span class="pr-price">$25–40 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Mediano (10x10cm)</span><span class="pr-price">$45–70 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Grande (20x20cm)</span><span class="pr-price">$80–130 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Rollo 100 piezas</span><span class="pr-price">$15–25 MXN/ea</span></div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-service">🔖 Etiquetas de Ropa</div>
+        <div class="price-row"><span class="pr-qty">Tejida (min 100)</span><span class="pr-price">$12–18 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Transfer térmico</span><span class="pr-price">$8–14 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Satín impreso</span><span class="pr-price">$10–16 MXN/ea</span></div>
+        <div class="price-row"><span class="pr-qty">Papel troquelado</span><span class="pr-price">$5–10 MXN/ea</span></div>
+      </div>
+
+    </div>
+    <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:12px;font-size:10px;color:var(--txt2);line-height:1.8">
+      Precios <strong style="color:var(--green)">aproximados</strong>. El precio final depende del diseño, cantidad de colores, tamaño del bordado, tipo de prenda y cantidad.<br>
+      <strong style="color:var(--gold)">Solicita cotización sin costo</strong> enviando tu diseño por WhatsApp: +52 (646) 117-0835
+    </div>
+  </div>
+
+  <!-- ══ HACER PEDIDO ══ -->
+  <div id="tab-pedido" class="sec">
+    <div class="sec-hdr">NUEVO PEDIDO / COTIZACION</div>
+    <div class="grid2">
+      <div class="card">
+        <div class="form-row"><div class="lbl">NOMBRE COMPLETO</div><input class="inp" id="p-nombre" placeholder="Tu nombre"/></div>
+        <div class="form-row"><div class="lbl">TELEFONO / WHATSAPP</div><input class="inp" id="p-tel" placeholder="(646) xxx-xxxx"/></div>
+        <div class="form-row"><div class="lbl">EMAIL (opcional)</div><input class="inp" id="p-email" type="email" placeholder="correo@email.com"/></div>
+        <div class="form-row"><div class="lbl">TIPO DE SERVICIO</div>
+          <select class="inp" id="p-servicio">
+            <option>Bordado en Gorra</option>
+            <option>Bordado en Camisa/Polo</option>
+            <option>Bordado en Chamarra</option>
+            <option>Bordado en Mochila</option>
+            <option>Impresion DTF — Transfer</option>
+            <option>Grabado Laser</option>
+            <option>Calcomanias / Stickers</option>
+            <option>Etiquetas de Ropa</option>
+            <option>Uniformes Completos</option>
+            <option>Otro / Personalizado</option>
+          </select></div>
+        <div class="form-row"><div class="lbl">CANTIDAD DE PIEZAS</div><input class="inp" id="p-qty" type="number" min="1" placeholder="1"/></div>
+        <div class="form-row"><div class="lbl">DESCRIPCION DEL DISEÑO</div>
+          <textarea class="inp" id="p-desc" placeholder="Describe tu diseño: colores, texto, logo, medidas... Adjunta imagen por WhatsApp"></textarea></div>
+        <div class="form-row"><div class="lbl">FECHA NECESARIA</div><input class="inp" id="p-fecha" type="date"/></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-wa" onclick="enviarPedido()">📱 Enviar por WhatsApp</button>
+          <button class="btn btn-ghost" onclick="enviarEmail()">Enviar por Email</button>
+        </div>
+      </div>
+      <div>
+        <div class="card mb10">
+          <div class="sec-hdr">COMO FUNCIONA</div>
+          <div style="font-size:11px;color:var(--txt2);line-height:2">
+            <div><span style="color:var(--gold);font-weight:700">1.</span> Envía tu pedido o cotización</div>
+            <div><span style="color:var(--gold);font-weight:700">2.</span> Te mandamos cotización en &lt;24 hrs</div>
+            <div><span style="color:var(--gold);font-weight:700">3.</span> Apruebas diseño y realizas pago (50% anticipo)</div>
+            <div><span style="color:var(--gold);font-weight:700">4.</span> Producción: 3–7 días hábiles</div>
+            <div><span style="color:var(--gold);font-weight:700">5.</span> Entrega en tienda o envío a tu domicilio</div>
+          </div>
+        </div>
+        <div class="card mb10">
+          <div class="sec-hdr">FORMATOS ACEPTADOS</div>
+          <div style="font-size:10px;color:var(--txt2);line-height:1.9">
+            <div><span style="color:var(--gold)">Bordado:</span> AI, PDF, PNG alta resolución, vectores</div>
+            <div><span style="color:var(--gold)">DTF:</span> PNG con fondo transparente, JPG, PDF</div>
+            <div><span style="color:var(--gold)">Láser:</span> AI, DXF, SVG, PDF, PNG</div>
+            <div><span style="color:var(--gold)">Calcomanías:</span> AI, EPS, PDF, SVG</div>
+            <div style="margin-top:6px;color:var(--gold);font-size:9px">¿No tienes archivo? Hacemos el diseño por ti — pregunta por cotización</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="sec-hdr">FORMAS DE PAGO</div>
+          <div style="font-size:10px;color:var(--txt2);line-height:1.9">
+            Efectivo · Transferencia bancaria · OXXO Pay<br>
+            50% anticipo para comenzar · 50% al entregar<br>
+            <span style="color:var(--gold)">Sin tarjeta, sin problema — preguntanos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEGUIMIENTO ══ -->
+  <div id="tab-seguimiento" class="sec">
+    <div class="sec-hdr">SEGUIMIENTO DE PEDIDOS</div>
+    <div class="grid2 mb16">
+      <div class="card">
+        <div class="form-row"><div class="lbl">BUSCAR FOLIO</div><input class="inp" id="s-folio" placeholder="OSB-000"/></div>
+        <button class="btn btn-gold" onclick="buscarPedido()">Buscar Pedido</button>
+      </div>
+      <div class="card" id="s-resultado" style="display:none">
+        <div class="sec-hdr">RESULTADO</div>
+        <div id="s-data"></div>
+      </div>
+    </div>
+    <div class="sec-hdr">TODOS LOS PEDIDOS</div>
+    <div class="card">
+      <table class="tbl">
+        <tr><th>FOLIO</th><th>CLIENTE</th><th>SERVICIO</th><th>PZAS</th><th>FECHA PEDIDO</th><th>ENTREGA EST.</th><th>ESTADO</th></tr>
+        <tr><td style="color:var(--gold)">OSB-241</td><td>Constructora ABC</td><td>Bordado gorras</td><td>24</td><td>06/08</td><td>06/15</td><td><span class="badge bg">EN PROCESO</span></td></tr>
+        <tr><td style="color:var(--gold)">OSB-240</td><td>Frutas del Valle</td><td>DTF camisas</td><td>50</td><td>06/05</td><td>06/12</td><td><span class="badge bo">LISTO ENTREGAR</span></td></tr>
+        <tr><td style="color:var(--gold)">OSB-239</td><td>Despacho Lic. Ramirez</td><td>Grabado laser trofeos</td><td>10</td><td>06/01</td><td>06/08</td><td><span class="badge bb">ENVIADO</span></td></tr>
+        <tr><td style="color:var(--gold)">OSB-238</td><td>Vinos Don Pedro</td><td>Calcomanias botellas</td><td>100</td><td>05/28</td><td>06/05</td><td><span class="badge bg">ENTREGADO</span></td></tr>
+        <tr><td style="color:var(--gold)">OSB-237</td><td>Escuela Primaria Hidalgo</td><td>Uniformes bordados</td><td>120</td><td>05/20</td><td>05/30</td><td><span class="badge bg">ENTREGADO</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ EMPRESAS ══ -->
+  <div id="tab-empresas" class="sec">
+    <div class="sec-hdr">PROGRAMA EMPRESARIAL — UNIFORMES Y PEDIDOS CORPORATIVOS</div>
+    <div style="font-size:11px;color:var(--txt2);line-height:1.8;margin-bottom:16px">Old School Bordados atiende a empresas, escuelas, restaurantes, hoteles, constructoras, y cualquier negocio que requiera uniformes bordados, calcomanias, etiquetas o grabado corporativo. Precios especiales por volumen y contratos anuales.</div>
+
+    <div class="grid3 mb16">
+      <div class="card card-gold">
+        <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:8px">Industrias que Atendemos</div>
+        <div style="font-size:10px;color:var(--txt2);line-height:2">
+          🏗️ Constructoras y contratistas<br>
+          🌾 Empresas agricolas / campo<br>
+          🍽️ Restaurantes y cafeterias<br>
+          🏨 Hoteles y turismo<br>
+          🏥 Clinicas y salud<br>
+          🏫 Escuelas y universidades<br>
+          ⚽ Equipos deportivos<br>
+          🏭 Industria y manufactura<br>
+          🛒 Retail y tiendas<br>
+          🚛 Transporte y logistica<br>
+          🍷 Vitivinicola / Bodegas<br>
+          🐟 Pesca y nautico
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:8px">Beneficios Empresariales</div>
+        <div style="font-size:10px;color:var(--txt2);line-height:2">
+          <div class="rev-row"><span>Precio por volumen</span><span style="color:var(--green)">✓</span></div>
+          <div class="rev-row"><span>Credito 30 dias (calificado)</span><span style="color:var(--green)">✓</span></div>
+          <div class="rev-row"><span>Entrega a domicilio local</span><span style="color:var(--green)">✓</span></div>
+          <div class="rev-row"><span>Factura / CFDi</span><span style="color:var(--green)">✓</span></div>
+          <div class="rev-row"><span>Diseño incluido (vol.)</span><span style="color:var(--green)">✓</span></div>
+          <div class="rev-row"><span>Muestra gratis (50+ pzas)</span><span style="color:var(--green)">✓</span></div>
+          <div class="rev-row"><span>Contrato anual</span><span style="color:var(--green)">✓</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:8px">Prendas Disponibles</div>
+        <div style="font-size:10px;color:var(--txt2);line-height:2">
+          Camisas de trabajo / polo<br>
+          Gorras y cachuchas<br>
+          Chamarras y chalecos<br>
+          Pants y shorts deportivos<br>
+          Filipinas y mandiles<br>
+          Mochilas y bolsas<br>
+          Tenis y calzado (logo)<br>
+          Mascarillas y batas<br>
+          Prendas del cliente
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-hdr">COTIZACION EMPRESARIAL</div>
+    <div class="card">
+      <div class="grid2">
+        <div class="form-row"><div class="lbl">EMPRESA</div><input class="inp" placeholder="Nombre de la empresa"/></div>
+        <div class="form-row"><div class="lbl">CONTACTO</div><input class="inp" placeholder="Nombre y cargo"/></div>
+        <div class="form-row"><div class="lbl">TELEFONO</div><input class="inp" placeholder="(646) xxx-xxxx"/></div>
+        <div class="form-row"><div class="lbl">EMAIL</div><input class="inp" type="email" placeholder="empresa@correo.com"/></div>
+        <div class="form-row"><div class="lbl">SERVICIO PRINCIPAL</div>
+          <select class="inp"><option>Uniformes bordados</option><option>DTF en prendas</option><option>Etiquetas de ropa</option><option>Grabado laser</option><option>Calcomanias / branding</option><option>Paquete completo</option></select></div>
+        <div class="form-row"><div class="lbl">CANTIDAD MENSUAL APROX.</div><input class="inp" placeholder="Piezas por mes" type="number"/></div>
+      </div>
+      <div class="form-row"><div class="lbl">DESCRIPCION DEL PROYECTO</div>
+        <textarea class="inp" placeholder="Cuéntanos de tu empresa y qué necesitas..."></textarea></div>
+      <button class="btn btn-wa" onclick="cotizarEmpresa()">📱 Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- ══ GALERIA ══ -->
+  <div id="tab-galeria" class="sec">
+    <div class="sec-hdr">GALERIA DE TRABAJOS</div>
+    <div class="port-grid mb16">
+      <div class="port-item"><div style="font-size:40px">🧢</div><div class="port-label">GORRAS BORDADAS</div></div>
+      <div class="port-item"><div style="font-size:40px">👕</div><div class="port-label">CAMISAS DTF</div></div>
+      <div class="port-item"><div style="font-size:40px">🏆</div><div class="port-label">TROFEOS LASER</div></div>
+      <div class="port-item"><div style="font-size:40px">🎒</div><div class="port-label">MOCHILAS BORDADAS</div></div>
+      <div class="port-item"><div style="font-size:40px">🔖</div><div class="port-label">ETIQUETAS ROPA</div></div>
+      <div class="port-item"><div style="font-size:40px">🚗</div><div class="port-label">CALCOMANIAS AUTO</div></div>
+      <div class="port-item"><div style="font-size:40px">🧥</div><div class="port-label">CHAMARRAS BORDADAS</div></div>
+      <div class="port-item"><div style="font-size:40px">🍽️</div><div class="port-label">UNIFORMES REST.</div></div>
+      <div class="port-item"><div style="font-size:40px">⚽</div><div class="port-label">UNIFORMES DEPORTIVOS</div></div>
+      <div class="port-item"><div style="font-size:40px">🌲</div><div class="port-label">GRABADO EN MADERA</div></div>
+      <div class="port-item"><div style="font-size:40px">🏷️</div><div class="port-label">STICKERS / VINIL</div></div>
+      <div class="port-item" style="border-color:var(--bord)" onclick="openWA()"><div style="font-size:40px">📸</div><div class="port-label">VER MAS EN IG</div></div>
+    </div>
+    <div style="text-align:center">
+      <button class="btn btn-ghost" style="margin-right:8px" onclick="window.open('https://www.instagram.com/oldschool.bordados','_blank')">📷 Instagram @oldschool.bordados</button>
+      <button class="btn btn-ghost" onclick="window.open('https://www.facebook.com/oldschool.bordados','_blank')">Facebook</button>
+    </div>
+  </div>
+
+  <!-- ══ AI ASSISTANT ══ -->
+  <div id="tab-ai" class="sec">
+    <div class="sec-hdr">ASISTENTE IA — OLD SCHOOL BORDADOS</div>
+    <div class="grid2">
+      <div>
+        <div id="chat-messages" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;min-height:220px;max-height:420px;overflow-y:auto">
+          <div class="chat-bubble ai">¡Hola! Soy el asistente de Old School Bordados. Preguntame sobre servicios, precios, tiempos de entrega, formatos de archivo, pedidos empresariales o cualquier duda. También hablo English if needed! 🧵</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <input class="inp" id="ai-input" placeholder="Pregunta sobre bordados, precios, tiempos..." style="flex:1"/>
+          <button class="btn btn-gold" onclick="sendAI()">Enviar</button>
+        </div>
+      </div>
+      <div>
+        <div class="sec-hdr">PREGUNTAS FRECUENTES</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn btn-ghost" style="text-align:left;width:100%;font-size:10px" onclick="quickAsk('Cuanto cuesta bordar mi logo en 24 gorras?')">¿Cuánto cuesta bordar logo en 24 gorras?</button>
+          <button class="btn btn-ghost" style="text-align:left;width:100%;font-size:10px" onclick="quickAsk('Cual es la diferencia entre bordado y DTF?')">¿Diferencia entre bordado y DTF?</button>
+          <button class="btn btn-ghost" style="text-align:left;width:100%;font-size:10px" onclick="quickAsk('Cuanto tiempo tarda un pedido de 50 camisas con estampado DTF?')">¿Tiempo de entrega 50 camisas DTF?</button>
+          <button class="btn btn-ghost" style="text-align:left;width:100%;font-size:10px" onclick="quickAsk('Hacen facturas para empresas?')">¿Hacen facturas para empresas?</button>
+          <button class="btn btn-ghost" style="text-align:left;width:100%;font-size:10px" onclick="quickAsk('Que formatos de archivo aceptan para bordado?')">¿Qué formatos aceptan para bordado?</button>
+          <button class="btn btn-ghost" style="text-align:left;width:100%;font-size:10px" onclick="quickAsk('Do you ship to the US? How much is shipping?')">Do you ship to the US?</button>
+          <button class="btn btn-ghost" style="text-align:left;width:100%;font-size:10px" onclick="quickAsk('Pueden hacer grabado laser en objetos que llevo yo?')">¿Grabado láser en objetos propios?</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ADMIN ══ -->
+  <div id="tab-admin" class="sec">
+    <div id="adm-locked">
+      <div class="card" style="max-width:300px;margin:0 auto;text-align:center;padding:24px">
+        <div style="font-size:28px;font-weight:900;font-style:italic;color:var(--gold);letter-spacing:3px;margin-bottom:4px">Old School</div>
+        <div style="font-size:11px;font-weight:700;color:var(--txt2);letter-spacing:2px;margin-bottom:14px">ADMIN ACCESS</div>
+        <input class="inp" id="adm-pin" type="password" placeholder="PIN de administrador" style="text-align:center;margin-bottom:10px"/>
+        <button class="btn btn-gold" style="width:100%" onclick="checkAdmin()">Acceder</button>
+      </div>
+    </div>
+    <div id="adm-content" style="display:none">
+      <div class="grid4 mb16">
+        <div class="stat-card"><div class="stat-val">18</div><div class="stat-lbl">PEDIDOS MES</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--gold)">$48,400</div><div class="stat-lbl">INGRESOS MXN</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--green)">5</div><div class="stat-lbl">ACTIVOS</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--blue)">3</div><div class="stat-lbl">CLIENTES NUEVOS</div></div>
+      </div>
+      <div class="sec-hdr">PEDIDOS — ADMINISTRACION</div>
+      <div class="card mb16">
+        <table class="tbl">
+          <tr><th>FOLIO</th><th>CLIENTE</th><th>SERVICIO</th><th>PZAS</th><th>TOTAL MXN</th><th>ANTICIPO</th><th>ESTADO</th></tr>
+          <tr><td style="color:var(--gold)">OSB-241</td><td>Constructora ABC</td><td>Bordado gorras</td><td>24</td><td style="color:var(--gold)">$2,880</td><td style="color:var(--green)">$1,440 ✓</td><td><span class="badge bg">EN PROCESO</span></td></tr>
+          <tr><td style="color:var(--gold)">OSB-240</td><td>Frutas del Valle</td><td>DTF camisas</td><td>50</td><td style="color:var(--gold)">$2,750</td><td style="color:var(--green)">$1,375 ✓</td><td><span class="badge bo">LISTO</span></td></tr>
+          <tr><td style="color:var(--gold)">OSB-239</td><td>Despacho Ramirez</td><td>Laser trofeos</td><td>10</td><td style="color:var(--gold)">$1,800</td><td style="color:var(--green)">$900 ✓</td><td><span class="badge bb">ENVIADO</span></td></tr>
+        </table>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-gold">Nuevo Pedido</button>
+        <button class="btn btn-ghost">Exportar Reporte</button>
+        <button class="btn btn-ghost" onclick="lockAdmin()">Cerrar Sesion</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var pin='';var PINS={'4321':'demo','0609051974':'owner'};
+function updateDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+function np(v){if(v==='del')pin=pin.slice(0,-1);else if(v==='ok'){checkPin();return;}else if(pin.length<4)pin+=v;updateDots();if(PINS[pin])setTimeout(checkPin,120);}
+function checkPin(){if(PINS[pin]){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';window._paFire&&window._paFire('login',PINS[pin]);goTab('dashboard');}else{var e=document.getElementById('g-err');if(e){e.textContent='Incorrect PIN';setTimeout(function(){e.textContent='';},2000);}pin='';updateDots();}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';pin='';updateDots();}
+</script>
+<script>
+var pin=''; var PINS={'4321':'demo','0609051974':'owner'};
+function updateDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+function np(v){if(v==='del')pin=pin.slice(0,-1);else if(v==='ok'){checkPin();return;}else if(pin.length<4)pin+=v;updateDots();if(PINS[pin])setTimeout(checkPin,120);}
+function checkPin(){if(PINS[pin]){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';window._paFire&&window._paFire('login',PINS[pin]);goTab('dashboard');}else{var e=document.getElementById('g-err');if(e){e.textContent='Incorrect PIN';setTimeout(function(){e.textContent='';},2000);}pin='';updateDots();}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';pin='';updateDots();}
+
+ 
+var lang='es';
+
+var _lk=false;
+,80);
+  if(v==='del')pin=pin.slice(0,-1);
+  else if(v==='ok'){checkPin();return;}
+  else if(pin.length<4)pin+=v;
+  updateDots();
+  if(pin.length===4)setTimeout(checkPin,120);
+}
+
+
+
+function goTab(t){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on')});
+  document.querySelectorAll('.tn').forEach(function(b){b.classList.remove('on')});
+  var el=document.getElementById('tab-'+t); if(el)el.classList.add('on');
+  event.currentTarget.classList.add('on');
+}
+function setLang(l){
+  lang=l;
+  document.getElementById('lt-es').classList.toggle('on',l==='es');
+  document.getElementById('lt-en').classList.toggle('on',l==='en');
+}
+function openWA(){window.open('https://wa.me/5216461170835','_blank');}
+function enviarPedido(){
+  var msg='*Pedido Old School Bordados*%0A%0ANombre: '+document.getElementById('p-nombre').value+'%0ATel: '+document.getElementById('p-tel').value+'%0AServicio: '+document.getElementById('p-servicio').value+'%0ACantidad: '+document.getElementById('p-qty').value+' pzas%0ADescripcion: '+document.getElementById('p-desc').value+'%0AFecha requerida: '+document.getElementById('p-fecha').value;
+  window.open('https://wa.me/5216461170835?text='+msg,'_blank');
+}
+function enviarEmail(){
+  var body='Pedido Old School Bordados\nNombre: '+document.getElementById('p-nombre').value+'\nTel: '+document.getElementById('p-tel').value+'\nServicio: '+document.getElementById('p-servicio').value+'\nCantidad: '+document.getElementById('p-qty').value+'\nDescripcion: '+document.getElementById('p-desc').value;
+  window.open('mailto:oldschool.bordados@gmail.com?subject=Pedido/Cotizacion&body='+encodeURIComponent(body),'_blank');
+}
+function cotizarEmpresa(){window.open('https://wa.me/5216461170835?text=Hola%2C+me+interesa+cotizaci%C3%B3n+empresarial+de+Old+School+Bordados.','_blank');}
+function buscarPedido(){
+  var f=document.getElementById('s-folio').value.trim().toUpperCase();
+  var pedidos={'OSB-241':{cliente:'Constructora ABC',servicio:'Bordado gorras x24',estado:'EN PROCESO',entrega:'15 Jun 2026'},'OSB-240':{cliente:'Frutas del Valle',servicio:'DTF camisas x50',estado:'LISTO PARA ENTREGAR',entrega:'12 Jun 2026'},'OSB-239':{cliente:'Despacho Ramirez',servicio:'Grabado laser x10',estado:'ENVIADO',entrega:'08 Jun 2026'}};
+  var r=document.getElementById('s-resultado');
+  var d=document.getElementById('s-data');
+  if(pedidos[f]){
+    var p=pedidos[f];
+    d.innerHTML='<div style="font-size:11px;color:var(--txt2);line-height:2"><div><strong style="color:var(--gold)">Folio:</strong> '+f+'</div><div><strong style="color:var(--gold)">Cliente:</strong> '+p.cliente+'</div><div><strong style="color:var(--gold)">Servicio:</strong> '+p.servicio+'</div><div><strong style="color:var(--gold)">Estado:</strong> <span style="color:var(--green)">'+p.estado+'</span></div><div><strong style="color:var(--gold)">Entrega estimada:</strong> '+p.entrega+'</div></div>';
+    r.style.display='block';
+  }else{d.innerHTML='<div style="color:var(--red);font-size:11px">Folio no encontrado. Verifique el número.</div>';r.style.display='block';}
+}
+function checkAdmin(){
+  var p=document.getElementById('adm-pin').value;
+  if(p==='1234'||p==='0609051974'){document.getElementById('adm-locked').style.display='none';document.getElementById('adm-content').style.display='block';}
+  else{alert('PIN incorrecto');}
+}
+function lockAdmin(){document.getElementById('adm-locked').style.display='block';document.getElementById('adm-content').style.display='none';document.getElementById('adm-pin').value='';}
+
+var chatHistory=[];
+async function sendAI(){
+  var inp=document.getElementById('ai-input');
+  var msg=inp.value.trim(); if(!msg)return;
+  inp.value=''; addChat(msg,'user');
+  chatHistory.push({role:'user',content:msg});
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:'Eres el asistente de Old School Bordados, empresa de bordado y estampado en Ensenada, Baja California, México. Dirección: Av. Diamante #1852, Col. Hidalgo. WhatsApp: +52 (646) 117-0835. Tel: (646) 468-4771. Instagram: @oldschool.bordados. Servicios: bordado en máquina (gorras, camisas, uniformes, mochilas), impresión DTF, grabado láser (madera, acero, acrílico, cuero), calcomanías/stickers en vinil, etiquetas de ropa, uniformes corporativos. Desde 1 pieza. Precios aproximados en MXN: bordado gorra $45-120, DTF transfer $35-75, láser desde $80, calcomanías desde $25, etiquetas desde $8. Tiempo de entrega 3-7 días hábiles. Formatos: AI, PDF, PNG, SVG. Responde en español principalmente, inglés si te hablan en inglés. Sé amable, conciso y útil.',
+        messages:chatHistory})}
+    );
+    var data=await res.json();
+    var reply=data.content&&data.content[0]?data.content[0].text:'Sin respuesta';
+    chatHistory.push({role:'assistant',content:reply});
+    addChat(reply,'ai');
+  }catch(e){addChat('Error de conexión. Contáctanos por WhatsApp: (646) 117-0835','ai');}
+}
+function addChat(t,r){var d=document.createElement('div');d.className='chat-bubble '+r;d.textContent=t;document.getElementById('chat-messages').appendChild(d);d.scrollIntoView({behavior:'smooth'});}
+function quickAsk(q){document.getElementById('ai-input').value=q;sendAI();}
+
+// ── PORTAL USAGE PING ────────────────────────────────────────────────────
+function pingPortalAccess(portalName, pin) {
+  try {
+    fetch('https://auditdna-backend-1-production.up.railway.app/api/alerts/notify', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        source: 'portal-access', portal: portalName, pin: pin,
+        timestamp: new Date().toISOString(), url: window.location.href,
+        message: 'PORTAL OPENED: ' + portalName + ' | PIN: ' + pin + ' | ' + new Date().toLocaleString()
+      })
+    }).catch(function(){});
+  } catch(e) {}
+}
+
+</script>
+
+<div id="tab-cotizacion" class="tab-section" style="display:none">
+  <div class="sec-hdr">Generador de Cotizacion</div>
+  <div class="card" style="margin-bottom:14px;max-width:640px">
+    <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:12px">Datos del Cliente y Pedido</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Nombre del Cliente</div><input id="cot-cliente" class="inp" placeholder="Nombre completo o empresa"/></div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Tel / WhatsApp</div><input id="cot-tel" class="inp" placeholder="+52 646 xxx xxxx"/></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Tipo de Servicio</div>
+        <select id="cot-tipo" class="inp">
+          <option>Bordado en Playera</option><option>Bordado en Gorra</option><option>Serigrafía</option><option>Transfer DTF</option><option>Bordado en Chamarra</option><option>Uniforme Corporativo</option>
+        </select>
+      </div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Cantidad</div><input id="cot-cant" class="inp" type="number" placeholder="0" oninput="cotCalc()"/></div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Precio Unitario (MXN)</div><input id="cot-precio" class="inp" type="number" placeholder="0" oninput="cotCalc()"/></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Tiempo de Entrega</div>
+        <select id="cot-entrega" class="inp"><option>3-5 dias habiles</option><option>7-10 dias habiles</option><option>15 dias habiles</option><option>Urgente (costo extra)</option></select>
+      </div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Notas / Descripcion</div><input id="cot-notas" class="inp" placeholder="Color, talla, posicion del bordado..."/></div>
+    </div>
+    <div style="background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.2);border-radius:8px;padding:14px;margin-bottom:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div><div style="font-size:9px;color:var(--muted)">SUBTOTAL</div><div id="cot-sub" style="font-size:18px;font-weight:900;color:var(--txt)">$0 MXN</div></div>
+        <div><div style="font-size:9px;color:var(--muted)">IVA (16%)</div><div id="cot-iva" style="font-size:18px;font-weight:900;color:var(--muted)">$0 MXN</div></div>
+        <div><div style="font-size:9px;color:var(--muted)">TOTAL</div><div id="cot-total" style="font-size:22px;font-weight:900;color:var(--gold)">$0 MXN</div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="cotGuardar()" class="btn" style="flex:1">Guardar Cotizacion</button>
+      <button onclick="cotWhatsApp()" style="flex:1;padding:10px;background:#25D366;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:11px">Enviar por WhatsApp</button>
+    </div>
+  </div>
+  <div class="card"><div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:10px">Cotizaciones Guardadas</div>
+    <table class="tbl"><thead><tr><th>Folio</th><th>Cliente</th><th>Servicio</th><th>Cant</th><th>Total MXN</th><th>Entrega</th></tr></thead><tbody id="cot-tbody"></tbody></table>
+  </div>
+</div>
+
+<div id="tab-seguimiento" class="tab-section" style="display:none">
+  <div class="sec-hdr">Seguimiento de Pedidos por Folio</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;gap:10px;align-items:center">
+      <input id="seg-buscar" class="inp" placeholder="Buscar por folio o nombre de cliente" style="flex:1"/>
+      <button onclick="segBuscar()" class="btn">Buscar</button>
+    </div>
+  </div>
+  <div id="seg-resultado" style="display:none" class="card" style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:10px">Resultado</div>
+    <div id="seg-detalle"></div>
+    <div style="margin-top:12px">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:6px">Actualizar Estado:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="seg-btns"></div>
+    </div>
+  </div>
+  <div class="card"><div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:10px">Todos los Pedidos</div>
+    <table class="tbl"><thead><tr><th>Folio</th><th>Cliente</th><th>Servicio</th><th>Total</th><th>Estado</th><th>Entrega</th></tr></thead><tbody id="seg-tbody"></tbody></table>
+  </div>
+</div>
+
+<script>
+var cotData=JSON.parse(localStorage.getItem('brd_cot')||'[]');
+var cotFolio=cotData.length+1;
+function cotCalc(){var cant=parseFloat(document.getElementById('cot-cant').value)||0,precio=parseFloat(document.getElementById('cot-precio').value)||0;var sub=cant*precio;var iva=sub*0.16;var total=sub+iva;document.getElementById('cot-sub').textContent='$'+sub.toLocaleString()+' MXN';document.getElementById('cot-iva').textContent='$'+iva.toLocaleString(undefined,{maximumFractionDigits:0})+' MXN';document.getElementById('cot-total').textContent='$'+total.toLocaleString(undefined,{maximumFractionDigits:0})+' MXN';}
+function cotGuardar(){var c=document.getElementById('cot-cliente').value.trim(),tel=document.getElementById('cot-tel').value.trim(),tipo=document.getElementById('cot-tipo').value,cant=parseFloat(document.getElementById('cot-cant').value)||0,precio=parseFloat(document.getElementById('cot-precio').value)||0,ent=document.getElementById('cot-entrega').value,notas=document.getElementById('cot-notas').value.trim();if(!c||!cant||!precio)return;var sub=cant*precio,iva=sub*0.16,total=sub+iva;var folio='OSB-'+String(cotFolio).padStart(4,'0');cotData.unshift({folio:folio,cliente:c,tel:tel,tipo:tipo,cant:cant,precio:precio,sub:sub,iva:iva,total:total,entrega:ent,notas:notas,estado:'Recibido',fecha:new Date().toLocaleDateString()});cotFolio++;localStorage.setItem('brd_cot',JSON.stringify(cotData));cotRender();alert('Cotizacion guardada. Folio: '+folio);}
+function cotRender(){var tb=document.getElementById('cot-tbody');if(!tb)return;tb.innerHTML=cotData.map(function(r){return'<tr><td style="font-weight:700;color:var(--gold)">'+r.folio+'</td><td>'+r.cliente+'</td><td>'+r.tipo+'</td><td>'+r.cant+'</td><td>$'+r.total.toLocaleString(undefined,{maximumFractionDigits:0})+'</td><td>'+r.entrega+'</td></tr>';}).join('');}
+function cotWhatsApp(){var c=document.getElementById('cot-cliente').value.trim(),tipo=document.getElementById('cot-tipo').value,cant=document.getElementById('cot-cant').value,precio=document.getElementById('cot-precio').value,ent=document.getElementById('cot-entrega').value;var total=(parseFloat(cant)||0)*(parseFloat(precio)||0)*1.16;var msg='Hola '+c+'! Aqui su cotizacion de Old School Bordados:%0A%0AServicio: '+tipo+'%0ACantidad: '+cant+' piezas%0APrecio unitario: $'+precio+' MXN%0ATotal con IVA: $'+total.toLocaleString(undefined,{maximumFractionDigits:0})+' MXN%0AEntrega: '+ent+'%0A%0APara confirmar su pedido, respondanos por aqui. Gracias!';window.open('https://wa.me/526463402686?text='+msg,'_blank');}
+function segBuscar(){var q=document.getElementById('seg-buscar').value.trim().toLowerCase();var found=cotData.find(function(r){return r.folio.toLowerCase().includes(q)||r.cliente.toLowerCase().includes(q);});var res=document.getElementById('seg-resultado');if(!found){alert('No se encontro el pedido.');return;}res.style.display='block';var col={Recibido:'var(--blue)',Produccion:'var(--gold)','Control de Calidad':'var(--txt)',Listo:'var(--green)',Entregado:'var(--muted)'};document.getElementById('seg-detalle').innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px"><div><div style="font-size:9px;color:var(--muted)">FOLIO</div><div style="font-size:16px;font-weight:900;color:var(--gold)">'+found.folio+'</div></div><div><div style="font-size:9px;color:var(--muted)">CLIENTE</div><div style="font-size:13px;font-weight:700;color:var(--txt)">'+found.cliente+'</div></div><div><div style="font-size:9px;color:var(--muted)">ESTADO ACTUAL</div><div style="font-size:13px;font-weight:700;color:'+(col[found.estado]||'var(--txt)')+'">'+found.estado+'</div></div></div>';document.getElementById('seg-btns').innerHTML=['Recibido','Produccion','Control de Calidad','Listo','Entregado'].map(function(s){return'<button onclick="segUpdate(''+found.folio+'',''+s+'')" style="padding:7px 14px;background:'+(found.estado===s?'rgba(201,165,92,0.2)':'rgba(255,255,255,0.04)')+';border:1px solid '+(found.estado===s?'var(--gold)':'var(--bord2)')+';border-radius:6px;color:'+(found.estado===s?'var(--gold)':'var(--txt2)')+';font-size:10px;cursor:pointer">'+s+'</button>';}).join('');}
+function segUpdate(folio,estado){var r=cotData.find(function(x){return x.folio===folio;});if(r){r.estado=estado;localStorage.setItem('brd_cot',JSON.stringify(cotData));segBuscar();segRender();}}
+function segRender(){var tb=document.getElementById('seg-tbody');if(!tb)return;var cols={Recibido:'var(--blue)',Produccion:'var(--gold)','Control de Calidad':'var(--txt)',Listo:'var(--green)',Entregado:'var(--muted)'};tb.innerHTML=cotData.map(function(r){return'<tr><td style="font-weight:700;color:var(--gold)">'+r.folio+'</td><td>'+r.cliente+'</td><td>'+r.tipo+'</td><td>$'+r.total.toLocaleString(undefined,{maximumFractionDigits:0})+'</td><td style="color:'+(cols[r.estado]||'var(--txt)')+';font-weight:700">'+r.estado+'</td><td>'+r.entrega+'</td></tr>';}).join('');}
+document.addEventListener('DOMContentLoaded',function(){cotRender();segRender();});
+</script>
+
+<div id="tab-inventario" class="tab-section" style="display:none">
+  <div class="sec-hdr">Inventario de Materiales</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:10px">Agregar Material</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end">
+      <div><div class="lbl">Material</div><input id="inv2-name" class="inp" placeholder="Hilo, tela, playeras..."/></div>
+      <div><div class="lbl">Color / Tipo</div><input id="inv2-color" class="inp" placeholder="Negro, blanco, poliester..."/></div>
+      <div><div class="lbl">Cantidad</div><input id="inv2-qty" class="inp" type="number" placeholder="0"/></div>
+      <div><div class="lbl">Punto de Reorden</div><input id="inv2-reorder" class="inp" type="number" placeholder="0"/></div>
+      <button onclick="inv2Add()" class="btn" style="height:36px">Agregar</button>
+    </div>
+  </div>
+  <div class="card"><table class="tbl"><thead><tr><th>Material</th><th>Color/Tipo</th><th>Cantidad</th><th>Reorden</th><th>Estado</th><th>Ajustar</th></tr></thead><tbody id="inv2-tbody"></tbody></table></div>
+</div>
+<div id="tab-reportes" class="tab-section" style="display:none">
+  <div class="sec-hdr">Reportes del Negocio</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+    <div class="stat"><div style="font-size:24px;font-weight:900;color:var(--gold)" id="rpt-pedidos">0</div><div style="font-size:9px;color:var(--txt3);margin-top:3px">PEDIDOS TOTALES</div></div>
+    <div class="stat"><div style="font-size:24px;font-weight:900;color:var(--green)" id="rpt-entregados">0</div><div style="font-size:9px;color:var(--txt3);margin-top:3px">ENTREGADOS</div></div>
+    <div class="stat"><div style="font-size:24px;font-weight:900;color:var(--blue)" id="rpt-ingresos">$0</div><div style="font-size:9px;color:var(--txt3);margin-top:3px">INGRESOS TOTALES MXN</div></div>
+  </div>
+  <div class="card">
+    <div style="font-size:10px;font-weight:700;color:var(--txt);margin-bottom:10px">PEDIDOS POR ESTADO</div>
+    <div id="rpt-estados" style="font-size:11px;color:var(--txt3)">Sin datos aun.</div>
+  </div>
+</div>
+<script>
+var inv2DataB=JSON.parse(localStorage.getItem('brd_inv')||'[]');
+function inv2Add(){var n=document.getElementById('inv2-name').value.trim(),c=document.getElementById('inv2-color').value.trim(),q=parseInt(document.getElementById('inv2-qty').value)||0,r=parseInt(document.getElementById('inv2-reorder').value)||0;if(!n)return;inv2DataB.push({name:n,color:c,qty:q,reorder:r});localStorage.setItem('brd_inv',JSON.stringify(inv2DataB));inv2RenderB();['inv2-name','inv2-color','inv2-qty','inv2-reorder'].forEach(function(id){document.getElementById(id).value='';}); }
+function inv2RenderB(){var tb=document.getElementById('inv2-tbody');if(!tb)return;tb.innerHTML=inv2DataB.map(function(r,i){var low=r.qty<=r.reorder;return'<tr><td style="font-weight:600">'+r.name+'</td><td>'+r.color+'</td><td style="color:'+(low?'var(--red)':'var(--green)')+';font-weight:700">'+r.qty+'</td><td>'+r.reorder+'</td><td><span class="badge '+(low?'b-red':'b-green')+'">'+(low?'BAJO STOCK':'OK')+'</span></td><td><button onclick="inv2AdjB('+i+',-1)" style="font-size:9px;padding:2px 7px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red);border-radius:4px;cursor:pointer">-</button> <button onclick="inv2AdjB('+i+',1)" style="font-size:9px;padding:2px 7px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:var(--green);border-radius:4px;cursor:pointer">+</button></td></tr>';}).join('');}
+function inv2AdjB(i,d){inv2DataB[i].qty=Math.max(0,inv2DataB[i].qty+d);localStorage.setItem('brd_inv',JSON.stringify(inv2DataB));inv2RenderB();}
+function rptRenderB(){var cotDataB=JSON.parse(localStorage.getItem('brd_cot')||'[]');var pe=document.getElementById('rpt-pedidos');var en=document.getElementById('rpt-entregados');var ing=document.getElementById('rpt-ingresos');if(pe)pe.textContent=cotDataB.length;if(en)en.textContent=cotDataB.filter(function(r){return r.estado==='Entregado';}).length;var total=cotDataB.reduce(function(s,r){return s+(r.total||0);},0);if(ing)ing.textContent='$'+total.toLocaleString(undefined,{maximumFractionDigits:0});var estados=document.getElementById('rpt-estados');if(estados){var counts={};cotDataB.forEach(function(r){counts[r.estado]=(counts[r.estado]||0)+1;});estados.innerHTML=Object.keys(counts).map(function(k){return'<div style="padding:4px 0;border-bottom:1px solid var(--bord);font-size:11px;display:flex;justify-content:space-between"><span>'+k+'</span><span style="font-weight:700;color:var(--gold)">'+counts[k]+'</span></div>';}).join('')||'<div style="color:var(--txt3)">Sin datos.</div>';}}
+document.addEventListener('DOMContentLoaded',function(){inv2RenderB();rptRenderB();});
+</script>
+<script>
+
+// ── PORTAL ACTIVITY TRACKER ───────────────────────────────────────────────
+(function(){
+var _PA_PORTAL='Old School Bordados';
+var _PA_API='https://auditdna-backend-1-production.up.railway.app/api/portal-activity';
+var _PA_SID=Math.random().toString(36).slice(2)+Date.now().toString(36);
+function paFire(event,role,tab){
+  try{
+    fetch(_PA_API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({portal:_PA_PORTAL,event:event,pin_role:role||'demo',tab:tab||null,session_id:_PA_SID})
+    }).catch(function(){});
+  }catch(e){}
+}
+window._paFire=paFire;
+// Patch logout
+var _origLock=window.lock;
+window.lock=function(){paFire('logout');if(_origLock)_origLock();else{var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';}};
+// Tab change tracking — patch goTab
+var _origGoTab=window.goTab;
+window.goTab=function(id){paFire('tab_change',null,id);if(_origGoTab)_origGoTab(id);};
+})();
+</script>
+
+</body>
+</html>

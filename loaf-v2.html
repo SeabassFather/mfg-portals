@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>LOAF — Live Operational Agricultural Field</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:linear-gradient(135deg,#c5cad1 0%,#d8dce2 50%,#c2c7ce 100%);
+  --card:rgba(255,255,255,0.60);
+  --card-solid:#ffffff;
+  --border:rgba(15,20,25,0.10);
+  --border-gold:rgba(201,165,92,0.45);
+  --dark:#0F1419;
+  --gray:#475569;
+  --muted:#64748b;
+  --gold:#C9A55C;
+  --gold-dark:#8a6f3a;
+  --green:#0F7B41;
+  --green-dark:#0a5a2f;
+  --red:#DC2626;
+  --blue:#1D4ED8;
+  --white:#ffffff;
+  --shadow:0 2px 16px rgba(15,20,25,0.10);
+}
+html,body{min-height:100vh;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:var(--dark);font-size:15px}
+.screen{display:none;min-height:100vh;padding-bottom:80px}
+.screen.active{display:block}
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;z-index:100;padding:8px 0 env(safe-area-inset-bottom,0)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;font-family:inherit}
+.nav-btn .nav-icon{font-size:20px;line-height:1}
+.nav-btn .nav-label{font-size:9px;font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase}
+.nav-btn.active .nav-icon{filter:none}
+.nav-btn.active .nav-label{color:var(--green)}
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px;position:sticky;top:0;background:rgba(197,202,209,0.95);backdrop-filter:blur(12px);z-index:50;border-bottom:1px solid var(--border)}
+.topbar h1{font-size:17px;font-weight:700;color:var(--dark)}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.lang-btn{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:11px;font-weight:600;cursor:pointer;color:var(--gray);font-family:inherit}
+.logout-btn{padding:4px 10px;border-radius:20px;border:1px solid rgba(220,38,38,0.3);background:transparent;font-size:11px;font-weight:600;cursor:pointer;color:var(--red);font-family:inherit}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;backdrop-filter:blur(8px)}
+.card-gold{border-color:var(--border-gold)}
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center}
+.stat-val{font-size:26px;font-weight:700;color:var(--green)}
+.stat-val.gold{color:var(--gold)}
+.stat-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-top:2px}
+/* FORMS */
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 13px;background:rgba(255,255,255,0.7);border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--dark);font-family:inherit;outline:none;appearance:none;-webkit-appearance:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--green);background:rgba(255,255,255,0.9)}
+.form-textarea{resize:vertical;min-height:80px}
+/* BUTTONS */
+.btn{width:100%;padding:13px;border-radius:10px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.2px;transition:all .2s}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:active{background:var(--green-dark)}
+.btn-gold{background:var(--gold);color:#000}
+.btn-gold:active{background:var(--gold-dark)}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--dark)}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;width:auto}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* SECTIONS */
+.section{padding:12px 16px}
+.section-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+/* LIST ITEMS */
+.list-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px}
+.list-item-title{font-size:14px;font-weight:700;color:var(--dark)}
+.list-item-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.list-item-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+/* BADGE */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.badge-green{background:rgba(15,123,65,0.12);color:var(--green);border:1px solid rgba(15,123,65,0.2)}
+.badge-gold{background:rgba(201,165,92,0.12);color:var(--gold-dark);border:1px solid rgba(201,165,92,0.3)}
+.badge-red{background:rgba(220,38,38,0.08);color:var(--red);border:1px solid rgba(220,38,38,0.2)}
+.badge-blue{background:rgba(29,78,216,0.08);color:var(--blue);border:1px solid rgba(29,78,216,0.2)}
+/* GATE SCREEN */
+#gate-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;background:var(--bg)}
+.gate-logo{font-size:56px;font-weight:900;color:var(--dark);letter-spacing:-3px;line-height:1}
+.gate-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px;text-align:center}
+.gate-desc{font-size:14px;color:var(--gray);text-align:center;margin:20px 0 28px;line-height:1.6;max-width:320px}
+.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:360px;margin-bottom:24px}
+.role-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:20px 12px;text-align:center;cursor:pointer;transition:all .2s}
+.role-card:active{transform:scale(.97)}
+.role-card.grower:hover,.role-card.grower:active{border-color:var(--green)}
+.role-card.buyer:hover,.role-card.buyer:active{border-color:var(--gold)}
+.role-card .role-icon{font-size:28px;margin-bottom:8px;display:block}
+.role-card .role-name{font-size:15px;font-weight:700;color:var(--dark)}
+.role-card .role-hint{font-size:11px;color:var(--muted);margin-top:3px}
+/* STATUS messages */
+.status-msg{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;margin-top:8px;display:none}
+.status-msg.show{display:block}
+.status-ok{background:rgba(15,123,65,0.1);color:var(--green);border:1px solid rgba(15,123,65,0.2)}
+.status-err{background:rgba(220,38,38,0.08);color:var(--red);border:1px solid rgba(220,38,38,0.2)}
+.status-loading{background:rgba(201,165,92,0.1);color:var(--gold-dark);border:1px solid rgba(201,165,92,0.2)}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,20,25,0.5);z-index:200;display:none;align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:24px 16px 40px;width:100%;max-height:90vh;overflow-y:auto}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:16px}
+/* INVENTORY CARD */
+.inv-price{font-size:18px;font-weight:700;color:var(--green)}
+.inv-vol{font-size:13px;color:var(--muted)}
+/* LOADING */
+.loading{text-align:center;padding:32px;color:var(--muted);font-size:13px}
+.empty{text-align:center;padding:32px;color:var(--muted);font-size:13px;background:var(--card);border-radius:12px;border:1px dashed var(--border)}
+/* TABS */
+.tab-bar{display:flex;gap:6px;padding:10px 16px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:transparent;font-family:inherit;transition:all .2s}
+.tab.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/* COMMODITY CHIPS */
+.commodity-grid{display:flex;flex-wrap:wrap;gap:6px}
+.comm-chip{padding:6px 12px;background:rgba(255,255,255,0.7);border:1px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--dark)}
+.comm-chip.selected{background:var(--green);color:#fff;border-color:var(--green)}
+/* FSMA CHECKLIST */
+.check-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:#fff}
+.check-box.checked{background:var(--green);border-color:var(--green);color:#fff}
+.check-text{font-size:13px;color:var(--dark);line-height:1.4}
+</style>
+</head>
+<body>
+
+<!-- ═══ GATE / ROLE SELECT ═══ -->
+<div id="gate-screen">
+  <div class="gate-logo">LOAF</div>
+  <div class="gate-sub">Live Operational Agricultural Field</div>
+  <div class="gate-sub" style="margin-top:2px;font-size:9px;opacity:.6">By Mexausa Food Group, Inc.</div>
+  <div class="gate-desc" id="gate-desc">Connecting verified growers directly to US buyers. No brokers. No delays.</div>
+  <div class="role-cards">
+    <div class="role-card grower" onclick="showAuth('grower')">
+      <span class="role-icon">&#9881;</span>
+      <div class="role-name" id="rc-grower">Grower</div>
+      <div class="role-hint" id="rc-grower-hint">Upload inventory</div>
+    </div>
+    <div class="role-card buyer" onclick="showAuth('buyer')">
+      <span class="role-icon">&#9650;</span>
+      <div class="role-name" id="rc-buyer">Buyer</div>
+      <div class="role-hint" id="rc-buyer-hint">Source direct</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:8px">
+    <button class="btn btn-outline btn-sm" onclick="setLang('EN')" id="lang-en" style="flex:1">EN</button>
+    <button class="btn btn-outline btn-sm" onclick="setLang('ES')" id="lang-es" style="flex:1">ES</button>
+  </div>
+</div>
+
+<!-- ═══ AUTH SCREEN ═══ -->
+<div id="auth-screen" class="screen">
+  <div style="padding:24px 20px">
+    <button class="btn btn-outline btn-sm" onclick="showGate()" style="margin-bottom:20px;width:auto;padding:8px 16px">&larr; <span class="t" data-key="back">Back</span></button>
+    <h2 style="font-size:22px;font-weight:700;margin-bottom:4px" id="auth-title"></h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:24px" id="auth-sub"></p>
+    <div class="form-group">
+      <label class="form-label t" data-key="yourName">Your Name</label>
+      <input class="form-input" id="auth-name" type="text" placeholder="Full name" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label class="form-label t" data-key="phone">Phone Number</label>
+      <input class="form-input" id="auth-phone" type="tel" placeholder="+52 or +1..." autocomplete="tel">
+    </div>
+    <div class="form-group" id="auth-company-group" style="display:none">
+      <label class="form-label t" data-key="company">Company Name</label>
+      <input class="form-input" id="auth-company" type="text" placeholder="Company / distributor">
+    </div>
+    <div class="form-group" id="auth-commodity-group" style="display:none">
+      <label class="form-label t" data-key="mainCommodity">Main Commodity</label>
+      <select class="form-select" id="auth-commodity">
+        <option value="">Select...</option>
+        <option>Hass Avocado</option><option>Strawberry</option><option>Blueberry</option><option>Raspberry</option>
+        <option>Blackberry</option><option>Roma Tomato</option><option>Persian Lime</option><option>Bell Pepper</option>
+        <option>Asparagus</option><option>Mango</option><option>Broccoli</option><option>Cauliflower</option>
+        <option>Jalisco Berries</option><option>Cilantro</option><option>Green Onion</option><option>Other</option>
+      </select>
+    </div>
+    <div class="form-group" id="auth-region-group" style="display:none">
+      <label class="form-label t" data-key="region">Growing Region</label>
+      <select class="form-select" id="auth-region">
+        <option value="">Select state...</option>
+        <option>Michoacan</option><option>Jalisco</option><option>Baja California</option><option>Sinaloa</option>
+        <option>Sonora</option><option>Chiapas</option><option>Veracruz</option><option>Guanajuato</option>
+        <option>Colima</option><option>Oaxaca</option><option>Guerrero</option><option>Nayarit</option>
+        <option>Guatemala</option><option>Honduras</option><option>Costa Rica</option><option>Peru</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div id="auth-status" class="status-msg"></div>
+    <button class="btn btn-green" id="auth-btn" onclick="doAuth()" style="margin-top:8px"><span class="t" data-key="enterPlatform">Enter Platform</span></button>
+  </div>
+</div>
+
+<!-- ═══ GROWER APP ═══ -->
+<div id="grower-screen" class="screen">
+  <div class="topbar">
+    <h1>LOAF <span style="color:var(--green);font-size:13px;font-weight:600" class="t" data-key="growerPortal">Grower Portal</span></h1>
+    <div class="topbar-right">
+      <button class="lang-btn" onclick="toggleLang()">EN/ES</button>
+      <button class="logout-btn" onclick="doLogout()" class="t" data-key="exit">Exit</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="gTab('g-dash')" id="gtab-g-dash"><span class="t" data-key="dashboard">Dashboard</span></button>
+    <button class="tab" onclick="gTab('g-inv')" id="gtab-g-inv"><span class="t" data-key="inventory">Inventory</span></button>
+    <button class="tab" onclick="gTab('g-post')" id="gtab-g-post"><span class="t" data-key="postLoad">Post Load</span></button>
+    <button class="tab" onclick="gTab('g-buyers')" id="gtab-g-buyers"><span class="t" data-key="buyerNeeds">Buyer Needs</span></button>
+    <button class="tab" onclick="gTab('g-factor')" id="gtab-g-factor"><span class="t" data-key="factoring">Factoring</span></button>
+    <button class="tab" onclick="gTab('g-fsma')" id="gtab-g-fsma">FSMA 204</button>
+    <button class="tab" onclick="gTab('g-auctions')" id="gtab-g-auctions">CFT</button>
+  </div>
+
+  <!-- GROWER DASHBOARD -->
+  <div class="tab-content active" id="g-dash">
+    <div class="stats-row" id="g-stats">
+      <div class="stat-card"><div class="stat-val" id="g-stat-listings">—</div><div class="stat-label t" data-key="myListings">My Listings</div></div>
+      <div class="stat-card"><div class="stat-val gold" id="g-stat-buyers">—</div><div class="stat-label t" data-key="buyerNeeds">Buyer Needs</div></div>
+      <div class="stat-card"><div class="stat-val" id="g-stat-auctions">—</div><div class="stat-label">Open CFTs</div></div>
+      <div class="stat-card"><div class="stat-val gold" id="g-stat-matched">Live</div><div class="stat-label t" data-key="matched">Matched</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title t" data-key="recentListings">My Recent Listings</div>
+      <div id="g-recent-listings"><div class="loading t" data-key="loading">Loading...</div></div>
+      <button class="btn btn-green" onclick="gTab('g-post')" style="margin-top:12px"><span class="t" data-key="postNewLoad">Post New Load</span></button>
+    </div>
+  </div>
+
+  <!-- MY INVENTORY -->
+  <div class="tab-content" id="g-inv">
+    <div class="section">
+      <div class="section-title t" data-key="myInventory">My Inventory</div>
+      <div id="g-inv-list"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- POST LOAD -->
+  <div class="tab-content" id="g-post">
+    <div class="section">
+      <div class="section-title t" data-key="postNewLoad">Post New Load</div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label t" data-key="commodity">Commodity</label>
+          <select class="form-select" id="post-commodity">
+            <option value="">Select commodity...</option>
+            <option>Hass Avocado</option><option>Strawberry</option><option>Blueberry</option><option>Raspberry</option>
+            <option>Blackberry</option><option>Roma Tomato</option><option>Persian Lime</option><option>Bell Pepper</option>
+            <option>Asparagus</option><option>Mango</option><option>Broccoli</option><option>Cauliflower</option>
+            <option>Cilantro</option><option>Green Onion</option><option>Jalisco Berries</option><option>Other</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-group">
+            <label class="form-label t" data-key="volumeBoxes">Volume (boxes)</label>
+            <input class="form-input" id="post-volume" type="number" placeholder="e.g. 500">
+          </div>
+          <div class="form-group">
+            <label class="form-label t" data-key="fobPrice">FOB Price ($)</label>
+            <input class="form-input" id="post-price" type="number" step="0.01" placeholder="e.g. 22.50">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="packType">Pack Type</label>
+          <input class="form-input" id="post-pack" type="text" placeholder="e.g. 25lb carton, 8x1lb flat">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="variety">Variety</label>
+          <input class="form-input" id="post-variety" type="text" placeholder="e.g. Albion, Hass, Kent">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-group">
+            <label class="form-label t" data-key="availableFrom">Available From</label>
+            <input class="form-input" id="post-from" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label t" data-key="availableTo">Available To</label>
+            <input class="form-input" id="post-to" type="date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="location">FOB Location</label>
+          <input class="form-input" id="post-location" type="text" placeholder="e.g. Zamora, Michoacan">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grade / Condition</label>
+          <select class="form-select" id="post-grade">
+            <option>Grade 1 — Fancy</option><option>Grade 2 — Choice</option><option>Grade 3 — Standard</option><option>Organic Grade 1</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="certifications">Certifications</label>
+          <div class="commodity-grid" id="post-certs">
+            <button class="comm-chip" onclick="toggleCert(this)" data-val="GAP">GAP</button>
+            <button class="comm-chip" onclick="toggleCert(this)" data-val="FSMA">FSMA 204</button>
+            <button class="comm-chip" onclick="toggleCert(this)" data-val="Organic">Organic</button>
+            <button class="comm-chip" onclick="toggleCert(this)" data-val="GlobalGAP">GlobalGAP</button>
+            <button class="comm-chip" onclick="toggleCert(this)" data-val="Rainforest">Rainforest</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="notes">Notes</label>
+          <textarea class="form-textarea" id="post-notes" placeholder="Harvest date, quality notes, packaging details..."></textarea>
+        </div>
+        <div id="post-status" class="status-msg"></div>
+        <button class="btn btn-green" id="post-btn" onclick="postInventory()"><span class="t" data-key="postLoad">Post Load</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUYER NEEDS -->
+  <div class="tab-content" id="g-buyers">
+    <div class="section">
+      <div class="section-title t" data-key="whatBuyersNeed">What Buyers Need Right Now</div>
+      <div id="g-buyer-needs-list"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- FACTORING -->
+  <div class="tab-content" id="g-factor">
+    <div class="section">
+      <div class="section-title t" data-key="invoiceFactoring">Invoice Factoring</div>
+      <div class="card card-gold" style="margin-bottom:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div><div style="font-size:20px;font-weight:700;color:var(--gold)">80%</div><div style="font-size:10px;color:var(--muted)" class="t" data-key="advance">Advance</div></div>
+          <div><div style="font-size:20px;font-weight:700;color:var(--green)" class="t" data-key="sameWeek">Same Week</div><div style="font-size:10px;color:var(--muted)">Speed</div></div>
+          <div><div style="font-size:20px;font-weight:700;color:var(--dark)">$0</div><div style="font-size:10px;color:var(--muted)" class="t" data-key="upfront">Upfront</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label t" data-key="buyer">Buyer / Debtor Name</label>
+          <input class="form-input" id="fac-buyer" type="text" placeholder="Company that owes you">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="commodity">Commodity</label>
+          <input class="form-input" id="fac-commodity" type="text" placeholder="e.g. Hass Avocado">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="invoiceAmount">Invoice Amount (USD)</label>
+          <input class="form-input" id="fac-amount" type="number" placeholder="e.g. 45000" oninput="calcAdvance()">
+        </div>
+        <div id="fac-calc" style="display:none;padding:12px;background:rgba(15,123,65,0.06);border:1px solid rgba(15,123,65,0.15);border-radius:8px;margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span class="t" data-key="advance">Advance (80%):</span><strong id="fac-advance" style="color:var(--green)"></strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:4px">
+            <span class="t" data-key="feeEst">Fee estimate (3.5%):</span><strong id="fac-fee" style="color:var(--muted)"></strong>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="type">Type</label>
+          <select class="form-select" id="fac-type">
+            <option value="ar">AR Invoice Factoring</option>
+            <option value="po">PO Finance</option>
+          </select>
+        </div>
+        <div id="fac-status" class="status-msg"></div>
+        <button class="btn btn-gold" id="fac-btn" onclick="submitFactoring()"><span class="t" data-key="submitFactoring">Submit Factoring Request</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FSMA 204 -->
+  <div class="tab-content" id="g-fsma">
+    <div class="section">
+      <div class="section-title">FSMA 204 — <span class="t" data-key="originAttestation">Origin Attestation</span></div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label t" data-key="commodity">Commodity</label>
+          <input class="form-input" id="fsma-commodity" type="text">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="variety">Variety</label>
+          <input class="form-input" id="fsma-variety" type="text">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lot Number</label>
+          <input class="form-input" id="fsma-lot" type="text" placeholder="Leave blank to auto-generate">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="harvestDate">Harvest Date</label>
+          <input class="form-input" id="fsma-harvest" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="fieldLocation">Field Location</label>
+          <input class="form-input" id="fsma-field" type="text" placeholder="Ranch name, municipality, state">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="acresHarvested">Acres Harvested</label>
+          <input class="form-input" id="fsma-acres" type="number" step="0.1">
+        </div>
+        <div class="section-title" style="margin-top:8px;margin-bottom:10px t" data-key="fsmaChecklist">FSMA Compliance Checklist</div>
+        <div id="fsma-checks">
+          <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text t" data-key="check1">Water quality test on file (past 12 months)</div></div>
+          <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text t" data-key="check2">Worker hygiene training completed</div></div>
+          <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text t" data-key="check3">No animals in growing area 30 days pre-harvest</div></div>
+          <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text t" data-key="check4">Soil amendments applied per schedule</div></div>
+          <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text t" data-key="check5">Harvest equipment sanitized and documented</div></div>
+          <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text t" data-key="check6">Cold chain maintained from field to transport</div></div>
+        </div>
+        <div id="fsma-status" class="status-msg" style="margin-top:10px"></div>
+        <button class="btn btn-green" onclick="submitFSMA()" style="margin-top:12px"><span class="t" data-key="submitAttestation">Submit Attestation</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CFT / AUCTIONS -->
+  <div class="tab-content" id="g-auctions">
+    <div class="section">
+      <div class="section-title t" data-key="openCFTs">Open Call-For-Tenders</div>
+      <div id="g-auctions-list"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" onclick="gTab('g-dash')" id="gnav-g-dash"><div class="nav-icon">&#9632;</div><div class="nav-label t" data-key="home">Home</div></button>
+    <button class="nav-btn" onclick="gTab('g-post')" id="gnav-g-post"><div class="nav-icon">&#43;</div><div class="nav-label t" data-key="post">Post</div></button>
+    <button class="nav-btn" onclick="gTab('g-buyers')" id="gnav-g-buyers"><div class="nav-icon">&#9650;</div><div class="nav-label t" data-key="buyers">Buyers</div></button>
+    <button class="nav-btn" onclick="gTab('g-factor')" id="gnav-g-factor"><div class="nav-icon">&#36;</div><div class="nav-label t" data-key="factoring">Factor</div></button>
+    <button class="nav-btn" onclick="gTab('g-fsma')" id="gnav-g-fsma"><div class="nav-icon">&#10003;</div><div class="nav-label">FSMA</div></button>
+  </nav>
+</div>
+
+<!-- ═══ BUYER APP ═══ -->
+<div id="buyer-screen" class="screen">
+  <div class="topbar">
+    <h1>LOAF <span style="color:var(--gold);font-size:13px;font-weight:600" class="t" data-key="buyerPortal">Buyer Portal</span></h1>
+    <div class="topbar-right">
+      <button class="lang-btn" onclick="toggleLang()">EN/ES</button>
+      <button class="logout-btn" onclick="doLogout()"><span class="t" data-key="exit">Exit</span></button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="bTab('b-dash')" id="btab-b-dash"><span class="t" data-key="dashboard">Dashboard</span></button>
+    <button class="tab" onclick="bTab('b-browse')" id="btab-b-browse"><span class="t" data-key="browse">Browse</span></button>
+    <button class="tab" onclick="bTab('b-need')" id="btab-b-need"><span class="t" data-key="postNeed">Post Need</span></button>
+    <button class="tab" onclick="bTab('b-needs')" id="btab-b-needs"><span class="t" data-key="myNeeds">My Needs</span></button>
+    <button class="tab" onclick="bTab('b-auctions')" id="btab-b-auctions">CFT</button>
+    <button class="tab" onclick="bTab('b-deal')" id="btab-b-deal"><span class="t" data-key="dealRoom">Deal Room</span></button>
+  </div>
+
+  <!-- BUYER DASHBOARD -->
+  <div class="tab-content active" id="b-dash">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="b-stat-inv">—</div><div class="stat-label t" data-key="liveInventory">Live Inventory</div></div>
+      <div class="stat-card"><div class="stat-val gold" id="b-stat-needs">—</div><div class="stat-label t" data-key="myNeeds">My Needs</div></div>
+      <div class="stat-card"><div class="stat-val" id="b-stat-auctions">—</div><div class="stat-label">Open CFTs</div></div>
+      <div class="stat-card"><div class="stat-val gold">Live</div><div class="stat-label t" data-key="matching">Matching</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title t" data-key="freshInventory">Fresh Inventory This Week</div>
+      <div id="b-recent-inv"><div class="loading">Loading...</div></div>
+      <button class="btn btn-outline" onclick="bTab('b-browse')" style="margin-top:12px"><span class="t" data-key="browseAll">Browse All Inventory</span></button>
+    </div>
+  </div>
+
+  <!-- BROWSE INVENTORY -->
+  <div class="tab-content" id="b-browse">
+    <div class="section">
+      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px">
+        <select class="form-select" id="browse-filter-comm" onchange="loadInventory()">
+          <option value=""><span class="t" data-key="allCommodities">All Commodities</span></option>
+          <option>Hass Avocado</option><option>Strawberry</option><option>Blueberry</option><option>Raspberry</option>
+          <option>Blackberry</option><option>Roma Tomato</option><option>Persian Lime</option><option>Bell Pepper</option>
+          <option>Asparagus</option><option>Mango</option><option>Broccoli</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="loadInventory()">&#8635;</button>
+      </div>
+      <div id="b-inv-list"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- POST NEED -->
+  <div class="tab-content" id="b-need">
+    <div class="section">
+      <div class="section-title t" data-key="postBuyerNeed">Post What You Need</div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label t" data-key="commodity">Commodity</label>
+          <select class="form-select" id="need-commodity">
+            <option value="">Select commodity...</option>
+            <option>Hass Avocado</option><option>Strawberry</option><option>Blueberry</option><option>Raspberry</option>
+            <option>Blackberry</option><option>Roma Tomato</option><option>Persian Lime</option><option>Bell Pepper</option>
+            <option>Asparagus</option><option>Mango</option><option>Broccoli</option><option>Other</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-group">
+            <label class="form-label t" data-key="volumeBoxes">Volume (boxes)</label>
+            <input class="form-input" id="need-volume" type="number" placeholder="500">
+          </div>
+          <div class="form-group">
+            <label class="form-label t" data-key="maxPrice">Max Price ($)</label>
+            <input class="form-input" id="need-price" type="number" step="0.01" placeholder="25.00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="deliveryLocation">Delivery Location</label>
+          <input class="form-input" id="need-location" type="text" placeholder="e.g. Los Angeles, CA">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="neededBy">Needed By</label>
+          <input class="form-input" id="need-date" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label t" data-key="deliveryTerms">Delivery Terms</label>
+          <select class="form-select" id="need-delivery">
+            <option>FOB Mexico</option><option>FOB Border</option><option>Delivered US Terminal</option><option>CIF Destination</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="need-autopng" style="width:18px;height:18px;cursor:pointer" checked>
+          <label for="need-autopng" style="font-size:13px;color:var(--dark);cursor:pointer" class="t" data-key="autoPingGrowers">Auto-ping matched growers</label>
+        </div>
+        <div id="need-status" class="status-msg"></div>
+        <button class="btn btn-gold" id="need-btn" onclick="postBuyerNeed()"><span class="t" data-key="postNeed">Post Need</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY NEEDS -->
+  <div class="tab-content" id="b-needs">
+    <div class="section">
+      <div class="section-title t" data-key="myActiveNeeds">My Active Needs</div>
+      <div id="b-needs-list"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- CFT AUCTIONS -->
+  <div class="tab-content" id="b-auctions">
+    <div class="section">
+      <div class="section-title t" data-key="openCFTs">Open Call-For-Tenders</div>
+      <div id="b-auctions-list"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- DEAL ROOM -->
+  <div class="tab-content" id="b-deal">
+    <div class="section">
+      <div class="section-title t" data-key="dealRoom">Deal Room</div>
+      <div id="b-deal-list"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" onclick="bTab('b-dash')" id="bnav-b-dash"><div class="nav-icon">&#9632;</div><div class="nav-label t" data-key="home">Home</div></button>
+    <button class="nav-btn" onclick="bTab('b-browse')" id="bnav-b-browse"><div class="nav-icon">&#9664;&#9654;</div><div class="nav-label t" data-key="browse">Browse</div></button>
+    <button class="nav-btn" onclick="bTab('b-need')" id="bnav-b-need"><div class="nav-icon">&#43;</div><div class="nav-label t" data-key="need">Need</div></button>
+    <button class="nav-btn" onclick="bTab('b-auctions')" id="bnav-b-auctions"><div class="nav-icon">&#9650;</div><div class="nav-label">CFT</div></button>
+    <button class="nav-btn" onclick="bTab('b-deal')" id="bnav-b-deal"><div class="nav-icon">&#9670;</div><div class="nav-label t" data-key="deals">Deals</div></button>
+  </nav>
+</div>
+
+<script>
+const BE='https://auditdna-backend-1-production.up.railway.app/api/loaf/agent';
+let ROLE=null,USER=null,LANG='EN';
+
+// ── TRANSLATIONS ─────────────────────────────────────────────────────────────
+const T={
+  EN:{back:'Back',yourName:'Your Name',phone:'Phone Number',company:'Company Name',
+    mainCommodity:'Main Commodity',region:'Growing Region',enterPlatform:'Enter Platform',
+    growerPortal:'Grower Portal',buyerPortal:'Buyer Portal',exit:'Exit',
+    dashboard:'Dashboard',inventory:'Inventory',postLoad:'Post Load',buyerNeeds:'Buyer Needs',
+    factoring:'Factoring',originAttestation:'Origin Attestation',openCFTs:'Open CFTs',
+    home:'Home',post:'Post',buyers:'Buyers',deals:'Deals',browse:'Browse',
+    commodity:'Commodity',volumeBoxes:'Volume (boxes)',fobPrice:'FOB Price ($)',
+    packType:'Pack Type',variety:'Variety',availableFrom:'Available From',
+    availableTo:'Available To',location:'FOB Location',certifications:'Certifications',
+    notes:'Notes',buyer:'Buyer / Debtor',invoiceAmount:'Invoice Amount (USD)',
+    advance:'Advance (80%)',feeEst:'Fee estimate (3.5%)',type:'Type',
+    sameWeek:'Same Week',upfront:'Upfront',submitFactoring:'Submit Factoring Request',
+    harvestDate:'Harvest Date',fieldLocation:'Field Location',acresHarvested:'Acres Harvested',
+    fsmaChecklist:'FSMA Compliance Checklist',submitAttestation:'Submit Attestation',
+    check1:'Water quality test on file (past 12 months)',check2:'Worker hygiene training completed',
+    check3:'No animals in growing area 30 days pre-harvest',check4:'Soil amendments applied per schedule',
+    check5:'Harvest equipment sanitized and documented',check6:'Cold chain maintained from field to transport',
+    myListings:'My Listings',matched:'Matched',recentListings:'My Recent Listings',
+    postNewLoad:'Post New Load',myInventory:'My Inventory',whatBuyersNeed:'What Buyers Need Right Now',
+    invoiceFactoring:'Invoice Factoring',liveInventory:'Live Inventory',myNeeds:'My Needs',
+    matching:'Matching',freshInventory:'Fresh Inventory This Week',browseAll:'Browse All Inventory',
+    allCommodities:'All Commodities',postBuyerNeed:'Post What You Need',
+    deliveryLocation:'Delivery Location',neededBy:'Needed By',deliveryTerms:'Delivery Terms',
+    autoPingGrowers:'Auto-ping matched growers',postNeed:'Post Need',
+    myActiveNeeds:'My Active Needs',dealRoom:'Deal Room',need:'Need',
+    loading:'Loading...',noData:'No data yet.',
+    'grower-title':'Grower — Enter Your Details','buyer-title':'Buyer — Enter Your Details',
+    'grower-sub':'Your phone is your ID. No password needed.','buyer-sub':'Tell us who you are. Growers will be notified automatically.'},
+  ES:{back:'Atras',yourName:'Tu Nombre',phone:'Numero de Telefono',company:'Nombre de Empresa',
+    mainCommodity:'Producto Principal',region:'Region de Cultivo',enterPlatform:'Entrar a la Plataforma',
+    growerPortal:'Portal del Productor',buyerPortal:'Portal del Comprador',exit:'Salir',
+    dashboard:'Inicio',inventory:'Inventario',postLoad:'Publicar Carga',buyerNeeds:'Necesidades',
+    factoring:'Factoraje',originAttestation:'Atestacion de Origen',openCFTs:'CFTs Abiertos',
+    home:'Inicio',post:'Publicar',buyers:'Compradores',deals:'Tratos',browse:'Buscar',
+    commodity:'Producto',volumeBoxes:'Volumen (cajas)',fobPrice:'Precio FOB ($)',
+    packType:'Tipo de Empaque',variety:'Variedad',availableFrom:'Disponible Desde',
+    availableTo:'Disponible Hasta',location:'Ubicacion FOB',certifications:'Certificaciones',
+    notes:'Notas',buyer:'Comprador / Deudor',invoiceAmount:'Monto de Factura (USD)',
+    advance:'Anticipo (80%)',feeEst:'Comision estimada (3.5%)',type:'Tipo',
+    sameWeek:'Misma Semana',upfront:'Adelanto',submitFactoring:'Enviar Solicitud de Factoraje',
+    harvestDate:'Fecha de Cosecha',fieldLocation:'Ubicacion del Campo',acresHarvested:'Hectareas Cosechadas',
+    fsmaChecklist:'Lista de Cumplimiento FSMA',submitAttestation:'Enviar Atestacion',
+    check1:'Prueba de calidad del agua en archivo (ultimos 12 meses)',check2:'Capacitacion en higiene del trabajador completada',
+    check3:'Sin animales en area de cultivo 30 dias antes de cosecha',check4:'Enmiendas de suelo aplicadas segun calendario',
+    check5:'Equipo de cosecha sanitizado y documentado',check6:'Cadena de frio mantenida desde campo hasta transporte',
+    myListings:'Mis Publicaciones',matched:'Conectados',recentListings:'Mis Publicaciones Recientes',
+    postNewLoad:'Publicar Nueva Carga',myInventory:'Mi Inventario',whatBuyersNeed:'Lo Que Necesitan los Compradores',
+    invoiceFactoring:'Factoraje de Facturas',liveInventory:'Inventario en Vivo',myNeeds:'Mis Necesidades',
+    matching:'Conectando',freshInventory:'Inventario Fresco Esta Semana',browseAll:'Ver Todo el Inventario',
+    allCommodities:'Todos los Productos',postBuyerNeed:'Publicar Lo Que Necesitas',
+    deliveryLocation:'Lugar de Entrega',neededBy:'Necesario Para',deliveryTerms:'Terminos de Entrega',
+    autoPingGrowers:'Notificar productores automaticamente',postNeed:'Publicar Necesidad',
+    myActiveNeeds:'Mis Necesidades Activas',dealRoom:'Sala de Tratos',need:'Necesidad',
+    loading:'Cargando...',noData:'Sin datos aun.',
+    'grower-title':'Productor — Ingresa tus Datos','buyer-title':'Comprador — Ingresa tus Datos',
+    'grower-sub':'Tu telefono es tu ID. No necesitas contrasena.','buyer-sub':'Dinos quien eres. Los productores seran notificados automaticamente.'}
+};
+
+function t(key){return T[LANG]?.[key]||T.EN?.[key]||key;}
+function applyLang(){document.querySelectorAll('.t[data-key]').forEach(el=>{const v=t(el.dataset.key);if(v)el.textContent=v;});}
+function setLang(l){LANG=l;applyLang();document.getElementById('lang-en').style.fontWeight=l==='EN'?'700':'400';document.getElementById('lang-es').style.fontWeight=l==='ES'?'700':'400';}
+function toggleLang(){setLang(LANG==='EN'?'ES':'EN');}
+
+// ── SCREENS ──────────────────────────────────────────────────────────────────
+function showGate(){ROLE=null;document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('gate-screen').style.display='flex';}
+function showAuth(role){
+  ROLE=role;
+  document.getElementById('gate-screen').style.display='none';
+  showScreen('auth-screen');
+  document.getElementById('auth-title').textContent=t(role+'-title');
+  document.getElementById('auth-sub').textContent=t(role+'-sub');
+  document.getElementById('auth-company-group').style.display=role==='buyer'?'block':'none';
+  document.getElementById('auth-commodity-group').style.display=role==='grower'?'block':'none';
+  document.getElementById('auth-region-group').style.display=role==='grower'?'block':'none';
+  // Check if already logged in
+  const saved=localStorage.getItem('loaf_'+role);
+  if(saved){USER=JSON.parse(saved);enterApp();}
+}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function doLogout(){USER=null;ROLE=null;localStorage.removeItem('loaf_grower');localStorage.removeItem('loaf_buyer');showGate();}
+
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+async function doAuth(){
+  const name=document.getElementById('auth-name').value.trim();
+  const phone=document.getElementById('auth-phone').value.trim();
+  const company=document.getElementById('auth-company')?.value?.trim()||'';
+  const commodity=document.getElementById('auth-commodity')?.value||'';
+  const region=document.getElementById('auth-region')?.value||'';
+  if(!name||!phone){setStatus('auth-status','error',LANG==='ES'?'Por favor ingresa tu nombre y telefono.':'Please enter your name and phone.');return;}
+  const btn=document.getElementById('auth-btn');btn.disabled=true;btn.textContent=t('loading');
+  setStatus('auth-status','loading',LANG==='ES'?'Conectando...':'Connecting...');
+  try{
+    if(ROLE==='grower'){
+      await api('/register',{name,company,phone,commodity,region});
+    }
+    USER={name,phone,company,commodity,region,role:ROLE};
+    localStorage.setItem('loaf_'+ROLE,JSON.stringify(USER));
+    setStatus('auth-status','ok',LANG==='ES'?'Bienvenido, '+name+'!':'Welcome, '+name+'!');
+    setTimeout(()=>enterApp(),800);
+  }catch(e){setStatus('auth-status','error',e.message||'Error');}
+  btn.disabled=false;btn.textContent=t('enterPlatform');
+}
+function enterApp(){
+  if(ROLE==='grower'){showScreen('grower-screen');loadGrowerDash();}
+  else{showScreen('buyer-screen');loadBuyerDash();}
+  applyLang();
+}
+
+// ── API ───────────────────────────────────────────────────────────────────────
+async function api(endpoint,body,method='POST'){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body && method!=='GET') opts.body=JSON.stringify(body);
+  const res=await fetch(BE+endpoint,opts);
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error||e.message||'Request failed');}
+  return res.json();
+}
+async function apiGet(endpoint){
+  const res=await fetch(BE+endpoint,{headers:{'Content-Type':'application/json'}});
+  if(!res.ok) throw new Error('Request failed');
+  return res.json();
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+function setStatus(id,type,msg){
+  const el=document.getElementById(id);if(!el)return;
+  el.textContent=msg;el.className='status-msg show';
+  el.classList.remove('status-ok','status-err','status-loading');
+  el.classList.add(type==='ok'?'status-ok':type==='error'?'status-err':'status-loading');
+}
+function clearStatus(id){const el=document.getElementById(id);if(el){el.className='status-msg';}}
+
+// ── GROWER TABS ───────────────────────────────────────────────────────────────
+const G_TABS=['g-dash','g-inv','g-post','g-buyers','g-factor','g-fsma','g-auctions'];
+function gTab(id){
+  G_TABS.forEach(t=>{
+    document.getElementById(t)?.classList.remove('active');
+    document.getElementById('gtab-'+t)?.classList.remove('active');
+    document.getElementById('gnav-'+t)?.classList.remove('active');
+  });
+  document.getElementById(id)?.classList.add('active');
+  document.getElementById('gtab-'+id)?.classList.add('active');
+  document.getElementById('gnav-'+id)?.classList.add('active');
+  if(id==='g-inv') loadMyListings();
+  if(id==='g-buyers') loadBuyerNeeds();
+  if(id==='g-auctions') loadAuctions('g');
+}
+
+// ── BUYER TABS ────────────────────────────────────────────────────────────────
+const B_TABS=['b-dash','b-browse','b-need','b-needs','b-auctions','b-deal'];
+function bTab(id){
+  B_TABS.forEach(t=>{
+    document.getElementById(t)?.classList.remove('active');
+    document.getElementById('btab-'+t)?.classList.remove('active');
+    document.getElementById('bnav-'+t)?.classList.remove('active');
+  });
+  document.getElementById(id)?.classList.add('active');
+  document.getElementById('btab-'+id)?.classList.add('active');
+  document.getElementById('bnav-'+id)?.classList.add('active');
+  if(id==='b-browse') loadInventory();
+  if(id==='b-needs') loadMyNeeds();
+  if(id==='b-auctions') loadAuctions('b');
+  if(id==='b-deal') loadDealRoom();
+}
+
+// ── GROWER LOAD ───────────────────────────────────────────────────────────────
+async function loadGrowerDash(){
+  try{
+    const[inv,needs,auctions]=await Promise.all([
+      apiGet('/my-listings?phone='+encodeURIComponent(USER.phone)).catch(()=>({rows:[],inventory:[]})),
+      apiGet('/buyer-needs').catch(()=>({needs:[]})),
+      apiGet('/auctions/open').catch(()=>({auctions:[]})),
+    ]);
+    const listings=inv.inventory||inv.rows||[];
+    const needsList=needs.needs||[];
+    const auctList=auctions.auctions||[];
+    document.getElementById('g-stat-listings').textContent=listings.length;
+    document.getElementById('g-stat-buyers').textContent=needsList.length;
+    document.getElementById('g-stat-auctions').textContent=auctList.length;
+    renderListings('g-recent-listings',listings.slice(0,5));
+  }catch(e){document.getElementById('g-recent-listings').innerHTML='<div class="empty">'+t('noData')+'</div>';}
+}
+async function loadMyListings(){
+  document.getElementById('g-inv-list').innerHTML='<div class="loading">'+t('loading')+'</div>';
+  try{
+    const d=await apiGet('/my-listings?phone='+encodeURIComponent(USER.phone));
+    renderListings('g-inv-list',(d.inventory||d.rows||[]));
+  }catch(e){document.getElementById('g-inv-list').innerHTML='<div class="empty">'+t('noData')+'</div>';}
+}
+function renderListings(id,items){
+  const el=document.getElementById(id);if(!el)return;
+  if(!items.length){el.innerHTML='<div class="empty">'+t('noData')+'</div>';return;}
+  el.innerHTML=items.map(i=>`
+    <div class="list-item">
+      <div class="list-item-row">
+        <div><div class="list-item-title">${i.commodity||'—'} &nbsp;<span class="badge badge-green">${i.grade||'Grade 1'}</span></div>
+          <div class="list-item-sub">${i.volume||i.quantity||'—'} boxes &bull; ${i.location||'—'} &bull; ${fmtDate(i.submitted_at||i.created_at)}</div>
+          <div class="list-item-sub">${i.variety||''} ${i.pack_type||''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="inv-price">$${Number(i.price||0).toFixed(2)}</div>
+          <div class="inv-vol">FOB</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── BUYER NEEDS ───────────────────────────────────────────────────────────────
+async function loadBuyerNeeds(){
+  document.getElementById('g-buyer-needs-list').innerHTML='<div class="loading">'+t('loading')+'</div>';
+  try{
+    const d=await apiGet('/buyer-needs');
+    const needs=d.needs||[];
+    if(!needs.length){document.getElementById('g-buyer-needs-list').innerHTML='<div class="empty">'+t('noData')+'</div>';return;}
+    document.getElementById('g-buyer-needs-list').innerHTML=needs.map(n=>`
+      <div class="list-item">
+        <div class="list-item-row">
+          <div><div class="list-item-title">${n.commodity} &nbsp;<span class="badge badge-gold">${n.volume||'—'} boxes</span></div>
+            <div class="list-item-sub">Max: $${Number(n.max_price||0).toFixed(2)} &bull; ${n.location||'—'} &bull; ${fmtDate(n.needed_by)}</div>
+            <div class="list-item-sub">${n.name||''} ${n.company?'('+n.company+')':''}</div>
+          </div>
+        </div>
+      </div>`).join('');
+  }catch(e){document.getElementById('g-buyer-needs-list').innerHTML='<div class="empty">'+t('noData')+'</div>';}
+}
+
+// ── POST INVENTORY ────────────────────────────────────────────────────────────
+async function postInventory(){
+  const commodity=document.getElementById('post-commodity').value;
+  const volume=document.getElementById('post-volume').value;
+  const price=document.getElementById('post-price').value;
+  if(!commodity||!volume||!price){setStatus('post-status','error','Fill in commodity, volume, and price.');return;}
+  const btn=document.getElementById('post-btn');btn.disabled=true;btn.textContent=t('loading');
+  setStatus('post-status','loading',LANG==='ES'?'Publicando...':'Posting...');
+  const certs=Array.from(document.querySelectorAll('#post-certs .comm-chip.selected')).map(c=>c.dataset.val);
+  try{
+    await api('/inventory-post',{
+      name:USER.name,phone:USER.phone,email:'',
+      commodity,volume:+volume,price:+price,
+      location:document.getElementById('post-location').value,
+      pack_type:document.getElementById('post-pack').value,
+      variety:document.getElementById('post-variety').value,
+      grade:document.getElementById('post-grade').value,
+      available_from:document.getElementById('post-from').value,
+      available_to:document.getElementById('post-to').value,
+      notes:document.getElementById('post-notes').value,
+      certifications:certs,
+      country:USER.region||'Mexico',
+      condition:'Fresh',
+      radius:500
+    });
+    setStatus('post-status','ok',LANG==='ES'?'Carga publicada. Los compradores seran notificados.':'Load posted. Matched buyers will be notified.');
+    // Clear form
+    ['post-commodity','post-volume','post-price','post-location','post-pack','post-variety','post-from','post-to','post-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.querySelectorAll('#post-certs .comm-chip.selected').forEach(c=>c.classList.remove('selected'));
+  }catch(e){setStatus('post-status','error',e.message);}
+  btn.disabled=false;btn.textContent=t('postLoad');
+}
+
+// ── FACTORING ─────────────────────────────────────────────────────────────────
+function calcAdvance(){
+  const amt=parseFloat(document.getElementById('fac-amount').value)||0;
+  if(amt>0){
+    document.getElementById('fac-calc').style.display='block';
+    document.getElementById('fac-advance').textContent='$'+((amt*.8).toLocaleString('en-US',{maximumFractionDigits:0}));
+    document.getElementById('fac-fee').textContent='$'+((amt*.035).toLocaleString('en-US',{maximumFractionDigits:0}));
+  }else{document.getElementById('fac-calc').style.display='none';}
+}
+async function submitFactoring(){
+  const buyer=document.getElementById('fac-buyer').value.trim();
+  const commodity=document.getElementById('fac-commodity').value.trim();
+  const amount=document.getElementById('fac-amount').value;
+  if(!buyer||!amount){setStatus('fac-status','error','Fill in buyer and amount.');return;}
+  const btn=document.getElementById('fac-btn');btn.disabled=true;
+  setStatus('fac-status','loading',LANG==='ES'?'Enviando solicitud...':'Submitting request...');
+  try{
+    await api('/factoring-intake',{name:USER.name,phone:USER.phone,buyer,commodity,amount:+amount,type:document.getElementById('fac-type').value,factoring_partner:'Mexausa'});
+    setStatus('fac-status','ok',LANG==='ES'?'Solicitud enviada. Saul Garcia la revisara hoy.':'Request submitted. Saul Garcia will review today.');
+    document.getElementById('fac-buyer').value='';document.getElementById('fac-commodity').value='';document.getElementById('fac-amount').value='';document.getElementById('fac-calc').style.display='none';
+  }catch(e){setStatus('fac-status','error',e.message);}
+  btn.disabled=false;
+}
+
+// ── FSMA ──────────────────────────────────────────────────────────────────────
+function toggleCheck(el){el.classList.toggle('checked');el.textContent=el.classList.contains('checked')?'&#10003;':'';}
+async function submitFSMA(){
+  const commodity=document.getElementById('fsma-commodity').value.trim();
+  const harvest_date=document.getElementById('fsma-harvest').value;
+  if(!commodity||!harvest_date){setStatus('fsma-status','error','Commodity and harvest date required.');return;}
+  setStatus('fsma-status','loading','Submitting attestation...');
+  try{
+    const r=await api('/origin/attest',{
+      name:USER.name,phone:USER.phone,commodity,
+      variety:document.getElementById('fsma-variety').value,
+      lot_number:document.getElementById('fsma-lot').value,
+      harvest_date,
+      field_location:document.getElementById('fsma-field').value,
+      acres_harvested:parseFloat(document.getElementById('fsma-acres').value)||null,
+      certifications:Array.from(document.querySelectorAll('#post-certs .comm-chip.selected')).map(c=>c.dataset.val),
+    });
+    setStatus('fsma-status','ok','Attestation submitted. Lot ID: '+(r.lot_id||'confirmed'));
+  }catch(e){setStatus('fsma-status','error',e.message);}
+}
+
+// ── AUCTIONS ──────────────────────────────────────────────────────────────────
+async function loadAuctions(mode){
+  const id=mode==='g'?'g-auctions-list':'b-auctions-list';
+  document.getElementById(id).innerHTML='<div class="loading">'+t('loading')+'</div>';
+  try{
+    const d=await apiGet('/auctions/open');
+    const list=d.auctions||[];
+    if(!list.length){document.getElementById(id).innerHTML='<div class="empty">'+t('noData')+'</div>';return;}
+    document.getElementById(id).innerHTML=list.map(a=>`
+      <div class="list-item">
+        <div class="list-item-row">
+          <div><div class="list-item-title">${a.commodity||'—'} &nbsp;<span class="badge badge-blue">CFT</span></div>
+            <div class="list-item-sub">${a.volume||'—'} boxes &bull; ${a.location||'—'}</div>
+            <div class="list-item-sub">${t('neededBy')}: ${fmtDate(a.needed_by||a.deadline)}</div>
+          </div>
+          ${mode==='g'?`<button class="btn btn-green btn-sm" onclick="bidAuction('${a.id}')">Bid</button>`:''}
+        </div>
+      </div>`).join('');
+  }catch(e){document.getElementById(id).innerHTML='<div class="empty">'+t('noData')+'</div>';}
+}
+async function bidAuction(id){
+  const price=prompt('Your bid price per box ($):');
+  if(!price||isNaN(price))return;
+  try{
+    await api('/auctions/'+id+'/bid',{bidder_name:USER.name,bidder_phone:USER.phone,bid_price:+price});
+    alert(LANG==='ES'?'Oferta enviada.':'Bid submitted.');
+    loadAuctions('g');
+  }catch(e){alert('Error: '+e.message);}
+}
+
+// ── BUYER DASHBOARD ───────────────────────────────────────────────────────────
+async function loadBuyerDash(){
+  try{
+    const[inv,needs,auctions]=await Promise.all([
+      apiGet('/inventory').catch(()=>({inventory:[]})),
+      apiGet('/my-needs?phone='+encodeURIComponent(USER.phone)).catch(()=>({needs:[]})),
+      apiGet('/auctions/open').catch(()=>({auctions:[]})),
+    ]);
+    const invList=inv.inventory||inv.rows||[];
+    document.getElementById('b-stat-inv').textContent=invList.length;
+    document.getElementById('b-stat-needs').textContent=(needs.needs||[]).length;
+    document.getElementById('b-stat-auctions').textContent=(auctions.auctions||[]).length;
+    renderInventoryCards('b-recent-inv',invList.slice(0,6));
+  }catch(e){document.getElementById('b-recent-inv').innerHTML='<div class="empty">'+t('noData')+'</div>';}
+}
+async function loadInventory(){
+  document.getElementById('b-inv-list').innerHTML='<div class="loading">'+t('loading')+'</div>';
+  const filter=document.getElementById('browse-filter-comm')?.value||'';
+  try{
+    const d=await apiGet('/inventory'+(filter?'?commodity='+encodeURIComponent(filter):''));
+    renderInventoryCards('b-inv-list',d.inventory||d.rows||[]);
+  }catch(e){document.getElementById('b-inv-list').innerHTML='<div class="empty">'+t('noData')+'</div>';}
+}
+function renderInventoryCards(id,items){
+  const el=document.getElementById(id);if(!el)return;
+  if(!items.length){el.innerHTML='<div class="empty">'+t('noData')+'</div>';return;}
+  el.innerHTML=items.map(i=>`
+    <div class="list-item">
+      <div class="list-item-row">
+        <div><div class="list-item-title">${i.commodity||'—'} &nbsp;<span class="badge badge-green">${i.condition||'Fresh'}</span></div>
+          <div class="list-item-sub">${i.volume||i.quantity||'—'} boxes &bull; ${i.location||'—'}</div>
+          <div class="list-item-sub">${i.name||''} &bull; ${i.region||''} &bull; ${fmtDate(i.submitted_at||i.created_at)}</div>
+          <div class="list-item-sub">${(i.certifications||[]).join(' | ')||''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="inv-price">$${Number(i.price||0).toFixed(2)}</div>
+          <div class="inv-vol" style="font-size:11px">FOB</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── POST BUYER NEED ───────────────────────────────────────────────────────────
+async function postBuyerNeed(){
+  const commodity=document.getElementById('need-commodity').value;
+  const volume=document.getElementById('need-volume').value;
+  if(!commodity||!volume){setStatus('need-status','error','Commodity and volume required.');return;}
+  const btn=document.getElementById('need-btn');btn.disabled=true;
+  setStatus('need-status','loading',LANG==='ES'?'Publicando...':'Posting...');
+  try{
+    await api('/buyer-need',{
+      name:USER.name,company:USER.company||'',phone:USER.phone,email:'',
+      commodity,volume:+volume,
+      max_price:parseFloat(document.getElementById('need-price').value)||null,
+      needed_by:document.getElementById('need-date').value,
+      location:document.getElementById('need-location').value,
+      delivery:document.getElementById('need-delivery').value,
+      radius:1000,
+      auto_ping_growers:document.getElementById('need-autopng').checked
+    });
+    setStatus('need-status','ok',LANG==='ES'?'Necesidad publicada. Los productores seran notificados.':'Need posted. Matched growers will be notified automatically.');
+    ['need-commodity','need-volume','need-price','need-location','need-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  }catch(e){setStatus('need-status','error',e.message);}
+  btn.disabled=false;
+}
+
+// ── MY NEEDS ──────────────────────────────────────────────────────────────────
+async function loadMyNeeds(){
+  document.getElementById('b-needs-list').innerHTML='<div class="loading">'+t('loading')+'</div>';
+  try{
+    const d=await apiGet('/my-needs?phone='+encodeURIComponent(USER.phone));
+    const needs=d.needs||[];
+    if(!needs.length){document.getElementById('b-needs-list').innerHTML='<div class="empty">'+t('noData')+'</div>';return;}
+    document.getElementById('b-needs-list').innerHTML=needs.map(n=>`
+      <div class="list-item">
+        <div class="list-item-title">${n.commodity} &nbsp;<span class="badge badge-gold">${n.volume} boxes</span></div>
+        <div class="list-item-sub">Max $${Number(n.max_price||0).toFixed(2)} &bull; ${n.location||'—'} &bull; ${fmtDate(n.needed_by)}</div>
+        <div class="list-item-sub">${t('autoPingGrowers')}: ${n.auto_ping_growers?'Yes':'No'}</div>
+      </div>`).join('');
+  }catch(e){document.getElementById('b-needs-list').innerHTML='<div class="empty">'+t('noData')+'</div>';}
+}
+
+// ── DEAL ROOM ─────────────────────────────────────────────────────────────────
+async function loadDealRoom(){
+  document.getElementById('b-deal-list').innerHTML='<div class="loading">'+t('loading')+'</div>';
+  try{
+    const d=await apiGet('/deal-room');
+    const deals=d.deals||d.rooms||[];
+    if(!deals.length){document.getElementById('b-deal-list').innerHTML='<div class="empty">'+t('noData')+'</div>';return;}
+    document.getElementById('b-deal-list').innerHTML=deals.map(d=>`
+      <div class="list-item">
+        <div class="list-item-row">
+          <div><div class="list-item-title">${d.commodity||'—'} <span class="badge badge-blue">${d.status||'OPEN'}</span></div>
+            <div class="list-item-sub">${d.volume||'—'} boxes &bull; $${Number(d.price_per_unit||0).toFixed(2)}/box</div>
+            <div class="list-item-sub">${fmtDate(d.created_at)}</div>
+          </div>
+        </div>
+      </div>`).join('');
+  }catch(e){document.getElementById('b-deal-list').innerHTML='<div class="empty">'+t('noData')+'</div>';}
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}catch{return d;}}
+function toggleCert(el){el.classList.toggle('selected');}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload=function(){
+  applyLang();
+  // Check for saved session
+  const sg=localStorage.getItem('loaf_grower');
+  const sb=localStorage.getItem('loaf_buyer');
+  if(sg||sb){
+    // Show gate — let user choose to re-enter or switch
+  }
+};
+</script>
+</body>
+</html>

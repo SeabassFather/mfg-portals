@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Your Company  BookKeeper + Accountant + Tax Pro Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#020912;color:#e2e8f0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+:root{--gold:#C9A55C;--dark:#020912;--navy:#0d1117;--card:#161b22;--bord:rgba(255,255,255,0.07);--txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;--green:#22c55e;--red:#ef4444;--blue:#4a8fd4;--purple:#8b5cf6}
+#gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
+.gate-card{background:var(--card);border:1px solid rgba(201,165,92,0.3);border-radius:20px;padding:36px 28px;width:90%;max-width:340px;text-align:center;box-shadow:0 0 60px rgba(201,165,92,0.07)}
+.gate-logo{width:64px;height:64px;background:linear-gradient(135deg,#C9A55C,#8a6930);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:10px;font-weight:900;color:#020912;letter-spacing:.5px;line-height:1.4;text-align:center}
+.gate-brand{font-size:16px;font-weight:900;color:#e2e8f0;margin-bottom:3px}
+.gate-title{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.gate-sub{font-size:10px;color:var(--muted);margin-bottom:22px;line-height:1.5}
+#dots{font-size:26px;letter-spacing:10px;color:var(--gold);min-height:34px;margin-bottom:8px}
+#g-err{font-size:11px;color:var(--red);min-height:16px;margin-bottom:10px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nb{background:#0d1117;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:15px 0;font-size:20px;font-weight:700;color:var(--txt);cursor:pointer;user-select:none;touch-action:manipulation;transition:background .15s}
+.nb:hover{background:#1e293b}
+.nb:active{background:rgba(201,165,92,0.2)}
+.nb.del{color:var(--red);font-size:14px}
+.powered{font-size:9px;color:#1a2744;margin-top:6px}
+#app{display:none;min-height:100vh}
+.topbar{background:#0d1117;border-bottom:1px solid var(--bord);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
+.logo-row{display:flex;align-items:center;gap:12px}
+.logo-sq{width:38px;height:38px;background:linear-gradient(135deg,#C9A55C,#8a6930);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#020912;letter-spacing:.3px;text-align:center;line-height:1.3;flex-shrink:0}
+.co-name{font-size:14px;font-weight:900;color:var(--gold)}
+.co-sub{font-size:9px;color:var(--muted);letter-spacing:.8px;margin-top:1px}
+.tabs{display:flex;gap:4px;padding:10px 20px;background:#0d1117;border-bottom:1px solid var(--bord);overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{padding:7px 13px;border-radius:7px;font-size:10px;font-weight:800;letter-spacing:.5px;cursor:pointer;border:1px solid var(--bord);background:transparent;color:var(--muted);white-space:nowrap;transition:all .15s;touch-action:manipulation}
+.tab-btn.active{background:var(--gold);color:#020912;border-color:var(--gold)}
+.tab-btn:hover:not(.active){border-color:rgba(201,165,92,0.4);color:var(--gold)}
+.body{padding:20px;max-width:1300px;margin:0 auto}
+.section{display:none}
+.section.active{display:block}
+.card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-title{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px}
+.kpi-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.kpi-val{font-size:22px;font-weight:900;color:var(--gold)}
+.kpi-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 10px;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;border-bottom:1px solid var(--bord);text-transform:uppercase;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt)}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.badge-green{background:rgba(34,197,94,0.15);color:#22c55e}
+.badge-red{background:rgba(239,68,68,0.15);color:#ef4444}
+.badge-gold{background:rgba(201,165,92,0.15);color:#C9A55C}
+.badge-blue{background:rgba(74,143,212,0.15);color:#4a8fd4}
+.badge-purple{background:rgba(139,92,246,0.15);color:#8b5cf6}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+input,select,textarea{background:rgba(255,255,255,0.04);border:1px solid rgba(74,143,212,0.2);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:16px;outline:none;font-family:inherit;transition:border-color .2s;width:100%}
+input:focus,select:focus{border-color:rgba(201,165,92,0.5)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.btn{padding:10px 18px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:none;letter-spacing:.5px;transition:opacity .2s;touch-action:manipulation}
+.btn-gold{background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912}
+.btn-blue{background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.3);color:#4a8fd4}
+.btn-purple{background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);color:#8b5cf6}
+.btn-red{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+.btn-green{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
+.btn:hover{opacity:.85}
+.progress-wrap{background:rgba(255,255,255,0.05);border-radius:4px;height:6px;margin-top:5px}
+.progress-bar{height:100%;border-radius:4px}
+.tax-hero{background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(201,165,92,0.1));border:1px solid rgba(139,92,246,0.3);border-radius:12px;padding:20px;margin-bottom:14px}
+.footer-bar{background:#0d1117;border-top:1px solid var(--bord);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:480px){.kpi-val{font-size:18px}.body{padding:12px}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">YOUR<br/>CO.</div>
+    <div class="gate-brand">YOUR COMPANY NAME HERE</div>
+    <div class="gate-title" id="gate-title-el">Full-Service Financial Portal</div>
+    <div class="gate-sub" id="gate-sub-el">Bookkeeping &bull; Accounting &bull; Tax Services<br/>Secured by AuditDNA Intelligence &bull; Patent Pending</div>
+    <div id="dots"></div>
+    <div id="g-err"></div>
+    <div class="numpad">
+      <div class="nb" onclick="np('1')">1</div><div class="nb" onclick="np('2')">2</div><div class="nb" onclick="np('3')">3</div>
+      <div class="nb" onclick="np('4')">4</div><div class="nb" onclick="np('5')">5</div><div class="nb" onclick="np('6')">6</div>
+      <div class="nb" onclick="np('7')">7</div><div class="nb" onclick="np('8')">8</div><div class="nb" onclick="np('9')">9</div>
+      <div class="nb del" onclick="nd()">DEL</div><div class="nb" onclick="np('0')">0</div><div class="nb del" onclick="nc()">CLR</div>
+    </div>
+  </div>
+  <div class="powered">Powered by AuditDNA Intelligence &bull; Mexausa Food Group, Inc. &bull; Patent Pending</div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="logo-row">
+      <div class="logo-sq">YOUR<br/>CO.</div>
+      <div>
+        <div class="co-name">YOUR COMPANY NAME HERE</div>
+        <div class="co-sub">BOOKKEEPING &bull; ACCOUNTING &bull; TAX SERVICES &bull; AUDITDNA INTELLIGENCE</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <span class="badge badge-gold">BOOKS</span>
+        <span class="badge badge-blue">ACCOUNTING</span>
+        <span class="badge badge-purple">TAX</span>
+      </div>
+      <div id="clock" style="font-size:10px;color:var(--muted)"></div>
+      <button id="lang-btn" class="btn btn-blue" onclick="toggleLang()" style="padding:7px 12px;font-size:10px;margin-right:4px">ES</button>
+      <button class="btn btn-red" onclick="lock()" style="padding:7px 12px;font-size:10px">LOCK</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="goTab('dashboard')">DASHBOARD</button>
+    <button class="tab-btn" onclick="goTab('bookkeeping')">BOOKKEEPING</button>
+    <button class="tab-btn" onclick="goTab('ar')">A/R &amp; A/P</button>
+    <button class="tab-btn" onclick="goTab('reconcile')">RECONCILE</button>
+    <button class="tab-btn" onclick="goTab('accounting')">ACCOUNTING</button>
+    <button class="tab-btn" onclick="goTab('tax')">TAX SERVICES</button>
+    <button class="tab-btn" onclick="goTab('reports')">REPORTS</button>
+    <button class="tab-btn" onclick="goTab('quickbooks')">QUICKBOOKS SYNC</button>
+    <button class="tab-btn" onclick="goTab('tasks')">TASKS</button>
+    <button class="tab-btn" onclick="goTab('docs')">DOCUMENTS</button>
+  </div>
+
+  <div class="body">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="section active">
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Monthly Revenue</div><div class="kpi-val" style="color:var(--green)">$284,600</div><div class="kpi-sub">All income sources</div></div>
+        <div class="kpi"><div class="kpi-lbl">Cash Balance</div><div class="kpi-val">$148,400</div><div class="kpi-sub">Operating account</div></div>
+        <div class="kpi"><div class="kpi-lbl">A/R Outstanding</div><div class="kpi-val" style="color:var(--red)">$84,200</div><div class="kpi-sub">11 open invoices</div></div>
+        <div class="kpi"><div class="kpi-lbl">A/P Due</div><div class="kpi-val" style="color:var(--red)">$42,800</div><div class="kpi-sub">This month</div></div>
+        <div class="kpi"><div class="kpi-lbl">Net Income MTD</div><div class="kpi-val" style="color:var(--green)">$94,200</div><div class="kpi-sub">33.1% margin</div></div>
+        <div class="kpi"><div class="kpi-lbl">Tax Liability Est.</div><div class="kpi-val" style="color:var(--purple)">$28,400</div><div class="kpi-sub">YTD estimated</div></div>
+        <div class="kpi"><div class="kpi-lbl">QB Last Sync</div><div class="kpi-val" style="color:var(--blue)">Live</div><div class="kpi-sub">Connected</div></div>
+        <div class="kpi"><div class="kpi-lbl">Open Tasks</div><div class="kpi-val" style="color:var(--gold)">9</div><div class="kpi-sub">3 urgent</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Recent Transactions</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>QB Status</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Jun 17</td><td>Client Payment  [Client A]</td><td><span class="badge badge-green">INCOME</span></td><td style="color:var(--green)">+$18,400</td><td><span class="badge badge-blue">SYNCED</span></td><td><span class="badge badge-green">CLEARED</span></td></tr>
+            <tr><td>Jun 16</td><td>Office Rent  June</td><td><span class="badge badge-red">EXPENSE</span></td><td style="color:var(--red)">-$4,200</td><td><span class="badge badge-blue">SYNCED</span></td><td><span class="badge badge-green">CLEARED</span></td></tr>
+            <tr><td>Jun 15</td><td>Client Payment  [Client B]</td><td><span class="badge badge-green">INCOME</span></td><td style="color:var(--green)">+$12,800</td><td><span class="badge badge-blue">SYNCED</span></td><td><span class="badge badge-green">CLEARED</span></td></tr>
+            <tr><td>Jun 14</td><td>Quarterly Estimated Tax Payment</td><td><span class="badge badge-purple">TAX</span></td><td style="color:var(--red)">-$8,400</td><td><span class="badge badge-blue">SYNCED</span></td><td><span class="badge badge-green">CLEARED</span></td></tr>
+            <tr><td>Jun 13</td><td>Vendor Payment  [Vendor]</td><td><span class="badge badge-red">EXPENSE</span></td><td style="color:var(--red)">-$2,800</td><td><span class="badge badge-gold">PENDING</span></td><td><span class="badge badge-gold">PENDING</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Budget vs Actual  June 2026</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Operating Expenses</span><span style="font-size:11px;color:var(--green)">$84,200 / $90,000</span></div><div class="progress-wrap"><div class="progress-bar" style="width:93%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Payroll</span><span style="font-size:11px;color:var(--gold)">$42,800 / $44,000</span></div><div class="progress-wrap"><div class="progress-bar" style="width:97%;background:var(--gold)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Marketing</span><span style="font-size:11px;color:var(--green)">$8,200 / $12,000</span></div><div class="progress-wrap"><div class="progress-bar" style="width:68%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Tax Reserve</span><span style="font-size:11px;color:var(--red)">$28,400 / $24,000</span></div><div class="progress-wrap"><div class="progress-bar" style="width:100%;background:var(--red)"></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">YTD P&amp;L Summary</div>
+          <table><tbody>
+            <tr><td style="color:var(--dim)">Total Revenue YTD</td><td style="color:var(--green);text-align:right">$1,842,400</td></tr>
+            <tr><td style="color:var(--dim)">Total Expenses YTD</td><td style="color:var(--red);text-align:right">-$1,242,800</td></tr>
+            <tr><td style="color:var(--dim)">Estimated Tax Liability</td><td style="color:var(--purple);text-align:right">-$148,400</td></tr>
+            <tr style="border-top:1px solid var(--bord)"><td style="font-weight:900;padding-top:8px">NET INCOME YTD</td><td style="color:var(--green);font-weight:900;font-size:16px;text-align:right;padding-top:8px">$451,200</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOKKEEPING -->
+    <div id="tab-bookkeeping" class="section">
+      <div class="card">
+        <div class="card-title">Add Transaction</div>
+        <div class="form-grid">
+          <div class="field"><label>Date</label><input type="date"/></div>
+          <div class="field"><label>Category</label>
+            <select><option>Income  Client Payment</option><option>Income  Other</option><option>Expense  Rent</option><option>Expense  Payroll</option><option>Expense  Vendors</option><option>Expense  Marketing</option><option>Expense  Insurance</option><option>Tax  Estimated Payment</option><option>Tax  Payroll Tax</option><option>Tax  Sales Tax</option></select>
+          </div>
+          <div class="field"><label>Amount ($)</label><input type="number" placeholder="0.00"/></div>
+          <div class="field"><label>Reference / Check #</label><input type="text" placeholder="REF-001"/></div>
+          <div class="field" style="grid-column:1/-1"><label>Description</label><input type="text" placeholder="Transaction description..."/></div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-gold">SAVE TRANSACTION</button>
+          <button class="btn btn-blue">SAVE + SYNC TO QB</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Transaction Ledger  June 2026</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <button class="btn btn-gold" style="padding:6px 12px;font-size:10px">ALL</button>
+          <button class="btn btn-blue" style="padding:6px 12px;font-size:10px;background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.3)">INCOME</button>
+          <button class="btn btn-red" style="padding:6px 12px;font-size:10px">EXPENSES</button>
+          <button class="btn btn-purple" style="padding:6px 12px;font-size:10px">TAX</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Debit</th><th>Credit</th><th>Balance</th><th>QB</th></tr></thead>
+          <tbody>
+            <tr><td>Jun 17</td><td>[Client A] Payment</td><td><span class="badge badge-green">INCOME</span></td><td>--</td><td style="color:var(--green)">$18,400</td><td>$148,400</td><td><span class="badge badge-blue">SYNCED</span></td></tr>
+            <tr><td>Jun 16</td><td>Office Rent</td><td><span class="badge badge-red">EXPENSE</span></td><td style="color:var(--red)">$4,200</td><td>--</td><td>$130,000</td><td><span class="badge badge-blue">SYNCED</span></td></tr>
+            <tr><td>Jun 15</td><td>[Client B] Payment</td><td><span class="badge badge-green">INCOME</span></td><td>--</td><td style="color:var(--green)">$12,800</td><td>$134,200</td><td><span class="badge badge-blue">SYNCED</span></td></tr>
+            <tr><td>Jun 14</td><td>Q2 Estimated Tax</td><td><span class="badge badge-purple">TAX</span></td><td style="color:var(--red)">$8,400</td><td>--</td><td>$121,400</td><td><span class="badge badge-blue">SYNCED</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- A/R & A/P -->
+    <div id="tab-ar" class="section">
+      <div class="card">
+        <div class="card-title">Accounts Receivable  Aging</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Invoice</th><th>Client</th><th>Amount</th><th>Current</th><th>31-60</th><th>61-90</th><th>90+</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>INV-0441</td><td>[Client]</td><td style="color:var(--green)">$18,400</td><td>$18,400</td><td>--</td><td>--</td><td>--</td><td><span class="badge badge-green">CURRENT</span></td></tr>
+            <tr><td>INV-0438</td><td>[Client]</td><td style="color:var(--gold)">$12,800</td><td>--</td><td>$12,800</td><td>--</td><td>--</td><td><span class="badge badge-gold">FOLLOW UP</span></td></tr>
+            <tr><td>INV-0434</td><td>[Client]</td><td style="color:var(--red)">$24,200</td><td>--</td><td>--</td><td>$24,200</td><td>--</td><td><span class="badge badge-red">OVERDUE</span></td></tr>
+            <tr><td>INV-0428</td><td>[Client]</td><td style="color:var(--red)">$8,400</td><td>--</td><td>--</td><td>--</td><td>$8,400</td><td><span class="badge badge-red">DEMAND</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Accounts Payable  Due This Month</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Vendor</th><th>Category</th><th>Amount</th><th>Due Date</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>[Vendor Name]</td><td><span class="badge badge-red">EXPENSE</span></td><td style="color:var(--red)">$4,200</td><td>Jun 25</td><td><span class="badge badge-gold">PENDING</span></td></tr>
+            <tr><td>[Vendor Name]</td><td><span class="badge badge-red">EXPENSE</span></td><td style="color:var(--red)">$2,800</td><td>Jun 28</td><td><span class="badge badge-gold">PENDING</span></td></tr>
+            <tr><td>IRS Estimated Tax</td><td><span class="badge badge-purple">TAX</span></td><td style="color:var(--red)">$8,400</td><td>Jun 15</td><td><span class="badge badge-green">PAID</span></td></tr>
+            <tr><td>State Tax Payment</td><td><span class="badge badge-purple">TAX</span></td><td style="color:var(--red)">$2,100</td><td>Jun 15</td><td><span class="badge badge-green">PAID</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- RECONCILE -->
+    <div id="tab-reconcile" class="section">
+      <div class="card">
+        <div class="card-title">Bank Reconciliation  June 2026</div>
+        <div class="grid3" style="margin-bottom:14px">
+          <div class="kpi"><div class="kpi-lbl">Bank Balance</div><div class="kpi-val">$148,400</div></div>
+          <div class="kpi"><div class="kpi-lbl">Book Balance</div><div class="kpi-val">$146,820</div></div>
+          <div class="kpi"><div class="kpi-lbl">Difference</div><div class="kpi-val" style="color:var(--gold)">$1,580</div><div class="kpi-sub">2 outstanding checks</div></div>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Account</th><th>Bank Balance</th><th>Book Balance</th><th>Difference</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Chase Business Checking</td><td>$124,400</td><td>$122,820</td><td style="color:var(--gold)">$1,580</td><td><span class="badge badge-gold">REVIEW</span></td></tr>
+            <tr><td>Chase Business Savings</td><td>$24,000</td><td>$24,000</td><td style="color:var(--green)">$0</td><td><span class="badge badge-green">RECONCILED</span></td></tr>
+            <tr><td>Tax Reserve Account</td><td>$28,400</td><td>$28,400</td><td style="color:var(--green)">$0</td><td><span class="badge badge-green">RECONCILED</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ACCOUNTING -->
+    <div id="tab-accounting" class="section">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Income Statement  June 2026</div>
+          <table><tbody>
+            <tr><td style="color:var(--dim)">Gross Revenue</td><td style="color:var(--green);text-align:right">$284,600</td></tr>
+            <tr><td style="color:var(--dim)">Returns &amp; Allowances</td><td style="color:var(--red);text-align:right">-$2,400</td></tr>
+            <tr><td style="color:var(--dim);font-weight:700">Net Revenue</td><td style="color:var(--green);text-align:right;font-weight:700">$282,200</td></tr>
+            <tr><td colspan="2" style="padding:4px 0"></td></tr>
+            <tr><td style="color:var(--dim)">Cost of Goods Sold</td><td style="color:var(--red);text-align:right">-$84,200</td></tr>
+            <tr><td style="color:var(--dim);font-weight:700">Gross Profit</td><td style="color:var(--green);text-align:right;font-weight:700">$198,000</td></tr>
+            <tr><td colspan="2" style="padding:4px 0"></td></tr>
+            <tr><td style="color:var(--dim)">Payroll &amp; Benefits</td><td style="color:var(--red);text-align:right">-$42,800</td></tr>
+            <tr><td style="color:var(--dim)">Rent &amp; Facilities</td><td style="color:var(--red);text-align:right">-$8,400</td></tr>
+            <tr><td style="color:var(--dim)">Insurance</td><td style="color:var(--red);text-align:right">-$3,200</td></tr>
+            <tr><td style="color:var(--dim)">Marketing</td><td style="color:var(--red);text-align:right">-$8,200</td></tr>
+            <tr><td style="color:var(--dim)">Other G&amp;A</td><td style="color:var(--red);text-align:right">-$14,200</td></tr>
+            <tr><td colspan="2" style="padding:4px 0"></td></tr>
+            <tr><td style="color:var(--dim)">Operating Income (EBIT)</td><td style="color:var(--green);text-align:right">$121,200</td></tr>
+            <tr><td style="color:var(--dim)">Interest Expense</td><td style="color:var(--red);text-align:right">-$2,400</td></tr>
+            <tr><td style="color:var(--dim)">Income Tax Provision</td><td style="color:var(--purple);text-align:right">-$24,800</td></tr>
+            <tr style="border-top:1px solid var(--bord)"><td style="font-weight:900;padding-top:8px">NET INCOME</td><td style="color:var(--green);font-weight:900;font-size:16px;text-align:right;padding-top:8px">$94,000</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <div class="card-title">Balance Sheet Snapshot</div>
+          <table><tbody>
+            <tr><td style="color:var(--gold);font-weight:700;padding-top:4px" colspan="2">ASSETS</td></tr>
+            <tr><td style="color:var(--dim)">Cash &amp; Equivalents</td><td style="color:var(--txt);text-align:right">$148,400</td></tr>
+            <tr><td style="color:var(--dim)">Accounts Receivable</td><td style="color:var(--txt);text-align:right">$84,200</td></tr>
+            <tr><td style="color:var(--dim)">Prepaid Expenses</td><td style="color:var(--txt);text-align:right">$12,400</td></tr>
+            <tr><td style="color:var(--dim)">Fixed Assets (Net)</td><td style="color:var(--txt);text-align:right">$84,000</td></tr>
+            <tr><td style="font-weight:700">TOTAL ASSETS</td><td style="color:var(--green);text-align:right;font-weight:700">$329,000</td></tr>
+            <tr><td style="color:var(--gold);font-weight:700;padding-top:10px" colspan="2">LIABILITIES</td></tr>
+            <tr><td style="color:var(--dim)">Accounts Payable</td><td style="color:var(--txt);text-align:right">$42,800</td></tr>
+            <tr><td style="color:var(--dim)">Tax Liability</td><td style="color:var(--purple);text-align:right">$28,400</td></tr>
+            <tr><td style="color:var(--dim)">Other Liabilities</td><td style="color:var(--txt);text-align:right">$18,200</td></tr>
+            <tr><td style="font-weight:700">TOTAL LIABILITIES</td><td style="color:var(--red);text-align:right;font-weight:700">$89,400</td></tr>
+            <tr style="border-top:1px solid var(--bord)"><td style="font-weight:900;padding-top:8px">OWNER EQUITY</td><td style="color:var(--green);font-weight:900;font-size:15px;text-align:right;padding-top:8px">$239,600</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAX SERVICES -->
+    <div id="tab-tax" class="section">
+      <div class="tax-hero">
+        <div style="font-size:11px;font-weight:800;color:var(--purple);letter-spacing:2px;margin-bottom:8px">TAX SERVICES CENTER</div>
+        <div style="font-size:13px;color:var(--txt);margin-bottom:4px">Full-Service Tax Preparation &bull; Planning &bull; IRS Compliance &bull; Filing</div>
+        <div style="font-size:10px;color:var(--dim)">Individual &bull; Business &bull; Self-Employed &bull; Partnerships &bull; S-Corps &bull; C-Corps &bull; Back Taxes &bull; IRS Resolution</div>
+      </div>
+
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">YTD Estimated Tax</div><div class="kpi-val" style="color:var(--purple)">$28,400</div><div class="kpi-sub">Federal + State</div></div>
+        <div class="kpi"><div class="kpi-lbl">Q2 Payment</div><div class="kpi-val" style="color:var(--green)">PAID</div><div class="kpi-sub">Jun 15 &bull; $8,400</div></div>
+        <div class="kpi"><div class="kpi-lbl">Next Due</div><div class="kpi-val" style="color:var(--gold)">Sep 15</div><div class="kpi-sub">Q3 Estimated</div></div>
+        <div class="kpi"><div class="kpi-lbl">Tax Year Status</div><div class="kpi-val" style="color:var(--blue)">2025</div><div class="kpi-sub">Return filed</div></div>
+        <div class="kpi"><div class="kpi-lbl">Effective Tax Rate</div><div class="kpi-val" style="color:var(--purple)">22.4%</div><div class="kpi-sub">Federal</div></div>
+        <div class="kpi"><div class="kpi-lbl">Tax Savings YTD</div><div class="kpi-val" style="color:var(--green)">$14,200</div><div class="kpi-sub">From deductions</div></div>
+        <div class="kpi"><div class="kpi-lbl">Deductions Found</div><div class="kpi-val" style="color:var(--green)">28</div><div class="kpi-sub">This tax year</div></div>
+        <div class="kpi"><div class="kpi-lbl">IRS Status</div><div class="kpi-val" style="color:var(--green)">CLEAR</div><div class="kpi-sub">No open issues</div></div>
+      </div>
+
+      <!-- Tax Calendar -->
+      <div class="card">
+        <div class="card-title">Tax Payment Calendar</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Due Date</th><th>Payment Type</th><th>Estimated Amount</th><th>Filed To</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Apr 15, 2026</td><td>Q1 Estimated Tax</td><td style="color:var(--green)">$8,400</td><td>IRS + State</td><td><span class="badge badge-green">PAID</span></td></tr>
+            <tr><td>Jun 15, 2026</td><td>Q2 Estimated Tax</td><td style="color:var(--green)">$8,400</td><td>IRS + State</td><td><span class="badge badge-green">PAID</span></td></tr>
+            <tr><td>Sep 15, 2026</td><td>Q3 Estimated Tax</td><td style="color:var(--gold)">$8,400</td><td>IRS + State</td><td><span class="badge badge-gold">UPCOMING</span></td></tr>
+            <tr><td>Jan 15, 2027</td><td>Q4 Estimated Tax</td><td style="color:var(--gold)">$8,400</td><td>IRS + State</td><td><span class="badge badge-gold">UPCOMING</span></td></tr>
+            <tr><td>Apr 15, 2027</td><td>2026 Annual Return</td><td style="color:var(--dim)">TBD</td><td>IRS + State</td><td><span class="badge badge-blue">IN PROGRESS</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- Deductions Tracker -->
+      <div class="card">
+        <div class="card-title">Deductions Tracker  2026 Tax Year</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Category</th><th>YTD Amount</th><th>Tax Savings Est.</th><th>Documentation</th></tr></thead>
+          <tbody>
+            <tr><td>Home Office Deduction</td><td style="color:var(--green)">$18,000</td><td style="color:var(--green)">$3,960</td><td><span class="badge badge-green">DOCUMENTED</span></td></tr>
+            <tr><td>Vehicle / Mileage</td><td style="color:var(--green)">$12,400</td><td style="color:var(--green)">$2,728</td><td><span class="badge badge-green">DOCUMENTED</span></td></tr>
+            <tr><td>Business Meals (50%)</td><td style="color:var(--green)">$4,200</td><td style="color:var(--green)">$924</td><td><span class="badge badge-gold">PARTIAL</span></td></tr>
+            <tr><td>Equipment &amp; Technology</td><td style="color:var(--green)">$8,400</td><td style="color:var(--green)">$1,848</td><td><span class="badge badge-green">DOCUMENTED</span></td></tr>
+            <tr><td>Professional Services</td><td style="color:var(--green)">$6,200</td><td style="color:var(--green)">$1,364</td><td><span class="badge badge-green">DOCUMENTED</span></td></tr>
+            <tr><td>Health Insurance Premiums</td><td style="color:var(--green)">$14,400</td><td style="color:var(--green)">$3,168</td><td><span class="badge badge-green">DOCUMENTED</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- Services offered -->
+      <div class="card">
+        <div class="card-title">Tax Services Available Through This Portal</div>
+        <div class="grid2">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="padding:10px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px">Individual Tax Return (1040)</div>
+              <div style="font-size:10px;color:var(--muted)">W-2, self-employed, investments, rental income. Coordinated with licensed CPA/EA.</div>
+            </div>
+            <div style="padding:10px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px">Business Tax Return (1120S / 1065)</div>
+              <div style="font-size:10px;color:var(--muted)">S-Corp, Partnership, LLC. Full preparation from your AuditDNA books.</div>
+            </div>
+            <div style="padding:10px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px">Quarterly Estimated Tax Planning</div>
+              <div style="font-size:10px;color:var(--muted)">Never underpay or overpay again. Calculated monthly from live books.</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="padding:10px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px">IRS Compliance &amp; Back Taxes</div>
+              <div style="font-size:10px;color:var(--muted)">IRS notices, back taxes, installment agreements, penalty abatement.</div>
+            </div>
+            <div style="padding:10px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px">Payroll Tax Returns (941 / 940)</div>
+              <div style="font-size:10px;color:var(--muted)">Quarterly and annual payroll tax filings. W-2 and 1099 preparation.</div>
+            </div>
+            <div style="padding:10px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
+              <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px">Tax Planning &amp; Strategy</div>
+              <div style="font-size:10px;color:var(--muted)">Year-round deduction tracking, entity structure review, retirement planning.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-purple">REQUEST TAX CONSULTATION</button>
+          <button class="btn btn-gold">VIEW TAX CALENDAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="tab-reports" class="section">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Available Reports</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-gold" style="text-align:left">P&amp;L Statement  June 2026</button>
+            <button class="btn btn-blue" style="text-align:left">Balance Sheet  Current</button>
+            <button class="btn btn-blue" style="text-align:left">Cash Flow Statement  Q2</button>
+            <button class="btn btn-blue" style="text-align:left">A/R Aging Report</button>
+            <button class="btn btn-blue" style="text-align:left">A/P Summary  This Month</button>
+            <button class="btn btn-purple" style="text-align:left">Tax Liability Report  YTD</button>
+            <button class="btn btn-purple" style="text-align:left">Deductions Summary  2026</button>
+            <button class="btn btn-purple" style="text-align:left">Tax Prep Package  2025 Final</button>
+            <button class="btn btn-blue" style="text-align:left">Budget vs Actual  YTD</button>
+            <button class="btn btn-gold" style="text-align:left">Executive Summary  Owner</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Key Financial Ratios</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Gross Margin</span><span style="font-size:13px;font-weight:700;color:var(--green)">70.2%</span></div><div class="progress-wrap"><div class="progress-bar" style="width:70%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Net Profit Margin</span><span style="font-size:13px;font-weight:700;color:var(--green)">33.1%</span></div><div class="progress-wrap"><div class="progress-bar" style="width:33%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Current Ratio</span><span style="font-size:13px;font-weight:700;color:var(--green)">2.84x</span></div><div class="progress-wrap"><div class="progress-bar" style="width:71%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Debt to Equity</span><span style="font-size:13px;font-weight:700;color:var(--gold)">0.37x</span></div><div class="progress-wrap"><div class="progress-bar" style="width:37%;background:var(--gold)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--txt)">Effective Tax Rate</span><span style="font-size:13px;font-weight:700;color:var(--purple)">22.4%</span></div><div class="progress-wrap"><div class="progress-bar" style="width:22%;background:var(--purple)"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICKBOOKS SYNC -->
+    <div id="tab-quickbooks" class="section">
+      <div class="card" style="border-color:rgba(74,143,212,0.4)">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap">
+          <div style="width:48px;height:48px;background:#2ca01c;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0">QB</div>
+          <div>
+            <div style="font-size:14px;font-weight:900;color:var(--green)">QuickBooks Online  CONNECTED</div>
+            <div style="font-size:10px;color:var(--muted)">Live sync via QuickBooks API &bull; Last sync: 2 minutes ago &bull; Patent Pending AuditDNA Integration</div>
+          </div>
+          <button class="btn btn-blue" style="margin-left:auto">SYNC NOW</button>
+        </div>
+        <div class="grid3">
+          <div class="kpi"><div class="kpi-lbl">Transactions Synced</div><div class="kpi-val" style="color:var(--blue)">1,842</div><div class="kpi-sub">All time</div></div>
+          <div class="kpi"><div class="kpi-lbl">Last Sync</div><div class="kpi-val" style="color:var(--green)">LIVE</div><div class="kpi-sub">Auto every 15 min</div></div>
+          <div class="kpi"><div class="kpi-lbl">Sync Errors</div><div class="kpi-val" style="color:var(--green)">0</div><div class="kpi-sub">Clean</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">What Syncs Automatically</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span class="badge badge-green">LIVE</span>
+            <div style="font-size:11px;color:var(--txt)">All income transactions  invoices, payments, deposits</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span class="badge badge-green">LIVE</span>
+            <div style="font-size:11px;color:var(--txt)">All expense transactions  bills, payments, credit card charges</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span class="badge badge-green">LIVE</span>
+            <div style="font-size:11px;color:var(--txt)">Chart of accounts  categories, classes, locations</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span class="badge badge-green">LIVE</span>
+            <div style="font-size:11px;color:var(--txt)">Customer and vendor lists  contacts synced both ways</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span class="badge badge-green">LIVE</span>
+            <div style="font-size:11px;color:var(--txt)">P&L and balance sheet  pulls live from QB every report run</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.15);border-radius:8px">
+            <span class="badge badge-purple">TAX</span>
+            <div style="font-size:11px;color:var(--txt)">Tax categories  deductions auto-flagged from QB transactions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div id="tab-tasks" class="section">
+      <div class="card">
+        <div class="card-title">Bookkeeper / Accountant Task Queue</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Chase A/R  INV-0434  $24,200  61 days overdue</div><div style="font-size:10px;color:var(--muted)">Send demand letter today</div></div>
+            <span class="badge badge-red">URGENT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Reconcile Chase checking  $1,580 difference  2 outstanding checks</div><div style="font-size:10px;color:var(--muted)">Locate and clear before month end</div></div>
+            <span class="badge badge-red">URGENT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Q3 estimated tax reminder  Sep 15 deadline approaching</div><div style="font-size:10px;color:var(--muted)">Calculate and schedule payment  $8,400 est.</div></div>
+            <span class="badge badge-red">URGENT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Month-end close  June 2026  P&L and balance sheet</div><div style="font-size:10px;color:var(--muted)">Due Jun 30</div></div>
+            <span class="badge badge-gold">HIGH</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Update deductions tracker  3 business meals need receipts</div><div style="font-size:10px;color:var(--muted)">Tax documentation  partial status</div></div>
+            <span class="badge badge-purple">TAX</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(74,143,212,0.05);border:1px solid rgba(74,143,212,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">QB sync audit  verify all June transactions reconciled</div><div style="font-size:10px;color:var(--muted)">Due Jun 30</div></div>
+            <span class="badge badge-blue">NORMAL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+<div id="tab-docs" class="section">
+  <div class="card" style="border-color:rgba(74,143,212,0.3)">
+    <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1.5px;margin-bottom:4px">DOCUMENT HUB</div>
+    <div style="font-size:10px;color:var(--muted);line-height:1.6">Upload files directly, link your Google Drive folder, or connect DocuSign for e-signatures. All options below.</div>
+  </div>
+
+  <!-- OPTION A: GOOGLE DRIVE LINK -->
+  <div class="card">
+    <div class="card-title">Option A &mdash; Google Drive Link</div>
+    <div style="font-size:10px;color:var(--dim);margin-bottom:12px;line-height:1.6">Share a Google Drive folder with us. We get instant access to all your documents. No upload limits. Works with files you already have in Drive.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input id="gdrive-url" type="text" placeholder="Paste your Google Drive folder link here..." style="flex:1;min-width:200px"/>
+      <select id="gdrive-cat" style="width:160px">
+        <option value="bank_statements">Bank Statements</option>
+        <option value="invoices">Invoices</option>
+        <option value="tax_docs">Tax Documents</option>
+        <option value="payroll">Payroll Records</option>
+        <option value="contracts">Contracts</option>
+        <option value="general">General</option>
+      </select>
+      <button class="btn btn-gold" onclick="saveGDrive()">SAVE DRIVE LINK</button>
+    </div>
+    <div id="gdrive-status" style="font-size:10px;color:var(--green);margin-top:8px;min-height:16px"></div>
+    <div style="margin-top:10px;padding:10px;background:rgba(74,143,212,0.05);border-radius:8px;font-size:10px;color:var(--dim)">
+      To create a shared folder: Google Drive &rarr; New Folder &rarr; Right-click &rarr; Share &rarr; Anyone with link can view &rarr; Copy link &rarr; Paste above.
+    </div>
+  </div>
+
+  <!-- OPTION B: DIRECT UPLOAD -->
+  <div class="card">
+    <div class="card-title">Option B &mdash; Direct Upload to Secure Server</div>
+    <div style="font-size:10px;color:var(--dim);margin-bottom:12px;line-height:1.6">Upload files directly to our secure Railway server. Max 25MB per file. Accepted: PDF, Word, Excel, CSV, JPG, PNG.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <select id="upload-cat" style="width:180px">
+        <option value="bank_statements">Bank Statements</option>
+        <option value="invoices">Invoices / Bills</option>
+        <option value="tax_docs">Tax Documents</option>
+        <option value="payroll">Payroll Records</option>
+        <option value="contracts">Contracts</option>
+        <option value="receipts">Receipts</option>
+        <option value="financial_reports">Financial Reports</option>
+        <option value="general">General</option>
+      </select>
+      <input id="upload-notes" type="text" placeholder="Notes (optional)..." style="flex:1;min-width:160px"/>
+    </div>
+    <div id="drop-zone" onclick="document.getElementById('file-input').click()"
+      style="border:2px dashed rgba(74,143,212,0.4);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s"
+      ondragover="event.preventDefault();this.style.borderColor='var(--gold)'"
+      ondragleave="this.style.borderColor='rgba(74,143,212,0.4)'"
+      ondrop="handleDrop(event)">
+      <div style="font-size:28px;margin-bottom:8px">&#128196;</div>
+      <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px">Click to browse or drag & drop files here</div>
+      <div style="font-size:10px;color:var(--muted)">PDF &bull; Word &bull; Excel &bull; CSV &bull; JPG &bull; PNG &bull; Max 25MB</div>
+    </div>
+    <input id="file-input" type="file" style="display:none" multiple
+      accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.txt"
+      onchange="handleFiles(this.files)"/>
+    <div id="upload-progress" style="margin-top:10px"></div>
+  </div>
+
+  <!-- OPTION C: DOCUSIGN -->
+  <div class="card" style="border-color:rgba(139,92,246,0.3)">
+    <div class="card-title" style="color:var(--purple)">Option C &mdash; DocuSign Integration (Your Account)</div>
+    <div style="font-size:10px;color:var(--dim);margin-bottom:12px;line-height:1.6">Connect your existing DocuSign account. Send documents for e-signature directly from this portal. You keep your DocuSign account  we just connect to it.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="field"><label>DocuSign Access Token</label><input id="ds-token" type="password" placeholder="Bearer token from DocuSign"/></div>
+      <div class="field"><label>Account ID</label><input id="ds-account" type="text" placeholder="Your DocuSign account ID"/></div>
+      <div class="field"><label>Signer Email</label><input id="ds-email" type="email" placeholder="signer@email.com"/></div>
+      <div class="field"><label>Signer Name</label><input id="ds-name" type="text" placeholder="Full name"/></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-purple" onclick="sendDocuSign()">SEND FOR SIGNATURE</button>
+      <button class="btn btn-blue" onclick="checkDocuSign()">CHECK ENVELOPE STATUS</button>
+    </div>
+    <div id="ds-status" style="font-size:10px;color:var(--muted);margin-top:8px;min-height:16px"></div>
+    <div style="margin-top:10px;padding:10px;background:rgba(139,92,246,0.05);border-radius:8px;font-size:10px;color:var(--dim)">
+      Get your DocuSign access token at: apps.docusign.com &rarr; Settings &rarr; Apps &amp; Keys &rarr; Actions &rarr; Generate Token.
+      Your account ID is also in your DocuSign dashboard.
+    </div>
+  </div>
+
+  <!-- UPLOADED FILES LIST -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin-bottom:0">Uploaded Documents</div>
+      <button class="btn btn-blue" onclick="loadDocs()" style="padding:6px 12px;font-size:10px">REFRESH</button>
+    </div>
+    <div id="docs-list"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">Click REFRESH to load uploaded documents.</div></div>
+  </div>
+</div>
+
+<script>
+var PORTAL_SLUG = window.location.pathname.replace('/','').replace('.html','') || 'portal';
+var BE_URL = 'https://auditdna-backend-1-production.up.railway.app';
+
+function saveGDrive() {
+  var link = document.getElementById('gdrive-url').value.trim();
+  var cat  = document.getElementById('gdrive-cat').value;
+  var st   = document.getElementById('gdrive-status');
+  if (!link) { st.style.color='var(--red)'; st.textContent='Paste a Google Drive link first.'; return; }
+  st.style.color='var(--muted)'; st.textContent='Saving...';
+  fetch(BE_URL+'/api/portal-docs/gdrive', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({portal_slug:PORTAL_SLUG, gdrive_link:link, category:cat})
+  }).then(r=>r.json()).then(d=>{
+    if(d.ok) { st.style.color='var(--green)'; st.textContent='Google Drive folder linked successfully. ID: '+d.id; document.getElementById('gdrive-url').value=''; loadDocs(); }
+    else { st.style.color='var(--red)'; st.textContent='Error: '+d.error; }
+  }).catch(e=>{ st.style.color='var(--red)'; st.textContent='Connection error: '+e.message; });
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').style.borderColor='rgba(74,143,212,0.4)';
+  handleFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files) {
+  for(var i=0;i<files.length;i++) uploadFile(files[i]);
+}
+
+function uploadFile(file) {
+  var cat   = document.getElementById('upload-cat').value;
+  var notes = document.getElementById('upload-notes').value;
+  var prog  = document.getElementById('upload-progress');
+  var id    = 'prog-'+Date.now();
+  prog.innerHTML += '<div id="'+id+'" style="padding:8px;background:rgba(74,143,212,0.05);border-radius:6px;margin-bottom:6px;font-size:11px;color:var(--txt)">Uploading: '+file.name+' <span style=\'color:var(--muted)\'>0%</span></div>';
+  var fd = new FormData();
+  fd.append('file', file);
+  fd.append('portal_slug', PORTAL_SLUG);
+  fd.append('category', cat);
+  fd.append('notes', notes);
+  var xhr = new XMLHttpRequest();
+  xhr.upload.onprogress = function(e) {
+    if(e.lengthComputable) {
+      var pct = Math.round((e.loaded/e.total)*100);
+      var el = document.getElementById(id);
+      if(el) el.innerHTML = 'Uploading: '+file.name+' <span style=\'color:var(--blue)\'>'+pct+'%</span>';
+    }
+  };
+  xhr.onload = function() {
+    var el = document.getElementById(id);
+    try {
+      var resp = JSON.parse(xhr.responseText);
+      if(resp.ok) { if(el) el.innerHTML = file.name+' <span style=\'color:var(--green)\'>UPLOADED</span>'; loadDocs(); }
+      else { if(el) el.innerHTML = file.name+' <span style=\'color:var(--red)\'>ERROR: '+resp.error+'</span>'; }
+    } catch(e) { if(el) el.innerHTML = file.name+' <span style=\'color:var(--red)\'>UPLOAD FAILED</span>'; }
+  };
+  xhr.onerror = function() {
+    var el = document.getElementById(id);
+    if(el) el.innerHTML = file.name+' <span style=\'color:var(--red)\'>CONNECTION ERROR</span>';
+  };
+  xhr.open('POST', BE_URL+'/api/portal-docs/upload');
+  xhr.send(fd);
+}
+
+function loadDocs() {
+  var container = document.getElementById('docs-list');
+  container.innerHTML = '<div style="color:var(--muted);font-size:11px;padding:10px">Loading...</div>';
+  fetch(BE_URL+'/api/portal-docs/list/'+PORTAL_SLUG)
+    .then(r=>r.json()).then(d=>{
+      if(!d.ok||!d.docs.length) { container.innerHTML='<div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">No documents uploaded yet.</div>'; return; }
+      var html='<div class="tbl-wrap"><table><thead><tr><th>File</th><th>Category</th><th>Size</th><th>Uploaded</th><th>Type</th><th>Action</th></tr></thead><tbody>';
+      d.docs.forEach(function(doc) {
+        var size = doc.file_size ? (doc.file_size/1024).toFixed(0)+' KB' : '--';
+        var date = doc.created_at ? new Date(doc.created_at).toLocaleDateString() : '--';
+        var isGdrive = !!doc.gdrive_link;
+        var badge = isGdrive ? '<span class=\"badge badge-blue\">GOOGLE DRIVE</span>' : '<span class=\"badge badge-green\">UPLOADED</span>';
+        var action = isGdrive
+          ? '<a href=\"'+doc.gdrive_link+'\" target=\"_blank\" style=\"color:var(--blue);font-size:10px;font-weight:700;text-decoration:none\">OPEN</a>'
+          : '<a href=\"'+BE_URL+'/api/portal-docs/download/'+doc.id+'\" style=\"color:var(--gold);font-size:10px;font-weight:700;text-decoration:none\">DOWNLOAD</a>';
+        html+='<tr><td style=\"max-width:180px;overflow:hidden;text-overflow:ellipsis\">'+doc.original_name+'</td><td><span class=\"badge badge-gold\">'+doc.category.replace(/_/g,' ').toUpperCase()+'</span></td><td>'+size+'</td><td>'+date+'</td><td>'+badge+'</td><td>'+action+'</td></tr>';
+      });
+      html+='</tbody></table></div>';
+      container.innerHTML=html;
+    }).catch(e=>{ container.innerHTML='<div style="color:var(--red);font-size:11px;padding:10px">Error loading documents: '+e.message+'</div>'; });
+}
+
+function sendDocuSign() {
+  var token   = document.getElementById('ds-token').value.trim();
+  var account = document.getElementById('ds-account').value.trim();
+  var email   = document.getElementById('ds-email').value.trim();
+  var name    = document.getElementById('ds-name').value.trim();
+  var st      = document.getElementById('ds-status');
+  if(!token||!account||!email) { st.style.color='var(--red)'; st.textContent='Token, Account ID, and Signer Email required.'; return; }
+  st.style.color='var(--muted)'; st.textContent='Sending envelope...';
+  fetch(BE_URL+'/api/portal-docs/docusign/send', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({access_token:token, account_id:account, signer_email:email, signer_name:name, subject:'Please sign this document from AuditDNA Portal'})
+  }).then(r=>r.json()).then(d=>{
+    if(d.ok) { st.style.color='var(--green)'; st.textContent='Envelope sent. ID: '+d.envelope_id+' | Status: '+d.status; }
+    else { st.style.color='var(--red)'; st.textContent='DocuSign error: '+(d.error||JSON.stringify(d)); }
+  }).catch(e=>{ st.style.color='var(--red)'; st.textContent='Connection error: '+e.message; });
+}
+
+function checkDocuSign() {
+  var token   = document.getElementById('ds-token').value.trim();
+  var account = document.getElementById('ds-account').value.trim();
+  var st      = document.getElementById('ds-status');
+  var env_id  = prompt('Enter envelope ID to check:');
+  if(!env_id) return;
+  if(!token||!account) { st.style.color='var(--red)'; st.textContent='Token and Account ID required.'; return; }
+  fetch(BE_URL+'/api/portal-docs/docusign/status', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({access_token:token, account_id:account, envelope_id:env_id})
+  }).then(r=>r.json()).then(d=>{
+    if(d.ok) { st.style.color='var(--green)'; st.textContent='Envelope '+env_id+' status: '+d.status; }
+    else { st.style.color='var(--red)'; st.textContent='Error: '+d.error; }
+  }).catch(e=>{ st.style.color='var(--red)'; st.textContent='Error: '+e.message; });
+}
+</script>
+
+  </div>
+
+  <div class="footer-bar">
+    <div style="font-size:9px;color:var(--muted)">AuditDNA Intelligence &bull; Patent Pending &bull; Mexausa Food Group, Inc. &bull; QuickBooks API Integration &bull; Tax Services via Licensed CPA Partner</div>
+    <div style="font-size:9px;color:var(--muted)">Saul Garcia, Sr. Loan Officer NMLS #337526 &bull; (831) 251-3116 &bull; sgarcia1911@gmail.com</div>
+  </div>
+</div>
+
+<script>
+var entered='',PIN='8841';
+function updDots(){var d=document.getElementById('dots');d.textContent='';for(var i=0;i<entered.length;i++)d.textContent+='\u25CF ';}
+function np(v){if(entered.length>=6)return;entered+=v;updDots();if(entered.length===4)checkPin();}
+function nd(){entered=entered.slice(0,-1);updDots();}
+function nc(){entered='';updDots();}
+function checkPin(){
+  if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';startClock();}
+  else{var e=document.getElementById('g-err');e.textContent='Incorrect PIN. Try again.';entered='';updDots();setTimeout(function(){e.textContent='';},2000);}
+}
+function lock(){entered='';updDots();document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';}
+function goTab(t){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  var sec=document.getElementById('tab-'+t);if(sec)sec.classList.add('active');
+  event.target.classList.add('active');
+}
+function startClock(){
+  function tick(){var n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+  tick();setInterval(tick,1000);
+}
+var lang='en';
+var translations={
+  en:{
+    'gate-title':'Full-Service Financial Portal',
+    'gate-sub':'Bookkeeping  Accounting  Tax Services<br/>Secured by AuditDNA Intelligence  Patent Pending',
+    'co-sub':'BOOKKEEPING  ACCOUNTING  TAX SERVICES  AUDITDNA INTELLIGENCE',
+    'tab-dashboard':'DASHBOARD','tab-bookkeeping':'BOOKKEEPING','tab-ar':'A/R & A/P',
+    'tab-reconcile':'RECONCILE','tab-accounting':'ACCOUNTING','tab-tax':'TAX SERVICES',
+    'tab-reports':'REPORTS','tab-quickbooks':'QUICKBOOKS SYNC','tab-tasks':'TASKS',
+    'lang-btn':'ES'
+  },
+  es:{
+    'gate-title':'Portal Financiero Completo',
+    'gate-sub':'Contabilidad  Contaduria  Servicios de Impuestos<br/>Asegurado por AuditDNA Intelligence  Patente Pendiente',
+    'co-sub':'CONTABILIDAD  CONTADURIA  IMPUESTOS  AUDITDNA INTELLIGENCE',
+    'tab-dashboard':'PANEL','tab-bookkeeping':'LIBROS','tab-ar':'C/C & C/P',
+    'tab-reconcile':'CONCILIACION','tab-accounting':'CONTADURIA','tab-tax':'IMPUESTOS',
+    'tab-reports':'REPORTES','tab-quickbooks':'SYNC QUICKBOOKS','tab-tasks':'TAREAS',
+    'lang-btn':'EN'
+  }
+};
+function toggleLang(){
+  lang = lang==='en'?'es':'en';
+  var t=translations[lang];
+  document.getElementById('lang-btn').textContent=t['lang-btn'];
+  var gt=document.querySelector('.gate-title');if(gt)gt.textContent=t['gate-title'];
+  var gs=document.querySelector('.gate-sub');if(gs)gs.innerHTML=t['gate-sub'];
+  var cs=document.querySelector('.co-sub');if(cs)cs.textContent=t['co-sub'];
+  var tabs=document.querySelectorAll('.tab-btn');
+  var keys=['tab-dashboard','tab-bookkeeping','tab-ar','tab-reconcile','tab-accounting','tab-tax','tab-reports','tab-quickbooks','tab-tasks'];
+  tabs.forEach(function(btn,i){if(keys[i]&&t[keys[i]])btn.textContent=t[keys[i]];});
+}
+</script>
+</body>
+</html>

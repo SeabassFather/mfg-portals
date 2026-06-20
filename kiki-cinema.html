@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate"/>
+<title>🎬 Para Mi Jefe Kiki Gavilán</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:root{
+  --bg:#0a0a0f;
+  --card:#13131a;
+  --card2:#1a1a24;
+  --gold:#f5c518;
+  --red:#e50914;
+  --text:#ffffff;
+  --muted:#94a3b8;
+  --border:rgba(245,197,24,0.2);
+  --radius:12px;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a0f 0%,#1a0a1a 50%,#0a0a0f 100%);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:0}
+.gate-inner{background:rgba(255,255,255,0.03);border:1px solid rgba(245,197,24,0.3);border-radius:20px;padding:40px 32px;width:320px;text-align:center}
+.gate-title{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:2px;margin-bottom:4px}
+.gate-sub{font-size:11px;color:var(--muted);letter-spacing:3px;margin-bottom:28px}
+.gate-dedication{font-size:13px;color:rgba(255,255,255,0.5);font-style:italic;margin-bottom:28px;line-height:1.5}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.nb{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:22px;font-weight:600;border-radius:12px;padding:16px 0;cursor:pointer;transition:all 0.15s;font-family:inherit}
+.nb:active,.nb:hover{background:rgba(245,197,24,0.15);border-color:var(--gold);color:var(--gold)}
+.pd-dots{display:flex;justify-content:center;gap:12px;margin-bottom:16px;height:20px}
+.pd{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.2);transition:all 0.2s}.pd.on{background:#C9A55C!important;border-color:#C9A55C!important;}
+.pd.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px rgba(245,197,24,0.4)}
+.pd.error{background:#ef4444;border-color:#ef4444}
+.gate-err{font-size:11px;color:#ef4444;min-height:16px;margin-bottom:8px}
+.gate-clear{font-size:9px;color:rgba(255,255,255,0.15);cursor:pointer;letter-spacing:1px;text-decoration:none;display:block}
+
+/* APP */
+#app{display:none;min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:rgba(10,10,15,0.95);border-bottom:1px solid rgba(245,197,24,0.15);padding:0 16px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.logo-area{display:flex;flex-direction:column;flex:1}
+.logo-name{font-size:15px;font-weight:900;color:var(--gold);letter-spacing:1px}
+.logo-sub{font-size:8px;color:var(--muted);letter-spacing:2px}
+.lang-btn{padding:4px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--muted);font-size:10px;font-weight:700;border-radius:20px;cursor:pointer;letter-spacing:1px}
+.lang-btn.on{background:rgba(245,197,24,0.15);border-color:var(--gold);color:var(--gold)}
+
+/* SEARCH */
+.search-bar{padding:12px 16px;background:rgba(19,19,26,0.9);border-bottom:1px solid rgba(255,255,255,0.05)}
+.search-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:10px 16px 10px 40px;border-radius:25px;font-size:13px;outline:none;font-family:inherit}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+
+/* GENRE PILLS */
+.genre-scroll{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;border-bottom:1px solid rgba(255,255,255,0.04)}
+.genre-scroll::-webkit-scrollbar{display:none}
+.genre-pill{white-space:nowrap;padding:6px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--muted);font-size:11px;font-weight:700;border-radius:20px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;flex-shrink:0}
+.genre-pill.on{background:var(--red);border-color:var(--red);color:#fff}
+
+/* FEATURED HERO */
+.hero{position:relative;height:220px;overflow:hidden;margin-bottom:0}
+.hero-img{width:100%;height:100%;object-fit:cover}
+.hero-grad{position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 0%,rgba(10,10,15,0.3) 60%,transparent 100%)}
+.hero-content{position:absolute;bottom:16px;left:16px;right:16px}
+.hero-badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px;letter-spacing:2px;margin-bottom:6px}
+.hero-title{font-size:22px;font-weight:900;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,0.8)}
+.hero-meta{font-size:11px;color:rgba(255,255,255,0.7);display:flex;gap:8px;align-items:center}
+.star{color:var(--gold)}
+
+/* SECTION */
+.section{padding:16px}
+.section-title{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+/* MOVIE GRID */
+.movie-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.movie-card{background:var(--card);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform 0.2s;border:1px solid rgba(255,255,255,0.05)}
+.movie-card:active{transform:scale(0.97)}
+.movie-poster{width:100%;aspect-ratio:2/3;object-fit:cover;background:#1a1a2e}
+.movie-info{padding:8px 8px 10px}
+.movie-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.movie-year{font-size:9px;color:var(--muted)}
+.movie-rating{font-size:9px;color:var(--gold);font-weight:700}
+
+/* MOVIE DETAIL MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;overflow-y:auto;display:none}
+.modal.open{display:block}
+.modal-inner{max-width:480px;margin:0 auto;padding-bottom:40px}
+.modal-poster-wrap{position:relative;height:280px}
+.modal-poster{width:100%;height:100%;object-fit:cover}
+.modal-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.95) 0%,transparent 60%)}
+.modal-close{position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:18px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+.modal-fav{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:18px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+.modal-body{padding:16px}
+.modal-title{font-size:22px;font-weight:900;margin-bottom:6px}
+.modal-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:11px;color:var(--muted)}
+.tag{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-size:10px}
+.modal-plot{font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;margin-bottom:16px}
+.modal-cast{font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.modal-actions{display:flex;gap:10px}
+.btn-trailer{flex:1;padding:12px;background:var(--red);border:none;color:#fff;font-size:12px;font-weight:700;border-radius:8px;cursor:pointer;letter-spacing:1px;font-family:inherit}
+.btn-fav{padding:12px 16px;background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.3);color:var(--gold);font-size:12px;font-weight:700;border-radius:8px;cursor:pointer;letter-spacing:1px;font-family:inherit}
+
+/* TRAILER MODAL */
+.trailer-modal{position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center}
+.trailer-modal.open{display:flex}
+.trailer-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:20px;width:40px;height:40px;border-radius:50%;cursor:pointer}
+.trailer-frame{width:100%;max-width:480px;aspect-ratio:16/9;border:none;border-radius:8px}
+
+/* WATCHLIST */
+.watchlist-btn{position:fixed;bottom:20px;right:16px;background:var(--gold);color:#0a0a0f;width:50px;height:50px;border-radius:50%;border:none;font-size:22px;cursor:pointer;box-shadow:0 4px 20px rgba(245,197,24,0.4);z-index:150;display:flex;align-items:center;justify-content:center}
+.watchlist-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;flex-direction:column;gap:12px;color:var(--muted);font-size:12px}
+.spinner{width:32px;height:32px;border:3px solid rgba(245,197,24,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,15,0.97);border-top:1px solid rgba(245,197,24,0.15);display:flex;z-index:160;backdrop-filter:blur(12px);padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:0.5px;gap:3px;transition:color 0.2s;font-family:inherit}
+.nav-btn.on{color:var(--gold)}
+.nav-btn .nav-icon{font-size:20px;line-height:1}
+#app{padding-bottom:70px}
+.watchlist-btn{bottom:80px}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(245,197,24,0.9);color:#0a0a0f;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;z-index:500;pointer-events:none;opacity:0;transition:opacity 0.3s;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="gate">
+  <div class="gate-inner">
+    <div style="font-size:48px;margin-bottom:12px">🎬</div>
+    <div class="gate-title">CINE KIKI</div>
+    <div class="gate-sub">PARA MI JEFE GAVILÁN</div>
+    <div class="gate-dedication">Con todo el cariño del mundo,<br>tu familia te lo dedica.<br><em>"Para el mejor JEFE KIKI Gavilán"</em></div>
+    <div class="pd-dots">
+      <div class="pd" id="pd0"></div>
+      <div class="pd" id="pd1"></div>
+      <div class="pd" id="pd2"></div>
+      <div class="pd" id="pd3"></div>
+    </div>
+    <div class="gate-err" id="gate-err"></div>
+    <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+<div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+<div class="pd" id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div>
+<div class="numpad">
+      <button class="nb" onclick="kp('1')">1</button>
+      <button class="nb" onclick="kp('2')">2</button>
+      <button class="nb" onclick="kp('3')">3</button>
+      <button class="nb" onclick="kp('4')">4</button>
+      <button class="nb" onclick="kp('5')">5</button>
+      <button class="nb" onclick="kp('6')">6</button>
+      <button class="nb" onclick="kp('7')">7</button>
+      <button class="nb" onclick="kp('8')">8</button>
+      <button class="nb" onclick="kp('9')">9</button>
+      <button class="nb" onclick="kp('clr')" style="font-size:14px;color:#94a3b8">CLR</button>
+      <button class="nb" onclick="kp('0')">0</button>
+      <button class="nb" onclick="kp('del')" style="font-size:14px;color:#94a3b8">⌫</button>
+    </div>
+    <a class="gate-clear" onclick="localStorage.removeItem('kiki_auth');pinBuf='';updateDots();return false" href="#">CLEAR SESSION</a>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo-area">
+      <div class="logo-name">🎬 CINE KIKI</div>
+      <div class="logo-sub" id="logo-sub">PARA MI JEFE GAVILÁN</div>
+    </div>
+    <button class="lang-btn on" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search-in" placeholder="Search movies... / Buscar películas..." oninput="onSearch(this.value)" />
+    </div>
+  </div>
+
+  <!-- GENRES -->
+  <div class="genre-scroll" id="genre-scroll"></div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-content">
+    <div class="loading"><div class="spinner"></div><span id="loading-txt">Loading cinema...</span></div>
+  </div>
+
+  <!-- WATCHLIST FAB -->
+  <button class="watchlist-btn" id="watchlist-fab" style="display:none" onclick="showWatchlist()" title="Watchlist">
+    ❤️
+    <span class="watchlist-badge" id="wl-badge" style="display:none">0</span>
+  </button>
+
+</div>
+
+<!-- MOVIE DETAIL MODAL -->
+<div class="modal" id="movie-modal">
+  <div class="modal-inner">
+    <div class="modal-poster-wrap">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-fav" id="modal-fav-btn" onclick="toggleFav()">🤍</button>
+      <img class="modal-poster" id="modal-poster" src="" alt="">
+      <div class="modal-grad"></div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-meta" id="modal-meta"></div>
+      <p class="modal-plot" id="modal-plot"></p>
+      <div class="modal-cast" id="modal-cast"></div>
+      <div class="modal-actions">
+        <button class="btn-trailer" onclick="playTrailer()" id="trailer-btn">▶ TRAILER</button>
+        <button id="play-full-btn" onclick="playFullMovie()" style="display:none;flex:1;padding:12px;background:linear-gradient(135deg,#4ade80,#22c55e);border:none;color:#020912;font-size:12px;font-weight:700;border-radius:8px;cursor:pointer;letter-spacing:1px;font-family:inherit">▶ FULL MOVIE</button>
+        <button class="btn-fav" onclick="toggleFav()" id="fav-btn-text">🤍 SAVE</button>
+      </div>
+      <div style="margin-top:12px">
+        <div style="font-size:9px;color:#c9a55c;letter-spacing:2px;font-weight:700;margin-bottom:8px">WHERE TO WATCH</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="watch-links">
+          <a id="wl-netflix" href="#" target="_blank" style="display:none;padding:6px 12px;background:#e50914;color:#fff;font-size:10px;font-weight:700;border-radius:4px;text-decoration:none">Netflix</a>
+          <a id="wl-prime" href="#" target="_blank" style="display:none;padding:6px 12px;background:#00a8e0;color:#fff;font-size:10px;font-weight:700;border-radius:4px;text-decoration:none">Prime</a>
+          <a id="wl-disney" href="#" target="_blank" style="display:none;padding:6px 12px;background:#113ccf;color:#fff;font-size:10px;font-weight:700;border-radius:4px;text-decoration:none">Disney+</a>
+          <a id="wl-youtube" href="#" target="_blank" style="padding:6px 12px;background:#ff0000;color:#fff;font-size:10px;font-weight:700;border-radius:4px;text-decoration:none">YouTube</a>
+          <a id="wl-google" href="#" target="_blank" style="padding:6px 12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#e2e8f0;font-size:10px;font-weight:700;border-radius:4px;text-decoration:none">Google</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRAILER MODAL -->
+<div class="trailer-modal" id="trailer-modal">
+  <button class="trailer-close" onclick="closeTrailer()">✕</button>
+  <iframe class="trailer-frame" id="trailer-frame" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bottom-nav" style="display:none">
+  <button class="nav-btn on" id="nav-home" onclick="navGo('home',this)"><span class="nav-icon">🎬</span><span id="nav-home-lbl">HOME</span></button>
+  <button class="nav-btn" id="nav-search" onclick="navGo('search',this)"><span class="nav-icon">🔍</span><span id="nav-search-lbl">SEARCH</span></button>
+  <button class="nav-btn" id="nav-genres" onclick="navGo('genres',this)"><span class="nav-icon">🎭</span><span id="nav-genres-lbl">GENRES</span></button>
+  <button class="nav-btn" id="nav-watchlist" onclick="navGo('watchlist',this)"><span class="nav-icon">❤️</span><span id="nav-wl-lbl">MY LIST</span></button>
+  <button class="nav-btn" id="nav-toprated" onclick="navGo('toprated',this)"><span class="nav-icon">⭐</span><span id="nav-top-lbl">TOP</span></button>
+  <button class="nav-btn" id="nav-logout" onclick="doLogout()" style="color:#ef4444"><span class="nav-icon">🚪</span><span>EXIT</span></button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- HIDDEN PIN BUFFER -->
+<input type="text" id="_pin" value="" readonly style="position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0;font-size:16px;pointer-events:none"/>
+
+<script>
+var PIN='0564',PLEN=4,entered='';
+function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
+function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
+
+// ═══════════════════════════════════════════════
+//  KIKI CINEMA — Full Feature Movie Office
+// ═══════════════════════════════════════════════
+
+
+var pinBuf = '';
+var lang = 'en';
+var watchlist = JSON.parse(localStorage.getItem('kiki_watchlist')||'[]');
+var currentMovie = null;
+var allMovies = [];
+var filteredMovies = [];
+var activeGenre = 'all';
+var searchQ = '';
+
+// ── TRANSLATIONS ──────────────────────────────
+var T = {
+  en: {
+    searching:'Searching...',loading:'Loading cinema...',
+    genres:'All Genres',noResults:'No movies found.',
+    saved:'Added to watchlist!',removed:'Removed from watchlist',
+    watchlist:'Your Watchlist',empty:'Your watchlist is empty.',
+    trailer:'TRAILER',save:'SAVE',saved2:'SAVED ❤️',
+    cast:'Cast:',director:'Director:',
+    popular:'POPULAR NOW',toprated:'TOP RATED',trending:'TRENDING',
+    action:'Action',comedy:'Comedy',drama:'Drama',horror:'Horror',
+    romance:'Romance',scifi:'Sci-Fi',animation:'Animation',
+    documentary:'Documentary',thriller:'Thriller',crime:'Crime',
+    adventure:'Adventure',fantasy:'Fantasy',family:'Family',
+    history:'History',western:'Western',music:'Music',war:'War',
+    mystery:'Mystery',biography:'Biography',sport:'Sport',
+    dedication:'For My JEFE KIKI Gavilán — With All Our Love'
+  },
+  es: {
+    searching:'Buscando...',loading:'Cargando cine...',
+    genres:'Todos los Géneros',noResults:'No se encontraron películas.',
+    saved:'¡Guardado en tu lista!',removed:'Eliminado de tu lista',
+    watchlist:'Tu Lista',empty:'Tu lista está vacía.',
+    trailer:'TRÁILER',save:'GUARDAR',saved2:'GUARDADO ❤️',
+    cast:'Reparto:',director:'Director:',
+    popular:'POPULARES AHORA',toprated:'MÁS VALORADAS',trending:'TENDENCIAS',
+    action:'Acción',comedy:'Comedia',drama:'Drama',horror:'Terror',
+    romance:'Romance',scifi:'Ciencia Ficción',animation:'Animación',
+    documentary:'Documental',thriller:'Suspenso',crime:'Crimen',
+    adventure:'Aventura',fantasy:'Fantasía',family:'Familia',
+    history:'Historia',western:'Western',music:'Música',war:'Guerra',
+    mystery:'Misterio',biography:'Biografía',sport:'Deporte',
+    dedication:'Para Mi JEFE KIKI Gavilán — Con Todo Nuestro Cariño'
+  }
+};
+function t(k){ return (T[lang]||T.en)[k] || k; }
+
+// ── GENRE LIST ────────────────────────────────
+var GENRES = [
+  {id:'all',en:'All',es:'Todos',tmdb:null},
+  {id:'28',en:'Action',es:'Acción',tmdb:28},
+  {id:'35',en:'Comedy',es:'Comedia',tmdb:35},
+  {id:'18',en:'Drama',es:'Drama',tmdb:18},
+  {id:'27',en:'Horror',es:'Terror',tmdb:27},
+  {id:'10749',en:'Romance',es:'Romance',tmdb:10749},
+  {id:'878',en:'Sci-Fi',es:'Ciencia Ficción',tmdb:878},
+  {id:'16',en:'Animation',es:'Animación',tmdb:16},
+  {id:'99',en:'Documentary',es:'Documental',tmdb:99},
+  {id:'53',en:'Thriller',es:'Suspenso',tmdb:53},
+  {id:'80',en:'Crime',es:'Crimen',tmdb:80},
+  {id:'12',en:'Adventure',es:'Aventura',tmdb:12},
+  {id:'14',en:'Fantasy',es:'Fantasía',tmdb:14},
+  {id:'10751',en:'Family',es:'Familia',tmdb:10751},
+  {id:'36',en:'History',es:'Historia',tmdb:36},
+  {id:'37',en:'Western',es:'Western',tmdb:37},
+  {id:'10402',en:'Music',es:'Música',tmdb:10402},
+  {id:'10752',en:'War',es:'Guerra',tmdb:10752},
+  {id:'9648',en:'Mystery',es:'Misterio',tmdb:9648},
+  {id:'36',en:'Biography',es:'Biografía',tmdb:36},
+  {id:'novelas',en:'📺 Telenovelas 70s/80s',es:'📺 Telenovelas 70s/80s',tmdb:null},
+];
+
+// ── TMDB API ──────────────────────────────────
+// Using TMDB v3 with a public read token (no secrets — read-only public data)
+var TMDB_BASE = 'https://api.themoviedb.org/3';
+var TMDB_IMG  = 'https://image.tmdb.org/t/p/w500';
+var TMDB_IMG_ORIG = 'https://image.tmdb.org/t/p/w780';
+// Public TMDB read access token (read-only, safe to embed)
+var TMDB_KEY  = '8265bd1679663a7ea12ac168da84d2e8';
+
+
+// ── FALLBACK CATALOG (when API unavailable) ─────────────
+
+// ══════════════════════════════════════════════════════════
+//  KIKI CINEMA — 500+ MOVIES + TELENOVELAS 70s/80s
+// ══════════════════════════════════════════════════════════
+
+var MOVIE_REGISTRY = {};
+function regMovie(m){ MOVIE_REGISTRY[m.id]=m; return m.id; }
+function getMovie(id){ return MOVIE_REGISTRY[id]||FALLBACK_MOVIES.find(function(m){return m.id==id;})||null; }
+
+var FALLBACK_MOVIES = [
+// ── CLASSICS / DRAMA ───────────────────────────────────
+{id:278,title: "The Shawshank Redemption",poster_path: "/9cqNxx0GxF0bAY0K8GxVgAFMnD6.jpg",vote_average:8.7,release_date: "1994-09-23",overview: "Two imprisoned men bond over years, finding solace and redemption through acts of common decency.",genre_ids:[18,80]},
+{id:238,title: "The Godfather",poster_path: "/3bhkrj58Vtu7enYsLori8phjKkQ.jpg",vote_average:8.7,release_date: "1972-03-14",overview: "The aging patriarch of an organized crime dynasty transfers control to his reluctant son.",genre_ids:[18,80]},
+{id:240,title: "The Godfather Part II",poster_path: "/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg",vote_average:8.6,release_date: "1974-12-18",overview:"The early life of Vito Corleone in 1920s New York contrasted with his son Michael\'s expansion.",genre_ids:[18,80]},
+{id:424,title:"Schindler\'s List",poster_path: "/sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg",vote_average:8.6,release_date: "1993-11-29",overview: "In German-occupied Poland, Oskar Schindler gradually becomes concerned for his Jewish workforce.",genre_ids:[18,36,10752]},
+{id:389,title: "12 Angry Men",poster_path: "/ow3wq89wM8qd5X7hWKxiRfsFf9C.jpg",vote_average:8.5,release_date: "1957-04-10",overview: "A jury holdout attempts to prevent a miscarriage of justice by forcing his colleagues to reconsider.",genre_ids:[18,53]},
+{id:637,title: "Life is Beautiful",poster_path: "/f4GtnBNFfuZFsEuGbH9ghkSTTXO.jpg",vote_average:8.5,release_date: "1997-12-20",overview: "A Jewish man uses imagination to shield his son from the horrors of a concentration camp.",genre_ids:[18,35,10749]},
+{id:19404,title: "Dilwale Dulhania Le Jayenge",poster_path: "/lfRkUr7DYdHldAqi3PwdQGBjevU.jpg",vote_average:8.6,release_date: "1995-10-20",overview: "A young man and woman fall in love on a trip through Europe.",genre_ids:[18,10749]},
+{id:129,title: "Spirited Away",poster_path: "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg",vote_average:8.5,release_date: "2001-07-20",overview: "A sullen girl wanders into a world ruled by gods and witches.",genre_ids:[16,12,14]},
+{id:372058,title: "Your Name",poster_path: "/q719jXXEzOoYaps6babgKnONONX.jpg",vote_average:8.4,release_date: "2016-08-26",overview: "Two strangers find they are linked in a bizarre way.",genre_ids:[16,18,10749,14]},
+{id:496243,title: "Parasite",poster_path: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",vote_average:8.5,release_date: "2019-05-30",overview: "Greed and class discrimination threaten the newly formed symbiotic relationship between two families.",genre_ids:[18,53,35]},
+{id:769,title: "GoodFellas",poster_path: "/aKuFiU82s5ISJpGZp7YkIr3kCUd.jpg",vote_average:8.5,release_date: "1990-09-12",overview: "The story of Henry Hill and his life in the mob.",genre_ids:[18,80]},
+{id:539,title: "Psycho",poster_path: "/81d8oyEFgj7FlxJqSDXWr8JH8kV.jpg",vote_average:8.3,release_date: "1960-06-22",overview: "A secretary embezzles money and ends up at a motel run by a young man dominated by his mother.",genre_ids:[27,18,53]},
+{id:346,title: "Seven Samurai",poster_path: "/8OKmBV5BUFzmozIC3pPWKHy17kx.jpg",vote_average:8.5,release_date: "1954-04-26",overview: "A poor village hires seven samurai to defend themselves against bandits.",genre_ids:[28,18,12]},
+{id:11216,title: "Cinema Paradiso",poster_path: "/gCI2AeMV4IHSewhJkzsur2QWfpD.jpg",vote_average:8.4,release_date: "1988-11-17",overview:"A filmmaker recalls his childhood, when he fell in love with the movies at his village\'s theater.",genre_ids:[18,10749]},
+{id:15,title: "Citizen Kane",poster_path: "/sav0jxhqiH0bPr2vZFU0Kjt2nZL.jpg",vote_average:8.3,release_date: "1941-09-05",overview: "Following the death of a publishing tycoon, news reporters scramble to uncover the meaning of his final utterance.",genre_ids:[18,9648]},
+{id:453,title: "Forbidden Planet",poster_path: "/yqMsQ5oSgDQCgEMPkaMtRCzKSUz.jpg",vote_average:7.3,release_date: "1956-05-03",overview:"A starship crew goes to investigate the silence of a planet\'s colony and find two survivors.",genre_ids:[878,12]},
+
+// ── ACTION ──────────────────────────────────────────────
+{id:155,title: "The Dark Knight",poster_path: "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",vote_average:8.5,release_date: "2008-07-16",overview: "Batman raises the stakes in his war on crime.",genre_ids:[28,80,18,53]},
+{id:550,title: "Fight Club",poster_path: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",vote_average:8.4,release_date: "1999-10-15",overview: "An insomniac office worker and a soapmaker form an underground fight club.",genre_ids:[18,53]},
+{id:680,title: "Pulp Fiction",poster_path: "/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",vote_average:8.5,release_date: "1994-09-10",overview: "The lives of two mob hitmen and others intertwine in LA.",genre_ids:[53,80]},
+{id:77,title: "Memento",poster_path: "/yuNs09hvpHVU1cBTCAk9zxsL2oW.jpg",vote_average:8.2,release_date: "2000-10-11",overview:"A man with short-term memory loss attempts to track down his wife\'s murderer.",genre_ids:[9648,53,18]},
+{id:120,title: "The Lord of the Rings: Fellowship",poster_path: "/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",vote_average:8.4,release_date: "2001-12-18",overview: "A Hobbit and eight companions set out on a journey to destroy the One Ring.",genre_ids:[12,14,28]},
+{id:122,title:"Lord of the Rings: Return of the King",poster_path: "/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg",vote_average:8.5,release_date: "2003-12-01",overview:"Aragorn leads the World of Men against Sauron\'s army.",genre_ids:[12,14,28]},
+{id:121,title:"The Lord of the Rings: Two Towers",poster_path: "/5VTN0pR8gcqV3EPUHHfMGnJYspN.jpg",vote_average:8.4,release_date: "2002-12-18",overview: "While Frodo and Sam edge closer to Mordor, the divided Fellowship makes new allies.",genre_ids:[12,14,28]},
+{id:11,title: "Star Wars: A New Hope",poster_path: "/6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg",vote_average:8.2,release_date: "1977-05-25",overview: "Luke Skywalker joins forces with a Jedi Knight to rescue a princess and battle the Empire.",genre_ids:[12,28,878]},
+{id:1891,title: "The Empire Strikes Back",poster_path: "/2l05cFWJacyIsTpsqSgH0wQXe4V.jpg",vote_average:8.4,release_date: "1980-05-21",overview: "After the rebels are overpowered, Luke Skywalker begins training with Yoda.",genre_ids:[12,28,878]},
+{id:1892,title: "Return of the Jedi",poster_path: "/mDCBQNhR6R0PVFucJp8WdYBQMkI.jpg",vote_average:7.9,release_date: "1983-05-25",overview: "After a daring mission, the rebels seek to destroy the second Death Star.",genre_ids:[12,28,878]},
+{id:85,title: "Raiders of the Lost Ark",poster_path: "/ceG9VzoRAVGwivFU403Wc3AHRys.jpg",vote_average:8.0,release_date: "1981-06-12",overview: "Archaeologist and adventurer Indiana Jones is hired to find the Ark of the Covenant.",genre_ids:[12,28]},
+{id:87,title:"Indiana Jones and the Temple of Doom",poster_path: "/obBpOwRSMQjhH7F5MBrJBtI4bWQ.jpg",vote_average:7.5,release_date: "1984-05-23",overview: "Indiana Jones and his companions must escape the clutches of a sinister cult.",genre_ids:[12,28]},
+{id:89,title:"Indiana Jones and the Last Crusade",poster_path: "/4eygWo3bMbqFkuaBMSDKGqvFGDn.jpg",vote_average:8.0,release_date: "1989-05-24",overview: "Indiana Jones teams up with his father to find the Holy Grail.",genre_ids:[12,28]},
+{id:1372,title: "El Mariachi",poster_path: "/lnUcS97lASmBanCRdHFQbRJSe2A.jpg",vote_average:7.0,release_date: "1992-02-26",overview: "A traveling mariachi musician is mistaken for a hit man in a small Mexican border town.",genre_ids:[28,80,12]},
+{id:8204,title: "Desperado",poster_path: "/dUGc2sniEHJwCBFCGF5eUmaMnz0.jpg",vote_average:7.0,release_date: "1995-08-25",overview: "A mysterious guitar-playing stranger searches for the drug lord who killed his girlfriend.",genre_ids:[28,80,12]},
+{id:218,title: "The Terminator",poster_path: "/qvktm0BHcnmDpul4Hz01GIazWPr.jpg",vote_average:7.9,release_date: "1984-10-26",overview: "A cyborg assassin is sent back in time to kill the mother of the future rebel leader.",genre_ids:[28,878,53]},
+{id:87101,title: "Terminator 2: Judgment Day",poster_path: "/weVXMD5QBGeQil4HEATZqAkXeEc.jpg",vote_average:8.1,release_date: "1991-07-03",overview:"A cyborg is sent to protect Sarah Connor\'s son John, the future leader of the resistance.",genre_ids:[28,878,53]},
+{id:1366,title: "Rambo: First Blood",poster_path: "/oYvPjAMlQaqSmTCpoBBNQ53SbFl.jpg",vote_average:7.4,release_date: "1982-10-22",overview: "A troubled veteran is forced to survive in the wilderness when a small town sheriff pushes him too far.",genre_ids:[28,12,53]},
+{id:1368,title: "Rambo III",poster_path: "/wF20XEYWT6noqJGDM1xAmEBhgQN.jpg",vote_average:6.4,release_date: "1988-05-25",overview: "Rambo single-handedly takes on the entire Soviet army in Afghanistan.",genre_ids:[28,12]},
+{id:1569,title: "Commando",poster_path: "/5RKIP4tDfIBN9UBpZUqv1A7rDUj.jpg",vote_average:6.7,release_date: "1985-10-04",overview: "A retired elite Black Ops soldier is forced to go to war to rescue his kidnapped daughter.",genre_ids:[28,12]},
+{id:1724,title: "The Predator",poster_path: "/r9G9ZmcrpMMLjq8So0FaHQOC0xS.jpg",vote_average:7.1,release_date: "1987-06-12",overview: "A team of commandos on a mission in a Central American jungle are hunted by an alien.",genre_ids:[28,878,27,12]},
+{id:9607,title: "Scarface",poster_path: "/iQ5ztdjvteGeboxtmRdXEChJOHh.jpg",vote_average:8.0,release_date: "1983-12-09",overview: "A young Cuban immigrant arrives in Miami during the 1980s Mariel boatlift and creates a drug empire.",genre_ids:[18,80,53]},
+{id:111,title: "Scarecrow",poster_path: "/3EsoGEOBiicpv8MLwGr14uFDcaH.jpg",vote_average:7.2,release_date: "1973-04-11",overview: "Two drifters travel the country together.",genre_ids:[18,12]},
+{id:637,title: "Platoon",poster_path: "/f4GtnBNFfuZFsEuGbH9ghkSTTXO.jpg",vote_average:7.9,release_date: "1986-12-19",overview: "A young soldier in Vietnam faces a moral crisis when confronted with the horrors of war.",genre_ids:[10752,18,28]},
+{id:1051,title: "Full Metal Jacket",poster_path: "/61BLiqOWKg7FKZKSmCpuJkIU2kK.jpg",vote_average:8.0,release_date: "1987-07-10",overview: "A pragmatic U.S. Marine observes the dehumanizing effects of the Vietnam War on his fellow recruits.",genre_ids:[10752,18,28]},
+{id:197,title: "Braveheart",poster_path: "/or1gBugydmjToAEq7OZY0owwFk.jpg",vote_average:7.9,release_date: "1995-05-24",overview: "Scottish warrior William Wallace leads his countrymen in a rebellion against English rule.",genre_ids:[28,18,36]},
+{id:256962,title: "Mad Max: Fury Road",poster_path: "/8tZYtuWezp8JbcsvHYO0O46tFbo.jpg",vote_average:7.9,release_date: "2015-05-15",overview: "In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler.",genre_ids:[28,12,878]},
+
+// ── COMEDY ──────────────────────────────────────────────
+{id:13,title: "Forrest Gump",poster_path: "/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg",vote_average:8.5,release_date: "1994-07-06",overview: "The presidencies of Kennedy and Johnson through the eyes of an Alabama man with an IQ of 75.",genre_ids:[35,18,10749]},
+{id:10386,title: "Home Alone",poster_path: "/onTSipZ8R3bliBdKfPtsDnqe9T0.jpg",vote_average:7.4,release_date: "1990-11-16",overview: "An eight-year-old troublemaker must protect his house from two burglars.",genre_ids:[35,10751]},
+{id:2109,title: "Grease",poster_path: "/oKzNLeTDtMxE5OKhOKwMXvFpHB5.jpg",vote_average:7.2,release_date: "1978-06-16",overview: "Good girl Sandy and greaser Danny fell in love over the summer.",genre_ids:[35,18,10402,10749]},
+{id:680,title: "Some Like It Hot",poster_path: "/diHyqHB7zp5RHc9qdN4BUHJjqA0.jpg",vote_average:8.1,release_date: "1959-03-19",overview: "After two musicians witness a mob murder, they flee disguised as women.",genre_ids:[35,18,80]},
+{id:330,title: "The Blues Brothers",poster_path: "/6BHaFVlCLrFOIlckiWEDN2blYPV.jpg",vote_average:7.9,release_date: "1980-06-20",overview: "Jake and Elwood Blues put their band back together to save the orphanage.",genre_ids:[35,28,10402]},
+{id:620,title: "Airplane!",poster_path: "/qRPZRCxE1eMDuWB3hDfZDgYxpnH.jpg",vote_average:7.7,release_date: "1980-07-02",overview: "A man afraid to fly must land a plane when the pilots get sick.",genre_ids:[35]},
+{id:2080,title: "Animal House",poster_path: "/p3SZbhj3tkTsSg7EsBT3k9QNH5b.jpg",vote_average:7.3,release_date: "1978-07-28",overview: "At a 1962 college, the Delta Tau Chi fraternity is on trial.",genre_ids:[35]},
+{id:9487,title: "Ghostbusters",poster_path: "/9wd0qGLWJ5tnGM65SkDY2TFZWBS.jpg",vote_average:7.8,release_date: "1984-06-08",overview: "Three former parapsychology professors set up shop as a ghost-catching business.",genre_ids:[35,14,12]},
+{id:10198,title: "Ace Ventura: Pet Detective",poster_path: "/cuNFtrCuCrguMkVUd2ND9MN4dJN.jpg",vote_average:6.9,release_date: "1994-02-04",overview:"A goofy detective specializing in animals goes on the case when the Miami Dolphins' mascot is stolen.",genre_ids:[35,9648,28]},
+{id:6977,title: "Three Amigos!",poster_path: "/i0bZCsK9xCaVqNJp7d9QBqbsDXj.jpg",vote_average:7.0,release_date: "1986-12-12",overview:"Three unemployed actors receive a real bandit\'s invitation thinking it\\'s another film.",genre_ids:[35,12,10752]},
+
+// ── HORROR / THRILLER ───────────────────────────────────
+{id:694,title: "The Shining",poster_path: "/b6ko0IKC8MdYBBPkkA1aBPLe2yz.jpg",vote_average:8.4,release_date: "1980-05-23",overview: "A family heads to an isolated hotel where an evil and spiritual presence influences the father.",genre_ids:[27,53]},
+{id:348,title: "Alien",poster_path: "/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg",vote_average:8.1,release_date: "1979-05-25",overview: "The crew of a commercial spacecraft encounter a deadly extraterrestrial organism.",genre_ids:[27,878]},
+{id:8077,title: "Aliens",poster_path: "/r1x5JGpyqZU8PYhbs4UcrO1Xb6x.jpg",vote_average:8.0,release_date: "1986-07-18",overview: "Ripley returns to the planet where her crew encountered the hostile Alien creatures.",genre_ids:[28,27,878,12]},
+{id:539,title: "Poltergeist",poster_path: "/jjCp5KnkJRU8xkSftCcjH0SJyPH.jpg",vote_average:7.4,release_date: "1982-06-04",overview:"A family\'s home is haunted by a host of ghosts that communicate with their younger daughter.",genre_ids:[27,53,18]},
+{id:637,title: "A Nightmare on Elm Street",poster_path: "/4wY2Wr2BoN8QEkurmMKSLnBPLVS.jpg",vote_average:7.4,release_date: "1984-11-16",overview:"Several teenagers fall prey to Freddy Krueger, a disfigured midnight mangler.",genre_ids:[27,53]},
+{id:9032,title: "Halloween",poster_path: "/qVpCaBcnjkFNgvigsRbY6bMNSoJ.jpg",vote_average:7.7,release_date: "1978-10-25",overview: "Fifteen years after murdering his sister on Halloween, Michael Myers escapes and returns to Haddonfield.",genre_ids:[27,53]},
+{id:11983,title: "Friday the 13th",poster_path: "/gGDzXVMrg3q7bLoynLyalqUG5Rv.jpg",vote_average:6.4,release_date: "1980-05-09",overview: "A group of camp counselors are stalked and murdered by an unknown assailant at Camp Crystal Lake.",genre_ids:[27,53]},
+{id:694,title: "The Exorcist",poster_path: "/4engmHo6nOsTaMmRbMpQBs8AhzO.jpg",vote_average:7.9,release_date: "1973-12-26",overview: "When a 12-year-old girl is possessed by a mysterious entity, her mother seeks help from a priest.",genre_ids:[27,53,18]},
+{id:6972,title: "Silence of the Lambs",poster_path: "/rplLJ2hPcOQmkFhTqUte0MkEaO2.jpg",vote_average:8.3,release_date: "1991-02-14",overview: "A young FBI cadet must confide in a manipulative cannibal killer to catch another serial killer.",genre_ids:[18,27,53]},
+{id:9590,title: "Jaws",poster_path: "/lxM6e836MFN7A5OoRkwbxmrgCE5.jpg",vote_average:8.0,release_date: "1975-06-20",overview: "A giant great white shark arrives on the shores of a small seaside community and wreaks havoc.",genre_ids:[27,12,53]},
+{id:1091,title: "The Thing",poster_path: "/tzGY72FiIxS1bMFl2sKkqT8MQce.jpg",vote_average:8.2,release_date: "1982-06-25",overview: "A research team in Antarctica is hunted by a shape-shifting alien organism.",genre_ids:[27,878,53]},
+{id:218,title: "The Birds",poster_path: "/bCiMjw1jSAHjcAyy5wPxjmDkqRC.jpg",vote_average:7.7,release_date: "1963-03-28",overview: "Melanie travels to a small Northern California town and encounters a sudden unexplained attack by birds.",genre_ids:[27,53,9648]},
+
+// ── SCI-FI ──────────────────────────────────────────────
+{id:348,title: "2001: A Space Odyssey",poster_path: "/ve72VxNqsuTFBOuIjxp5akPieea.jpg",vote_average:8.3,release_date: "1968-04-02",overview: "Humanity finds a mysterious object buried beneath the lunar surface.",genre_ids:[878,9648]},
+{id:859,title: "E.T. the Extra-Terrestrial",poster_path: "/an0nD6uq6byfxXCfk4nB6lMLGCk.jpg",vote_average:7.9,release_date: "1982-06-11",overview: "A troubled child summons the courage to help a friendly alien escape from Earth.",genre_ids:[878,12,10751]},
+{id:72105,title: "Blade Runner",poster_path: "/63N9uy8nd9j7Eog2axPQ8lbr3Wj.jpg",vote_average:8.0,release_date: "1982-06-25",overview: "A blade runner must pursue and terminate four replicants who stole a ship and have returned to Earth.",genre_ids:[878,53,18]},
+{id:601,title: "Back to the Future",poster_path: "/fNOH9f1aA7XRTzl1sAOx9iF553Q.jpg",vote_average:8.3,release_date: "1985-07-03",overview: "Marty McFly is accidentally sent back in time in a time-traveling DeLorean invented by his friend.",genre_ids:[35,12,878]},
+{id:105,title: "Back to the Future Part II",poster_path: "/5aGhaIHYuQbqlHWvWYqMCnj40y2.jpg",vote_average:7.8,release_date: "1989-11-22",overview: "After visiting 2015, Marty McFly must repeat his visit to 1955 to prevent disastrous changes.",genre_ids:[35,12,878]},
+{id:196,title: "Back to the Future Part III",poster_path: "/crzoVQnMzIrRfHtQw7k3iu2kAVb.jpg",vote_average:7.4,release_date: "1990-05-25",overview: "Stranded in 1955, Marty McFly receives written word from the future.",genre_ids:[35,12,878,37]},
+{id:329,title: "Close Encounters of the Third Kind",poster_path: "/lRLfXq1WbIFkCIHQGbT5tqHbWZ5.jpg",vote_average:7.6,release_date: "1977-11-16",overview: "Roy Neary has a close encounter with a UFO and becomes obsessed with a strange vision.",genre_ids:[878,18,9648]},
+{id:2503,title: "The Matrix",poster_path: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",vote_average:8.2,release_date: "1999-03-31",overview: "A computer hacker learns the world is a simulated reality and joins a rebellion.",genre_ids:[28,878,12]},
+{id:603,title: "The Matrix Reloaded",poster_path: "/8Nmb8kFOJe6EgBELOHlFD9NHQF0.jpg",vote_average:7.3,release_date: "2003-05-15",overview: "Neo and the rebel leaders estimate they have 72 hours until the machines reach Zion.",genre_ids:[28,878,12]},
+{id:9603,title: "Planet of the Apes",poster_path: "/af1pCbBqVEh3McWz7X6psT6jIcL.jpg",vote_average:7.7,release_date: "1968-04-03",overview: "An astronaut crew crash-lands on a planet in the distant future where apes are the dominant species.",genre_ids:[878,12,53]},
+{id:1934,title:"Logan\'s Run",poster_path: "/cBWiTaMHcRBVFtZsrUuNAvMMhcN.jpg",vote_average:6.8,release_date: "1976-06-23",overview: "In a futuristic society, everyone lives in a domed city and must die at age 30.",genre_ids:[878,12,53]},
+{id:103,title: "Soylent Green",poster_path: "/5UJVfK6cJkWqaFZGqeC7ZM7LEKM.jpg",vote_average:7.2,release_date: "1973-05-09",overview: "In a future of overpopulation and depleted resources, a cop investigates a murder.",genre_ids:[878,53,18]},
+
+// ── ROMANCE ─────────────────────────────────────────────
+{id:597,title: "Titanic",poster_path: "/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",vote_average:7.9,release_date: "1997-11-18",overview: "A seventeen-year-old aristocrat falls in love with a kind but poor artist aboard the Titanic.",genre_ids:[18,10749]},
+{id:11041,title: "Pretty Woman",poster_path: "/iFsAiMQFbHk1YPBP6SsY5tPMCKv.jpg",vote_average:7.4,release_date: "1990-03-23",overview: "A man in a legal but hurtful business needs an escort for some social events and hires a beautiful prostitute.",genre_ids:[35,18,10749]},
+{id:11017,title: "An Officer and a Gentleman",poster_path: "/fwJ7yX1kNaGNZR9QVNQ1v9h7JjL.jpg",vote_average:7.2,release_date: "1982-07-28",overview:"A young man joins the Navy to become a naval aviator and falls in love with a local factory worker.",genre_ids:[18,10749,18]},
+{id:9297,title: "The Notebook",poster_path: "/rNzQyW4f8B8cQeg7Dgj3n6eT5k9.jpg",vote_average:7.9,release_date: "2004-06-25",overview: "A young man tells the story of a couple who fell in love in the 1940s.",genre_ids:[18,10749]},
+{id:4248,title: "Ghost",poster_path: "/3hRZEfniPoSIFPBqJRLIfOSVbih.jpg",vote_average:7.4,release_date: "1990-07-13",overview: "After a young man is murdered, his spirit stays behind to warn his lover of impending danger.",genre_ids:[10749,27,18,53]},
+{id:1858,title: "Love Story",poster_path: "/bRuLLEbCCL2ky7F4pEpT5hDuGLo.jpg",vote_average:7.0,release_date: "1970-12-16",overview: "Harvard student Oliver falls in love with Jenny, a working-class Radcliffe music student.",genre_ids:[18,10749]},
+{id:43074,title: "Dirty Dancing",poster_path: "/8yTYQRBpMJrLU3FkHoGtfCGjpST.jpg",vote_average:7.2,release_date: "1987-08-21",overview: "Spending the summer at a Catskills resort with her family, a young woman falls in love with the dance instructor.",genre_ids:[18,10749,10402]},
+
+// ── ANIMATION ───────────────────────────────────────────
+{id:8392,title: "My Neighbor Totoro",poster_path: "/rtGDOeG9LzoerkDGZF9dnVeLppL.jpg",vote_average:8.2,release_date: "1988-04-16",overview: "When two girls move to the country to be near their ailing mother, they have adventures with forest spirits.",genre_ids:[16,12,14,10751]},
+{id:10515,title: "Castle in the Sky",poster_path: "/npOnzAbLh6VOIu3naU5g3GQeqtB.jpg",vote_average:8.0,release_date: "1986-08-02",overview: "A young boy and a girl with a magic crystal must race against pirates and government agents to find a legendary floating castle.",genre_ids:[16,12,14]},
+{id:149870,title: "Nausicaä of the Valley of the Wind",poster_path: "/cs4bqomobgHqNZ2Gsa6ywZjFgq3.jpg",vote_average:8.0,release_date: "1984-03-11",overview: "Nausicaä is a gentle princess who fights to preserve the environment of a post-apocalyptic Earth.",genre_ids:[16,12,14,878]},
+{id:37854,title: "One Piece: Stampede",poster_path: "/1BiqfQBiTm1u6JQoEP8vBQEd4tD.jpg",vote_average:7.7,release_date: "2019-08-09",overview: "Pirates from around the world gather at the Pirate Expo to hunt down a legendary treasure.",genre_ids:[16,28,12]},
+{id:812,title: "Bambi",poster_path: "/3VWNA4HFcXW4LMPsaStMsHfAGxP.jpg",vote_average:7.3,release_date: "1942-08-09",overview: "The story of Bambi, a young deer who grows up in the forest.",genre_ids:[16,10751]},
+{id:863,title: "Toy Story",poster_path: "/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",vote_average:7.9,release_date: "1995-11-22",overview: "A cowboy doll is profoundly threatened and jealous when a new spaceman toy becomes the top toy.",genre_ids:[16,12,35,10751]},
+{id:8467,title: "Toy Story 2",poster_path: "/d7gBWXMJTlZTjXmfbXlh68LXjOh.jpg",vote_average:7.8,release_date: "1999-10-30",overview: "When Woody is stolen by a toy collector, Buzz and his friends set out on a rescue mission.",genre_ids:[16,12,35,10751]},
+{id:10193,title: "Toy Story 3",poster_path: "/AbbXspMOwdvwWZgVP0EjhL1pAf6.jpg",vote_average:8.2,release_date: "2010-06-18",overview: "The toys are mistakenly delivered to a day-care center instead of the attic just before Andy leaves for college.",genre_ids:[16,12,35,10751]},
+{id:4935,title:"Howl\'s Moving Castle",poster_path: "/TkFE0WeJXFQHFfq81JJNRoJMzCg.jpg",vote_average:8.4,release_date: "2004-11-20",overview: "When an unconfident young woman is cursed with an old body by a spiteful witch, her only chance is a wizard.",genre_ids:[16,12,14,10749]},
+{id:149532,title: "Princess Mononoke",poster_path: "/sHH8gJJM3lFuv8E9gsDNFDMaBe5.jpg",vote_average:8.4,release_date: "1997-07-12",overview:"On a journey to find the cure for a Tatarigami\'s curse, Ashitaka discovers the struggle between the forest gods and human beings.",genre_ids:[16,12,14,28]},
+{id:2268,title: "Fantasia",poster_path: "/47wy3Ouo5HSzmMLlHITvAUmakm3.jpg",vote_average:7.8,release_date: "1940-11-13",overview: "A collection of animated interpretations of great works of classical music.",genre_ids:[16,10402,10751]},
+
+// ── FAMILY / ADVENTURE ──────────────────────────────────
+{id:1930,title: "Superman",poster_path: "/8vYdm9o7MnPvw0gVJcnVxDWBgIS.jpg",vote_average:7.3,release_date: "1978-12-15",overview:"An alien orphan is sent from his dying planet to Earth, where he grows up to become his adoptive world\'s first superhero.",genre_ids:[12,14,28,878,10751]},
+{id:1452,title: "Superman II",poster_path: "/f2MkxCQPkLFuMaEHjWMbFmFOtQA.jpg",vote_average:6.8,release_date: "1980-12-04",overview: "Superman agrees to sacrifice his powers to start a new life with Lois Lane, then discovers three escaped Kryptonian criminals.",genre_ids:[12,14,28,10751]},
+{id:9590,title: "The Goonies",poster_path: "/vkh2cH7GGNTB7k2f5LbEFRqVP0J.jpg",vote_average:7.8,release_date: "1985-06-07",overview: "A group of kids embark on a wild adventure after finding an old treasure map.",genre_ids:[12,35,10751]},
+{id:10681,title: "WALL-E",poster_path: "/hbhFnRzzImg6x7NFsMcV8w4p3YM.jpg",vote_average:8.1,release_date: "2008-06-22",overview: "In the distant future, a small waste-collecting robot inadvertently embarks on a space journey.",genre_ids:[16,12,878,10751]},
+{id:14,title: "American Tail: Fievel",poster_path: "/kOJh65iIwtKUzFsGc8yFmMCfuvz.jpg",vote_average:7.0,release_date: "1986-11-21",overview: "A young Russian mouse is separated from his family and immigrates to America.",genre_ids:[16,12,10751]},
+{id:22881,title: "The Land Before Time",poster_path: "/qXChNIvbhWkHEq9cFLOk5YJFjFO.jpg",vote_average:7.4,release_date: "1988-11-18",overview: "An orphaned dinosaur befriends others of different species as they embark on a journey to the Great Valley.",genre_ids:[16,12,10751]},
+{id:62211,title: "Aladdin",poster_path: "/eLnqPRZjBBF4VGxHIEFYMHoycpk.jpg",vote_average:7.7,release_date: "1992-11-25",overview: "A street urchin vies for the love of a beautiful princess using a magic lamp that can grant wishes.",genre_ids:[16,12,14,35,10749,10751]},
+{id:11688,title: "The Little Mermaid",poster_path: "/v3NqBBHAi3MxFOe9HxuBpDJXJdQ.jpg",vote_average:7.3,release_date: "1989-11-15",overview: "A mermaid princess makes a deal with a sea-witch to become human so she can be with a man she loves.",genre_ids:[16,12,14,10749,10751]},
+{id:15121,title: "Beauty and the Beast",poster_path: "/ssPMnOPydxKtFSWb0lkVi5BGYRI.jpg",vote_average:7.7,release_date: "1991-11-13",overview:"A proud prince is turned into a beast, and must find love before the enchanted rose\'s last petal falls.",genre_ids:[16,12,14,10749,10751]},
+{id:8355,title: "The Lion King",poster_path: "/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg",vote_average:8.3,release_date: "1994-06-24",overview: "Lion cub and future king Simba searches for his identity in this coming-of-age Disney animated classic.",genre_ids:[16,12,14,10751]},
+
+// ── CRIME / THRILLER ────────────────────────────────────
+{id:275,title: "Fargo",poster_path: "/iGCnM3jKQeD9FqmSHWXBMwEMcSm.jpg",vote_average:8.1,release_date: "1996-04-05",overview: "A small-town Minnesota crime story with a very pregnant police chief.",genre_ids:[80,53,18,35]},
+{id:562,title: "Chinatown",poster_path: "/bKM3YRkzGRPTRKCpyaSCH6CZ8TP.jpg",vote_average:8.2,release_date: "1974-06-20",overview: "A private detective hired to expose an adulterer finds himself caught up in a web of deceit involving a corrupt water commissioner.",genre_ids:[80,9648,53,18]},
+{id:598,title: "The French Connection",poster_path: "/n43NNDo8FqhWZiV5fSm5C3GqeSV.jpg",vote_average:7.6,release_date: "1971-10-07",overview: "A pair of NYC cops become involved in a complicated plot involving a drug smuggling operation.",genre_ids:[80,53,28,18]},
+{id:423,title: "The Usual Suspects",poster_path: "/bY5HaXDPAGS7HqHPHMDNVzCPGcD.jpg",vote_average:8.5,release_date: "1995-09-15",overview: "A sole survivor tells investigators about the massacre of five criminals on a boat in the harbour.",genre_ids:[80,9648,53]},
+{id:769,title: "Heat",poster_path: "/zNdNNMNqQCk5L6Xb7rMivkFHHYq.jpg",vote_average:7.9,release_date: "1995-12-15",overview: "A group of professional bank robbers start to feel the heat from the LAPD.",genre_ids:[28,80,53,18]},
+{id:240,title:"Miller\'s Crossing",poster_path: "/qM0s7xVnBH1R0bNTk2LVZOW1vhW.jpg",vote_average:7.7,release_date: "1990-09-21",overview:"A crime boss\'s advisor tries to keep the peace between two gangs.",genre_ids:[80,18,53]},
+{id:207703,title: "No Country for Old Men",poster_path: "/6d5XOczc5zIIBMDcJHABBXmSFCx.jpg",vote_average:8.1,release_date: "2007-11-21",overview: "Violence and mayhem ensue after a hunter stumbles upon a drug deal gone wrong.",genre_ids:[80,53,18]},
+
+// ── WESTERN ─────────────────────────────────────────────
+{id:978,title: "The Good, the Bad and the Ugly",poster_path: "/7djAN7MsZCZXXGTnEdgNiCVMlbg.jpg",vote_average:8.5,release_date: "1966-12-23",overview: "A bounty hunting scam joins two men in an uneasy alliance against a third in a race to find a buried cache of Confederate gold.",genre_ids:[37,28]},
+{id:11216,title: "A Fistful of Dollars",poster_path: "/2Xv6SRSB2jFMg8gHerCzknwumfG.jpg",vote_average:8.0,release_date: "1964-09-12",overview: "A wandering gunfighter plays two rival families against each other in a town torn apart by greed, pride, and revenge.",genre_ids:[37,28]},
+{id:11232,title: "For a Few Dollars More",poster_path: "/g9k6XmMPEh9RbCTuGF91TxXlHRA.jpg",vote_average:8.0,release_date: "1965-12-18",overview: "Two bounty hunters with different motives pursue a common target.",genre_ids:[37,28]},
+{id:1525,title: "Butch Cassidy and the Sundance Kid",poster_path: "/fUiOhCTnS9fVnKEJFDZPLFQDDid.jpg",vote_average:8.0,release_date: "1969-09-23",overview: "The story of Wild West outlaws Butch Cassidy and the Sundance Kid.",genre_ids:[37,28,35]},
+{id:566,title: "Once Upon a Time in the West",poster_path: "/qbYgqOczabWAzcutBGDwmxMGPcM.jpg",vote_average:8.5,release_date: "1968-12-21",overview: "Epic story of a mysterious stranger with a harmonica who joins forces with a notorious desperado.",genre_ids:[37,28,18]},
+{id:310,title: "The Magnificent Seven",poster_path: "/zL8CSXON5lXmVtFKvzqhcbVS8Nh.jpg",vote_average:7.6,release_date: "1960-11-23",overview: "Seven gunfighters are hired by Mexican peasants to liberate their village from a group of bandits.",genre_ids:[37,28,18]},
+
+// ── MUSICALS ────────────────────────────────────────────
+{id:4935,title: "Grease",poster_path: "/oKzNLeTDtMxE5OKhOKwMXvFpHB5.jpg",vote_average:7.2,release_date: "1978-06-16",overview: "Good girl Sandy and greaser Danny fell in love over the summer.",genre_ids:[10402,35,18,10749]},
+{id:1258,title: "The Sound of Music",poster_path: "/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg",vote_average:8.1,release_date: "1965-03-02",overview: "A woman leaves an Austrian convent to become a governess for a naval officer widower and his seven children.",genre_ids:[10402,18,10749,10751]},
+{id:2062,title: "Saturday Night Fever",poster_path: "/3TPSEX2s1cVFCOWGd1rPAeVCpjk.jpg",vote_average:7.1,release_date: "1977-12-14",overview: "A Brooklyn teenager with nowhere to go but the disco finds himself seeking fame under the mirror ball.",genre_ids:[10402,18,35]},
+{id:8869,title: "Footloose",poster_path: "/uBHBh18xVHpoCH2D9aXjTxaXcPt.jpg",vote_average:6.8,release_date: "1984-02-17",overview: "A big-city kid moves to a small town where rock music and dancing have been banned.",genre_ids:[10402,18,35]},
+{id:22683,title: "Xanadu",poster_path: "/AzFbdF3sEMgJi7VuH0AJV4HrFjt.jpg",vote_average:5.8,release_date: "1980-08-08",overview: "A struggling artist falls in love with one of the nine Greek muses.",genre_ids:[10402,14,10749]},
+{id:9717,title: "West Side Story",poster_path: "/nIq2eUrqvmk5HEbQnMwHBBNnkFg.jpg",vote_average:7.5,release_date: "1961-10-18",overview: "Two youngsters from rival New York City gangs fall in love.",genre_ids:[10402,18,10749]},
+
+// ── WAR ─────────────────────────────────────────────────
+{id:197,title: "Apocalypse Now",poster_path: "/gQB8Y5RCMkv2zwzFHbUJX3kAhvA.jpg",vote_average:8.4,release_date: "1979-08-15",overview: "A U.S. Army officer is sent into the jungle to assassinate a rogue general.",genre_ids:[10752,18,28]},
+{id:1571,title: "The Deer Hunter",poster_path: "/xuzCYDqWE5cZYoJoJFP5XLUFTnQ.jpg",vote_average:8.1,release_date: "1978-12-08",overview: "An in-depth examination of the ways in which the Vietnam War impacts the lives of people in a small industrial town.",genre_ids:[10752,18]},
+{id:1639,title: "Born on the Fourth of July",poster_path: "/qXHhd7lCmXNsQ8Jfh8cGCVpkU2e.jpg",vote_average:7.3,release_date: "1989-12-20",overview: "The biography of Ron Kovic, a paralyzed Vietnam veteran who became an anti-war activist.",genre_ids:[10752,18]},
+{id:2969,title: "Patton",poster_path: "/j9JhHM4b0J32Lz6hGbOQNaRRzCW.jpg",vote_average:7.9,release_date: "1970-02-04",overview:"The World War II story of General George S. Patton.",genre_ids:[10752,18,36]},
+{id:2280,title: "The Great Escape",poster_path: "/nwDHB2ky3yLuJrIMhHa0rjdI3xL.jpg",vote_average:8.1,release_date: "1963-07-04",overview: "Based on the true story of a WWII escape from a German prison camp.",genre_ids:[10752,28,18,36]},
+{id:10694,title: "Das Boot",poster_path: "/rS1GhVyxMG7HGE0RqhDxk71LkwT.jpg",vote_average:8.3,release_date: "1981-09-17",overview: "The claustrophobic world of a WWII German submarine crew.",genre_ids:[10752,18,28]},
+
+// ── DOCUMENTARY ─────────────────────────────────────────
+{id:14284,title: "Woodstock",poster_path: "/5pnrKb40WaBnY5dvG0JxOadkQxW.jpg",vote_average:7.9,release_date: "1970-03-26",overview: "A documentary record of the legendary 1969 Woodstock festival.",genre_ids:[99,10402]},
+{id:35,title: "Fahrenheit 9/11",poster_path: "/l7afV7lFuaWwEJidNcCzE7v8cxD.jpg",vote_average:7.3,release_date: "2004-06-25",overview:"Michael Moore\'s documentary about the September 11 attacks.",genre_ids:[99]},
+{id:10440,title: "Planet Earth",poster_path: "/7MwFiMnpMp2zXf2JQAbwAnDT7Dh.jpg",vote_average:9.0,release_date: "2006-03-05",overview: "David Attenborough narrates this stunning documentary series about life on Earth.",genre_ids:[99]},
+
+// ── MEXICAN / LATIN CINEMA ──────────────────────────────
+{id:68734,title: "Amores Perros",poster_path: "/gRPJf8MBbKNKlsBByCGF5t1oLyD.jpg",vote_average:8.1,release_date: "2000-05-19",overview: "Three interlocking stories about the consequences of a Mexico City car accident.",genre_ids:[18,53,28]},
+{id:107251,title: "Y Tu Mamá También",poster_path: "/4W2NfPTv2PxlMBFINcEWWX6GFDf.jpg",vote_average:7.6,release_date: "2001-06-08",overview: "Two teenage boys take a road trip with an older woman.",genre_ids:[18,10749,35]},
+{id:615,title:"El laberinto del fauno (Pan\'s Labyrinth)",poster_path: "/3g8PxJi5RWkSMcRVp3WJwAKzNdq.jpg",vote_average:8.2,release_date: "2006-10-11",overview: "In the Falangist Spain of 1944, the bookish young stepdaughter of a sadistic army officer escapes into an eerie but captivating fantasy world.",genre_ids:[14,18,27]},
+{id:15121,title: "Coco",poster_path: "/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg",vote_average:8.4,release_date: "2017-10-27",overview: "Aspiring musician Miguel enters the Land of the Dead to find his great-great-grandfather.",genre_ids:[16,12,14,10751]},
+{id:14580,title: "Nacho Libre",poster_path: "/wLd1V0WivjAMqLiO5nWaqe2gWJ5.jpg",vote_average:6.2,release_date: "2006-06-16",overview: "A Mexican cook secretly trains as a Luchador wrestler.",genre_ids:[35,12,10751]},
+{id:8988,title: "El Norte",poster_path: "/eN0ZBQtyKsMb5R7bANJiT3c01jk.jpg",vote_average:7.9,release_date: "1983-01-11",overview: "Guatemalan siblings flee their country for the United States.",genre_ids:[18,12]},
+{id:7219,title: "Aguirre, der Zorn Gottes",poster_path: "/hYekP5RQdPdgBnYkGJrR1kVYxcM.jpg",vote_average:7.9,release_date: "1972-12-29",overview: "In 1560, a Spanish conquistador leads a doomed expedition in search of El Dorado.",genre_ids:[12,18,28,36]},
+{id:9946,title: "Like Water for Chocolate",poster_path: "/h2FmFTRQMmO0PGMrpKb5u0nGqNQ.jpg",vote_average:7.4,release_date: "1992-04-17",overview:"A young Mexican woman\'s emotions literally flow into her cooking and affect those who eat it.",genre_ids:[18,14,10749]},
+{id:23297,title: "Cronos",poster_path: "/z3l8JCqjT0M1gd6I4RKoHZuHpA2.jpg",vote_average:7.0,release_date: "1993-04-16",overview: "A mysterious device designed to provide its owner with eternal life resurfaces after 400 years.",genre_ids:[27,14,18]},
+
+// ══════════════════════════════════════════════════════════
+//  TELENOVELAS CLÁSICAS — 70s & 80s ♥
+// ══════════════════════════════════════════════════════════
+{id:900001,title: "Los Ricos También Lloran",poster_path: "/nWoRbkVcVVFZWCvBMW0MKNWriuE.jpg",vote_average:8.5,release_date: "1979-01-01",overview: "Mariana, una joven humilde, se enamora del millonario Luis Alberto. La telenovela más vista de México y exportada al mundo entero.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900002,title: "Simplemente María",poster_path: "/kOJh65iIwtKUzFsGc8yFmMCfuvz.jpg",vote_average:8.3,release_date: "1967-01-01",overview: "María es una muchacha humilde que llega a la ciudad con grandes sueños. La telenovela más exitosa de la historia latinoamericana.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900003,title: "El Derecho de Nacer",poster_path: "/w4ib9eFpIV55C3d0YIL9x1t2Ej4.jpg",vote_average:8.7,release_date: "1966-01-01",overview: "Historia clásica cubana de Alberto Limonta, hijo ilegítimo criado en secreto, que busca a su verdadera familia.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900004,title: "Cuna de Lobos",poster_path: "/iEEHMxFm8QG4wPCWiPr5BfTLRSf.jpg",vote_average:9.0,release_date: "1986-01-01",overview: "Catalina Creel, la villana más famosa de México, manipula a toda su familia con una mano falsa. Obra maestra del melodrama.",genre_ids:[18,53],tv:true,novela:true},
+{id:900005,title: "Quinceañera",poster_path: "/qNgToAFtPt4XpGEO0LdZWkLkDGZ.jpg",vote_average:8.2,release_date: "1987-01-01",overview: "Maricruz es una joven de clase baja que sueña con su fiesta de quinceañera y encuentra el amor.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900006,title: "Tú o Nadie",poster_path: "/b6ko0IKC8MdYBBPkkA1aBPLe2yz.jpg",vote_average:8.4,release_date: "1985-01-01",overview: "Una romántica historia de amor entre Alejandro y Amparo, protagonizada por Lucía Méndez y José Luis Rodríguez \"El Puma\".",genre_ids:[10749,18],tv:true,novela:true},
+{id:900007,title: "Viviana",poster_path: "/j9JhHM4b0J32Lz6hGbOQNaRRzCW.jpg",vote_average:8.0,release_date: "1978-01-01",overview: "Viviana es una joven que sufre las consecuencias de un amor prohibido en la sociedad de la época.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900008,title: "Colorina",poster_path: "/7djAN7MsZCZXXGTnEdgNiCVMlbg.jpg",vote_average:8.1,release_date: "1980-01-01",overview: "La historia de una joven pelirroja que lucha contra la discriminación y encuentra el amor verdadero.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900009,title: "Baila Conmigo",poster_path: "/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg",vote_average:8.0,release_date: "1992-01-01",overview: "Historia de amor entre una bailarina y un hombre de negocios, con música y baile de la época.",genre_ids:[10749,18,10402],tv:true,novela:true},
+{id:900010,title: "Bodas de Odio",poster_path: "/f4GtnBNFfuZFsEuGbH9ghkSTTXO.jpg",vote_average:8.3,release_date: "1983-01-01",overview: "Pasión y odio en una telenovela de época ambientada en el México del siglo XIX.",genre_ids:[10749,18,36],tv:true,novela:true},
+{id:900011,title: "El Maleficio",poster_path: "/6d5XOczc5zIIBMDcJHABBXmSFCx.jpg",vote_average:8.5,release_date: "1983-01-01",overview: "Ernesto Dobles hace un pacto con el diablo a cambio del amor de una mujer. La telenovela de terror más famosa de México.",genre_ids:[27,18,10749],tv:true,novela:true},
+{id:900012,title: "Chispita",poster_path: "/9cqNxx0GxF0bAY0K8GxVgAFMnD6.jpg",vote_average:8.2,release_date: "1982-01-01",overview: "Una niña huérfana busca a sus padres biológicos mientras enfrenta la crueldad del mundo adulto.",genre_ids:[18,10751,10749],tv:true,novela:true},
+{id:900013,title: "Belinda",poster_path: "/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg",vote_average:8.0,release_date: "1988-01-01",overview: "Una joven de origen humilde trabaja como empleada doméstica y se enamora del hijo de la familia.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900014,title: "Rosa Salvaje",poster_path: "/sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg",vote_average:8.6,release_date: "1987-01-01",overview: "Rosa, una joven luchadora criada en la calle, se convierte en una mujer de mundo gracias a su valentía y amor.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900015,title: "La Usurpadora",poster_path: "/ow3wq89wM8qd5X7hWKxiRfsFf9C.jpg",vote_average:9.0,release_date: "1998-01-01",overview: "Paola, una mujer malvada, usurpa la identidad de su gemela buena Paulina para robarle la vida y el esposo.",genre_ids:[10749,18,53],tv:true,novela:true},
+{id:900016,title: "Corazón Salvaje",poster_path: "/3bhkrj58Vtu7enYsLori8phjKkQ.jpg",vote_average:8.8,release_date: "1977-01-01",overview: "El apuesto Conde León de Altamira lucha por su amor y su honor en el México decimonónico.",genre_ids:[10749,18,36],tv:true,novela:true},
+{id:900017,title: "La Indomable",poster_path: "/9cqNxx0GxF0bAY0K8GxVgAFMnD6.jpg",vote_average:8.1,release_date: "1987-01-01",overview: "Una joven de carácter fuerte se niega a doblegarse ante las injusticias y lucha por su amor.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900018,title: "Yesenia",poster_path: "/aKuFiU82s5ISJpGZp7YkIr3kCUd.jpg",vote_average:8.7,release_date: "1970-01-01",overview: "Yesenia es una joven aventurera que viaja con una tribu gitana y se enamora de un joven aristócrata.",genre_ids:[10749,18,12],tv:true,novela:true},
+{id:900019,title: "Muchacha Italiana Viene a Casarse",poster_path: "/iGCnM3jKQeD9FqmSHWXBMwEMcSm.jpg",vote_average:8.4,release_date: "1971-01-01",overview: "Una joven italiana llega a México y se convierte en la sirvienta de una familia, enamorándose del hijo mayor.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900020,title: "Ángel Rebelde",poster_path: "/81d8oyEFgj7FlxJqSDXWr8JH8kV.jpg",vote_average:8.2,release_date: "1970-01-01",overview: "Una joven huérfana con temperamento rebelde lucha por encontrar su lugar en el mundo y el amor verdadero.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900021,title: "El Pecado de Oyuki",poster_path: "/8OKmBV5BUFzmozIC3pPWKHy17kx.jpg",vote_average:8.0,release_date: "1988-01-01",overview: "Una joven japonesa viene a México y se enfrenta a los prejuicios de la sociedad.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900022,title: "De Pura Sangre",poster_path: "/bY5HaXDPAGS7HqHPHMDNVzCPGcD.jpg",vote_average:8.3,release_date: "1988-01-01",overview: "Una telenovela de época sobre pasiones y rivalidades en el mundo de los caballos de carrera.",genre_ids:[18,10749,36],tv:true,novela:true},
+{id:900023,title: "Amor en Silencio",poster_path: "/nIq2eUrqvmk5HEbQnMwHBBNnkFg.jpg",vote_average:8.1,release_date: "1988-01-01",overview: "Fernanda, una joven sorda, lucha por comunicarse con el mundo y encuentra el amor.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900024,title: "Morir para Vivir",poster_path: "/gCI2AeMV4IHSewhJkzsur2QWfpD.jpg",vote_average:8.0,release_date: "1979-01-01",overview: "Un hombre y una mujer deben superar tragedias y obstáculos para estar juntos.",genre_ids:[10749,18],tv:true,novela:true},
+{id:900025,title: "Mi Segunda Madre",poster_path: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",vote_average:8.4,release_date: "1989-01-01",overview: "Una mujer trabajadora y sacrificada cría a sus hijos con amor y dedica su vida a su familia.",genre_ids:[18,10749,10751],tv:true,novela:true},
+{id:900026,title: "Apuesta por un Amor",poster_path: "/q719jXXEzOoYaps6babgKnONONX.jpg",vote_average:7.9,release_date: "2004-01-01",overview: "Dos jóvenes de mundos distintos se unen por una apuesta que se convierte en amor verdadero.",genre_ids:[10749,18,35],tv:true,novela:true},
+{id:900027,title: "Quiero Amarte",poster_path: "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg",vote_average:8.0,release_date: "2013-01-01",overview: "Maximiliano y Soledad deben superar el engaño y las mentiras para encontrar su amor verdadero.",genre_ids:[10749,18],tv:true,novela:true},
+];
+
+var NOVELA_FILTER_ID = 'novelas';
+
+
+
+async function tmdb(path, params){
+  var url = TMDB_BASE + path + '?api_key=' + TMDB_KEY + '&language=' + (lang==='es'?'es-MX':'en-US');
+  if(params) url += '&' + params;
+  var controller = new AbortController();
+  var timeout = setTimeout(function(){ controller.abort(); }, 3000);
+  try {
+    var r = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+    return r.json();
+  } catch(e) {
+    clearTimeout(timeout);
+    throw e;
+  }
+}
+
+// ── PIN GATE ──────────────────────────────────
+(function(){
+  if(localStorage.getItem('kiki_auth')==='1'){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    var bn=document.getElementById('bottom-nav'); if(bn) bn.style.display='flex';
+    var wf=document.getElementById('watchlist-fab'); if(wf) wf.style.display='flex';
+    setTimeout(init, 100);
+  }
+})();
+
+
+}
+
+function kp(v){
+  if(v==='clr'){pinBuf='';updateDots();document.getElementById('gate-err').textContent='';return;}
+  if(v==='del'){pinBuf=pinBuf.slice(0,-1);updateDots();return;}
+  if(pinBuf.length>=4) return;
+  pinBuf+=v;
+  updateDots();
+  if(pinBuf.length===4){
+    if(pinBuf===PIN){
+      localStorage.setItem('kiki_auth','1');
+      document.getElementById('gate').style.display='none';
+      document.getElementById('app').style.display='block';
+      var bn=document.getElementById('bottom-nav'); if(bn) bn.style.display='flex';
+      var wf=document.getElementById('watchlist-fab'); if(wf) wf.style.display='flex';
+      setTimeout(init, 200);
+    } else {
+      document.querySelectorAll('.pd').forEach(function(d){d.className='pd error';});
+      document.getElementById('gate-err').textContent=lang==='es'?'PIN incorrecto — intenta de nuevo':'Wrong PIN — try again';
+      setTimeout(function(){pinBuf='';updateDots();document.getElementById('gate-err').textContent='';},900);
+    }
+  }
+}
+
+// ── LANGUAGE ──────────────────────────────────
+function setLang(l){
+  lang=l;
+  document.getElementById('btn-en').className='lang-btn'+(l==='en'?' on':'');
+  document.getElementById('btn-es').className='lang-btn'+(l==='es'?' on':'');
+  document.getElementById('loading-txt').textContent=t('loading');
+  document.getElementById('logo-sub').textContent=l==='es'?'PARA MI JEFE GAVILÁN':'FOR MY JEFE KIKI GAVILÁN';
+  document.getElementById('search-in').placeholder=l==='es'?'Buscar películas...':'Search movies...';
+  buildGenres();
+  // Update nav labels
+  var labels = lang==='es'
+    ? {home:'INICIO',search:'BUSCAR',genres:'GÉNEROS','nav-wl-lbl':'MI LISTA',top:'TOP'}
+    : {home:'HOME',search:'SEARCH',genres:'GENRES','nav-wl-lbl':'MY LIST',top:'TOP'};
+  var el;
+  if((el=document.getElementById('nav-home-lbl'))) el.textContent=labels.home;
+  if((el=document.getElementById('nav-search-lbl'))) el.textContent=labels.search;
+  if((el=document.getElementById('nav-genres-lbl'))) el.textContent=labels.genres;
+  if((el=document.getElementById('nav-wl-lbl'))) el.textContent=labels['nav-wl-lbl'];
+  if((el=document.getElementById('nav-top-lbl'))) el.textContent=labels.top;
+  loadMovies(activeGenre, searchQ);
+}
+
+// ── GENRES ───────────────────────────────────
+function buildGenres(){
+  var el=document.getElementById('genre-scroll');
+  el.innerHTML=GENRES.map(function(g){
+    return '<div class="genre-pill'+(g.id===activeGenre?' on':'')+'" onclick="selectGenre(\''+g.id+'\')">'+(lang==='es'?g.es:g.en)+'</div>';
+  }).join('');
+}
+
+function selectGenre(id){
+  activeGenre=id;
+  buildGenres();
+  if(id==='novelas'){
+    var novelas=FALLBACK_MOVIES.filter(function(m){return m.novela;});
+    renderMovies(novelas);
+  } else {
+    loadMovies(id, searchQ);
+  }
+}
+
+// ── MOVIES ────────────────────────────────────
+async function loadMovies(genreId, query){
+  var mc=document.getElementById('main-content');
+  // Only show spinner if no content yet
+  if(!mc.innerHTML || mc.innerHTML.indexOf('movie-card')<0){
+    mc.innerHTML='<div class="loading"><div class="spinner"></div><span>'+t('loading')+'</span></div>';
+  }
+  try {
+    var data;
+    if(query && query.trim().length > 1){
+      data = await tmdb('/search/movie','query='+encodeURIComponent(query)+'&page=1');
+    } else if(genreId==='all'){
+      data = await tmdb('/movie/popular','page=1');
+    } else {
+      data = await tmdb('/discover/movie','with_genres='+genreId+'&sort_by=popularity.desc&page=1');
+    }
+
+    allMovies = (data.results||[]).filter(function(m){return m.poster_path;});
+    renderMovies(allMovies);
+  } catch(e){
+    console.warn('[Kiki] TMDB fetch failed:', e.message, '— using fallback');
+    var filtered = genreId && genreId!=='all'
+      ? FALLBACK_MOVIES.filter(function(m){ return m.genre_ids && m.genre_ids.includes(parseInt(genreId)); })
+      : FALLBACK_MOVIES;
+    if(!filtered.length) filtered = FALLBACK_MOVIES;
+    renderMovies(filtered);
+  }
+}
+
+function renderMovies(movies){
+  var mc=document.getElementById('main-content');
+  if(!movies.length){
+    mc.innerHTML='<div class="loading">'+t('noResults')+'</div>';
+    return;
+  }
+
+  // Featured hero = first movie
+  var hero = movies[0];
+  var heroBg = hero.backdrop_path ? 'https://image.tmdb.org/t/p/w780'+hero.backdrop_path : (hero.poster_path ? TMDB_IMG+hero.poster_path : '');
+  var heroRating = hero.vote_average ? hero.vote_average.toFixed(1) : '?';
+  
+  var html = '';
+  
+  if(heroBg){
+    regMovie(hero);
+  html += '<div class="hero" onclick="openMovieById('+hero.id+',getMovie('+hero.id+'))">'
+      +'<img class="hero-img" src="'+heroBg+'" loading="lazy"/>'
+      +'<div class="hero-grad"></div>'
+      +'<div class="hero-content">'
+        +'<div class="hero-badge">FEATURED</div>'
+        +'<div class="hero-title">'+(lang==='es'&&hero.title?hero.title:hero.title)+'</div>'
+        +'<div class="hero-meta">'
+          +'<span class="star">★ '+heroRating+'</span>'
+          +'<span>'+( hero.release_date?hero.release_date.slice(0,4):'')+'</span>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }
+
+  html += '<div class="section">';
+  html += '<div class="section-title">🎬 '+(searchQ&&searchQ.length>1?'RESULTS':'MOVIES')+'<span style="color:#475569;font-weight:400">'+movies.length+'</span></div>';
+  html += '<div class="movie-grid">';
+  
+  movies.forEach(function(m){
+    if(!m.poster_path) return;
+    var rating = m.vote_average ? m.vote_average.toFixed(1) : '';
+    var year = m.release_date ? m.release_date.slice(0,4) : '';
+    var isFav = watchlist.some(function(w){return w.id===m.id;});
+    regMovie(m);
+    html += '<div class="movie-card" onclick="openMovieById('+m.id+',getMovie('+m.id+'))">'
+      +'<div style="position:relative">'
+        +'<img class="movie-poster" src="'+TMDB_IMG+m.poster_path+'" loading="lazy" alt="'+m.title+'">'
+        +(isFav?'<div style="position:absolute;top:4px;right:4px;font-size:14px">❤️</div>':'')
+      +'</div>'
+      +'<div class="movie-info">'
+        +'<div class="movie-title">'+m.title+'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:3px">'
+          +'<span class="movie-year">'+year+'</span>'
+          +(rating?'<span class="movie-rating">★'+rating+'</span>':'')
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  });
+
+  html += '</div></div>';
+  mc.innerHTML = html;
+}
+
+// ── SEARCH ────────────────────────────────────
+var searchTimer = null;
+function onSearch(q){
+  searchQ = q;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function(){
+    loadMovies(activeGenre, q);
+  }, 500);
+}
+
+// ── MOVIE DETAIL ──────────────────────────────
+async function openMovieById(id, basic){
+  currentMovie = basic;
+  openMovieBasic(basic);
+  // Load full details
+  try {
+    var data = await tmdb('/movie/'+id,'append_to_response=credits,videos');
+    currentMovie = Object.assign({}, basic, data);
+    updateModalFull(data);
+  } catch(e){}
+}
+
+function openMovie(m){
+  openMovieById(m.id, m);
+}
+
+
+function populateWatchLinks(movie) {
+  if(!movie) return;
+  // Show PLAY FULL MOVIE if Archive.org has it
+  var archiveId = getArchiveId(movie.title||'');
+  var playBtn = document.getElementById('play-full-btn');
+  if(playBtn) playBtn.style.display = archiveId ? 'block' : 'none';
+  var title = encodeURIComponent(movie.title + (movie.release_date ? ' ' + movie.release_date.slice(0,4) : ''));
+  var titleRaw = movie.title || '';
+  
+  // YouTube - search for full movie
+  var yt = document.getElementById('wl-youtube');
+  if(yt) yt.href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(titleRaw + ' full movie');
+  
+  // Google search
+  var gl = document.getElementById('wl-google');
+  if(gl) gl.href = 'https://www.google.com/search?q=' + encodeURIComponent('watch ' + titleRaw + ' online free');
+  
+  // Netflix search
+  var nf = document.getElementById('wl-netflix');
+  if(nf){ nf.href = 'https://www.netflix.com/search?q=' + encodeURIComponent(titleRaw); nf.style.display='inline'; }
+  
+  // Prime search  
+  var pr = document.getElementById('wl-prime');
+  if(pr){ pr.href = 'https://www.amazon.com/s?k=' + encodeURIComponent(titleRaw) + '&i=instant-video'; pr.style.display='inline'; }
+}
+function openMovieBasic(m){
+  document.getElementById('modal-poster').src = m.backdrop_path ? TMDB_IMG_ORIG+m.backdrop_path : TMDB_IMG+m.poster_path;
+  document.getElementById('modal-title').textContent = m.title;
+  document.getElementById('modal-plot').textContent = m.overview || (lang==='es'?'Sin descripción disponible.':'No description available.');
+  document.getElementById('modal-meta').innerHTML = [
+    m.release_date?'<span class="tag">'+m.release_date.slice(0,4)+'</span>':'',
+    m.vote_average?'<span class="tag">★ '+m.vote_average.toFixed(1)+'</span>':'',
+  ].filter(Boolean).join('');
+  document.getElementById('modal-cast').textContent = '';
+  document.getElementById('trailer-btn').textContent = '▶ '+t('trailer');
+  
+  var isFav = watchlist.some(function(w){return w.id===m.id;});
+  document.getElementById('modal-fav-btn').textContent = isFav?'❤️':'🤍';
+  document.getElementById('fav-btn-text').textContent = isFav?t('saved2'):('🤍 '+t('save'));
+  
+  document.getElementById('movie-modal').className='modal open';
+  document.body.style.overflow='hidden';
+  populateWatchLinks(m);
+}
+
+function updateModalFull(data){
+  if(!currentMovie) return;
+  
+  // Genres
+  var genreNames = (data.genres||[]).map(function(g){return lang==='es'?g.name:g.name;}).join(', ');
+  var runtime = data.runtime?data.runtime+'min':'';
+  var meta = [
+    data.release_date?'<span class="tag">'+data.release_date.slice(0,4)+'</span>':'',
+    data.vote_average?'<span class="tag">★ '+data.vote_average.toFixed(1)+'</span>':'',
+    runtime?'<span class="tag">'+runtime+'</span>':'',
+    genreNames?'<span class="tag">'+genreNames+'</span>':'',
+  ].filter(Boolean).join('');
+  document.getElementById('modal-meta').innerHTML=meta;
+
+  // Director + cast
+  var director = (data.credits&&data.credits.crew||[]).find(function(c){return c.job==='Director';});
+  var cast = (data.credits&&data.credits.cast||[]).slice(0,6).map(function(c){return c.name;}).join(', ');
+  var castStr = (director?t('director')+' '+director.name+'\n':'') + (cast?t('cast')+' '+cast:'');
+  document.getElementById('modal-cast').textContent = castStr;
+  
+  // Store for trailer
+  currentMovie.videos = data.videos;
+}
+
+function closeModal(){
+  document.getElementById('movie-modal').className='modal';
+  document.body.style.overflow='';
+  currentMovie=null;
+}
+
+// ── TRAILER ───────────────────────────────────
+function playTrailer(){
+  if(!currentMovie) return;
+  var videos = currentMovie.videos&&currentMovie.videos.results||[];
+  var trailer = videos.find(function(v){return v.type==='Trailer'&&v.site==='YouTube';})
+    || videos.find(function(v){return v.site==='YouTube';});
+  if(trailer){
+    document.getElementById('trailer-frame').src='https://www.youtube.com/embed/'+trailer.key+'?autoplay=1&rel=0';
+    document.getElementById('trailer-modal').className='trailer-modal open';
+  } else {
+    // Search YouTube
+    var q=encodeURIComponent((currentMovie.title||'')+(currentMovie.release_date?' '+currentMovie.release_date.slice(0,4):'')+' official trailer');
+    window.open('https://www.youtube.com/results?search_query='+q,'_blank');
+  }
+}
+
+function closeTrailer(){
+  document.getElementById('trailer-frame').src='';
+  document.getElementById('trailer-modal').className='trailer-modal';
+}
+
+// ── FAVORITES ─────────────────────────────────
+function toggleFav(){
+  if(!currentMovie) return;
+  var idx=watchlist.findIndex(function(w){return w.id===currentMovie.id;});
+  if(idx>-1){
+    watchlist.splice(idx,1);
+    showToast(t('removed'));
+    document.getElementById('modal-fav-btn').textContent='🤍';
+    document.getElementById('fav-btn-text').textContent='🤍 '+t('save');
+  } else {
+    watchlist.push({id:currentMovie.id,title:currentMovie.title,poster_path:currentMovie.poster_path,vote_average:currentMovie.vote_average,release_date:currentMovie.release_date});
+    showToast(t('saved'));
+    document.getElementById('modal-fav-btn').textContent='❤️';
+    document.getElementById('fav-btn-text').textContent=t('saved2');
+  }
+  localStorage.setItem('kiki_watchlist',JSON.stringify(watchlist));
+  updateWLBadge();
+}
+
+function updateWLBadge(){
+  var badge=document.getElementById('wl-badge');
+  if(watchlist.length>0){
+    badge.style.display='flex';
+    badge.textContent=watchlist.length>9?'9+':watchlist.length;
+  } else {
+    badge.style.display='none';
+  }
+}
+
+// ── WATCHLIST VIEW ────────────────────────────
+function showWatchlist(){
+  if(!watchlist.length){
+    showToast(t('empty'));
+    return;
+  }
+  renderMovies(watchlist);
+  document.getElementById('search-in').value='';
+  searchQ='';
+  activeGenre='all';
+  buildGenres();
+  window.scrollTo({top:0,behavior:'smooth'});
+  showToast('❤️ '+t('watchlist')+' ('+watchlist.length+')');
+}
+
+// ── TOAST ─────────────────────────────────────
+function showToast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='toast show';
+  setTimeout(function(){el.className='toast';},2500);
+}
+
+// ── INIT ──────────────────────────────────────
+
+// ── BOTTOM NAV ───────────────────────────────────────────
+var currentNav = 'home';
+function navGo(tab, el){
+  currentNav = tab;
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
+  if(el) el.classList.add('on');
+  var searchBar = document.querySelector('.search-bar');
+  var genreScroll = document.getElementById('genre-scroll');
+  if(tab==='home'){
+    if(searchBar) searchBar.style.display='block';
+    if(genreScroll) genreScroll.style.display='flex';
+    document.getElementById('search-in').value='';
+    searchQ=''; activeGenre='all';
+    buildGenres(); loadMovies('all','');
+  } else if(tab==='search'){
+    if(searchBar) searchBar.style.display='block';
+    if(genreScroll) genreScroll.style.display='none';
+    document.getElementById('search-in').focus();
+  } else if(tab==='genres'){
+    if(searchBar) searchBar.style.display='none';
+    if(genreScroll) genreScroll.style.display='none';
+    showGenreGrid();
+  } else if(tab==='watchlist'){
+    if(searchBar) searchBar.style.display='none';
+    if(genreScroll) genreScroll.style.display='none';
+    showWatchlistPage();
+  } else if(tab==='toprated'){
+    if(searchBar) searchBar.style.display='none';
+    if(genreScroll) genreScroll.style.display='none';
+    loadTopRated();
+  }
+}
+
+function genreEmoji(id){
+  var map={'novelas':'📺','28':'💥','35':'😂','18':'🎭','27':'👻','10749':'💕','878':'🚀','16':'✨','99':'🎥','53':'😱','80':'🔫','12':'🗺️','14':'🧙','10751':'👨‍👩‍👧','36':'⚔️','37':'🤠','10402':'🎵','10752':'🪖','9648':'🔍'};
+  return map[id]||'🎬';
+}
+
+function showGenreGrid(){
+  var mc = document.getElementById('main-content');
+  var colors=['#e50914','#f5c518','#1db954','#4a9eff','#ff6b6b','#c084fc','#fb923c','#34d399','#f472b6','#60a5fa','#a78bfa','#fbbf24','#4ade80','#f87171','#38bdf8','#e879f9','#fb7185','#818cf8'];
+  var html = '<div class="section"><div class="section-title">&#127902; '+(lang==='es'?'TODOS LOS G&#201;NEROS':'ALL GENRES')+'</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">';
+  GENRES.filter(function(g){return g.id!=='all';}).forEach(function(g,i){
+    var col=colors[i%colors.length];
+    var emoji=genreEmoji(g.id);
+    var label=lang==='es'?g.es:g.en;
+    html += '<div onclick="selectGenreNav(\''+g.id+'\')" style="background:'+col+'18;border:1px solid '+col+'44;border-radius:12px;padding:20px 8px;text-align:center;cursor:pointer">'
+      +'<div style="font-size:24px;margin-bottom:6px">'+emoji+'</div>'
+      +'<div style="font-size:11px;font-weight:700;color:#e2e8f0">'+label+'</div></div>';
+  });
+  html += '</div></div>';
+  mc.innerHTML = html;
+}
+
+function selectGenreNav(id){
+  activeGenre=id; buildGenres();
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
+  var homeBtn=document.getElementById('nav-home');
+  if(homeBtn) homeBtn.classList.add('on');
+  var s=document.querySelector('.search-bar');
+  var g=document.getElementById('genre-scroll');
+  if(s) s.style.display='block';
+  if(g) g.style.display='flex';
+  loadMovies(id,'');
+}
+
+async function loadTopRated(){
+  var mc=document.getElementById('main-content');
+  mc.innerHTML='<div class="loading"><div class="spinner"></div><span>'+(lang==='es'?'Cargando...':'Loading...')+'</span></div>';
+  try{ var d=await tmdb('/movie/top_rated','page=1'); renderMovies(d.results||[]); }
+  catch(e){ mc.innerHTML='<div class="loading">Error loading.</div>'; }
+}
+
+function showWatchlistPage(){
+  var mc=document.getElementById('main-content');
+  if(!watchlist.length){
+    mc.innerHTML='<div class="loading" style="flex-direction:column;gap:16px"><div style="font-size:52px">🎬</div>'
+      +'<div style="font-size:13px;color:#64748b">'+(lang==='es'?'Tu lista está vacía':'Your watchlist is empty')+'</div>'
+      +'<div style="font-size:11px;color:#475569">'+(lang==='es'?'Guarda películas con ❤️':'Save movies with ❤️')+'</div></div>';
+    return;
+  }
+  mc.innerHTML='<div class="section"><div class="section-title">❤️ '+(lang==='es'?'MI LISTA':'MY LIST')+' <span style="color:#475569;font-weight:400">'+watchlist.length+'</span></div>'
+    +'<div class="movie-grid">'+watchlist.map(function(m){
+      return '<div class="movie-card" onclick="openMovieById('+m.id+','+JSON.stringify(m).replace(/"/g,'&quot;')+')">'
+        +'<img class="movie-poster" src="https://image.tmdb.org/t/p/w500'+m.poster_path+'" loading="lazy">'
+        +'<div class="movie-info"><div class="movie-title">'+m.title+'</div>'
+        +'<div class="movie-rating">★'+(m.vote_average?m.vote_average.toFixed(1):'')+'</div></div></div>';
+    }).join('')+'</div></div>';
+}
+
+function doLogout(){
+  if(confirm(lang==='es'?'¿Salir de Cine Kiki?':'Exit Cine Kiki?')){
+    localStorage.removeItem('kiki_auth');
+    location.reload();
+  }
+}
+
+
+var ARCHIVE_IDS = {
+  // Classic Horror
+  'Dracula': 'dracula-colorized',
+  'Frankenstein': 'frankenstein-1931-colorized',
+  'The Wolf Man': 'wolf-man-1941',
+  'Invasion of the Body Snatchers': 'invasion-of-the-body-snatchers-1956-colo',
+  // Classic Sci-Fi
+  'The Day the Earth Stood Still': 'day-the-earth-stood-still-1951',
+  'Earth vs the Flying Saucers': 'earth-vs-the-flying-saucers-color',
+  'Tarantula': 'tarantula-1955-colorized',
+  // Classic Action/Western
+  'War of the Wildcats': 'WarOfTheWildcats-JohnWayne1943',
+  'Sahara': 'sahara-colorized',
+  'The Train': 'train-1964',
+  // Classic Comedy
+  'His Girl Friday': 'HisGirlFriday1940_201505',
+  'Abbott and Costello Meet the Invisible Man': 'AbbottCostelloMeetTheInvisibleMan',
+  // Horror
+  'Army of Darkness': 'army-of-darkness-directors-cut',
+  'Night of the Living Dead': 'george-a-romeros-night-of-the-living-dead',
+  // Action
+  'Godzilla': 'the-return-of-godzilla',
+  // Music
+  'Let It Be': 'Let_It_Be_1970_film',
+  // Sherlock Holmes
+  'Sherlock Holmes': 'sherlock-holmes-movies-colorized',
+};
+
+function getArchiveId(title) {
+  if(!title) return null;
+  // Direct match
+  if(ARCHIVE_IDS[title]) return ARCHIVE_IDS[title];
+  // Partial match
+  var keys = Object.keys(ARCHIVE_IDS);
+  for(var i=0;i<keys.length;i++){
+    if(title.toLowerCase().indexOf(keys[i].toLowerCase())>=0 || 
+       keys[i].toLowerCase().indexOf(title.toLowerCase())>=0) {
+      return ARCHIVE_IDS[keys[i]];
+    }
+  }
+  return null;
+}
+
+
+function playFullMovie(){
+  if(!currentMovie) return;
+  var archiveId = getArchiveId(currentMovie.title);
+  if(!archiveId) {
+    // Fallback: search Archive.org
+    window.open('https://archive.org/search?query=' + encodeURIComponent(currentMovie.title) + '+full+movie&and[]=mediatype%3A%22movies%22','_blank');
+    return;
+  }
+  document.getElementById('fullmovie-title').textContent = currentMovie.title;
+  document.getElementById('fullmovie-frame').src = 'https://archive.org/embed/' + archiveId + '?autoplay=1';
+  document.getElementById('fullmovie-modal').className='trailer-modal open';
+}
+
+function closeFullMovie(){
+  document.getElementById('fullmovie-frame').src='';
+  document.getElementById('fullmovie-modal').className='trailer-modal';
+}
+
+function init(){
+  FALLBACK_MOVIES.forEach(function(m){MOVIE_REGISTRY[m.id]=m;});
+  updateWLBadge();
+  buildGenres();
+  // Show ALL fallback movies immediately — always visible
+  renderMovies(FALLBACK_MOVIES);
+  // Try TMDB in background — only replaces if successful
+  loadMoviesBackground('all');
+}
+
+async function loadMoviesBackground(genreId){
+  try {
+    var data = await tmdb('/movie/popular','page=1');
+    var movies = (data.results||[]).filter(function(m){return m.poster_path;});
+    if(movies && movies.length > 0) {
+      allMovies = movies;
+      renderMovies(movies);
+    }
+  } catch(e){
+    // Keep fallback showing — do nothing
+    console.log('[Kiki] TMDB unavailable, showing local catalog');
+  }
+}
+
+
+// Export all PIN gate functions to global scope (required for onclick= on desktop)
+window.kp = kp;
+window.setLang = setLang;
+window.navGo = navGo;
+window.selectGenre = selectGenre;
+window.openMovie = openMovie;
+window.openMovieById = openMovieById;
+window.closeModal = closeModal;
+window.playTrailer = playTrailer;
+window.closeTrailer = closeTrailer;
+window.toggleFav = toggleFav;
+window.showWatchlist = showWatchlist;
+window.showGenreGrid = showGenreGrid;
+window.selectGenreNav = selectGenreNav;
+window.loadTopRated = loadTopRated;
+window.showWatchlistPage = showWatchlistPage;
+window.doLogout = doLogout;
+
+</script>
+
+<!-- FULL MOVIE PLAYER MODAL -->
+<div class="trailer-modal" id="fullmovie-modal">
+  <div style="width:100%;max-width:480px;padding:0 16px;text-align:center">
+    <button class="trailer-close" onclick="closeFullMovie()">✕</button>
+    <div style="font-size:11px;color:#c9a55c;letter-spacing:1px;margin-bottom:8px;margin-top:40px" id="fullmovie-title"></div>
+    <iframe id="fullmovie-frame" src="" width="100%" style="aspect-ratio:16/9;border:none;border-radius:8px;background:#000" allowfullscreen></iframe>
+    <div style="font-size:9px;color:#475569;margin-top:8px">Powered by Internet Archive — Free & Legal</div>
+  </div>
+</div>
+
+</body>
+</html>

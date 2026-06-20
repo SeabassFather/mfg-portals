@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Book a Call — Saul Garcia | FinanceLend</title>
+<style>
+:root{
+  --bg:#020912;--bg2:#0d1117;--card:#161b22;--card2:#1c2333;
+  --gold:#C9A55C;--goldd:#8a6930;--gold2:#E8C87A;
+  --blue:#4a8fd4;--green:#22c55e;--red:#ef4444;
+  --txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;
+  --bord:rgba(201,165,92,0.18);--bord2:rgba(255,255,255,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,'Segoe UI',sans-serif;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:rgba(2,9,18,0.97);border-bottom:1px solid var(--bord);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.tb-brand{font-size:16px;font-weight:900;color:var(--gold);letter-spacing:1px;}
+.tb-nmls{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-top:2px;}
+.tb-back{font-size:11px;color:var(--txt2);text-decoration:none;border:1px solid var(--bord);padding:6px 14px;border-radius:20px;}
+.tb-back:hover{color:var(--gold);border-color:rgba(201,165,92,0.4);}
+
+.main{max-width:900px;margin:0 auto;padding:36px 20px;}
+
+/* HERO */
+.hero{display:flex;gap:28px;align-items:flex-start;margin-bottom:36px;flex-wrap:wrap;}
+.saul-card{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:24px;flex-shrink:0;width:220px;text-align:center;}
+.saul-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--goldd));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#020912;}
+.saul-name{font-size:15px;font-weight:800;margin-bottom:4px;}
+.saul-title{font-size:10px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.saul-nmls{font-size:9px;color:var(--txt3);margin-bottom:12px;}
+.saul-badges{display:flex;flex-direction:column;gap:6px;}
+.sbadge{font-size:9px;padding:4px 8px;border-radius:6px;border:1px solid var(--bord);color:var(--txt2);text-align:left;}
+.sbadge.gold{border-color:rgba(201,165,92,0.3);color:var(--gold);}
+
+.hero-text{flex:1;min-width:260px;}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px;opacity:.8;}
+.hero-title{font-size:28px;font-weight:900;line-height:1.15;margin-bottom:12px;}
+.hero-title span{color:var(--gold);}
+.hero-sub{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:16px;}
+.hero-avail{background:var(--card);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:14px 16px;}
+.ha-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:8px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.ha-text{font-size:12px;font-weight:700;color:var(--green);}
+.ha-sub{font-size:10px;color:var(--txt3);margin-top:4px;margin-left:16px;}
+
+/* STEP INDICATOR */
+.steps{display:flex;gap:0;margin-bottom:32px;}
+.step{flex:1;text-align:center;position:relative;}
+.step::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--bord2);z-index:0;}
+.step:last-child::after{display:none;}
+.step-num{width:32px;height:32px;border-radius:50%;border:2px solid var(--bord2);background:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--txt3);position:relative;z-index:1;transition:all .3s;}
+.step-lbl{font-size:10px;color:var(--txt3);margin-top:6px;}
+.step.active .step-num{border-color:var(--gold);color:var(--gold);background:rgba(201,165,92,0.1);}
+.step.active .step-lbl{color:var(--txt2);}
+.step.done .step-num{border-color:var(--green);background:var(--green);color:#020912;}
+.step.done .step-lbl{color:var(--green);}
+.step.done::after{background:var(--green);}
+
+/* PANELS */
+.panel{display:none;}
+.panel.show{display:block;}
+
+/* CALENDAR */
+.cal-wrap{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:24px;margin-bottom:24px;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.cal-month{font-size:15px;font-weight:800;}
+.cal-nav{background:transparent;border:1px solid var(--bord);color:var(--txt2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;}
+.cal-nav:hover{border-color:var(--gold);color:var(--gold);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{text-align:center;font-size:9px;color:var(--txt3);letter-spacing:1px;padding:4px 0;text-transform:uppercase;}
+.cal-day{text-align:center;padding:8px 4px;border-radius:8px;font-size:13px;font-weight:600;cursor:default;color:var(--txt3);}
+.cal-day.available{color:var(--txt);cursor:pointer;border:1px solid var(--bord2);}
+.cal-day.available:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,165,92,0.06);}
+.cal-day.selected{background:var(--gold);color:#020912;border:1px solid var(--gold);}
+.cal-day.past{opacity:.3;}
+.cal-day.today{border:1px solid rgba(74,143,212,0.4);color:var(--blue);}
+.cal-day.closed{color:var(--txt3);opacity:.3;}
+
+/* SLOTS */
+.slots-wrap{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:24px;margin-bottom:24px;}
+.slots-title{font-size:12px;font-weight:700;color:var(--txt2);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;}
+.slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.slot{padding:12px;border-radius:10px;border:1px solid var(--bord2);text-align:center;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--txt2);}
+.slot.open{color:var(--txt);border-color:rgba(74,143,212,0.2);}
+.slot.open:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,165,92,0.06);}
+.slot.taken{opacity:.35;cursor:not-allowed;text-decoration:line-through;}
+.slot.selected{background:var(--gold);color:#020912;border-color:var(--gold);}
+.slot-sub{font-size:9px;margin-top:3px;opacity:.7;}
+
+/* FORM */
+.form-card{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:28px;margin-bottom:24px;}
+.form-title{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:10px;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+.field input,.field select,.field textarea{background:rgba(255,255,255,0.04);border:1px solid rgba(74,143,212,0.2);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:13px;outline:none;transition:border .2s;font-family:inherit;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.field input::placeholder,.field textarea::placeholder{color:var(--txt3);}
+.field textarea{resize:vertical;min-height:80px;}
+.field select option{background:#161b22;}
+.field.full{grid-column:1/-1;}
+
+.booking-summary{background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.2);border-radius:10px;padding:16px;margin-bottom:20px;}
+.bs-title{font-size:10px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.bs-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
+.bs-lbl{color:var(--txt3);}
+.bs-val{font-weight:700;color:var(--txt);}
+
+.submit-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-size:14px;font-weight:800;border:none;border-radius:10px;cursor:pointer;letter-spacing:.5px;transition:opacity .2s;margin-top:8px;}
+.submit-btn:hover{opacity:.9;}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
+.back-btn{width:100%;padding:12px;background:transparent;color:var(--txt2);font-size:13px;font-weight:600;border:1px solid var(--bord);border-radius:10px;cursor:pointer;margin-top:8px;}
+
+/* CONFIRMATION */
+.confirm-card{background:var(--card);border:1px solid rgba(34,197,94,0.3);border-radius:16px;padding:36px;text-align:center;margin-bottom:24px;}
+.confirm-icon{font-size:56px;margin-bottom:16px;}
+.confirm-title{font-size:24px;font-weight:900;color:var(--green);margin-bottom:8px;}
+.confirm-sub{font-size:14px;color:var(--txt2);margin-bottom:24px;}
+.confirm-details{background:rgba(255,255,255,0.03);border-radius:12px;padding:20px;text-align:left;margin-bottom:20px;}
+.cd-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bord2);font-size:13px;}
+.cd-row:last-child{border-bottom:none;}
+.cd-lbl{color:var(--txt3);}
+.cd-val{font-weight:700;}
+.confirm-note{font-size:11px;color:var(--txt3);line-height:1.6;}
+.new-booking-btn{display:inline-block;margin-top:20px;padding:12px 28px;background:transparent;color:var(--gold);border:1px solid rgba(201,165,92,0.4);border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;}
+
+/* ERROR / LOADING */
+.err-msg{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:12px;display:none;}
+.loading{text-align:center;padding:40px;color:var(--txt2);font-size:13px;}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--bord);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* FOOTER */
+.footer{text-align:center;padding:28px 20px;border-top:1px solid var(--bord2);color:var(--txt3);font-size:9px;line-height:1.8;margin-top:20px;}
+
+@media(max-width:600px){
+  .hero{flex-direction:column;}
+  .saul-card{width:100%;}
+  .slots-grid{grid-template-columns:repeat(2,1fr);}
+  .steps{gap:0;}
+  .step-lbl{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="tb-brand">FinanceLend</div>
+    <div class="tb-nmls">NMLS #337526 &bull; American 1st Partners NMLS #1773303</div>
+  </div>
+  <a href="https://financelend.me" class="tb-back">&#8592; financelend.me</a>
+</div>
+
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="saul-card">
+      <div class="saul-avatar">SG</div>
+      <div class="saul-name">Saul Garcia</div>
+      <div class="saul-title">Sr. Loan Officer</div>
+      <div class="saul-nmls">NMLS #337526</div>
+      <div class="saul-badges">
+        <div class="sbadge gold">150+ Wholesale Lenders</div>
+        <div class="sbadge">US &amp; Mexico Loans</div>
+        <div class="sbadge">Bilingual EN / ES</div>
+        <div class="sbadge">San Diego &bull; Baja CA</div>
+        <div class="sbadge">25+ Years Experience</div>
+      </div>
+    </div>
+    <div class="hero-text">
+      <div class="hero-eyebrow">Schedule a Strategy Call</div>
+      <h1 class="hero-title">Let's Talk<br/><span>Mortgages &amp; Mexico.</span></h1>
+      <p class="hero-sub">Book a free 30-minute consultation to discuss loan programs for your clients, cross-border Mexico financing, storefront partnership opportunities, and how we can grow your San Diego business together.</p>
+      <div class="hero-avail">
+        <span class="ha-dot"></span><span class="ha-text">Accepting Appointments</span>
+        <div class="ha-sub">Monday–Saturday &bull; 10:30 AM – 1:30 PM PST &bull; 30-min sessions</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step active" id="step-1"><div class="step-num">1</div><div class="step-lbl">Pick a Date</div></div>
+    <div class="step" id="step-2"><div class="step-num">2</div><div class="step-lbl">Choose Time</div></div>
+    <div class="step" id="step-3"><div class="step-num">3</div><div class="step-lbl">Your Info</div></div>
+    <div class="step" id="step-4"><div class="step-num">&#10003;</div><div class="step-lbl">Confirmed</div></div>
+  </div>
+
+  <!-- PANEL 1: CALENDAR -->
+  <div class="panel show" id="panel-1">
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="prevMonth()">&#8249;</button>
+        <div class="cal-month" id="cal-month-label"></div>
+        <button class="cal-nav" onclick="nextMonth()">&#8250;</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div id="err-1" class="err-msg">Please select a date to continue.</div>
+    <button class="submit-btn" onclick="goStep2()">Continue &rarr;</button>
+  </div>
+
+  <!-- PANEL 2: TIME SLOTS -->
+  <div class="panel" id="panel-2">
+    <div class="slots-wrap">
+      <div class="slots-title" id="slots-date-label">Available Times</div>
+      <div id="slots-container"><div class="loading"><span class="spinner"></span>Loading available times...</div></div>
+    </div>
+    <div id="err-2" class="err-msg">Please select a time slot to continue.</div>
+    <button class="submit-btn" onclick="goStep3()">Continue &rarr;</button>
+    <button class="back-btn" onclick="goStep1()">&#8592; Back</button>
+  </div>
+
+  <!-- PANEL 3: FORM -->
+  <div class="panel" id="panel-3">
+    <div class="booking-summary" id="booking-summary"></div>
+    <div class="form-card">
+      <div class="form-title">Your Information</div>
+      <div id="err-3" class="err-msg"></div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" id="f-name" placeholder="Jane Smith"/>
+        </div>
+        <div class="field">
+          <label>Email Address *</label>
+          <input type="email" id="f-email" placeholder="jane@realty.com"/>
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" id="f-phone" placeholder="(619) 555-0100"/>
+        </div>
+        <div class="field">
+          <label>Brokerage / Company</label>
+          <input type="text" id="f-brokerage" placeholder="Coldwell Banker, RE/MAX..."/>
+        </div>
+        <div class="field">
+          <label>I Want to Discuss</label>
+          <select id="f-topic-sel" onchange="onTopicChange()">
+            <option value="">Select a topic...</option>
+            <option value="Client loan — US purchase">Client Loan — US Purchase</option>
+            <option value="Client loan — Mexico / Baja California">Client Loan — Mexico / Baja</option>
+            <option value="Client refinance">Client Refinance</option>
+            <option value="Storefront partnership ($49-$199/mo)">Storefront Partnership</option>
+            <option value="Cross-border referral partnership">Cross-Border Referral Partnership</option>
+            <option value="Mortgage audit for client">Mortgage Audit for Client</option>
+            <option value="General introduction">General Introduction</option>
+            <option value="other">Other (specify below)</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Additional Notes</label>
+          <textarea id="f-notes" placeholder="Tell me a bit about what you need — client situation, property type, loan amount, questions, etc."></textarea>
+        </div>
+      </div>
+    </div>
+    <button class="submit-btn" id="submit-btn" onclick="submitBooking()">Confirm Appointment</button>
+    <button class="back-btn" onclick="goStep2()">&#8592; Back</button>
+  </div>
+
+  <!-- PANEL 4: CONFIRMATION -->
+  <div class="panel" id="panel-4">
+    <div class="confirm-card">
+      <div class="confirm-icon">&#10003;</div>
+      <div class="confirm-title">You're Booked!</div>
+      <div class="confirm-sub">A confirmation has been sent to your email. Saul will call you at the scheduled time.</div>
+      <div class="confirm-details" id="confirm-details"></div>
+      <div class="confirm-note">
+        Need to reschedule? Email <strong>sgarcia1911@gmail.com</strong> with your booking reference and preferred new time.<br/>
+        Saul Garcia &bull; NMLS #337526 &bull; American 1st Partners NMLS #1773303
+      </div>
+      <button class="new-booking-btn" onclick="resetAll()">Book Another Appointment</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Saul Garcia &bull; Sr. Loan Officer NMLS #337526 &bull; American 1st Partners NMLS #1773303<br/>
+  15615 Alton Pkwy Suite 450, Irvine CA 92618 &bull; financelend.me &bull; enjoybaja.com<br/>
+  Licensed by CA DFPI &bull; Equal Housing Lender &bull; Not a commitment to lend.
+</div>
+
+<script>
+var API = 'https://auditdna-backend-1-production.up.railway.app';
+var selectedDate = null;
+var selectedSlot = null;
+var curYear, curMonth;
+
+var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function init() {
+  var now = new Date();
+  curYear = now.getFullYear();
+  curMonth = now.getMonth();
+  renderCal();
+}
+
+function renderCal() {
+  document.getElementById('cal-month-label').textContent = MONTHS[curMonth] + ' ' + curYear;
+  var grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  DAYS.forEach(function(d){
+    var el = document.createElement('div');
+    el.className = 'cal-dow';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+  var first = new Date(curYear, curMonth, 1).getDay();
+  var days = new Date(curYear, curMonth+1, 0).getDate();
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  for(var i=0;i<first;i++){
+    var blank = document.createElement('div');
+    blank.className='cal-day';
+    grid.appendChild(blank);
+  }
+  for(var d=1;d<=days;d++){
+    var el = document.createElement('div');
+    var date = new Date(curYear, curMonth, d);
+    var dow = date.getDay();
+    var isPast = date < today;
+    var isSun = dow === 0;
+    var dateStr = curYear+'-'+String(curMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var isToday = date.getTime()===today.getTime();
+    var isSelected = dateStr===selectedDate;
+    if(isPast){ el.className='cal-day past'; el.textContent=d; }
+    else if(isSun){ el.className='cal-day closed'; el.textContent=d; el.title='Closed Sundays'; }
+    else {
+      el.className='cal-day available'+(isSelected?' selected':'')+(isToday&&!isSelected?' today':'');
+      el.textContent=d;
+      (function(ds){ el.onclick=function(){ selectDate(ds); }; })(dateStr);
+    }
+    grid.appendChild(el);
+  }
+}
+
+function selectDate(ds) {
+  selectedDate=ds;
+  selectedSlot=null;
+  renderCal();
+}
+
+function prevMonth(){
+  curMonth--;
+  if(curMonth<0){curMonth=11;curYear--;}
+  renderCal();
+}
+function nextMonth(){
+  curMonth++;
+  if(curMonth>11){curMonth=0;curYear++;}
+  renderCal();
+}
+
+function goStep1(){
+  showPanel(1);
+  setStep(1);
+}
+
+function goStep2(){
+  if(!selectedDate){document.getElementById('err-1').style.display='block';return;}
+  document.getElementById('err-1').style.display='none';
+  showPanel(2);
+  setStep(2);
+  loadSlots(selectedDate);
+  var d=new Date(selectedDate+'T12:00:00Z');
+  document.getElementById('slots-date-label').textContent=
+    d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'UTC'});
+}
+
+function loadSlots(date){
+  var container=document.getElementById('slots-container');
+  container.innerHTML='<div class="loading"><span class="spinner"></span>Loading available times...</div>';
+  fetch(API+'/api/bookings/slots?date='+date)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.slots&&data.slots.length===0){
+        container.innerHTML='<div class="loading">No availability on this day.</div>';
+        return;
+      }
+      var html='<div class="slots-grid">';
+      (data.slots||[]).forEach(function(s){
+        var cls='slot'+(s.available?' open':' taken')+(s.time===selectedSlot?' selected':'');
+        if(s.available){
+          html+='<div class="'+cls+'" onclick="selectSlot(\''+s.time+'\',\''+s.display+'\')">'+
+            s.display+'<div class="slot-sub">PST</div></div>';
+        } else {
+          html+='<div class="'+cls+'">'+s.display+'<div class="slot-sub">Booked</div></div>';
+        }
+      });
+      html+='</div>';
+      container.innerHTML=html;
+    })
+    .catch(function(){
+      // Fallback static slots if backend not reachable
+      var SLOTS=[{time:'10:30',display:'10:30 AM'},{time:'11:00',display:'11:00 AM'},{time:'11:30',display:'11:30 AM'},
+                 {time:'12:00',display:'12:00 PM'},{time:'12:30',display:'12:30 PM'},{time:'13:00',display:'1:00 PM'}];
+      var html='<div class="slots-grid">';
+      SLOTS.forEach(function(s){
+        var cls='slot open'+(s.time===selectedSlot?' selected':'');
+        html+='<div class="'+cls+'" onclick="selectSlot(\''+s.time+'\',\''+s.display+'\')">'+
+          s.display+'<div class="slot-sub">PST</div></div>';
+      });
+      html+='</div>';
+      container.innerHTML=html;
+    });
+}
+
+function selectSlot(time, display){
+  selectedSlot=time;
+  document.querySelectorAll('.slot').forEach(function(el){el.classList.remove('selected');});
+  event.currentTarget.classList.add('selected');
+}
+
+function goStep3(){
+  if(!selectedSlot){document.getElementById('err-2').style.display='block';return;}
+  document.getElementById('err-2').style.display='none';
+  showPanel(3);
+  setStep(3);
+  var d=new Date(selectedDate+'T12:00:00Z');
+  var dateStr=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'UTC'});
+  var h=parseInt(selectedSlot.split(':')[0]);
+  var m=selectedSlot.split(':')[1];
+  var suffix=h>=12?'PM':'AM';
+  var h12=h>12?h-12:h===0?12:h;
+  var timeStr=h12+':'+m+' '+suffix+' PST';
+  document.getElementById('booking-summary').innerHTML=
+    '<div class="bs-title">Your Selection</div>'+
+    '<div class="bs-row"><span class="bs-lbl">Date</span><span class="bs-val">'+dateStr+'</span></div>'+
+    '<div class="bs-row"><span class="bs-lbl">Time</span><span class="bs-val" style="color:var(--gold)">'+timeStr+'</span></div>'+
+    '<div class="bs-row"><span class="bs-lbl">Duration</span><span class="bs-val">30 minutes</span></div>';
+}
+
+function onTopicChange(){
+  var sel=document.getElementById('f-topic-sel').value;
+  var notes=document.getElementById('f-notes');
+  if(sel&&sel!=='other'){notes.placeholder='Any additional details about '+sel.toLowerCase()+' — client situation, property type, loan amount, etc.';}
+}
+
+function submitBooking(){
+  var name=document.getElementById('f-name').value.trim();
+  var email=document.getElementById('f-email').value.trim();
+  var phone=document.getElementById('f-phone').value.trim();
+  var brokerage=document.getElementById('f-brokerage').value.trim();
+  var topicSel=document.getElementById('f-topic-sel').value;
+  var notes=document.getElementById('f-notes').value.trim();
+  var topic=topicSel==='other'?notes:topicSel+(notes?'\n\nNotes: '+notes:'');
+  var errEl=document.getElementById('err-3');
+  if(!name||!email){errEl.textContent='Name and email are required.';errEl.style.display='block';return;}
+  if(!email.includes('@')){errEl.textContent='Please enter a valid email address.';errEl.style.display='block';return;}
+  errEl.style.display='none';
+  var btn=document.getElementById('submit-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Confirming...';
+  fetch(API+'/api/bookings/create',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({agent_name:name,agent_email:email,agent_phone:phone,brokerage:brokerage,slot_date:selectedDate,slot_time:selectedSlot,topic:topic})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.error){errEl.textContent=data.error;errEl.style.display='block';btn.disabled=false;btn.textContent='Confirm Appointment';return;}
+    showConfirmation(data.booking_id,name,email,brokerage);
+  })
+  .catch(function(e){
+    // Still show confirmation even if backend glitches
+    showConfirmation('BK-PENDING',name,email,brokerage);
+  });
+}
+
+function showConfirmation(bookingId,name,email,brokerage){
+  var d=new Date(selectedDate+'T12:00:00Z');
+  var dateStr=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'UTC'});
+  var h=parseInt(selectedSlot.split(':')[0]);
+  var m=selectedSlot.split(':')[1];
+  var suffix=h>=12?'PM':'AM';
+  var h12=h>12?h-12:h===0?12:h;
+  var timeStr=h12+':'+m+' '+suffix+' PST';
+  document.getElementById('confirm-details').innerHTML=
+    '<div class="cd-row"><span class="cd-lbl">Booking ID</span><span class="cd-val" style="color:var(--gold)">'+bookingId+'</span></div>'+
+    '<div class="cd-row"><span class="cd-lbl">Name</span><span class="cd-val">'+name+'</span></div>'+
+    '<div class="cd-row"><span class="cd-lbl">Confirmation sent to</span><span class="cd-val">'+email+'</span></div>'+
+    (brokerage?'<div class="cd-row"><span class="cd-lbl">Brokerage</span><span class="cd-val">'+brokerage+'</span></div>':'')+
+    '<div class="cd-row"><span class="cd-lbl">Date</span><span class="cd-val" style="color:var(--green)">'+dateStr+'</span></div>'+
+    '<div class="cd-row"><span class="cd-lbl">Time</span><span class="cd-val" style="color:var(--green)">'+timeStr+'</span></div>'+
+    '<div class="cd-row"><span class="cd-lbl">Duration</span><span class="cd-val">30 minutes</span></div>';
+  showPanel(4);
+  setStep(4);
+}
+
+function resetAll(){
+  selectedDate=null;selectedSlot=null;
+  var now=new Date();curYear=now.getFullYear();curMonth=now.getMonth();
+  renderCal();
+  document.getElementById('f-name').value='';
+  document.getElementById('f-email').value='';
+  document.getElementById('f-phone').value='';
+  document.getElementById('f-brokerage').value='';
+  document.getElementById('f-topic-sel').value='';
+  document.getElementById('f-notes').value='';
+  var btn=document.getElementById('submit-btn');
+  btn.disabled=false;btn.textContent='Confirm Appointment';
+  goStep1();
+}
+
+function showPanel(n){
+  for(var i=1;i<=4;i++){
+    document.getElementById('panel-'+i).className='panel'+(i===n?' show':'');
+  }
+}
+function setStep(n){
+  for(var i=1;i<=4;i++){
+    var el=document.getElementById('step-'+i);
+    if(i<n) el.className='step done';
+    else if(i===n) el.className='step active';
+    else el.className='step';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

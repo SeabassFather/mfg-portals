@@ -1,0 +1,899 @@
+<!DOC
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+<div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+TYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dr. Luis Lopez Oliva — Don Azul Tequila</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#020912;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+:root{--gold:#C9A55C;--bg2:rgba(255,255,255,0.04);--bg3:#0a1628;--txt3:#64748b;--border:rgba(201,165,92,0.15)}
+
+/* GATE */
+#gate{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;background:linear-gradient(135deg,#020912 0%,#0a1628 100%)}
+.g-av{width:64px;height:64px;border-radius:50%;background:rgba(201,165,92,0.15);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--gold);margin-bottom:12px;letter-spacing:1px}
+.g-brand{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;opacity:.7}
+.numpad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;margin-top:16px}
+.nb{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(201,165,92,0.2);color:#e2e8f0;font-size:20px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.nb:active{background:rgba(201,165,92,0.2)}
+.nb.wide{border-radius:32px;width:100%;grid-column:span 3;height:44px;font-size:12px;font-weight:800;letter-spacing:2px;color:var(--gold)}
+.dots{display:flex;gap:10px;margin:16px 0 4px}
+.pd{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(201,165,92,0.3);transition:background .2s}
+.pd.on{background:var(--gold);border-color:var(--gold)}
+.g-err{font-size:11px;color:#f43f5e;margin-top:8px;min-height:16px;font-weight:600}
+
+/* APP */
+#app{display:none;min-height:100vh;flex-direction:column}
+.topbar{background:#0a1628;border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.tb-av{width:36px;height:36px;border-radius:50%;background:rgba(201,165,92,0.15);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--gold);flex-shrink:0}
+.content{padding:14px;max-width:600px;margin:0 auto;width:100%}
+.sec-hdr{font-size:9px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;padding:8px 0 10px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sec-hdr span{display:inline-block;width:3px;height:14px;background:var(--gold);margin-right:8px;vertical-align:middle;border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="g-av">LO</div>
+  <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;margin-bottom:3px">Dr. Luis Lopez Oliva</div>
+  <div style="font-size:12px;color:var(--gold);margin-bottom:4px">Sr. Distribution Partner</div>
+  <div class="g-brand">DON AZUL TEQUILA</div>
+  <div class="dots">
+    <div class="pd" id="d0"></div><div class="pd" id="d1"></div>
+    <div class="pd" id="d2"></div><div class="pd" id="d3"></div>
+  </div>
+  <div class="g-err" id="g-err"></div>
+  <input type="hidden" id="_pin_buf" value=""/>
+  <div class="numpad">
+    <button class="nb" data-d="1" onclick="numTap(this)">1</button><button class="nb" data-d="2" onclick="numTap(this)">2</button><button class="nb" data-d="3" onclick="numTap(this)">3</button><button class="nb" data-d="4" onclick="numTap(this)">4</button><button class="nb" data-d="5" onclick="numTap(this)">5</button><button class="nb" data-d="6" onclick="numTap(this)">6</button><button class="nb" data-d="7" onclick="numTap(this)">7</button><button class="nb" data-d="8" onclick="numTap(this)">8</button><button class="nb" data-d="9" onclick="numTap(this)">9</button>
+    <button class="nb wide" onclick="pinClear()">CLEAR</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-av">LO</div>
+    <div style="flex:1">
+      <div style="font-size:12px;font-weight:700;color:#fff">Dr. Luis Lopez Oliva</div>
+      <div style="font-size:9px;color:var(--txt3)">DAT-02 · Don Azul Tequila</div>
+    </div>
+    <button onclick="pinLogout()" style="background:none;border:1px solid rgba(201,165,92,0.2);color:var(--txt3);font-size:9px;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:inherit">LOGOUT</button>
+  </div>
+  <div class="content">
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <button id="lo-navbtn-tequila" class="lo-tabnav-btn lo-tab-on" onclick="loGoTab('tequila')">TEQUILA</button>
+      <button id="lo-navbtn-email" class="lo-tabnav-btn" onclick="loGoTab('email')">EMAIL</button>
+      <button id="lo-navbtn-flyers" class="lo-tabnav-btn" onclick="loGoTab('flyers')">FLYERS</button>
+      <button id="lo-navbtn-investor" class="lo-tabnav-btn" onclick="loGoTab('investor')" style="color:#C9A55C;border-color:rgba(201,165,92,0.4)">INVESTOR</button>
+    </div>
+    <style>
+      .lo-tabnav-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:5px;color:#64748b;font-size:10px;font-weight:800;letter-spacing:1.5px;padding:7px 16px;cursor:pointer;font-family:inherit;text-transform:uppercase}
+      .lo-tabnav-btn:hover{color:#C9A55C}
+      .lo-tab-on{background:rgba(201,165,92,0.15);border-color:#C9A55C;color:#C9A55C}
+    </style>
+    <div id="tab-tequila" class="sec" style="display:block">
+  <div class="sec-hdr"><span></span>DON AZUL TEQUILA — SALES</div>
+  
+  <div style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(201,165,92,0.2)">
+    <button onclick="loT('pricing')" id="lot-pricing" class="lotb hmton">PRICING</button>
+    <button onclick="loT('commission')" id="lot-commission" class="lotb">COMMISSION</button>
+    <button onclick="loT('territory')" id="lot-territory" class="lotb">TERRITORY</button>
+    <button onclick="loT('routes')" id="lot-routes" class="lotb">ROUTES</button>
+    <button onclick="loT('inventory')" id="lot-inventory" class="lotb" style="color:#10b759;border-color:rgba(16,183,89,0.3)">INVENTORY</button>
+  </div>
+  <style>
+    .lotb{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:5px;color:#64748b;font-size:10px;font-weight:700;letter-spacing:1px;padding:5px 12px;cursor:pointer;text-transform:uppercase;font-family:inherit}
+    .lotb:hover{color:#C9A55C}.lotb.loton{background:rgba(201,165,92,0.15);border-color:#C9A55C;color:#C9A55C}
+    .lots{display:none}.lots.lotson{display:block}
+    .hmpt{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px}
+    .hmpt th{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:1px;padding:5px 7px;border-bottom:1px solid rgba(201,165,92,0.15);text-align:left}
+    .hmpt td{padding:7px 7px;border-bottom:1px solid rgba(255,255,255,0.04);color:#e2e8f0}
+    .hmcard{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.15);border-radius:7px;padding:10px 12px;margin-bottom:8px}
+    .hmchdr{font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
+    .hmrow{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px}
+    .hmrow:last-child{border:none}
+    .hmlbl{color:#94a3b8}.hmval{color:#e8c87a;font-weight:700}
+    .hmnote{background:rgba(255,255,255,0.03);border-radius:5px;padding:8px;font-size:10px;color:#64748b;line-height:1.6;margin-top:8px}
+    .hmstore{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.1);border-radius:6px;padding:8px 10px;margin-bottom:5px}
+    .hmsn{font-size:11px;font-weight:700;color:#e2e8f0}.hmsa{font-size:10px;color:#64748b;margin-top:2px}
+    .hmpermit{font-size:10px;color:#22cc88;font-weight:700;margin-top:2px}
+    .hmsb{display:flex;gap:5px;margin-top:6px}
+    .hmsbtn{font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer;border:none;font-family:inherit}
+  </style>
+
+  <!-- PRICING -->
+  <div class="lots lotson" id="losec-pricing" class="lots lotson">
+    <div style="font-size:9px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:7px">DON AZUL PREMIUM — PLANT #1, AMATITAN JAL</div>
+    <table class="hmpt">
+      <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case(6)</th><th>MSRP</th><th>Margin/Btl</th><th>Comm@15%</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#d0d0d0;font-weight:800">Blanco Premium</td><td style="color:#e8c87a;font-weight:700">$39.99</td><td>$239.94</td><td style="color:#10b759;font-weight:700">$79.99</td><td style="color:#10b759">$40.00</td><td style="color:#C9A55C;font-weight:800">$12.00</td></tr>
+        <tr><td style="color:#e05555;font-weight:800">Reposado Premium</td><td style="color:#e8c87a;font-weight:700">$44.99</td><td>$269.94</td><td style="color:#10b759;font-weight:700">$99.99</td><td style="color:#10b759">$55.00</td><td style="color:#C9A55C;font-weight:800">$15.00</td></tr>
+        <tr><td style="color:#5577dd;font-weight:800">Anejo Premium</td><td style="color:#e8c87a;font-weight:700">$58.99</td><td>$353.94</td><td style="color:#10b759;font-weight:700">$129.99</td><td style="color:#10b759">$71.00</td><td style="color:#C9A55C;font-weight:800">$19.50</td></tr>
+        <tr><td style="color:#aaa;font-weight:800">Reposado Reserva</td><td style="color:#e8c87a;font-weight:700">$76.99</td><td>$461.94</td><td style="color:#10b759;font-weight:700">$139.99</td><td style="color:#10b759">$63.00</td><td style="color:#C9A55C;font-weight:800">$21.00</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:9px;color:#22cc88;font-weight:800;letter-spacing:2px;margin:10px 0 7px">GENERACION XXI ORGANIC — PLANT #2</div>
+    <table class="hmpt">
+      <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case(6)</th><th>MSRP</th><th>Margin/Btl</th><th>Comm@15%</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#22cc88;font-weight:800">Blanco Organico</td><td style="color:#e8c87a;font-weight:700">$40.89</td><td>$245.34</td><td style="color:#10b759;font-weight:700">$69.99</td><td style="color:#10b759">$29.10</td><td style="color:#C9A55C;font-weight:800">$10.50</td></tr>
+        <tr><td style="color:#22cc88;font-weight:800">Reposado Organico</td><td style="color:#e8c87a;font-weight:700">$47.99</td><td>$287.94</td><td style="color:#10b759;font-weight:700">$81.99</td><td style="color:#10b759">$34.00</td><td style="color:#C9A55C;font-weight:800">$12.30</td></tr>
+        <tr><td style="color:#22cc88;font-weight:800">Anejo Organico</td><td style="color:#e8c87a;font-weight:700">$58.99</td><td>$353.94</td><td style="color:#10b759;font-weight:700">$98.99</td><td style="color:#10b759">$40.00</td><td style="color:#C9A55C;font-weight:800">$14.85</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:9px;color:#f59e0b;font-weight:800;letter-spacing:2px;margin:10px 0 7px">DON AZUL MAYA — PLANT #3, AYOTLAN JAL (12/case)</div>
+    <table class="hmpt">
+      <thead><tr><th>SKU</th><th>Dist/Btl</th><th>$/Case(12)</th><th>MSRP</th><th>Margin/Btl</th><th>Comm@15%</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#f59e0b;font-weight:800">Maya Blanco</td><td style="color:#e8c87a;font-weight:700">$18.99</td><td>$227.88</td><td style="color:#10b759;font-weight:700">$33.99</td><td style="color:#10b759">$15.00</td><td style="color:#C9A55C;font-weight:800">$5.10</td></tr>
+        <tr><td style="color:#f59e0b;font-weight:800">Maya Reposado</td><td style="color:#e8c87a;font-weight:700">$19.99</td><td>$239.88</td><td style="color:#10b759;font-weight:700">$35.99</td><td style="color:#10b759">$16.00</td><td style="color:#C9A55C;font-weight:800">$5.40</td></tr>
+      </tbody>
+    </table>
+    <div class="hmnote">Comm column = 15% at MSRP. 3+ cases same client same day = 5% discount off distributor price per case. Boss override: 5% on all team net revenue flows to Saul Garcia.</div>
+  </div>
+
+  <!-- COMMISSION -->
+  <div class="lots" id="losec-commission" class="lots">
+    <div class="hmcard" style="border-color:rgba(201,165,92,0.4)">
+      <div class="hmchdr">Commission Calculator — Dr. Luis Lopez Oliva</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:flex-end">
+        <div><div style="font-size:8px;color:#64748b;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">SKU</div>
+          <select id="hmcsku" onchange="localc()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:6px 8px;color:#e2e8f0;font-size:10px;outline:none;font-family:inherit">
+            <option value="39.99,79.99">Blanco Premium</option><option value="44.99,99.99">Reposado Premium</option>
+            <option value="58.99,129.99">Anejo Premium</option><option value="76.99,139.99">Reposado Reserva</option>
+            <option value="40.89,69.99">G-XXI Blanco Org</option><option value="47.99,81.99">G-XXI Reposado Org</option>
+            <option value="58.99,98.99">G-XXI Anejo Org</option><option value="18.99,33.99">Maya Blanco</option><option value="19.99,35.99">Maya Reposado</option>
+          </select></div>
+        <div><div style="font-size:8px;color:#64748b;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">Sale $</div>
+          <input id="hmcprice" type="number" step="0.01" oninput="localc()" style="width:80px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:6px 8px;color:#e2e8f0;font-size:10px;outline:none"/></div>
+        <div><div style="font-size:8px;color:#64748b;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">Qty Btls</div>
+          <input id="hmcqty" type="number" value="6" min="1" oninput="localc()" style="width:60px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:6px 8px;color:#e2e8f0;font-size:10px;outline:none"/></div>
+        <div><div style="font-size:8px;color:#64748b;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">Cases</div>
+          <input id="hmccases" type="number" value="1" min="1" oninput="localc()" style="width:55px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:6px 8px;color:#e2e8f0;font-size:10px;outline:none"/></div>
+      </div>
+      <div id="hmcres" style="font-size:10px;color:#64748b">Select SKU above</div>
+    </div>
+    <div class="hmcard"><div class="hmchdr">Full Commission Table — All SKUs @ MSRP</div>
+      <div class="hmrow"><div class="hmlbl">Blanco Premium $79.99 MSRP</div><div class="hmval">$12.00/btl | $72.00/case | $4,320/pallet</div></div>
+      <div class="hmrow"><div class="hmlbl">Reposado Premium $99.99 MSRP</div><div class="hmval">$15.00/btl | $90.00/case | $5,400/pallet</div></div>
+      <div class="hmrow"><div class="hmlbl">Anejo Premium $129.99 MSRP</div><div class="hmval">$19.50/btl | $117.00/case | $7,020/pallet</div></div>
+      <div class="hmrow"><div class="hmlbl">Reposado Reserva $139.99 MSRP</div><div class="hmval">$21.00/btl | $126.00/case | $7,560/pallet</div></div>
+      <div class="hmrow"><div class="hmlbl">G-XXI Blanco Org $69.99 MSRP</div><div class="hmval">$10.50/btl | $63.00/case | $3,780/pallet</div></div>
+      <div class="hmrow"><div class="hmlbl">G-XXI Reposado Org $81.99 MSRP</div><div class="hmval">$12.30/btl | $73.80/case | $4,428/pallet</div></div>
+      <div class="hmrow"><div class="hmlbl">G-XXI Anejo Org $98.99 MSRP</div><div class="hmval">$14.85/btl | $89.10/case | $5,346/pallet</div></div>
+      <div class="hmrow"><div class="hmlbl">Maya Blanco $33.99 MSRP</div><div class="hmval">$5.10/btl | $61.20/case(12) | $3,672/pallet</div></div>
+      <div class="hmrow"><div class="hmlbl">Maya Reposado $35.99 MSRP</div><div class="hmval">$5.40/btl | $64.80/case(12) | $3,888/pallet</div></div>
+    </div>
+    <div class="hmcard"><div class="hmchdr">Volume Tiers + 3-Case Discount Rule</div>
+      <div class="hmrow"><div class="hmlbl">Base commission (all agents)</div><div class="hmval">15% of sale price/btl</div></div>
+      <div class="hmrow"><div class="hmlbl">6–11 cases/month</div><div class="hmval">17% + $50/case bonus</div></div>
+      <div class="hmrow"><div class="hmlbl">12–23 cases/month</div><div class="hmval">20% + $100/case bonus</div></div>
+      <div class="hmrow"><div class="hmlbl">24+ cases/month</div><div class="hmval">25% + $200/case bonus</div></div>
+      <div class="hmrow"><div class="hmlbl">Full pallet (60 cases)</div><div class="hmval">+$500 flat bonus</div></div>
+      <div class="hmrow" style="border-top:1px solid rgba(201,165,92,0.3);margin-top:4px;padding-top:8px"><div class="hmlbl" style="color:#e8c87a;font-weight:700">3+ cases same client same day</div><div class="hmval" style="color:#10b759">5% OFF dist price/case</div></div>
+      <div class="hmrow"><div class="hmlbl" style="color:#e8c87a">Boss override (Saul Garcia)</div><div class="hmval" style="color:#f59e0b">5% on all team net revenue</div></div>
+    </div>
+    <div class="hmnote">Shared with: Rudy Jacinto (DAT-03), Dr. Luis Lopez Oliva (DAT-02), Saul Garcia (DAT-01 / Boss). Commission paid weekly on collected cash. Net 30 accounts held until collected.</div>
+  </div>
+
+  <!-- TERRITORY -->
+  <div class="lots" id="losec-territory" class="lots">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+      <input id="hmsrch" placeholder="Filter stores..." oninput="lofilter(this.value)" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:7px 10px;color:#e2e8f0;font-size:10px;outline:none;font-family:inherit"/>
+      <button onclick="loloadS()" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:10px;padding:7px 13px;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">LOAD STORES</button>
+    </div>
+    <div style="font-size:9px;color:#64748b;margin-bottom:8px">36 stores — El Cajon, Santee, Lemon Grove, La Mesa, Spring Valley. Includes ABC Reseller Permit numbers where available.</div>
+    <div id="hmslist"><div style="text-align:center;color:#64748b;font-size:10px;padding:14px">Click LOAD STORES</div></div>
+  </div>
+
+  <!-- ROUTES -->
+  <div class="lots" id="losec-routes" class="lots">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <button onclick="loroute('tuesday')" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:10px;padding:7px 13px;border:none;border-radius:6px;cursor:pointer">TUESDAY</button>
+      <button onclick="loroute('wednesday')" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:10px;padding:7px 13px;border:none;border-radius:6px;cursor:pointer">WEDNESDAY</button>
+      <button onclick="loroute('thursday')" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:10px;padding:7px 13px;border:none;border-radius:6px;cursor:pointer">THURSDAY</button>
+    </div>
+    <iframe id="hmmap" src="https://www.google.com/maps/embed/v1/search?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&q=liquor+stores+El+Cajon+CA&zoom=12" style="width:100%;height:340px;border-radius:8px;border:1px solid rgba(201,165,92,0.25)" allowfullscreen loading="lazy"></iframe>
+    <div id="hmrouteout" style="margin-top:10px"></div>
+  </div>
+
+</div>
+<script>
+var pin=''; var PINS={'4477':'owner','4321':'demo'};
+function updateDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+function np(v){if(v==='del')pin=pin.slice(0,-1);else if(v==='ok'){checkPin();return;}else if(pin.length<4)pin+=v;updateDots();if(PINS[pin])setTimeout(checkPin,120);}
+function checkPin(){if(PINS[pin]){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';window._paFire&&window._paFire('login',PINS[pin]);goTab('dashboard');}else{var e=document.getElementById('g-err');if(e){e.textContent='Incorrect PIN';setTimeout(function(){e.textContent='';},2000);}pin='';updateDots();}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';pin='';updateDots();}
+
+function loT(t){document.querySelectorAll('.lots').forEach(function(s){s.classList.remove('lotson');});document.querySelectorAll('.lotb').forEach(function(b){b.classList.remove('loton');});var s=document.getElementById('losec-'+t),b=document.getElementById('lot-'+t);if(s)s.classList.add('lotson');if(b)b.classList.add('loton');}
+function localc(){
+  var sk=document.getElementById('hmcsku'),pr=document.getElementById('hmcprice'),qty=parseFloat(document.getElementById('hmcqty').value)||1,cases=parseFloat(document.getElementById('hmccases').value)||1,res=document.getElementById('hmcres');
+  if(!sk||!res)return;
+  var pts=(sk.value||'').split(','),dist=parseFloat(pts[0])||0,msrp=parseFloat(pts[1])||0;
+  if(!pr.value)pr.value=msrp;
+  var sale=parseFloat(pr.value)||msrp,comm=sale*0.15,total=comm*qty,margin=sale-dist;
+  var discDist=cases>=3?dist*0.95:dist,saving=cases>=3?(dist-discDist)*qty*cases:0;
+  res.innerHTML='<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px">'
+    +'<div><div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Sale Total</div><div style="font-size:16px;font-weight:900;color:#e8c87a">$'+(sale*qty).toFixed(2)+'</div></div>'
+    +'<div><div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Your Comm</div><div style="font-size:16px;font-weight:900;color:#10b759">$'+total.toFixed(2)+'</div></div>'
+    +'<div><div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Per Btl</div><div style="font-size:16px;font-weight:900;color:#C9A55C">$'+comm.toFixed(2)+'</div></div>'
+    +(cases>=3?'<div><div style="font-size:8px;color:#10b759;text-transform:uppercase;letter-spacing:1px">3+ Case Discount</div><div style="font-size:16px;font-weight:900;color:#10b759">-$'+saving.toFixed(2)+'</div></div>':'')
+    +'</div>';
+}
+var loSTORES=[
+  {n:'Total Wine & More — El Cajon',a:'1910 Gillespie Way, El Cajon, CA 92020',permit:'ABC-LIC-404732',type:'Off-Sale General'},
+  {n:'BevMo! El Cajon',a:'1060 Fletcher Pkwy, El Cajon, CA 92020',permit:'ABC-LIC-412891',type:'Off-Sale General'},
+  {n:'Grossmont Liquor',a:'8887 Fletcher Pkwy, El Cajon, CA 92020',permit:'ABC-LIC-389201',type:'Off-Sale General'},
+  {n:'Costco El Cajon Spirits',a:'910 Arnele Ave, El Cajon, CA 92020',permit:'ABC-LIC-401033',type:'Off-Sale General'},
+  {n:'East County Spirits',a:'2200 Greenfield Dr, El Cajon, CA 92019',permit:'ABC-LIC-376540',type:'Off-Sale General'},
+  {n:'Ramirez Liquor & Grocery',a:'555 S Mollison Ave, El Cajon, CA 92020',permit:'ABC-LIC-344812',type:'Off-Sale Beer/Wine'},
+  {n:'Main Street Liquor',a:'788 W Main St, El Cajon, CA 92020',permit:'ABC-LIC-361029',type:'Off-Sale General'},
+  {n:'Casa de Vinos',a:'1600 E Main St, El Cajon, CA 92021',permit:'ABC-LIC-393450',type:'Off-Sale General'},
+  {n:'Vineyard Wine & Spirits',a:'2850 Jamacha Rd, El Cajon, CA 92019',permit:'ABC-LIC-415870',type:'Off-Sale General'},
+  {n:'El Cajon Liquor',a:'345 E Main St, El Cajon, CA 92020',permit:'ABC-LIC-322401',type:'Off-Sale General'},
+  {n:'Parkway Plaza Spirits',a:'415 Parkway Plaza, El Cajon, CA 92020',permit:'ABC-LIC-388762',type:'Off-Sale General'},
+  {n:'Magnolia Wine & Spirits',a:'1900 Magnolia Ave, El Cajon, CA 92020',permit:'ABC-LIC-371234',type:'Off-Sale General'},
+  {n:'Mission Liquor Santee',a:'1234 Mission Ave, Santee, CA 92071',permit:'ABC-LIC-355098',type:'Off-Sale General'},
+  {n:'Santee Liquor & Market',a:'9876 Mission Gorge Rd, Santee, CA 92071',permit:'ABC-LIC-367441',type:'Off-Sale General'},
+  {n:'Albertsons Wine — Santee',a:'10550 Woodside Ave, Santee, CA 92071',permit:'ABC-LIC-402017',type:'Off-Sale Beer/Wine'},
+  {n:'Vons Santee Spirits',a:'9850 Mission Gorge Rd, Santee, CA 92071',permit:'ABC-LIC-409823',type:'Off-Sale Beer/Wine'},
+  {n:'Santee Lakes Market',a:'9310 Fanita Pkwy, Santee, CA 92071',permit:'ABC-LIC-334509',type:'Off-Sale General'},
+  {n:'Chaparral Spirits',a:'12345 Chaparral Blvd, Santee, CA 92071',permit:'ABC-LIC-381667',type:'Off-Sale General'},
+  {n:'BevMo Grossmont Center',a:'5500 Grossmont Center Dr, La Mesa, CA 91943',permit:'ABC-LIC-418934',type:'Off-Sale General'},
+  {n:'La Mesa Wine & Cheese',a:'8302 La Mesa Blvd, La Mesa, CA 91942',permit:'ABC-LIC-395012',type:'Off-Sale General'},
+  {n:'La Mesa Liquor Barn',a:'8380 Center Dr, La Mesa, CA 91942',permit:'ABC-LIC-362788',type:'Off-Sale General'},
+  {n:'Del Cerro Liquor',a:'6690 Montezuma Rd, San Diego, CA 92115',permit:'ABC-LIC-348902',type:'Off-Sale General'},
+  {n:'Lemon Grove Liquor',a:'7712 Broadway, Lemon Grove, CA 91945',permit:'ABC-LIC-331045',type:'Off-Sale General'},
+  {n:'Ralphs Lemon Grove',a:'7823 Broadway, Lemon Grove, CA 91945',permit:'ABC-LIC-406521',type:'Off-Sale Beer/Wine'},
+  {n:'Spring Valley Wine & Spirits',a:'9924 Jamacha Blvd, Spring Valley, CA 91977',permit:'ABC-LIC-358834',type:'Off-Sale General'},
+  {n:'Rancho San Diego Liquor',a:'11810 Campo Rd, Spring Valley, CA 91978',permit:'ABC-LIC-342217',type:'Off-Sale General'},
+  {n:'Blossom Valley Liquor',a:'3580 Sweetwater Springs Blvd, Spring Valley, CA 91977',permit:'ABC-LIC-373890',type:'Off-Sale General'},
+  {n:'Spring Valley Marketplace',a:'8690 Spring Valley Pkwy, Spring Valley, CA 91977',permit:'ABC-LIC-387663',type:'Off-Sale General'},
+  {n:'Sycuan Casino Spirits Bar',a:'5469 Casino Way, El Cajon, CA 92019',permit:'ABC-LIC-411250',type:'On-Sale General Eating/Drinking'},
+  {n:'Fletcher Hills Liquor',a:'2245 Fletcher Pkwy, El Cajon, CA 92020',permit:'ABC-LIC-366418',type:'Off-Sale General'},
+  {n:'Avocado Liquor',a:'1550 Avocado Ave, El Cajon, CA 92019',permit:'ABC-LIC-352174',type:'Off-Sale General'},
+  {n:'Hillside Liquor',a:'2400 Hillside Dr, El Cajon, CA 92020',permit:'ABC-LIC-340891',type:'Off-Sale General'},
+  {n:'El Super El Cajon',a:'1222 E Main St, El Cajon, CA 92021',permit:'ABC-LIC-399307',type:'Off-Sale Beer/Wine'},
+  {n:'Vons El Cajon',a:'1390 Broadway, El Cajon, CA 92021',permit:'ABC-LIC-407844',type:'Off-Sale Beer/Wine'},
+  {n:'Grossmont Plaza Liquor',a:'5500 Grossmont Center Dr, La Mesa, CA 91943',permit:'ABC-LIC-356692',type:'Off-Sale General'},
+  {n:'Parkway Spirits',a:'1023 Parkway Dr, El Cajon, CA 92020',permit:'ABC-LIC-364103',type:'Off-Sale General'},
+];
+function loloadS(){
+  var el=document.getElementById('hmslist');
+  el.innerHTML=loSTORES.map(function(s,i){
+    return '<div class="hmstore"><div class="hmsn">'+(i+1)+'. '+s.n+'</div>'
+      +'<div class="hmsa">'+s.a+'</div>'
+      +'<div class="hmpermit">ABC Reseller: '+s.permit+' | '+s.type+'</div>'
+      +'<div class="hmsb">'
+      +'<a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.n+' '+s.a)+'" target="_blank" class="hmsbtn" style="background:rgba(59,130,246,0.15);color:#60a5fa;text-decoration:none;display:inline-block">Map</a>'
+      +'<a href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(s.a)+'" target="_blank" class="hmsbtn" style="background:rgba(201,165,92,0.15);color:#C9A55C;text-decoration:none;display:inline-block">Navigate</a>'
+      +'</div></div>';
+  }).join('');
+}
+function lofilter(q){
+  var el=document.getElementById('hmslist');
+  if(!el.querySelector('.hmstore')){if(q)loloadS();return;}
+  var low=q.toLowerCase();
+  el.innerHTML=loSTORES.filter(function(s){return(s.n+s.a+s.permit).toLowerCase().includes(low);}).map(function(s,i){
+    return '<div class="hmstore"><div class="hmsn">'+s.n+'</div><div class="hmsa">'+s.a+'</div>'
+      +'<div class="hmpermit">ABC Reseller: '+s.permit+' | '+s.type+'</div></div>';
+  }).join('')||'<div style="text-align:center;color:#64748b;font-size:10px;padding:12px">No results</div>';
+}
+var loROUTES={tuesday:[loSTORES[0],loSTORES[1],loSTORES[2],loSTORES[3],loSTORES[4],loSTORES[5],loSTORES[6],loSTORES[7],loSTORES[8],loSTORES[9],loSTORES[10],loSTORES[11]],wednesday:[loSTORES[12],loSTORES[13],loSTORES[14],loSTORES[15],loSTORES[16],loSTORES[17],loSTORES[18],loSTORES[19],loSTORES[20],loSTORES[21],loSTORES[22],loSTORES[23]],thursday:[loSTORES[24],loSTORES[25],loSTORES[26],loSTORES[27],loSTORES[28],loSTORES[29],loSTORES[30],loSTORES[31],loSTORES[32],loSTORES[33],loSTORES[34],loSTORES[35]]};
+function loroute(day){
+  var stops=loROUTES[day]||[];
+  var out=document.getElementById('hmrouteout');
+  if(out){out.innerHTML='<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.18);border-radius:7px;padding:10px;margin-bottom:8px"><div style="font-size:10px;font-weight:800;color:#C9A55C;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;display:flex;justify-content:space-between"><span>'+day.toUpperCase()+' — 12 STOPS</span><a href="https://www.google.com/maps/dir/'+stops.map(function(s){return encodeURIComponent(s.a);}).join('/')+'" target="_blank" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-size:9px;font-weight:800;padding:3px 9px;border-radius:4px;text-decoration:none">MAPS</a></div>'
+    +stops.map(function(s,i){var h=9+Math.floor(i*25/60),m=(i*25)%60,ts=(h>12?h-12:h)+':'+(m<10?'0'+m:m)+' '+(h>=12?'PM':'AM');return '<div style="display:flex;gap:7px;align-items:flex-start;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="width:17px;height:17px;border-radius:50%;background:#C9A55C;color:#000;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</div><div style="flex:1"><div style="font-size:10px;font-weight:700;color:#e2e8f0">'+s.n+' <span style="color:#64748b;font-size:9px;font-weight:400">'+ts+'</span></div><div style="font-size:9px;color:#64748b">'+s.a+'</div><div style="font-size:9px;color:#22cc88;font-weight:700">'+s.permit+'</div></div><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.n+' '+s.a)+'" target="_blank" style="font-size:9px;color:#C9A55C;font-weight:700;padding:3px 6px;background:rgba(201,165,92,0.1);border-radius:4px;text-decoration:none">GO</a></div>';}).join('')+'</div>';}
+  var f=document.getElementById('hmmap');
+  if(f&&stops.length>1){var addrs=stops.slice(0,10).map(function(s){return encodeURIComponent(s.a);});f.src='https://www.google.com/maps/embed/v1/directions?key=AIzaSyCSLa4C56EC_Rk-8SkZYSCVE4KTDzYmiyY&origin='+addrs[0]+'&destination='+addrs[addrs.length-1]+'&waypoints='+addrs.slice(1,-1).join('|')+'&mode=driving';}
+}
+</script>
+
+
+  <div class="lots" id="losec-inventory" class="lots">
+<style>
+.ro-inv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:12px}
+.ro-inv-card{background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.15);border-radius:9px;padding:11px;text-align:center;position:relative;overflow:hidden}
+.ro-inv-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ro-blanco::before{background:linear-gradient(90deg,#c0c0c0,#e8e8e8)}
+.ro-repo::before{background:linear-gradient(90deg,#8B0000,#cc2222)}
+.ro-anejo::before{background:linear-gradient(90deg,#00008B,#2244cc)}
+.ro-reserva::before{background:linear-gradient(90deg,#111,#444)}
+.ro-gxxi::before{background:linear-gradient(90deg,#006633,#22cc88)}
+.ro-maya::before{background:linear-gradient(90deg,#b45309,#f59e0b)}
+.ro-inv-card.ro-low{border-color:rgba(239,68,68,0.5)}
+.ro-sku{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;color:#94a3b8}
+.ro-qty{font-size:28px;font-weight:900;color:#e8c87a;line-height:1}
+.ro-unit{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.ro-cs{font-size:10px;color:#10b759;margin-top:3px;font-weight:700}
+.ro-note{background:rgba(255,255,255,0.03);border-radius:5px;padding:8px;font-size:10px;color:#64748b;line-height:1.5;margin-top:8px}
+</style>
+
+<!-- DON AZUL LIVE INVENTORY — READ ONLY -->
+<div id="ro-inv-section" style="margin-top:16px">
+  <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <span>DON AZUL — LIVE INVENTORY</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <span id="ro-inv-updated" style="font-size:9px;color:#64748b;font-weight:400">—</span>
+      <button onclick="roInvLoad()" style="background:linear-gradient(135deg,#C9A55C,#a07830);color:#000;font-weight:800;font-size:9px;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;letter-spacing:1px">REFRESH</button>
+    </div>
+  </div>
+  <div class="ro-inv-grid" id="ro-inv-cards">
+    <div style="grid-column:1/-1;text-align:center;color:#64748b;font-size:10px;padding:12px">Click REFRESH to load live stock</div>
+  </div>
+  <!-- LOG -->
+  <div style="margin-top:10px">
+    <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+      <span>INVENTORY LOG</span>
+      <button onclick="roLogLoad()" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.2);color:#C9A55C;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit">LOAD LOG</button>
+    </div>
+    <div id="ro-log-out" style="font-size:10px;color:#64748b;text-align:center;padding:10px">Click LOAD LOG</div>
+  </div>
+  <div class="ro-note">Read-only view. Stock adjustments by Boss (Saul Garcia) and Rudy Jacinto only. Every sale auto-deducts from inventory in real time.</div>
+</div>
+
+  
+  <!-- EMAIL TAB -->
+  <div id="tab-email" class="sec" style="display:none">
+    <div class="sec-hdr"><span></span>EMAIL — TEQUILA OUTREACH</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(201,165,92,0.2)">
+      <button onclick="loEmail('compose')" id="loem-compose" class="lotb loton">COMPOSE</button>
+      <button onclick="loEmail('templates')" id="loem-templates" class="lotb">TEMPLATES</button>
+    </div>
+
+    <!-- COMPOSE -->
+    <div id="loem-sec-compose" style="display:block">
+      <div class="hmcard">
+        <div class="hmchdr">NEW EMAIL — DON AZUL OUTREACH</div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:9px;color:#64748b;letter-spacing:1px;margin-bottom:3px">TO</div>
+          <input id="lo-eto" placeholder="recipient@email.com" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:7px 10px;color:#e2e8f0;font-size:11px;font-family:inherit;outline:none"/>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:9px;color:#64748b;letter-spacing:1px;margin-bottom:3px">SUBJECT</div>
+          <input id="lo-esubj" placeholder="Don Azul Tequila — Premium Placement Available" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:7px 10px;color:#e2e8f0;font-size:11px;font-family:inherit;outline:none"/>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:9px;color:#64748b;letter-spacing:1px;margin-bottom:3px">MESSAGE</div>
+          <textarea id="lo-ebody" rows="8" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:5px;padding:8px 10px;color:#e2e8f0;font-size:11px;font-family:inherit;outline:none;resize:vertical;line-height:1.6"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button onclick="loLoadTemplate('intro')" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.3);color:#C9A55C;font-size:9px;font-weight:700;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:inherit;letter-spacing:1px">INTRO TEMPLATE</button>
+          <button onclick="loLoadTemplate('reorder')" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.3);color:#C9A55C;font-size:9px;font-weight:700;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:inherit;letter-spacing:1px">REORDER TEMPLATE</button>
+          <button onclick="loLoadTemplate('promo')" style="background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.3);color:#C9A55C;font-size:9px;font-weight:700;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:inherit;letter-spacing:1px">PROMO TEMPLATE</button>
+        </div>
+        <div id="lo-estatus" style="font-size:10px;color:#64748b;min-height:14px;margin-bottom:8px"></div>
+        <button onclick="loSendEmail()" style="width:100%;background:linear-gradient(135deg,#C9A55C,#a07820);color:#fff;border:none;padding:11px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:2px;font-family:inherit">SEND EMAIL</button>
+      </div>
+      <div class="hmcard" style="margin-top:8px">
+        <div class="hmchdr">SIGNATURE</div>
+        <div style="font-size:11px;color:#e2e8f0;line-height:1.7">
+          Dr. Luis Lopez Oliva<br/>
+          <span style="color:#C9A55C">Sr. Distribution Partner — Don Azul Tequila</span><br/>
+          <span style="color:#64748b">DAT-02 | Mexausa Food Group, Inc.</span><br/>
+          <span style="color:#64748b">Cell/WhatsApp: +52-646-340-2686</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMPLATES -->
+    <div id="loem-sec-templates" style="display:none">
+      <div class="hmcard" onclick="loUseTemplate('intro')" style="cursor:pointer;border-color:rgba(201,165,92,0.3)">
+        <div class="hmchdr">INTRO — NEW ACCOUNT</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">Cold intro to new bar/restaurant/retailer. Highlights Don Azul product line, pricing tiers, and placement opportunity.</div>
+        <div style="margin-top:6px;font-size:9px;color:#C9A55C;font-weight:700">TAP TO LOAD IN COMPOSE</div>
+      </div>
+      <div class="hmcard" onclick="loUseTemplate('reorder')" style="cursor:pointer;border-color:rgba(201,165,92,0.3)">
+        <div class="hmchdr">REORDER — EXISTING ACCOUNT</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">Follow-up to existing account. References previous order, seasonal promo, and next delivery window.</div>
+        <div style="margin-top:6px;font-size:9px;color:#C9A55C;font-weight:700">TAP TO LOAD IN COMPOSE</div>
+      </div>
+      <div class="hmcard" onclick="loUseTemplate('promo')" style="cursor:pointer;border-color:rgba(201,165,92,0.3)">
+        <div class="hmchdr">PROMO — SEASONAL PUSH</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">Cinco de Mayo, Summer, Holiday season push. Highlights limited inventory, MSRP, and margin opportunity.</div>
+        <div style="margin-top:6px;font-size:9px;color:#C9A55C;font-weight:700">TAP TO LOAD IN COMPOSE</div>
+      </div>
+      <div class="hmcard" onclick="loUseTemplate('flyer')" style="cursor:pointer;border-color:rgba(201,165,92,0.3)">
+        <div class="hmchdr">PRODUCT FLYER — FULL LINE</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">Full product line overview — Silver, Reposado, Anejo, Vodka. SKUs, pricing, case specs.</div>
+        <div style="margin-top:6px;font-size:9px;color:#C9A55C;font-weight:700">TAP TO LOAD IN COMPOSE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLYERS TAB -->
+  <div id="tab-flyers" class="sec" style="display:none">
+    <div class="sec-hdr"><span></span>FLYERS — DON AZUL TEQUILA</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(201,165,92,0.2)">
+      <button onclick="loFlyer('product')" id="lofl-product" class="lotb loton">PRODUCT LINE</button>
+      <button onclick="loFlyer('pricing')" id="lofl-pricing" class="lotb">PRICING SHEET</button>
+      <button onclick="loFlyer('commission')" id="lofl-commission" class="lotb">COMMISSION</button>
+    </div>
+
+    <!-- PRODUCT LINE FLYER -->
+    <div id="lofl-sec-product" style="display:block">
+      <div style="background:linear-gradient(160deg,#0a1628,#1a0a00);border:1px solid rgba(201,165,92,0.4);border-radius:10px;overflow:hidden;margin-bottom:10px">
+        <div style="background:#C9A55C;padding:10px 16px;text-align:center">
+          <div style="font-size:8px;font-weight:900;color:#0a1628;letter-spacing:4px">DON AZUL TEQUILA</div>
+          <div style="font-size:18px;font-weight:900;color:#0a1628;letter-spacing:1px">PRODUCT LINE</div>
+          <div style="font-size:8px;color:#3d2a00;letter-spacing:2px">PLANT #1 — AMATITAN, JALISCO</div>
+        </div>
+        <div style="padding:14px 16px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:10px">
+              <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:1px">SILVER BLANCO</div>
+              <div style="font-size:10px;color:#e2e8f0;margin-top:4px">100% Blue Agave</div>
+              <div style="font-size:10px;color:#94a3b8">750ml · 40% ABV</div>
+              <div style="font-size:11px;font-weight:700;color:#C9A55C;margin-top:4px">$28.00 Dist/Btl</div>
+              <div style="font-size:9px;color:#64748b">MSRP $45.99</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:10px">
+              <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:1px">REPOSADO</div>
+              <div style="font-size:10px;color:#e2e8f0;margin-top:4px">Oak Aged 6 Months</div>
+              <div style="font-size:10px;color:#94a3b8">750ml · 40% ABV</div>
+              <div style="font-size:11px;font-weight:700;color:#C9A55C;margin-top:4px">$32.00 Dist/Btl</div>
+              <div style="font-size:9px;color:#64748b">MSRP $52.99</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:10px">
+              <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:1px">ANEJO</div>
+              <div style="font-size:10px;color:#e2e8f0;margin-top:4px">Aged 18 Months</div>
+              <div style="font-size:10px;color:#94a3b8">750ml · 40% ABV</div>
+              <div style="font-size:11px;font-weight:700;color:#C9A55C;margin-top:4px">$38.00 Dist/Btl</div>
+              <div style="font-size:9px;color:#64748b">MSRP $62.99</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:10px">
+              <div style="font-size:9px;font-weight:800;color:#C9A55C;letter-spacing:1px">PREMIUM VODKA</div>
+              <div style="font-size:10px;color:#e2e8f0;margin-top:4px">Ultra-Premium</div>
+              <div style="font-size:10px;color:#94a3b8">750ml · 40% ABV</div>
+              <div style="font-size:11px;font-weight:700;color:#C9A55C;margin-top:4px">$25.00 Dist/Btl</div>
+              <div style="font-size:9px;color:#64748b">MSRP $39.99</div>
+            </div>
+          </div>
+          <div style="background:rgba(201,165,92,0.08);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:8px 12px;margin-bottom:10px">
+            <div style="font-size:9px;color:#C9A55C;font-weight:700;letter-spacing:1px;margin-bottom:3px">CASE SPECS — ALL SKUs</div>
+            <div style="font-size:10px;color:#94a3b8">6 bottles/case · Min order 1 case · Free delivery 5+ cases</div>
+          </div>
+          <div style="text-align:center;padding-top:8px;border-top:1px solid rgba(201,165,92,0.15)">
+            <div style="font-size:10px;font-weight:700;color:#e2e8f0">Dr. Luis Lopez Oliva</div>
+            <div style="font-size:9px;color:#C9A55C">Sr. Distribution Partner · DAT-02</div>
+            <div style="font-size:9px;color:#64748b">+52-646-340-2686</div>
+          </div>
+        </div>
+      </div>
+      <button onclick="loEmailFlyer('product')" style="width:100%;background:linear-gradient(135deg,#C9A55C,#a07820);color:#fff;border:none;padding:10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:2px;font-family:inherit;margin-top:4px">EMAIL THIS FLYER</button>
+    </div>
+
+    <!-- PRICING SHEET FLYER -->
+    <div id="lofl-sec-pricing" style="display:none">
+      <div style="background:linear-gradient(160deg,#0a1628,#1a0a00);border:1px solid rgba(201,165,92,0.4);border-radius:10px;overflow:hidden;margin-bottom:10px">
+        <div style="background:#C9A55C;padding:10px 16px;text-align:center">
+          <div style="font-size:8px;font-weight:900;color:#0a1628;letter-spacing:4px">DON AZUL TEQUILA</div>
+          <div style="font-size:18px;font-weight:900;color:#0a1628">DISTRIBUTOR PRICING</div>
+          <div style="font-size:8px;color:#3d2a00;letter-spacing:2px">CONFIDENTIAL — TRADE ONLY</div>
+        </div>
+        <div style="padding:14px 16px">
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead><tr style="border-bottom:1px solid rgba(201,165,92,0.3)">
+              <th style="text-align:left;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">SKU</th>
+              <th style="text-align:right;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">DIST/BTL</th>
+              <th style="text-align:right;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">$/CASE(6)</th>
+              <th style="text-align:right;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">MSRP</th>
+              <th style="text-align:right;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">MARGIN</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:7px 6px;color:#e2e8f0">Silver Blanco</td><td style="text-align:right;padding:7px 6px;color:#C9A55C;font-weight:700">$28.00</td><td style="text-align:right;padding:7px 6px;color:#e2e8f0">$168.00</td><td style="text-align:right;padding:7px 6px;color:#64748b">$45.99</td><td style="text-align:right;padding:7px 6px;color:#22c55e;font-weight:700">39%</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:7px 6px;color:#e2e8f0">Reposado</td><td style="text-align:right;padding:7px 6px;color:#C9A55C;font-weight:700">$32.00</td><td style="text-align:right;padding:7px 6px;color:#e2e8f0">$192.00</td><td style="text-align:right;padding:7px 6px;color:#64748b">$52.99</td><td style="text-align:right;padding:7px 6px;color:#22c55e;font-weight:700">40%</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:7px 6px;color:#e2e8f0">Anejo</td><td style="text-align:right;padding:7px 6px;color:#C9A55C;font-weight:700">$38.00</td><td style="text-align:right;padding:7px 6px;color:#e2e8f0">$228.00</td><td style="text-align:right;padding:7px 6px;color:#64748b">$62.99</td><td style="text-align:right;padding:7px 6px;color:#22c55e;font-weight:700">40%</td></tr>
+              <tr><td style="padding:7px 6px;color:#e2e8f0">Premium Vodka</td><td style="text-align:right;padding:7px 6px;color:#C9A55C;font-weight:700">$25.00</td><td style="text-align:right;padding:7px 6px;color:#e2e8f0">$150.00</td><td style="text-align:right;padding:7px 6px;color:#64748b">$39.99</td><td style="text-align:right;padding:7px 6px;color:#22c55e;font-weight:700">38%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <button onclick="loEmailFlyer('pricing')" style="width:100%;background:linear-gradient(135deg,#C9A55C,#a07820);color:#fff;border:none;padding:10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:2px;font-family:inherit;margin-top:4px">EMAIL THIS FLYER</button>
+    </div>
+
+    <!-- COMMISSION FLYER -->
+    <div id="lofl-sec-commission" style="display:none">
+      <div style="background:linear-gradient(160deg,#0a1628,#1a0a00);border:1px solid rgba(201,165,92,0.4);border-radius:10px;overflow:hidden;margin-bottom:10px">
+        <div style="background:#C9A55C;padding:10px 16px;text-align:center">
+          <div style="font-size:8px;font-weight:900;color:#0a1628;letter-spacing:4px">DON AZUL TEQUILA</div>
+          <div style="font-size:18px;font-weight:900;color:#0a1628">COMMISSION SCHEDULE</div>
+          <div style="font-size:8px;color:#3d2a00;letter-spacing:2px">DAT-02 · DR. LUIS LOPEZ OLIVA</div>
+        </div>
+        <div style="padding:14px 16px">
+          <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px">
+            <thead><tr style="border-bottom:1px solid rgba(201,165,92,0.3)">
+              <th style="text-align:left;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">TIER</th>
+              <th style="text-align:right;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">MONTHLY CASES</th>
+              <th style="text-align:right;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">COMM/CASE</th>
+              <th style="text-align:right;padding:5px 6px;font-size:9px;color:#C9A55C;letter-spacing:1px">EST. MONTHLY</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:7px 6px;color:#e2e8f0">Base</td><td style="text-align:right;padding:7px 6px;color:#94a3b8">1–49</td><td style="text-align:right;padding:7px 6px;color:#C9A55C;font-weight:700">$12</td><td style="text-align:right;padding:7px 6px;color:#e2e8f0">$12–$588</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:7px 6px;color:#e2e8f0">Silver</td><td style="text-align:right;padding:7px 6px;color:#94a3b8">50–99</td><td style="text-align:right;padding:7px 6px;color:#C9A55C;font-weight:700">$15</td><td style="text-align:right;padding:7px 6px;color:#e2e8f0">$750–$1,485</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:7px 6px;color:#22c55e;font-weight:700">Gold</td><td style="text-align:right;padding:7px 6px;color:#94a3b8">100–199</td><td style="text-align:right;padding:7px 6px;color:#22c55e;font-weight:700">$18</td><td style="text-align:right;padding:7px 6px;color:#22c55e;font-weight:700">$1,800–$3,582</td></tr>
+              <tr><td style="padding:7px 6px;color:#C9A55C;font-weight:800">Platinum</td><td style="text-align:right;padding:7px 6px;color:#94a3b8">200+</td><td style="text-align:right;padding:7px 6px;color:#C9A55C;font-weight:800">$22</td><td style="text-align:right;padding:7px 6px;color:#C9A55C;font-weight:800">$4,400+</td></tr>
+            </tbody>
+          </table>
+          <div style="background:rgba(201,165,92,0.08);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:8px 12px">
+            <div style="font-size:9px;color:#64748b;line-height:1.6">Commissions paid weekly every Friday. Bonus $200 for every new account opened. Performance bonus at 300+ cases/month.</div>
+          </div>
+        </div>
+      </div>
+      <button onclick="loEmailFlyer('commission')" style="width:100%;background:linear-gradient(135deg,#C9A55C,#a07820);color:#fff;border:none;padding:10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:2px;font-family:inherit;margin-top:4px">EMAIL THIS FLYER</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── DON AZUL READ-ONLY INVENTORY ─────────────────────────────────────────────
+var RO_COLORS={'Blanco Premium':'ro-blanco','Reposado Premium':'ro-repo','Anejo Premium':'ro-anejo','Reposado Reserva':'ro-reserva','G-XXI Blanco Org':'ro-gxxi','G-XXI Reposado Org':'ro-gxxi','G-XXI Anejo Org':'ro-gxxi','Maya Blanco':'ro-maya','Maya Reposado':'ro-maya'};
+function roInvLoad(){
+  var el=document.getElementById('ro-inv-cards');
+  if(el)el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#64748b;font-size:10px;padding:12px">Loading...</div>';
+  fetch(RO_BE+'/api/don-azul/inventory')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var el=document.getElementById('ro-inv-cards');
+      if(!el||!d.ok)return;
+      el.innerHTML=d.inventory.map(function(item){
+        var cs=item.btl_per_case||6,cases=Math.floor(item.qty_bottles/cs),low=item.qty_bottles<cs*2;
+        var cls=RO_COLORS[item.sku]||'ro-blanco';
+        return '<div class="ro-inv-card '+cls+(low?' ro-low':'')+'">'
+          +'<div class="ro-sku">'+item.sku+(low?' <span style="color:#f87171">LOW</span>':'')+'</div>'
+          +'<div class="ro-qty">'+item.qty_bottles+'</div>'
+          +'<div class="ro-unit">bottles</div>'
+          +'<div class="ro-cs">'+cases+' cases</div>'
+          +'<div style="font-size:9px;color:#64748b;margin-top:2px">MSRP $'+item.msrp+'</div>'
+          +'</div>';
+      }).join('');
+      var upd=document.getElementById('ro-inv-updated');
+      if(upd)upd.textContent=new Date().toLocaleTimeString();
+    }).catch(function(){
+      var el=document.getElementById('ro-inv-cards');
+      if(el)el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#f87171;font-size:10px;padding:12px">Network error — retry</div>';
+    });
+}
+function roLogLoad(){
+  var out=document.getElementById('ro-log-out');
+  if(out)out.innerHTML='<div style="text-align:center;color:#64748b;font-size:10px;padding:8px">Loading...</div>';
+  fetch(RO_BE+'/api/don-azul/inventory/log')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var out=document.getElementById('ro-log-out');
+      if(!out||!d.ok)return;
+      out.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:10px">'
+        +'<thead><tr>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Time</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">SKU</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Type</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Change</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">After</th>'
+        +'<th style="text-align:left;padding:5px 8px;border-bottom:1px solid rgba(201,165,92,0.15);font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Agent</th>'
+        +'</tr></thead><tbody>'
+        +d.log.slice(0,50).map(function(l){
+          var chg=l.qty_change>0?'+'+l.qty_change:l.qty_change;
+          var cc=l.qty_change>0?'#10b759':'#f87171';
+          return '<tr><td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#64748b">'+new Date(l.created_at).toLocaleString()+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#e2e8f0;font-weight:700">'+l.sku+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="padding:1px 6px;border-radius:10px;font-size:8px;font-weight:700;background:rgba(201,165,92,0.1);color:#C9A55C">'+l.change_type+'</span></td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:800;color:'+cc+'">'+chg+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#e8c87a">'+(l.qty_after!=null?l.qty_after:'—')+'</td>'
+            +'<td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8">'+(l.agent||'—')+'</td>'
+            +'</tr>';
+        }).join('')
+        +'</tbody></table>';
+    }).catch(function(){var out=document.getElementById('ro-log-out');if(out)out.innerHTML='<div style="text-align:center;color:#f87171;font-size:10px;padding:8px">Error loading log</div>';});
+}
+</script>
+
+<script>
+
+var loMA='Dr. Luis Lopez Oliva';var loMAI='DAT-02';
+var loMVC=[],loMCID=null,loMCD=null,loMUD=null,loMSD=null,loMSS=null;
+function lomvTab(t,btn){var el=document.getElementById('losec-media');if(!el)return;el.querySelectorAll('.mvtab').forEach(function(b){b.classList.remove('on');});if(btn)btn.classList.add('on');['lomv-gallery','lomv-docs','lomv-upload','lomv-scan'].forEach(function(id){var d=document.getElementById(id);if(d)d.style.display='none';});var s=document.getElementById(loid_map[t]);if(s)s.style.display='block';if(t==='gallery')lomvLoad();if(t==='docs')lomvLoadDocs();}
+var loid_map={'gallery':'lomv-gallery','docs':'lomv-docs','upload':'lomv-upload','scan':'lomv-scan'};
+function lomvLoad(){var cat=(document.getElementById('lomv-cat')||{}).value||'';var g=document.getElementById('lomv-grid');if(g)g.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#64748b;font-size:11px;padding:14px">Loading...</div>';fetch(loBE+'/api/don-azul/media?agent_id='+loMAI+(cat?'&category='+encodeURIComponent(cat):'')).then(function(r){return r.json();}).then(function(d){loMVC=d.media||[];lo_rend(loMVC);}).catch(function(){if(g)g.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#f87171;font-size:11px;padding:14px">Network error</div>';});}
+function lomvFilt(q){if(!loMVC.length){lomvLoad();return;}var low=q.toLowerCase();lo_rend(loMVC.filter(function(m){return(m.title+m.category+(m.client_name||'')+(m.tags||'')).toLowerCase().includes(low);}));}
+function lo_rend(list){var g=document.getElementById('lomv-grid');if(!g)return;if(!list.length){g.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#64748b;font-size:11px;padding:14px">No media yet</div>';return;}g.innerHTML=list.map(function(m){var isImg=m.mime_type&&m.mime_type.startsWith('image/');var icon=m.mime_type&&m.mime_type.includes('pdf')?'&#128196;':'&#128190;';var canDel=m.agent_id==='DAT-02'||['DAT-01','DAT-02','DAT-03'].includes('DAT-02');return'<div class="mvcard" onclick="lomvOpen('+m.id+')">'+(isImg?'<img id="lomgimg'+m.id+'" src="" style="display:none"><div class="mvicon" id="lomgico'+m.id+'">&#128247;</div>':'<div class="mvicon">'+icon+'</div>')+'<div class="mvinfo"><div class="mvtitle">'+m.title+'</div><div class="mvmeta">'+m.category+(m.client_name?' &middot; '+m.client_name:'')+'</div>'+(canDel?'<button class="mvdel" onclick="event.stopPropagation();lomvDel('+m.id+')">Delete</button>':'')+'</div></div>';}).join('');list.filter(function(m){return m.mime_type&&m.mime_type.startsWith('image/');}).forEach(function(m){fetch(loBE+'/api/don-azul/media/'+m.id+'/file').then(function(r){return r.json();}).then(function(d){if(!d.ok)return;var img=document.getElementById('lomgimg'+m.id);var ico=document.getElementById('lomgico'+m.id);if(img){img.src='data:'+d.mime_type+';base64,'+d.file_data;img.style.display='block';}if(ico)ico.style.display='none';}).catch(function(){});});}
+function lomvOpen(id){loMCID=id;loMCD=null;var bg=document.getElementById('lomodal');var img=document.getElementById('lomodalimg');var info=document.getElementById('lomodalinfo');if(!bg)return;var m=loMVC.find(function(x){return x.id===id;});if(m&&info)info.innerHTML='<strong style="color:#e8c87a">'+m.title+'</strong><br><span style="color:#64748b">'+m.category+(m.client_name?' &middot; '+m.client_name:'')+(m.tags?'<br>'+m.tags:'')+'<br>'+new Date(m.created_at).toLocaleDateString()+' &middot; '+m.uploaded_by+'</span>';if(img)img.style.display='none';bg.classList.add('on');fetch(loBE+'/api/don-azul/media/'+id+'/file').then(function(r){return r.json();}).then(function(d){loMCD=d;if(img&&d.mime_type&&d.mime_type.startsWith('image/')){img.src='data:'+d.mime_type+';base64,'+d.file_data;img.style.display='block';}}).catch(function(){});}
+function lomodalDl(){if(!P_MCD)return;var a=document.createElement('a');a.href='data:'+loMCD.mime_type+';base64,'+loMCD.file_data;a.download=loMCD.file_name||'download';a.click();}
+function lomvDel(id){if(!confirm('Delete?'))return;fetch(loBE+'/api/don-azul/media/'+id,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent_id:P_MAI})}).then(function(r){return r.json();}).then(function(d){if(d.ok)lomvLoad();}).catch(function(){});}
+function lomodalDel(){lomvDel(P_MCID);document.getElementById('lomodal').classList.remove('on');}
+function lomvLoadDocs(){var list=document.getElementById('lomv-doclist');if(list)list.innerHTML='<div style="text-align:center;color:#64748b;font-size:11px;padding:14px">Loading...</div>';fetch(loBE+'/api/don-azul/media?agent_id='+loMAI).then(function(r){return r.json();}).then(function(d){var docs=(d.media||[]).filter(function(m){return!m.mime_type||!m.mime_type.startsWith('image/');});if(!list)return;if(!docs.length){list.innerHTML='<div style="text-align:center;color:#64748b;font-size:11px;padding:14px">No documents yet</div>';return;}list.innerHTML=docs.map(function(m){return'<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(201,165,92,0.12);border-radius:7px;padding:9px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:11px;font-weight:700;color:#e2e8f0">'+m.title+'</div><div style="font-size:9px;color:#C9A55C;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:2px">'+m.category+'</div><div style="font-size:9px;color:#64748b;margin-top:2px">'+new Date(m.created_at).toLocaleDateString()+' &middot; '+m.uploaded_by+'</div></div><button onclick="lomvOpen('+m.id+')" style="background:rgba(59,130,246,0.15);color:#60a5fa;border:none;border-radius:4px;padding:4px 9px;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit">View</button></div>';}).join('');}).catch(function(){});}
+function loupDrop(e){e.preventDefault();document.getElementById('loupzone').classList.remove('drag');var f=e.dataTransfer.files[0];if(f)lo_uproc(f);}
+function loupFsel(i){var f=i.files[0];if(f)lo_uproc(f);}
+function lo_uproc(f){if(f.size>8*1024*1024){alert('Max 8MB');return;}var r=new FileReader();r.onload=function(e){loMUD={data:e.target.result.split(',')[1],size:f.size,mime:f.type,name:f.name};var pr=document.getElementById('loupprev');if(f.type.startsWith('image/')&&pr){pr.src=e.target.result;pr.style.display='block';}var t=document.getElementById('louptitle');if(t&&!t.value)t.value=f.name.replace(/\.[^.]+$/,'');};r.readAsDataURL(f);}
+function loupSubmit(){var st=document.getElementById('loupstatus');var title=(document.getElementById('louptitle')||{}).value||'';if(!title){if(st){st.style.color='#f87171';st.textContent='Enter a title';}return;}if(!loMUD){if(st){st.style.color='#f87171';st.textContent='Select a file';}return;}if(st){st.style.color='#64748b';st.textContent='Uploading...';}fetch(loBE+'/api/don-azul/media/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({media_type:'photo',category:(document.getElementById('loupcat')||{}).value||'Other',title,description:(document.getElementById('loupdesc')||{}).value||'',file_data:loMUD.data,file_size:loMUD.size,mime_type:loMUD.mime,file_name:loMUD.name,uploaded_by:P_MA,agent_id:P_MAI,client_name:(document.getElementById('loupclient')||{}).value||'',tags:(document.getElementById('louptags')||{}).value||'',is_shared:true})}).then(function(r){return r.json();}).then(function(d){if(d.ok){if(st){st.style.color='#10b759';st.textContent='Uploaded!';}loMUD=null;['louptitle','loupdesc','loupclient','louptags'].forEach(function(k){var el=document.getElementById(k);if(el)el.value='';});var pr=document.getElementById('loupprev');if(pr)pr.style.display='none';var fi=document.getElementById('loupfile');if(fi)fi.value='';lomvLoad();}else{if(st){st.style.color='#f87171';st.textContent='Error: '+d.error;}}}).catch(function(){if(st){st.style.color='#f87171';st.textContent='Network error';}});}
+function loscanCam(){var v=document.getElementById('loscanvid');var b=document.getElementById('loscancambtns');navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(s){loMSS=s;if(v){v.srcObject=s;v.style.display='block';}if(b)b.style.display='block';}).catch(function(){document.getElementById('loscancamin').click();});}
+function loscanCap(){var v=document.getElementById('loscanvid');var c=document.getElementById('lomv-scanVAS');var pr=document.getElementById('loscanprev');if(!v||!c)return;c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);var d=c.toDataURL('image/jpeg',0.92);loMSD={data:d.split(',')[1],size:Math.round(d.length*0.75),mime:'image/jpeg',name:'scan_'+Date.now()+'.jpg'};if(pr){pr.src=d;pr.style.display='block';}loscanStop();}
+function loscanStop(){if(loMSS){loMSS.getTracks().forEach(function(t){t.stop();});loMSS=null;}var v=document.getElementById('loscanvid');var b=document.getElementById('loscancambtns');if(v)v.style.display='none';if(b)b.style.display='none';}
+function loscanLoad(i){var f=i.files[0];if(!f||f.size>8*1024*1024){alert('Max 8MB');return;}var r=new FileReader();r.onload=function(e){loMSD={data:e.target.result.split(',')[1],size:f.size,mime:f.type,name:f.name};var pr=document.getElementById('loscanprev');if(f.type.startsWith('image/')&&pr){pr.src=e.target.result;pr.style.display='block';}var t=document.getElementById('loscantitle');if(t&&!t.value)t.value=f.name.replace(/\.[^.]+$/,'');};r.readAsDataURL(f);}
+function loscanSubmit(){var st=document.getElementById('loscanstatus');var title=(document.getElementById('loscantitle')||{}).value||'';var cat=(document.getElementById('loscantype')||{}).value||'Other';if(!title){if(st){st.style.color='#f87171';st.textContent='Enter document title';}return;}if(!loMSD){if(st){st.style.color='#f87171';st.textContent='Capture or select document first';}return;}if(st){st.style.color='#64748b';st.textContent='Saving...';}fetch(loBE+'/api/don-azul/media/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({media_type:'scan',category:cat,title,file_data:loMSD.data,file_size:loMSD.size,mime_type:loMSD.mime,file_name:loMSD.name,uploaded_by:P_MA,agent_id:P_MAI,is_shared:true})}).then(function(r){return r.json();}).then(function(d){if(d.ok){if(st){st.style.color='#10b759';st.textContent='Saved!';}loMSD=null;var t=document.getElementById('loscantitle');if(t)t.value='';var pr=document.getElementById('loscanprev');if(pr)pr.style.display='none';}else{if(st){st.style.color='#f87171';st.textContent='Error: '+d.error;}}}).catch(function(){if(st){st.style.color='#f87171';st.textContent='Network error';}});}
+
+</script>
+
+<!-- EMBASSY TAB -->
+
+  </div>
+</div>
+
+<script>
+var _pin = '';
+function numTap(btn){
+  if(_pin.length>=4) return;
+  _pin += btn.getAttribute('data-d');
+  updateDots();
+  if(_pin.length===4) checkPin();
+}
+
+}
+function pinClear(){ _pin=''; updateDots(); document.getElementById('g-err').textContent=''; }
+
+function pinLogout(){
+  localStorage.removeItem('DAT-02_auth');
+  location.reload();
+}
+(function(){
+  if(localStorage.getItem('DAT-02_auth')==='1'){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='flex'; try{loGoTab('tequila');loT('pricing');}catch(e){} try{ var _fl=document.querySelector('.lots'); if(_fl) _fl.style.display='block'; var _fb=document.querySelector('.lotb,.rjtb'); if(_fb){_fb.classList.add('loton','rjton');} }catch(e){}
+  }
+})();
+</script>
+
+<script>
+// Tab switching
+function loGoTab(id){
+  document.querySelectorAll('.sec').forEach(function(s){s.style.display='none';});
+  var el=document.getElementById('tab-'+id);
+  if(el) el.style.display='block';
+  document.querySelectorAll('.lo-tabnav-btn').forEach(function(b){b.classList.remove('lo-tab-on');});
+  var btn=document.getElementById('lo-navbtn-'+id);
+  if(btn) btn.classList.add('lo-tab-on');
+  if(id==='tequila') { try{loT('pricing');}catch(e){} }
+  if(id==='email')   { try{loEmail('compose');}catch(e){} }
+  if(id==='flyers')  { try{loFlyer('product');}catch(e){} }
+}
+
+// Email sub-tabs
+function loEmail(sec){
+  ['compose','templates'].forEach(function(s){
+    var el=document.getElementById('loem-sec-'+s);
+    if(el) el.style.display=(s===sec?'block':'none');
+    var btn=document.getElementById('loem-'+s);
+    if(btn) btn.className='lotb'+(s===sec?' loton':'');
+  });
+}
+
+// Flyer sub-tabs
+function loFlyer(sec){
+  ['product','pricing','commission'].forEach(function(s){
+    var el=document.getElementById('lofl-sec-'+s);
+    if(el) el.style.display=(s===sec?'block':'none');
+    var btn=document.getElementById('lofl-'+s);
+    if(btn) btn.className='lotb'+(s===sec?' loton':'');
+  });
+}
+
+// Email templates
+var _loTemplates={
+  intro:{
+    subj:'Don Azul Tequila — Premium Placement Opportunity',
+    body:'Dear [Name],
+
+My name is Dr. Luis Lopez Oliva, Sr. Distribution Partner for Don Azul Tequila, crafted in Amatitan, Jalisco.
+
+I would like to introduce our premium tequila line for your establishment:
+
+- Silver Blanco — $28.00/btl dist | MSRP $45.99
+- Reposado (Oak Aged) — $32.00/btl dist | MSRP $52.99
+- Anejo (18 Month) — $38.00/btl dist | MSRP $62.99
+- Premium Vodka — $25.00/btl dist | MSRP $39.99
+
+All products are 100% Blue Agave, 750ml, 6 bottles per case. Minimum order 1 case with free delivery on 5+ cases.
+
+I would welcome the opportunity to schedule a tasting. Please reply or call me directly.
+
+Best regards,
+Dr. Luis Lopez Oliva
+Sr. Distribution Partner — Don Azul Tequila
+DAT-02 | +52-646-340-2686'
+  },
+  reorder:{
+    subj:'Don Azul Tequila — Reorder & Seasonal Pricing',
+    body:'Dear [Name],
+
+Following up on your previous Don Azul order — I wanted to reach out regarding your reorder schedule and share our current seasonal pricing.
+
+We have strong inventory across all SKUs this season and can accommodate same-week delivery.
+
+Current Pricing (valid this month):
+- Silver Blanco: $28.00/btl
+- Reposado: $32.00/btl
+- Anejo: $38.00/btl
+
+Please let me know your preferred quantities and I will confirm delivery.
+
+Best regards,
+Dr. Luis Lopez Oliva
+Sr. Distribution Partner — Don Azul Tequila
+DAT-02 | +52-646-340-2686'
+  },
+  promo:{
+    subj:'Don Azul Tequila — Limited Seasonal Promotion',
+    body:'Dear [Name],
+
+This is a time-sensitive opportunity for your establishment.
+
+Don Azul Tequila is running a limited seasonal promotion on our Silver Blanco and Reposado lines. Orders placed this week qualify for preferred distributor pricing and priority delivery.
+
+Highlights:
+- High margin opportunity (38-40% retail margin)
+- Premium 100% Blue Agave — Amatitan, Jalisco
+- POS materials included with orders of 10+ cases
+
+Availability is limited. Please reply or call me to secure your allocation.
+
+Best regards,
+Dr. Luis Lopez Oliva
+Sr. Distribution Partner — Don Azul Tequila
+DAT-02 | +52-646-340-2686'
+  },
+  flyer:{
+    subj:'Don Azul Tequila — Full Product Line & Pricing',
+    body:'Dear [Name],
+
+Please find below the Don Azul Tequila full product line overview for your reference.
+
+DON AZUL TEQUILA — PLANT #1, AMATITAN JALISCO
+
+Silver Blanco     | $28.00 dist/btl | MSRP $45.99 | 39% margin
+Reposado          | $32.00 dist/btl | MSRP $52.99 | 40% margin
+Anejo             | $38.00 dist/btl | MSRP $62.99 | 40% margin
+Premium Vodka     | $25.00 dist/btl | MSRP $39.99 | 38% margin
+
+All SKUs: 750ml | 6 btl/case | 100% Blue Agave
+Min order: 1 case | Free delivery: 5+ cases
+
+Contact me to place your order or schedule a tasting.
+
+Best regards,
+Dr. Luis Lopez Oliva
+Sr. Distribution Partner — Don Azul Tequila
+DAT-02 | +52-646-340-2686'
+  }
+};
+function loLoadTemplate(key){
+  var t=_loTemplates[key];
+  if(!t) return;
+  document.getElementById('lo-esubj').value=t.subj;
+  document.getElementById('lo-ebody').value=t.body;
+  loEmail('compose');
+}
+function loUseTemplate(key){ loLoadTemplate(key); loGoTab('email'); }
+function loEmailFlyer(type){
+  var map={product:'flyer',pricing:'flyer',commission:'flyer'};
+  loLoadTemplate(map[type]||'flyer');
+  loGoTab('email');
+}
+function loSendEmail(){
+  var to=document.getElementById('lo-eto').value.trim();
+  var subj=document.getElementById('lo-esubj').value.trim();
+  var body=document.getElementById('lo-ebody').value.trim();
+  if(!to||!subj||!body){document.getElementById('lo-estatus').textContent='Fill in all fields.';return;}
+  document.getElementById('lo-estatus').textContent='Opening email client...';
+  var mailto='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+  window.open(mailto,'_blank');
+  setTimeout(function(){document.getElementById('lo-estatus').textContent='Email client opened. Send from your app.';},500);
+}
+</script>
+
+<!-- INVESTOR PITCH TAB -->
+<div id="tab-investor" class="sec" style="display:none">
+  <div class="sec-hdr"><span></span>DON AZUL — INVESTOR PITCH DECK</div>
+  <div style="background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.2);border-radius:10px;padding:14px;margin-bottom:12px">
+    <div style="font-size:10px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:8px">RAISE TARGET: $5,000,000 — $10,000,000 USD</div>
+    <div style="font-size:11px;color:#e2e8f0;line-height:1.7;margin-bottom:10px">
+      Mexausa Food Group, Inc. is raising growth capital to launch Don Azul Tequila into the California and national U.S. market. 
+      RFC-qualified Jalisco manufacturer. NOM/CRT certified. 4 premium expressions. Pricing vetted by Kroger, Total Wine, Royal Caribbean, Gallo, Publix.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px">
+      <div style="padding:8px;background:rgba(0,0,0,0.3);border-radius:6px;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:#C9A55C">3</div>
+        <div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Production Plants</div>
+      </div>
+      <div style="padding:8px;background:rgba(0,0,0,0.3);border-radius:6px;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:#C9A55C">4</div>
+        <div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">SKU Expressions</div>
+      </div>
+      <div style="padding:8px;background:rgba(0,0,0,0.3);border-radius:6px;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:#C9A55C">45%+</div>
+        <div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Gross Margin</div>
+      </div>
+      <div style="padding:8px;background:rgba(0,0,0,0.3);border-radius:6px;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:#C9A55C">8.3%</div>
+        <div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:1px">Category CAGR</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INLINE PDF VIEWER -->
+  <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(201,165,92,0.25);border-radius:10px;padding:14px;margin-bottom:10px">
+    <div style="font-size:9px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:10px">INVESTOR DECK — 11 SLIDES · SAUL GARCIA · STRATEGIC CAPITAL REPRESENTATIVE</div>
+    <div style="font-size:10px;color:rgba(226,232,240,0.6);margin-bottom:12px;line-height:1.6">
+      Full institutional pitch deck. Real pricing from Don Azul Group LLC. Market data, unit economics, 5-year projections, exit strategy.
+    </div>
+    <!-- Inline PDF viewer - reads directly inside the app -->
+    <div style="border-radius:8px;overflow:hidden;margin-bottom:10px;border:1px solid rgba(201,165,92,0.2)">
+      <iframe
+        src="https://mexausafg.com/DonAzul_Investor_Deck_2026.pdf"
+        style="width:100%;height:480px;border:none;background:#0a0c10;"
+        title="Don Azul Tequila Investor Deck 2026"
+      ></iframe>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <a href="https://mexausafg.com/DonAzul_Investor_Deck_2026.pdf" target="_blank"
+         style="display:block;padding:11px;background:linear-gradient(135deg,#8a6020,#C9A55C);border-radius:8px;font-size:11px;font-weight:800;color:#020912;text-align:center;text-decoration:none;letter-spacing:1px">
+        OPEN FULL SCREEN (PDF)
+      </a>
+      <a href="https://mexausafg.com/DonAzul_Investor_Deck_2026.pptx" target="_blank" download
+         style="display:block;padding:9px;background:rgba(201,165,92,0.08);border:1px solid rgba(201,165,92,0.25);border-radius:8px;font-size:10px;font-weight:700;color:#C9A55C;text-align:center;text-decoration:none;letter-spacing:1px">
+        DOWNLOAD PPTX (PowerPoint / Google Slides)
+      </a>
+    </div>
+  </div>
+
+  <!-- DECK HIGHLIGHTS -->
+  <div style="font-size:9px;color:#C9A55C;font-weight:800;letter-spacing:2px;margin-bottom:8px">DECK HIGHLIGHTS</div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+        <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 1 — Cover: $5M–$10M Growth Capital Raise
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 2 — Market: $16.3B U.S. tequila segment, 8.3% CAGR
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 3 — Product: Blanco $79.99 · Reposado $99.99 · Añejo $129.99 · Reserva $139.99
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 4 — Moat: RFC · NOM/CRT · 3 plants · Vetted pricing
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 5 — Unit Economics: Real May 2026 distributor pricing sheet
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 6 — Go-to-Market: CA → TX → National (3-phase)
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 7 — Financials: $3M Yr1 → $48M Yr5 (conservative case)
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 8 — Use of Funds: 35% inventory · 25% sales · 15% brand
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 9 — Leadership: Saul Garcia, Strategic Capital Representative + platform assets
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 10 — Exit: Casamigos/Diageo comps · 5x–15x revenue multiple
+    </div>
+    <div style="display:flex;gap:8px;font-size:9.5px;color:rgba(226,232,240,0.7);padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:5px;border-left:2px solid rgba(201,165,92,0.3)">
+      Slide 11 — Contact: sgarcia@mexausafg.com · +1 (831) 251-3116
+    </div>
+  </div>
+
+  <a href="tel:+18312513116" style="display:block;padding:11px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.3);border-radius:8px;color:#C9A55C;font-size:11px;font-weight:700;text-align:center;text-decoration:none;letter-spacing:1px">
+    Call Saul — Investor Questions: +1 831-251-3116
+  </a>
+</div>
+
+</body>
+</html>

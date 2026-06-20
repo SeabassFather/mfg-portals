@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FinanceLend Mortgage Search Engine</title>
+<style>
+:root{
+  --bg:#020912;--bg2:#0d1117;--card:#161b22;--card2:#1c2333;
+  --gold:#C9A55C;--goldd:#8a6930;--gold2:#E8C87A;
+  --blue:#4a8fd4;--green:#22c55e;--red:#ef4444;
+  --txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;
+  --bord:rgba(201,165,92,0.18);--bord2:rgba(255,255,255,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,'Segoe UI',sans-serif;min-height:100vh;}
+
+/* GATE */
+.gate{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;}
+.g-logo{font-size:22px;font-weight:900;color:var(--gold);letter-spacing:2px;margin-bottom:4px;}
+.g-sub{font-size:10px;color:var(--txt3);letter-spacing:1.5px;margin-bottom:28px;}
+.pin-dots{display:flex;gap:10px;margin-bottom:20px;}
+.pd{width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;}
+.pd.on{background:var(--gold);border-color:var(--gold);}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:192px;}
+.nb{padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:var(--txt);font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;transition:background .1s;}
+.nb:active{background:rgba(201,165,92,0.15);}
+.nb.ok{background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-size:13px;font-weight:800;border:none;}
+#g-err{font-size:11px;color:var(--red);height:16px;margin-top:14px;font-weight:600;}
+.g-pwrd{font-size:9px;color:#1e3a4a;margin-top:20px;}
+
+/* APP */
+#app{display:none;min-height:100vh;}
+.topbar{background:rgba(2,9,18,0.95);border-bottom:1px solid var(--bord);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.tb-brand{display:flex;align-items:center;gap:10px;}
+.tb-logo-text{font-size:16px;font-weight:900;color:var(--gold);letter-spacing:1px;}
+.tb-nmls{font-size:9px;color:var(--txt3);letter-spacing:1px;}
+.tb-right{display:flex;align-items:center;gap:12px;}
+.lang-btn{padding:4px 10px;border-radius:20px;border:1px solid var(--bord);background:transparent;color:var(--txt2);font-size:11px;cursor:pointer;}
+.lang-btn.active{background:var(--gold);color:#020912;font-weight:700;border-color:var(--gold);}
+.apply-btn{padding:8px 18px;border-radius:20px;background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-size:12px;font-weight:800;border:none;cursor:pointer;letter-spacing:.5px;}
+.lock-btn{background:transparent;border:1px solid var(--bord);color:var(--txt3);padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;}
+
+.main-wrap{max-width:1100px;margin:0 auto;padding:32px 20px;}
+
+/* HERO */
+.hero{text-align:center;margin-bottom:40px;}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;opacity:.8;}
+.hero-title{font-size:36px;font-weight:900;line-height:1.1;margin-bottom:10px;}
+.hero-title span{color:var(--gold);}
+.hero-sub{font-size:15px;color:var(--txt2);max-width:580px;margin:0 auto 24px;}
+.hero-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.badge{padding:5px 12px;border-radius:20px;border:1px solid var(--bord);font-size:10px;color:var(--txt2);letter-spacing:.5px;}
+.badge.gold{border-color:rgba(201,165,92,0.4);color:var(--gold);}
+
+/* TABS */
+.prog-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;border-bottom:1px solid var(--bord2);padding-bottom:12px;}
+.pt{padding:8px 18px;border-radius:20px;border:1px solid var(--bord);background:transparent;color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.pt.active{background:var(--gold);color:#020912;border-color:var(--gold);}
+
+/* SEARCH FORM */
+.search-card{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:28px;margin-bottom:28px;}
+.sc-title{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:10px;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+.field input,.field select{background:rgba(255,255,255,0.04);border:1px solid rgba(74,143,212,0.2);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:13px;outline:none;transition:border .2s;font-family:inherit;}
+.field input:focus,.field select:focus{border-color:var(--gold);}
+.field select option{background:#161b22;}
+.field input::placeholder{color:var(--txt3);}
+.dollar-wrap{position:relative;}
+.dollar-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--txt3);font-size:13px;}
+.dollar-wrap input{padding-left:22px;}
+.search-btn{margin-top:20px;padding:13px 32px;background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-size:13px;font-weight:800;border:none;border-radius:10px;cursor:pointer;letter-spacing:.5px;transition:opacity .2s;}
+.search-btn:hover{opacity:.9;}
+.search-btn:disabled{opacity:.5;cursor:not-allowed;}
+.reset-btn{margin-top:20px;margin-left:12px;padding:13px 20px;background:transparent;color:var(--txt2);font-size:12px;font-weight:600;border:1px solid var(--bord);border-radius:10px;cursor:pointer;}
+
+/* RESULTS */
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.results-count{font-size:13px;color:var(--txt2);}
+.results-count span{color:var(--gold);font-weight:700;}
+.program-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:32px;}
+.prog-card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:20px;transition:border-color .2s;cursor:pointer;}
+.prog-card:hover{border-color:rgba(201,165,92,0.4);}
+.prog-card.featured{border-color:rgba(201,165,92,0.5);background:linear-gradient(135deg,rgba(201,165,92,0.06),rgba(13,17,23,0));}
+.pc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.pc-icon{width:38px;height:38px;border-radius:8px;background:rgba(201,165,92,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.pc-badge{font-size:9px;padding:3px 8px;border-radius:10px;font-weight:700;letter-spacing:.5px;}
+.pc-badge.best{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.pc-badge.featured{background:rgba(201,165,92,0.15);color:var(--gold);border:1px solid rgba(201,165,92,0.3);}
+.pc-badge.cross{background:rgba(74,143,212,0.15);color:var(--blue);border:1px solid rgba(74,143,212,0.3);}
+.pc-name{font-size:14px;font-weight:800;margin-bottom:4px;}
+.pc-desc{font-size:11px;color:var(--txt2);line-height:1.5;margin-bottom:14px;}
+.pc-rates{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.pc-rate{background:rgba(255,255,255,0.03);border-radius:6px;padding:8px;text-align:center;}
+.pc-rate-val{font-size:16px;font-weight:800;color:var(--gold);}
+.pc-rate-lbl{font-size:9px;color:var(--txt3);margin-top:2px;}
+.pc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.tag{font-size:9px;padding:3px 8px;border-radius:10px;border:1px solid var(--bord2);color:var(--txt3);}
+.pc-apply{width:100%;padding:10px;background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912;font-size:12px;font-weight:800;border:none;border-radius:8px;cursor:pointer;}
+
+/* ANALYSIS PANEL */
+.analysis-panel{background:var(--card);border:1px solid rgba(201,165,92,0.3);border-radius:16px;padding:28px;margin-bottom:28px;display:none;}
+.analysis-panel.show{display:block;}
+.ap-title{font-size:14px;font-weight:800;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.analysis-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px;}
+.ag-item{background:rgba(255,255,255,0.03);border-radius:10px;padding:14px;}
+.ag-val{font-size:22px;font-weight:900;color:var(--txt);}
+.ag-val.gold{color:var(--gold);}
+.ag-val.green{color:var(--green);}
+.ag-val.red{color:var(--red);}
+.ag-lbl{font-size:10px;color:var(--txt3);margin-top:4px;}
+.amort-bar{background:rgba(255,255,255,0.05);border-radius:8px;height:8px;margin:16px 0 8px;overflow:hidden;}
+.amort-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--blue));border-radius:8px;transition:width .8s ease;}
+.amort-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);}
+.disclaimer{font-size:9px;color:var(--txt3);line-height:1.6;padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid var(--bord2);}
+
+/* ENJOYBAJA LINK */
+.eb-link-card{background:linear-gradient(135deg,rgba(74,143,212,0.1),rgba(201,165,92,0.05));border:1px solid rgba(74,143,212,0.2);border-radius:12px;padding:20px;display:flex;align-items:center;gap:16px;margin-bottom:28px;text-decoration:none;}
+.eb-link-card:hover{border-color:rgba(74,143,212,0.4);}
+.ebl-icon{width:44px;height:44px;border-radius:10px;background:rgba(74,143,212,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ebl-text h4{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px;}
+.ebl-text p{font-size:11px;color:var(--txt2);}
+.ebl-arrow{margin-left:auto;color:var(--blue);font-size:18px;}
+
+/* AGENT TOOLS */
+.agent-strip{background:var(--card2);border:1px solid var(--bord);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:28px;}
+.as-label{font-size:10px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;flex-shrink:0;}
+.as-btn{padding:7px 16px;border-radius:8px;border:1px solid var(--bord);background:transparent;color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;}
+.as-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* FOOTER */
+.footer{text-align:center;padding:32px 20px;border-top:1px solid var(--bord2);color:var(--txt3);font-size:9px;line-height:1.8;}
+.footer a{color:var(--txt3);}
+
+/* NO RESULTS */
+.no-results{text-align:center;padding:48px 20px;color:var(--txt2);}
+.nr-icon{font-size:40px;margin-bottom:12px;opacity:.4;}
+
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr;}
+  .hero-title{font-size:26px;}
+  .program-grid{grid-template-columns:1fr;}
+  .analysis-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="g-logo">FinanceLend</div>
+  <div class="g-sub">NMLS #337526 &bull; SECURE ACCESS</div>
+  <div class="pin-dots" id="pdots">
+    <div class="pd" id="d0"></div>
+    <div class="pd" id="d1"></div>
+    <div class="pd" id="d2"></div>
+    <div class="pd" id="d3"></div>
+  </div>
+  <div class="numpad">
+    <button class="nb" onclick="np('1')" ontouchend="this.click()">1</button>
+    <button class="nb" onclick="np('2')" ontouchend="this.click()">2</button>
+    <button class="nb" onclick="np('3')" ontouchend="this.click()">3</button>
+    <button class="nb" onclick="np('4')" ontouchend="this.click()">4</button>
+    <button class="nb" onclick="np('5')" ontouchend="this.click()">5</button>
+    <button class="nb" onclick="np('6')" ontouchend="this.click()">6</button>
+    <button class="nb" onclick="np('7')" ontouchend="this.click()">7</button>
+    <button class="nb" onclick="np('8')" ontouchend="this.click()">8</button>
+    <button class="nb" onclick="np('9')" ontouchend="this.click()">9</button>
+    <button class="nb" onclick="np('del')" ontouchend="this.click()">&#9003;</button>
+    <button class="nb" onclick="np('0')" ontouchend="this.click()">0</button>
+    <button class="nb ok" onclick="np('ok')" ontouchend="this.click()">OK</button>
+  </div>
+  <div id="g-err"></div>
+  <div class="g-pwrd">Powered by AuditDNA Intelligence</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-brand">
+      <div>
+        <div class="tb-logo-text">FinanceLend</div>
+        <div class="tb-nmls">NMLS #337526 &bull; American 1st Partners NMLS #1773303</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+      <button class="apply-btn" onclick="window.open('https://financelend.me','_blank')">Apply Now</button>
+      <button class="lock-btn" onclick="lock()">Lock</button>
+    </div>
+  </div>
+
+  <div class="main-wrap">
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow" id="t-eyebrow">Mortgage Intelligence Engine</div>
+      <h1 class="hero-title" id="t-title">Find the Right Loan.<br/><span>US &amp; Mexico.</span> Instantly.</h1>
+      <p class="hero-sub" id="t-sub">Enter your client's information below and get a real-time mortgage analysis — rate estimate, monthly payment, program match, and more. Powered by 150+ wholesale lenders.</p>
+      <div class="hero-badges">
+        <span class="badge gold" id="t-b1">150+ Wholesale Lenders</span>
+        <span class="badge" id="t-b2">US &amp; Baja California</span>
+        <span class="badge" id="t-b3">All Nationalities</span>
+        <span class="badge" id="t-b4">Bilingual EN / ES</span>
+        <span class="badge gold" id="t-b5">Agent &amp; Consumer Ready</span>
+      </div>
+    </div>
+
+    <!-- PROGRAM TABS -->
+    <div class="prog-tabs">
+      <button class="pt active" data-prog="all" onclick="setProgram('all')">All Programs</button>
+      <button class="pt" data-prog="purchase" onclick="setProgram('purchase')">Purchase</button>
+      <button class="pt" data-prog="refinance" onclick="setProgram('refinance')">Refinance</button>
+      <button class="pt" data-prog="mexico" onclick="setProgram('mexico')">Mexico Cross-Border</button>
+      <button class="pt" data-prog="commercial" onclick="setProgram('commercial')">Commercial / SBA</button>
+      <button class="pt" data-prog="recovery" onclick="setProgram('recovery')">Mortgage Audit</button>
+    </div>
+
+    <!-- SEARCH FORM -->
+    <div class="search-card">
+      <div class="sc-title" id="t-form-title">Loan Search &amp; Analysis</div>
+      <div class="form-grid">
+        <div class="field">
+          <label id="t-lbl-type">Loan Purpose</label>
+          <select id="f-type" onchange="onTypeChange()">
+            <option value="">Select...</option>
+            <option value="purchase_us">Purchase — US Property</option>
+            <option value="purchase_mx">Purchase — Mexico Property</option>
+            <option value="refi_us">Refinance — US Property</option>
+            <option value="refi_mx">Refinance — Mexico Property</option>
+            <option value="cashout_us">Cash-Out Refi — US</option>
+            <option value="va">VA Loan</option>
+            <option value="fha">FHA Loan</option>
+            <option value="jumbo">Jumbo / Non-QM</option>
+            <option value="sba">SBA 7(a) Business Loan</option>
+            <option value="audit">Mortgage Audit &amp; Recovery</option>
+          </select>
+        </div>
+        <div class="field" id="field-price">
+          <label id="t-lbl-price">Property / Loan Amount</label>
+          <div class="dollar-wrap"><span>$</span><input type="number" id="f-price" placeholder="500,000" min="50000" max="10000000" step="1000" oninput="onInputChange()"/></div>
+        </div>
+        <div class="field" id="field-down">
+          <label id="t-lbl-down">Down Payment</label>
+          <div class="dollar-wrap"><span>$</span><input type="number" id="f-down" placeholder="100,000" min="0" step="1000" oninput="onInputChange()"/></div>
+        </div>
+        <div class="field">
+          <label id="t-lbl-credit">Credit Score</label>
+          <select id="f-credit" onchange="onInputChange()">
+            <option value="">Select...</option>
+            <option value="760+">760+ Excellent</option>
+            <option value="720-759">720-759 Very Good</option>
+            <option value="680-719">680-719 Good</option>
+            <option value="640-679">640-679 Fair</option>
+            <option value="600-639">600-639 Poor</option>
+            <option value="below600">Below 600</option>
+            <option value="none">No US Credit</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="t-lbl-nat">Nationality</label>
+          <select id="f-nat" onchange="onInputChange()">
+            <option value="">Select...</option>
+            <option value="us_citizen">US Citizen / Permanent Resident</option>
+            <option value="mexican">Mexican National</option>
+            <option value="canadian">Canadian</option>
+            <option value="colombian">Colombian</option>
+            <option value="french">French / European</option>
+            <option value="other">Other International</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="t-lbl-income">Annual Income (approx.)</label>
+          <div class="dollar-wrap"><span>$</span><input type="number" id="f-income" placeholder="120,000" min="0" step="1000" oninput="onInputChange()"/></div>
+        </div>
+        <div class="field">
+          <label id="t-lbl-term">Loan Term</label>
+          <select id="f-term" onchange="onInputChange()">
+            <option value="30">30 Year Fixed</option>
+            <option value="15">15 Year Fixed</option>
+            <option value="10">10 Year Fixed</option>
+            <option value="arm5">5/1 ARM</option>
+            <option value="arm7">7/1 ARM</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="t-lbl-prop">Property Type</label>
+          <select id="f-prop" onchange="onInputChange()">
+            <option value="sfr">Single Family Residence</option>
+            <option value="condo">Condo / Townhouse</option>
+            <option value="multi">Multi-Family (2-4 units)</option>
+            <option value="investment">Investment Property</option>
+            <option value="commercial">Commercial</option>
+            <option value="land_mx">Mexico Land / Lot</option>
+            <option value="resi_mx">Mexico Residential</option>
+          </select>
+        </div>
+      </div>
+      <button class="search-btn" id="search-btn" onclick="runSearch()">Analyze &amp; Find Programs</button>
+      <button class="reset-btn" onclick="resetForm()">Clear</button>
+    </div>
+
+    <!-- ANALYSIS PANEL -->
+    <div class="analysis-panel" id="analysis-panel">
+      <div class="ap-title">&#9654; Real-Time Mortgage Analysis</div>
+      <div class="analysis-grid" id="analysis-grid"></div>
+      <div class="amort-bar"><div class="amort-fill" id="amort-fill"></div></div>
+      <div class="amort-lbl"><span id="amort-pi">Principal &amp; Interest</span><span id="amort-tax">Taxes / Insurance Est.</span></div>
+      <div class="disclaimer" id="t-disclaimer">
+        Rate estimates are based on current wholesale market averages and are for illustrative purposes only. Actual rates depend on full underwriting, lender selection, and market conditions at time of lock. Not a commitment to lend. Lender Confidential — identity disclosed only after LOI &rarr; NDA &rarr; Term Sheet. Licensed by CA DFPI. Saul Garcia NMLS #337526 | American 1st Partners NMLS #1773303.
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results-wrap" style="display:none;">
+      <div class="results-header">
+        <div class="results-count" id="results-count"></div>
+        <a href="https://financelend.me" target="_blank" style="font-size:11px;color:var(--blue);text-decoration:none;">Apply at financelend.me &rarr;</a>
+      </div>
+      <div class="program-grid" id="program-grid"></div>
+    </div>
+
+    <!-- ENJOYBAJA LINK -->
+    <a href="https://enjoybaja.com" target="_blank" class="eb-link-card">
+      <div class="ebl-icon">&#127968;</div>
+      <div class="ebl-text">
+        <h4>Looking for Mexico Properties? Visit EnjoyBaja.com</h4>
+        <p>Cross-border property search, Baja California listings, bilingual agent network &amp; mortgage financing bundled.</p>
+      </div>
+      <div class="ebl-arrow">&#8599;</div>
+    </a>
+
+    <!-- AGENT TOOLS -->
+    <div class="agent-strip">
+      <span class="as-label">Agent Tools</span>
+      <button class="as-btn" onclick="printAnalysis()">Print Analysis</button>
+      <button class="as-btn" onclick="copyLink()">Copy Share Link</button>
+      <button class="as-btn" onclick="window.open('https://financelend.me','_blank')">Client Application</button>
+      <button class="as-btn" onclick="window.open('https://enjoybaja.com','_blank')">EnjoyBaja Search</button>
+      <button class="as-btn" onclick="window.open('mailto:sgarcia1911@gmail.com?subject=Referral%20Inquiry','_blank')">Refer a Client</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div style="margin-bottom:8px;font-size:11px;font-weight:700;color:var(--txt2);">FinanceLend &bull; Mexausa Food Group, Inc.</div>
+    Saul Garcia &bull; Sr. Loan Officer NMLS #337526 &bull; American 1st Partners NMLS #1773303<br/>
+    15615 Alton Pkwy Suite 450, Irvine CA 92618 &bull; <a href="https://financelend.me">financelend.me</a> &bull; <a href="https://enjoybaja.com">enjoybaja.com</a><br/>
+    Licensed by the CA DFPI &bull; Equal Housing Lender &bull; Lender identity confidential until NDA &amp; term sheet acceptance.<br/>
+    <br/>Not a commitment to lend. Rates shown are estimates for illustrative purposes only.
+  </div>
+</div>
+
+<script>
+var pin='';
+var PINS={'4321':'demo','0609051974':'owner'};
+var lang='en';
+
+function updateDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+function np(v){if(v==='del')pin=pin.slice(0,-1);else if(v==='ok'){checkPin();return;}else if(pin.length<4)pin+=v;updateDots();if(PINS[pin])setTimeout(checkPin,120);}
+function checkPin(){if(PINS[pin]){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';}else{var e=document.getElementById('g-err');if(e){e.textContent=lang==='en'?'Incorrect PIN':'PIN incorrecto';setTimeout(function(){e.textContent='';},2000);}pin='';updateDots();}}
+function lock(){document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';pin='';updateDots();}
+
+// LANGUAGE
+var TX={
+  en:{eyebrow:'Mortgage Intelligence Engine',title:'Find the Right Loan.<br/><span>US & Mexico.</span> Instantly.',sub:'Enter your client\'s information below and get a real-time mortgage analysis — rate estimate, monthly payment, program match, and more. Powered by 150+ wholesale lenders.',b1:'150+ Wholesale Lenders',b2:'US & Baja California',b3:'All Nationalities',b4:'Bilingual EN / ES',b5:'Agent & Consumer Ready',formTitle:'Loan Search & Analysis',lblType:'Loan Purpose',lblPrice:'Property / Loan Amount',lblDown:'Down Payment',lblCredit:'Credit Score',lblNat:'Nationality',lblIncome:'Annual Income (approx.)',lblTerm:'Loan Term',lblProp:'Property Type',disclaimer:'Rate estimates are based on current wholesale market averages and are for illustrative purposes only. Not a commitment to lend. Lender identity confidential until NDA accepted. Saul Garcia NMLS #337526 | American 1st Partners NMLS #1773303.'},
+  es:{eyebrow:'Motor de Inteligencia Hipotecaria',title:'Encuentra el Pr\u00e9stamo Ideal.<br/><span>EE.UU. y M\u00e9xico.</span> Al Instante.',sub:'Ingresa la informaci\u00f3n de tu cliente y obt\u00e9n un an\u00e1lisis hipotecario en tiempo real — tasa estimada, pago mensual, programa ideal y m\u00e1s. Respaldado por 150+ prestamistas mayoristas.',b1:'150+ Prestamistas Mayoristas',b2:'EE.UU. y Baja California',b3:'Todas las Nacionalidades',b4:'Bilinge\u00fc EN / ES',b5:'Para Agentes y Consumidores',formTitle:'B\u00fasqueda y An\u00e1lisis de Pr\u00e9stamo',lblType:'Prop\u00f3sito del Pr\u00e9stamo',lblPrice:'Monto / Valor de la Propiedad',lblDown:'Enganche',lblCredit:'Puntuaci\u00f3n de Cr\u00e9dito',lblNat:'Nacionalidad',lblIncome:'Ingreso Anual (aprox.)',lblTerm:'Plazo del Pr\u00e9stamo',lblProp:'Tipo de Propiedad',disclaimer:'Las tasas son estimaciones basadas en promedios del mercado mayorista. No constituyen un compromiso de pr\u00e9stamo. Identidad del prestamista confidencial hasta aceptaci\u00f3n de NDA. Saul Garcia NMLS #337526 | American 1st Partners NMLS #1773303.'}
+};
+
+function setLang(l){
+  lang=l;
+  document.getElementById('btn-en').className='lang-btn'+(l==='en'?' active':'');
+  document.getElementById('btn-es').className='lang-btn'+(l==='es'?' active':'');
+  var t=TX[l];
+  document.getElementById('t-eyebrow').textContent=t.eyebrow;
+  document.getElementById('t-title').innerHTML=t.title;
+  document.getElementById('t-sub').textContent=t.sub;
+  document.getElementById('t-b1').textContent=t.b1;
+  document.getElementById('t-b2').textContent=t.b2;
+  document.getElementById('t-b3').textContent=t.b3;
+  document.getElementById('t-b4').textContent=t.b4;
+  document.getElementById('t-b5').textContent=t.b5;
+  document.getElementById('t-form-title').innerHTML=t.formTitle;
+  document.getElementById('t-lbl-type').textContent=t.lblType;
+  document.getElementById('t-lbl-price').textContent=t.lblPrice;
+  document.getElementById('t-lbl-down').textContent=t.lblDown;
+  document.getElementById('t-lbl-credit').textContent=t.lblCredit;
+  document.getElementById('t-lbl-nat').textContent=t.lblNat;
+  document.getElementById('t-lbl-income').textContent=t.lblIncome;
+  document.getElementById('t-lbl-term').textContent=t.lblTerm;
+  document.getElementById('t-lbl-prop').textContent=t.lblProp;
+  document.getElementById('t-disclaimer').textContent=t.disclaimer;
+}
+
+// PROGRAM FILTER
+var activeProgram='all';
+function setProgram(p){
+  activeProgram=p;
+  document.querySelectorAll('.pt').forEach(function(b){b.classList.toggle('active',b.dataset.prog===p);});
+  // pre-select loan type
+  var map={'purchase':'purchase_us','refinance':'refi_us','mexico':'purchase_mx','commercial':'sba','recovery':'audit'};
+  if(map[p])document.getElementById('f-type').value=map[p];
+  onTypeChange();
+}
+
+function onTypeChange(){
+  var t=document.getElementById('f-type').value;
+  var isMx=t==='purchase_mx'||t==='refi_mx';
+  var isRefi=t==='refi_us'||t==='refi_mx'||t==='cashout_us';
+  var isAudit=t==='audit';
+  document.getElementById('field-down').style.display=isRefi||isAudit?'none':'flex';
+  onInputChange();
+}
+
+function onInputChange(){}
+
+// RATE LOOKUP TABLE
+var RATE_TABLE={
+  'purchase_us':{'760+':6.875,'720-759':7.125,'680-719':7.375,'640-679':7.75,'600-639':8.25,'below600':9.5,'none':9.5,'default':7.5},
+  'purchase_mx':{'760+':8.5,'720-759':8.75,'680-719':9.0,'640-679':9.5,'600-639':10.5,'below600':null,'none':8.75,'default':9.0},
+  'refi_us':    {'760+':6.75,'720-759':7.0,'680-719':7.25,'640-679':7.625,'600-639':8.125,'below600':null,'none':null,'default':7.25},
+  'refi_mx':    {'760+':8.25,'720-759':8.5,'680-719':8.875,'640-679':9.25,'600-639':null,'below600':null,'none':8.5,'default':8.75},
+  'cashout_us': {'760+':7.125,'720-759':7.375,'680-719':7.625,'640-679':8.0,'600-639':8.75,'below600':null,'none':null,'default':7.5},
+  'va':         {'760+':6.25,'720-759':6.375,'680-719':6.5,'640-679':6.875,'600-639':7.125,'below600':null,'none':null,'default':6.5},
+  'fha':        {'760+':6.5,'720-759':6.625,'680-719':6.75,'640-679':7.0,'600-639':7.375,'below600':null,'none':null,'default':6.875},
+  'jumbo':      {'760+':7.0,'720-759':7.25,'680-719':7.5,'640-679':null,'600-639':null,'below600':null,'none':null,'default':7.125},
+  'sba':        {'default':9.25},
+  'arm5':       {'760+':6.25,'720-759':6.5,'680-719':6.75,'640-679':7.0,'default':6.75},
+  'arm7':       {'760+':6.5,'720-759':6.75,'680-719':7.0,'640-679':7.375,'default':6.875},
+};
+
+var PROGRAMS=[
+  {id:'conv30',name:'Conventional 30-Year Fixed',icon:'&#127968;',types:['purchase_us','refi_us','cashout_us'],desc:'Primary residence, second homes, or investment. Conforming and super-conforming available. Fast close, low overlays.',badge:'featured',badgeText:'Most Popular',tags:['Conforming','FNMA/FHLMC','Primary & Investment','Fast Close'],applyUrl:'https://financelend.me'},
+  {id:'fha30',name:'FHA 30-Year Fixed',icon:'&#127981;',types:['fha','purchase_us'],desc:'3.5% down with 580+ FICO. Up to 57% DTI. Gift funds allowed. First-time and move-up buyers. Nationwide.',badge:'best',badgeText:'Low Down',tags:['3.5% Down','All Nationalities','Gift Funds OK','580+ FICO'],applyUrl:'https://financelend.me'},
+  {id:'va30',name:'VA Home Loan',icon:'&#127942;',types:['va'],desc:'0% down for eligible US veterans and active duty. No PMI. Competitive rates. Up to $2M+ in high-cost areas.',badge:'best',badgeText:'0% Down',tags:['0% Down','No PMI','Veterans','Active Duty'],applyUrl:'https://financelend.me'},
+  {id:'mxpurch',name:'Mexico Cross-Border Purchase',icon:'&#127987;',types:['purchase_mx','refi_mx'],desc:'Finance Baja California property as a Mexican national or US citizen. Ensenada, Rosarito, Tijuana, Colonet. Fideicomiso or direct title.',badge:'cross',badgeText:'Cross-Border',tags:['Baja California','Mexican Nationals','US Citizens','Bilingual'],applyUrl:'https://financelend.me'},
+  {id:'jumbo',name:'Jumbo & Non-QM',icon:'&#127968;',types:['jumbo','purchase_us','refi_us'],desc:'Loans $800K–$5M+. Bank statement programs, DSCR investor loans, foreign national programs, asset depletion.',badge:null,tags:['$800K+','Bank Statement','DSCR','Foreign National'],applyUrl:'https://financelend.me'},
+  {id:'cashout',name:'Cash-Out Refinance',icon:'&#128176;',types:['cashout_us','refi_us'],desc:'Access your home equity. Pay off debt, invest, or fund renovations. Up to 80% LTV. Primary and investment.',badge:null,tags:['Up to 80% LTV','Debt Payoff','Investment','Primary'],applyUrl:'https://financelend.me'},
+  {id:'arm',name:'Adjustable Rate (5/1 or 7/1 ARM)',icon:'&#128200;',types:['purchase_us','refi_us','purchase_mx'],desc:'Lower initial rate. Ideal for buyers planning to sell or refinance within 5-7 years. SOFR-indexed.',badge:null,tags:['Lower Initial Rate','SOFR Index','5 or 7 Year Fixed'],applyUrl:'https://financelend.me'},
+  {id:'sba',name:'SBA 7(a) Business Loan',icon:'&#127970;',types:['sba'],desc:'Up to $5M for business purchase, expansion, working capital, or real estate. Long terms, government-guaranteed.',badge:null,tags:['Up to $5M','25-Year Term','Working Capital','Real Estate'],applyUrl:'https://financelend.me'},
+  {id:'audit',name:'Mortgage Audit & Recovery',icon:'&#128269;',types:['audit'],desc:'Overpaying on your mortgage? Our AI audit team analyzes your loan for overcharges, servicer errors, and CFPB violations. No recovery = no fee.',badge:'best',badgeText:'No Recovery No Fee',tags:['CFPB Complaint','QWR Deadline','Servicer Errors','Recovery'],applyUrl:'https://financelend.me'},
+];
+
+function calcPayment(principal,annualRate,termYears){
+  if(!annualRate||!principal||!termYears)return 0;
+  var r=annualRate/100/12;
+  var n=termYears*12;
+  if(r===0)return principal/n;
+  return principal*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+}
+
+function fmt(n){return n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function fmtRate(r){return r?r.toFixed(3)+'%':'N/A';}
+
+function runSearch(){
+  var ltype=document.getElementById('f-type').value;
+  var price=parseFloat(document.getElementById('f-price').value)||0;
+  var down=parseFloat(document.getElementById('f-down').value)||0;
+  var credit=document.getElementById('f-credit').value;
+  var nat=document.getElementById('f-nat').value;
+  var income=parseFloat(document.getElementById('f-income').value)||0;
+  var termVal=document.getElementById('f-term').value;
+  var propType=document.getElementById('f-prop').value;
+
+  if(!ltype){alert(lang==='en'?'Please select a loan purpose.':'Por favor selecciona el prop\u00f3sito del pr\u00e9stamo.');return;}
+  if(!price&&ltype!=='audit'){alert(lang==='en'?'Please enter a property or loan amount.':'Por favor ingresa el monto.');return;}
+
+  // Determine loan amount
+  var loanAmt=ltype.startsWith('purchase')?Math.max(price-down,0):price;
+  var ltv=price>0?Math.round((loanAmt/price)*100):0;
+
+  // Get rate
+  var termYears=termVal==='arm5'?30:termVal==='arm7'?30:parseInt(termVal)||30;
+  var rateKey=ltype==='va'?'va':ltype==='fha'?'fha':ltype==='jumbo'?'jumbo':ltype==='sba'?'sba':ltype;
+  var rateTable=RATE_TABLE[rateKey]||RATE_TABLE['purchase_us'];
+  var baseRate=credit&&rateTable[credit]?rateTable[credit]:rateTable['default'];
+
+  // Adjustments
+  if(propType==='investment'&&baseRate)baseRate+=0.625;
+  if(propType==='condo'&&baseRate)baseRate+=0.125;
+  if(loanAmt>726200&&baseRate)baseRate+=0.25;
+  if(termYears===15&&baseRate)baseRate-=0.5;
+  if(termVal==='arm5'&&rateTable['760+'])baseRate=rateTable['760+']?rateTable['760+']*(0.88):baseRate*0.88;
+  if(termVal==='arm7'&&rateTable['760+'])baseRate=rateTable['760+']?rateTable['760+']*(0.91):baseRate*0.91;
+
+  var monthly=baseRate&&loanAmt?calcPayment(loanAmt,baseRate,termYears):0;
+  var taxIns=price?Math.round(price*0.015/12):0;
+  var totalPmt=monthly+taxIns;
+  var dtiRatio=income&&totalPmt?Math.round((totalPmt*12/income)*100):0;
+  var totalInterest=monthly?Math.round(monthly*termYears*12-loanAmt):0;
+
+  // Show analysis
+  if(ltype!=='audit'&&loanAmt>0){
+    var ap=document.getElementById('analysis-panel');
+    ap.className='analysis-panel show';
+    var grid=document.getElementById('analysis-grid');
+    var items=[
+      {val:baseRate?fmtRate(baseRate):'N/A',lbl:lang==='en'?'Est. Interest Rate':'Tasa Estimada',cls:'gold'},
+      {val:monthly?'$'+fmt(Math.round(monthly)):'N/A',lbl:lang==='en'?'Monthly P&I':'Pago Mensual P&I',cls:'gold'},
+      {val:totalPmt?'$'+fmt(Math.round(totalPmt)):'N/A',lbl:lang==='en'?'Total Monthly Est.':'Pago Total Est.',cls:''},
+      {val:'$'+fmt(loanAmt),lbl:lang==='en'?'Loan Amount':'Monto del Pr\u00e9stamo',cls:''},
+      {val:ltv+'%',lbl:'LTV',cls:ltv>80?'red':'green'},
+      {val:down>0?'$'+fmt(down):(ltype.startsWith('purchase')?lang==='en'?'Calc':'Calc':'N/A'),lbl:lang==='en'?'Down Payment':'Enganche',cls:''},
+      {val:totalInterest>0?'$'+fmt(totalInterest):'N/A',lbl:lang==='en'?'Total Interest ('+termYears+'yr)':'Inter\u00e9s Total',cls:totalInterest>200000?'red':''},
+      {val:dtiRatio>0?dtiRatio+'%':'N/A',lbl:'Est. DTI',cls:dtiRatio>43?'red':dtiRatio>36?'':' green'},
+    ];
+    grid.innerHTML=items.map(function(it){return '<div class="ag-item"><div class="ag-val '+it.cls+'">'+it.val+'</div><div class="ag-lbl">'+it.lbl+'</div></div>';}).join('');
+    var piPct=monthly&&totalPmt?Math.round((monthly/totalPmt)*100):70;
+    document.getElementById('amort-fill').style.width=piPct+'%';
+    document.getElementById('amort-pi').textContent=(lang==='en'?'P&I: ':'P&I: ')+(monthly?'$'+fmt(Math.round(monthly)):'');
+    document.getElementById('amort-tax').textContent=(lang==='en'?'Tax/Ins est: ':'Impuesto/Seguro est: ')+(taxIns?'$'+fmt(taxIns)+'/mo':'');
+  } else {
+    document.getElementById('analysis-panel').className='analysis-panel';
+  }
+
+  // Filter programs
+  var filtered=PROGRAMS.filter(function(p){
+    if(activeProgram!=='all'){
+      if(activeProgram==='mexico'&&!['mxpurch'].includes(p.id))return false;
+      if(activeProgram==='purchase'&&!p.types.some(function(t){return t.startsWith('purchase');}))return false;
+      if(activeProgram==='refinance'&&!p.types.some(function(t){return t.startsWith('refi')||t==='cashout_us';}))return false;
+      if(activeProgram==='commercial'&&p.id!=='sba')return false;
+      if(activeProgram==='recovery'&&p.id!=='audit')return false;
+    }
+    if(ltype&&!p.types.includes(ltype)&&ltype!==''){
+      var partial={
+        'purchase_us':['conv30','fha30','va30','jumbo','arm','cashout'],
+        'purchase_mx':['mxpurch','arm'],
+        'refi_us':['conv30','cashout','arm'],
+        'refi_mx':['mxpurch'],
+        'cashout_us':['cashout','conv30'],
+        'va':['va30'],
+        'fha':['fha30'],
+        'jumbo':['jumbo'],
+        'sba':['sba'],
+        'audit':['audit'],
+      };
+      var ok=partial[ltype]||[];
+      if(!ok.includes(p.id))return false;
+    }
+    if(nat==='mexican'&&(p.id==='va30'))return false;
+    if(credit==='below600'&&['jumbo','refi_us','cashout_us'].includes(p.id))return false;
+    return true;
+  });
+
+  // Render programs
+  var wrap=document.getElementById('results-wrap');
+  var pgrid=document.getElementById('program-grid');
+  var cnt=document.getElementById('results-count');
+  wrap.style.display='block';
+  cnt.innerHTML='<span>'+filtered.length+'</span> '+(lang==='en'?'programs matched':'programas coincidentes');
+
+  pgrid.innerHTML=filtered.map(function(p){
+    var rateTable=RATE_TABLE[p.types[0]]||RATE_TABLE['purchase_us'];
+    var estRate=credit&&rateTable[credit]?rateTable[credit]:rateTable['default'];
+    var estPmt=estRate&&loanAmt?calcPayment(loanAmt,estRate,termYears):0;
+    return '<div class="prog-card'+(p.badge==='featured'?' featured':'')+'">'+
+      '<div class="pc-top">'+
+        '<div class="pc-icon">'+p.icon+'</div>'+
+        (p.badge?'<span class="pc-badge '+p.badge+'">'+p.badgeText+'</span>':'<span></span>')+
+      '</div>'+
+      '<div class="pc-name">'+p.name+'</div>'+
+      '<div class="pc-desc">'+p.desc+'</div>'+
+      '<div class="pc-rates">'+
+        '<div class="pc-rate"><div class="pc-rate-val">'+fmtRate(estRate)+'</div><div class="pc-rate-lbl">'+(lang==='en'?'Est. Rate':'Tasa Est.')+'</div></div>'+
+        '<div class="pc-rate"><div class="pc-rate-val">'+(estPmt?'$'+fmt(Math.round(estPmt)):'N/A')+'</div><div class="pc-rate-lbl">'+(lang==='en'?'Monthly':'Mensual')+'</div></div>'+
+        '<div class="pc-rate"><div class="pc-rate-val">'+(termYears||30)+'yr</div><div class="pc-rate-lbl">'+(lang==='en'?'Term':'Plazo')+'</div></div>'+
+      '</div>'+
+      '<div class="pc-tags">'+p.tags.map(function(t){return '<span class="tag">'+t+'</span>';}).join('')+'</div>'+
+      '<button class="pc-apply" onclick="window.open(\''+p.applyUrl+'\',\'_blank\')">'+(lang==='en'?'Apply for This Loan &rarr;':'Solicitar Este Pr\u00e9stamo &rarr;')+'</button>'+
+    '</div>';
+  }).join('');
+}
+
+function resetForm(){
+  ['f-type','f-credit','f-nat','f-term','f-prop'].forEach(function(id){document.getElementById(id).value='';});
+  ['f-price','f-down','f-income'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('analysis-panel').className='analysis-panel';
+  document.getElementById('results-wrap').style.display='none';
+  document.getElementById('f-term').value='30';
+}
+
+function printAnalysis(){window.print();}
+
+function copyLink(){
+  var url=window.location.href;
+  navigator.clipboard.writeText(url).then(function(){alert('Link copied!');}).catch(function(){prompt('Copy this link:',url);});
+}
+
+// localStorage bypass
+(function(){
+  var stored=localStorage.getItem('flme_auth');
+  if(stored==='1'){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';}
+})();
+</script>
+</body>
+</html>

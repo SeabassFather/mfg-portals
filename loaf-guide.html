@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Use the LOAF Mini-Office — Platform Guide | Mexausa Food Group</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --green: #0F7B41;
+    --green-light: #1a9e54;
+    --gold: #C9A55C;
+    --black: #0F1419;
+    --panel: #131b24;
+    --panel2: #1a2433;
+    --border: rgba(201,165,92,0.18);
+    --border-green: rgba(15,123,65,0.3);
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-dimmer: #64748b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15,20,25,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 56px;
+  }
+  .topbar-brand { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; }
+  .topbar-nav { display: flex; gap: 24px; align-items: center; }
+  .topbar-nav a { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .topbar-nav a:hover { color: var(--gold); }
+  .topbar-nav .cta { background: var(--green); color: #fff; padding: 6px 16px; border-radius: 4px; font-size: 9px; letter-spacing: 2px; }
+  .topbar-nav .cta:hover { background: var(--green-light); color: #fff; }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+    margin-top: 56px;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 32px 0;
+  }
+
+  .sidebar-section {
+    margin-bottom: 8px;
+  }
+
+  .sidebar-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 3px;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    padding: 0 20px;
+    margin-bottom: 6px;
+    margin-top: 20px;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 8px 20px;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    font-weight: 500;
+  }
+
+  .sidebar a:hover { color: var(--gold); border-left-color: var(--gold); background: rgba(201,165,92,0.05); }
+  .sidebar a.active { color: var(--green); border-left-color: var(--green); background: rgba(15,123,65,0.08); }
+
+  .sidebar-module {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    font-weight: 500;
+  }
+
+  .sidebar-module:hover { color: var(--gold); border-left-color: var(--gold); background: rgba(201,165,92,0.05); }
+
+  .mod-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    background: rgba(201,165,92,0.15);
+    color: var(--gold);
+    padding: 1px 6px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+  }
+
+  /* MAIN */
+  .main {
+    padding: 48px 56px 80px;
+    max-width: 800px;
+  }
+
+  /* HERO */
+  .guide-hero {
+    margin-bottom: 56px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .guide-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .guide-tag::before { content: ''; display: block; width: 24px; height: 1px; background: var(--green); }
+
+  .guide-hero h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .guide-hero p { font-size: 15px; color: var(--text-dim); max-width: 600px; margin: 0; }
+
+  /* SECTIONS */
+  .guide-section {
+    margin-bottom: 64px;
+    scroll-margin-top: 80px;
+  }
+
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .section-tag::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .guide-section h2 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 18px;
+  }
+
+  .guide-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 28px 0 12px;
+  }
+
+  p { color: var(--text-dim); margin-bottom: 16px; font-size: 15px; line-height: 1.8; }
+  p strong { color: var(--text); font-weight: 600; }
+
+  /* MODULE HEADER */
+  .module-header {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .module-letter {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    min-width: 48px;
+  }
+
+  .module-info .mod-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .module-info .mod-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .module-info .mod-who {
+    font-size: 11px;
+    color: var(--green-light);
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* STEPS */
+  .steps {
+    counter-reset: step;
+    margin: 20px 0;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    counter-increment: step;
+    min-width: 28px;
+    height: 28px;
+    background: rgba(15,123,65,0.2);
+    border: 1px solid var(--border-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .step-num::before { content: counter(step); }
+
+  .step-content { flex: 1; }
+  .step-content strong { display: block; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+  .step-content span { font-size: 13px; color: var(--text-dimmer); line-height: 1.6; }
+
+  /* FIELD TABLE */
+  .field-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+
+  .field-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .field-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(201,165,92,0.08);
+    vertical-align: top;
+  }
+
+  .field-table tr:last-child td { border-bottom: none; }
+
+  .field-name { color: var(--gold); font-family: 'DM Mono', monospace; font-size: 12px; }
+  .field-req { color: var(--green); font-size: 10px; letter-spacing: 1px; }
+  .field-desc { color: var(--text-dimmer); line-height: 1.5; }
+
+  /* WHAT HAPPENS NEXT */
+  .what-next {
+    background: rgba(15,123,65,0.08);
+    border: 1px solid var(--border-green);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+
+  .what-next .wn-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .what-next ul { list-style: none; }
+  .what-next li { font-size: 13px; color: var(--text-dim); padding: 4px 0; padding-left: 16px; position: relative; }
+  .what-next li::before { content: ''; position: absolute; left: 0; top: 11px; width: 5px; height: 5px; background: var(--green); border-radius: 50%; }
+
+  /* TRACEABILITY TABLE */
+  .trace-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 20px 0;
+  }
+
+  .trace-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    text-align: left;
+    padding: 10px 16px;
+    background: var(--panel2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .trace-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(201,165,92,0.08);
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+
+  .trace-table tr:last-child td { border-bottom: none; }
+  .trace-table .step-label { color: var(--gold); font-weight: 600; white-space: nowrap; }
+
+  /* NOTIFICATION LIST */
+  .notif-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .notif-card {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+  }
+
+  .notif-card .nc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .notif-card ul { list-style: none; }
+  .notif-card li { font-size: 12px; color: var(--text-dimmer); padding: 3px 0; padding-left: 12px; position: relative; line-height: 1.5; }
+  .notif-card li::before { content: ''; position: absolute; left: 0; top: 9px; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; }
+
+  /* CERTIFICATION TABLE */
+  .cert-block {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    margin: 16px 0;
+  }
+
+  .cert-block .cb-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cert-block ul { list-style: none; }
+  .cert-block li { font-size: 13px; color: var(--text-dim); padding: 6px 0; border-bottom: 1px solid rgba(201,165,92,0.06); display: flex; align-items: flex-start; gap: 10px; }
+  .cert-block li:last-child { border-bottom: none; }
+  .cert-block li::before { content: ''; min-width: 5px; height: 5px; background: var(--green); border-radius: 50%; margin-top: 8px; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+  /* CONTACT */
+  .contact-strip {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .cs-left h3 { font-size: 16px; color: #fff; font-weight: 700; margin-bottom: 4px; }
+  .cs-left p { font-size: 13px; color: var(--text-dimmer); margin: 0; }
+
+  .cs-right { display: flex; flex-direction: column; gap: 6px; text-align: right; }
+  .cs-item { font-size: 12px; color: var(--gold); }
+  .cs-label { font-size: 10px; color: var(--text-dimmer); letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--green);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 5px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-top: 12px;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover { background: var(--green-light); }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 32px 20px; }
+    .notif-grid { grid-template-columns: 1fr; }
+    .contact-strip { flex-direction: column; }
+    .cs-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-brand">LOAF Platform Guide &mdash; Mexausa Food Group</div>
+  <div class="topbar-nav">
+    <a href="loaf-invitation.html">Invitation Letter</a>
+    <a href="mfginc-loaf.html">Mini-Office</a>
+    <a href="mfginc-loaf.html" class="cta">Join the Network</a>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Getting Started</div>
+      <a href="#start">Registration &amp; Login</a>
+      <a href="#dashboard">Your Dashboard</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Platform Modules</div>
+      <a class="sidebar-module" href="#launch"><span class="mod-badge">L</span> Launch &mdash; Inventory Upload</a>
+      <a class="sidebar-module" href="#origin"><span class="mod-badge">O</span> Origin &mdash; Program Registry</a>
+      <a class="sidebar-module" href="#altruistic"><span class="mod-badge">A</span> Altruistic &mdash; Call for Tender</a>
+      <a class="sidebar-module" href="#factor"><span class="mod-badge">F</span> Factor &mdash; Financing</a>
+      <a class="sidebar-module" href="#bid"><span class="mod-badge">B</span> Bid &mdash; Live Auction</a>
+      <a class="sidebar-module" href="#reverse"><span class="mod-badge">R</span> Reverse &mdash; Reverse Auction</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Platform Features</div>
+      <a href="#book">Book of Business</a>
+      <a href="#traceability">Traceability</a>
+      <a href="#notifications">Notifications</a>
+      <a href="#certifications">Certification Requirements</a>
+      <a href="#support">Support</a>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <div class="guide-hero">
+      <div class="guide-tag">Platform Guide</div>
+      <h1>How to Use Your LOAF Mini-Office</h1>
+      <p>A complete operational walkthrough of every module and feature in the LOAF agricultural trade platform. Built for growers, packers, shippers, buyers, wholesalers, and brokers operating in the US&ndash;Mexico fresh produce corridor.</p>
+    </div>
+
+    <!-- WHAT IS LOAF -->
+    <div class="guide-section" id="start">
+      <div class="section-tag">Overview</div>
+      <h2>What is LOAF?</h2>
+      <p>LOAF &mdash; the <strong>Launch, Origin, Altruistic, Factor</strong> Mini-Office &mdash; is the public-facing trade interface of the AuditDNA agricultural intelligence platform. It gives growers, packers, shippers, buyers, and wholesalers a single location to manage fresh produce trading: uploading inventory, issuing calls for tender, accessing financing, and managing a complete book of business with full traceability.</p>
+
+      <h3>Registration</h3>
+      <p>Navigate to loaf.mexausafg.com and select your participant category: Grower/Packer, Buyer/Wholesaler/Importer, Shipper/Logistics, or Broker/Agent. Complete the registration form and upload your required certifications. Applications are reviewed within 3 business days.</p>
+
+      <h3>First Login</h3>
+      <p>Upon approval you receive login credentials by email. Set your permanent password and 4-digit security PIN. The PIN is required for financing applications and bulk actions. Your dashboard displays active inventory, open tenders, incoming bids, financing status, and recent transaction history.</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- LAUNCH -->
+    <div class="guide-section" id="launch">
+      <div class="section-tag">Module L</div>
+      <div class="module-header">
+        <div class="module-letter">L</div>
+        <div class="module-info">
+          <div class="mod-code">Module L &mdash; Launch</div>
+          <div class="mod-name">Grower Inventory Upload</div>
+          <div class="mod-who">For: Growers, Packers, Shippers</div>
+        </div>
+      </div>
+      <p>The Launch module is how growers and packers bring inventory to market. Upload a lot once &mdash; the platform does the rest.</p>
+
+      <h3>How to Upload Inventory</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Click L &mdash; LAUNCH from your dashboard</strong><span>Opens the inventory upload form for your account.</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Complete the inventory form</strong><span>Enter all required fields (see table below). The more complete your listing, the better your buyer match rate.</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Attach photo or grading certificate (optional)</strong><span>Strongly recommended. Buyers respond faster to listings with visual documentation.</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Click SUBMIT</strong><span>Your listing is live. Buyer notifications begin immediately.</span></div></div>
+      </div>
+
+      <table class="field-table">
+        <thead>
+          <tr><th>Field</th><th>Required</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="field-name">Commodity</td><td class="field-req">Required</td><td class="field-desc">Select from dropdown &mdash; Avocado, Tomato, Strawberry, Lettuce, Pepper, etc.</td></tr>
+          <tr><td class="field-name">Variety</td><td class="field-req">Required</td><td class="field-desc">Specify variety: Hass, Roma, Driscoll, Romaine, Serrano, etc.</td></tr>
+          <tr><td class="field-name">Volume</td><td class="field-req">Required</td><td class="field-desc">Quantity and unit: lbs, kg, boxes, pallets, cases</td></tr>
+          <tr><td class="field-name">Size / Count</td><td class="field-req">Required</td><td class="field-desc">Pack size or count per box: 48ct, 60ct, 25 lb box, etc.</td></tr>
+          <tr><td class="field-name">Grade</td><td class="field-req">Required</td><td class="field-desc">US Fancy, US No. 1, Commercial, Organic, etc.</td></tr>
+          <tr><td class="field-name">Origin</td><td class="field-req">Required</td><td class="field-desc">City/Region and State/Country of origin</td></tr>
+          <tr><td class="field-name">Availability Window</td><td class="field-req">Required</td><td class="field-desc">First available date through last available date</td></tr>
+          <tr><td class="field-name">Asking Price</td><td class="field-req">Optional</td><td class="field-desc">Per unit price. Leave blank for negotiated / open offer</td></tr>
+          <tr><td class="field-name">Food Safety Certification</td><td class="field-req">Auto</td><td class="field-desc">Auto-populated from your profile. Update here if certification has changed.</td></tr>
+          <tr><td class="field-name">Notes</td><td class="field-req">Optional</td><td class="field-desc">Special handling, program details, packaging specifications</td></tr>
+        </tbody>
+      </table>
+
+      <div class="what-next">
+        <div class="wn-label">What Happens After You Submit</div>
+        <ul>
+          <li>AuditDNA classifies your lot against 33,000+ buyer contacts by commodity, market, and volume capacity</li>
+          <li>Customized notification emails sent to every matched buyer within minutes</li>
+          <li>You receive confirmation: number of buyers notified and markets reached</li>
+          <li>Buyer inquiries and offers arrive in your dashboard in real time</li>
+          <li>Edit volume, price, or availability window at any time from your dashboard</li>
+          <li>Mark the lot as SOLD, PARTIAL, or WITHDRAWN when complete</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ORIGIN -->
+    <div class="guide-section" id="origin">
+      <div class="section-tag">Module O</div>
+      <div class="module-header">
+        <div class="module-letter">O</div>
+        <div class="module-info">
+          <div class="mod-code">Module O &mdash; Origin</div>
+          <div class="mod-name">Program Registration</div>
+          <div class="mod-who">For: Growers with Year-Round or Recurring Programs</div>
+        </div>
+      </div>
+      <p>Use Origin to register an ongoing supply program &mdash; not a single lot, but a recurring supply relationship. This creates a permanent verified grower profile that buyers can find and reference continuously.</p>
+
+      <h3>Use This Module If:</h3>
+      <p>You have a year-round program (continuous avocado supply, recurring berry program, ongoing tomato supply from a specific region). You want buyers to find your ongoing availability without you re-uploading every week. You are establishing a branded grower identity on the platform.</p>
+
+      <div class="what-next">
+        <div class="wn-label">Verified Program Benefits</div>
+        <ul>
+          <li>Green VERIFIED badge displayed on all your inventory listings</li>
+          <li>Priority placement in buyer commodity searches</li>
+          <li>Direct profile link shareable with your own buyer network</li>
+          <li>Eligible for expedited financing application review</li>
+          <li>Season calendar visible to buyers showing your peak availability windows</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ALTRUISTIC -->
+    <div class="guide-section" id="altruistic">
+      <div class="section-tag">Module A</div>
+      <div class="module-header">
+        <div class="module-letter">A</div>
+        <div class="module-info">
+          <div class="mod-code">Module A &mdash; Altruistic</div>
+          <div class="mod-name">Call for Tender</div>
+          <div class="mod-who">For: Buyers, Wholesalers, Importers, Distributors</div>
+        </div>
+      </div>
+      <p>The Altruistic module is how buyers issue a formal, structured Call for Tender. Post what you need &mdash; the platform broadcasts immediately to every qualified grower in the network whose profile matches your specifications.</p>
+
+      <h3>How to Issue a Call for Tender</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Click A &mdash; ALTRUISTIC from your dashboard</strong></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Complete the tender form</strong><span>Commodity, variety, volume, grade required, delivery window, destination, and target price (optional).</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Enable BROADCAST TO GROWERS</strong><span>Check this box to immediately notify all matching growers in the network.</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Click SUBMIT CALL FOR TENDER</strong></div></div>
+      </div>
+
+      <div class="what-next">
+        <div class="wn-label">What Happens After You Submit</div>
+        <ul>
+          <li>Every matching grower receives an immediate notification with your tender specifications</li>
+          <li>Growers submit bids directly through the platform</li>
+          <li>Bids appear in your dashboard ranked by price, proximity, certification status, and relationship history</li>
+          <li>Request clarification from any bidder through the platform messaging system</li>
+          <li>Award the tender &mdash; a Purchase Order is generated automatically with full terms</li>
+          <li>Selected grower receives PO with all specifications, delivery terms, and payment conditions</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- FACTOR -->
+    <div class="guide-section" id="factor">
+      <div class="section-tag">Module F</div>
+      <div class="module-header">
+        <div class="module-letter">F</div>
+        <div class="module-info">
+          <div class="mod-code">Module F &mdash; Factor</div>
+          <div class="mod-name">Factoring &amp; PO Finance</div>
+          <div class="mod-who">For: Growers, Shippers, Buyers with Confirmed Orders</div>
+        </div>
+      </div>
+
+      <h3>Accounts Receivable Factoring</h3>
+      <p>Convert a confirmed, delivered PACA application pending invoice to working capital without waiting for the buyer's payment terms to expire.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Click F &mdash; FACTOR, then select INVOICE FACTORING</strong></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Upload your invoice</strong><span>Invoice number and date, buyer name and PACA license, commodity and delivery confirmation, invoice amount and payment terms, proof of delivery.</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Submit for review</strong><span>Our financing team responds with advance terms within 1 business day.</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Accept terms &mdash; advance processed</strong><span>The platform manages collection through payment.</span></div></div>
+      </div>
+
+      <h3>Purchase Order Financing</h3>
+      <p>Have a confirmed purchase order but need capital to fund procurement, packing, or logistics before delivery?</p>
+      <div class="steps">
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Click F &mdash; FACTOR, then select PO FINANCING</strong></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Upload your purchase order</strong><span>Buyer name and contact, PO number and terms, your cost breakdown (procurement + packing + freight), business banking information.</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Submit for review</strong><span>Financing terms presented within 2 business days based on PO value and your cost structure.</span></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Accept terms &mdash; advance disbursed</strong><span>Upon delivery and invoicing, the advance is repaid from invoice proceeds.</span></div></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- BID AND REVERSE -->
+    <div class="guide-section" id="bid">
+      <div class="section-tag">Modules B &amp; R</div>
+      <div class="module-header">
+        <div class="module-letter">B</div>
+        <div class="module-info">
+          <div class="mod-code">Module B &mdash; Bid</div>
+          <div class="mod-name">Live Auction</div>
+          <div class="mod-who">For: Growers listing lots / Buyers seeking spot product</div>
+        </div>
+      </div>
+      <p>Growers list a specific lot with a reserve price and auction duration. Buyers bid in real time. The system awards to the highest qualifying bidder when the auction closes. An auto-bid feature allows buyers to set a maximum and the system bids incrementally on their behalf.</p>
+    </div>
+
+    <div class="guide-section" id="reverse">
+      <div class="module-header">
+        <div class="module-letter">R</div>
+        <div class="module-info">
+          <div class="mod-code">Module R &mdash; Reverse</div>
+          <div class="mod-name">Reverse Auction</div>
+          <div class="mod-who">For: Buyers posting needs / Growers competing for business</div>
+        </div>
+      </div>
+      <p>The inverse of Module B. A buyer posts a specific need &mdash; commodity, volume, grade, delivery date &mdash; and growers compete openly with their best price. Use Reverse when you want market price discovery through open competition. Use Altruistic (Module A) when you want structured, confidential sealed bids evaluated by your team.</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- BOOK OF BUSINESS -->
+    <div class="guide-section" id="book">
+      <div class="section-tag">Platform Feature</div>
+      <h2>Your Book of Business</h2>
+      <p>Every action you take on the LOAF platform is logged to your book of business &mdash; your permanent operational record. Accessible from any device. Exportable to PDF or CSV at any time.</p>
+      <div class="cert-block">
+        <div class="cb-header">Book of Business Contents</div>
+        <ul>
+          <li>All active and historical inventory listings with unique lot numbers and full specifications</li>
+          <li>Open and completed purchase orders with all terms and delivery confirmation</li>
+          <li>Bid history &mdash; every bid submitted and every bid received, with timestamps and outcomes</li>
+          <li>Financing applications, advance history, and collection records</li>
+          <li>Contact directory &mdash; your verified trading partners on the platform</li>
+          <li>Document vault &mdash; certifications, food safety records, inspection reports</li>
+          <li>Payment and transaction ledger with full audit trail</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- TRACEABILITY -->
+    <div class="guide-section" id="traceability">
+      <div class="section-tag">Platform Feature</div>
+      <h2>Traceability &mdash; How It Works</h2>
+      <p>Every transaction on LOAF generates an immutable chain of custody record that satisfies FSMA requirements, retailer audit standards, and FDA Traceability Rule Key Data Elements. Records cannot be edited after confirmation.</p>
+      <table class="trace-table">
+        <thead>
+          <tr><th>Transaction Step</th><th>Data Captured</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="step-label">Inventory Upload</td><td>Grower ID, growing region, commodity, Traceability Lot Code, harvest/pack date, certifications, packing house</td></tr>
+          <tr><td class="step-label">Bid / Tender Match</td><td>Buyer ID, bid terms, award confirmation, timestamp</td></tr>
+          <tr><td class="step-label">Purchase Order</td><td>PO number, delivery terms, payment terms, both party signatures</td></tr>
+          <tr><td class="step-label">Delivery Confirmation</td><td>Delivery date, receiver name and location, condition notes, temperature log if provided</td></tr>
+          <tr><td class="step-label">Invoicing &amp; Payment</td><td>Invoice date, payment terms, payment date, method, amount</td></tr>
+        </tbody>
+      </table>
+      <p>In the event of a recall, the platform can immediately identify every buyer who received product from a specific lot, pull all chain of custody documentation, and generate a complete FDA-formatted response &mdash; in minutes.</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- NOTIFICATIONS -->
+    <div class="guide-section" id="notifications">
+      <div class="section-tag">Platform Feature</div>
+      <h2>Notifications &amp; Alerts</h2>
+      <div class="notif-grid">
+        <div class="notif-card">
+          <div class="nc-label">Growers &amp; Packers</div>
+          <ul>
+            <li>Buyer notification delivered &mdash; X buyers reached</li>
+            <li>New Call for Tender matching your commodity profile</li>
+            <li>Bid award &mdash; you have won a tender</li>
+            <li>Financing advance approved and disbursed</li>
+            <li>Certification expiration approaching &mdash; 60, 30, 7 days</li>
+          </ul>
+        </div>
+        <div class="notif-card">
+          <div class="nc-label">Buyers &amp; Wholesalers</div>
+          <ul>
+            <li>New inventory matching your commodity preferences</li>
+            <li>Bid update on your active calls for tender</li>
+            <li>Purchase order confirmed by grower</li>
+            <li>Delivery confirmed</li>
+            <li>Invoice received</li>
+          </ul>
+        </div>
+      </div>
+      <p>Notifications delivered by email. Configure your commodity preferences in account settings to control which products trigger notifications and at what volume thresholds.</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- CERTIFICATIONS -->
+    <div class="guide-section" id="certifications">
+      <div class="section-tag">Participation Requirements</div>
+      <h2>Certification Requirements</h2>
+
+      <div class="cert-block">
+        <div class="cb-header">Growers &amp; Packers &mdash; Mexico-Based</div>
+        <ul>
+          <li>SENASICA current certification (required for US export)</li>
+          <li>Phytosanitary certificate per shipment</li>
+          <li>GlobalG.A.P. or equivalent food safety certification (strongly preferred)</li>
+          <li>USDA AMS inspection documentation for imported lots</li>
+          <li>Cold chain documentation if temperature-sensitive commodity</li>
+        </ul>
+      </div>
+
+      <div class="cert-block">
+        <div class="cb-header">Growers &amp; Packers &mdash; US-Based</div>
+        <ul>
+          <li>USDA Harmonized GAP or LGMA (California leafy greens mandatory)</li>
+          <li>FSMA Produce Safety Rule compliance &mdash; written food safety plan required</li>
+          <li>Water testing records current</li>
+          <li>Worker health and hygiene training documentation</li>
+        </ul>
+      </div>
+
+      <div class="cert-block">
+        <div class="cb-header">Buyers &amp; Wholesalers</div>
+        <ul>
+          <li>PACA license required for buyers of PACA-covered commodities above de minimis</li>
+          <li>Traceability program documentation for retail and foodservice accounts</li>
+          <li>Banking references and trade credit history</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- SUPPORT -->
+    <div class="guide-section" id="support">
+      <div class="section-tag">Platform Support</div>
+      <h2>Support &amp; Contact</h2>
+      <p>AI-assisted support agents are available inside the platform 24 hours a day, 7 days a week. Click the chat icon in any module to connect with a specialist agent for grower onboarding, buyer sourcing, financing, or compliance questions.</p>
+      <p>Human account managers are available Monday through Friday, 7am&ndash;6pm Pacific Time, for complex situations, large program discussions, and direct relationship development.</p>
+    </div>
+
+    <!-- CONTACT STRIP -->
+    <div class="contact-strip">
+      <div class="cs-left">
+        <h3>Ready to Join?</h3>
+        <p>Application takes 15 minutes. Reviewed within 3 business days.</p>
+        <a href="mfginc-loaf.html" class="btn-primary">Begin Your Application</a>
+      </div>
+      <div class="cs-right">
+        <div class="cs-item"><span class="cs-label">Direct</span>Saul Garcia &mdash; +1-831-251-3116</div>
+        <div class="cs-item"><span class="cs-label">MX WhatsApp</span>+52-646-340-2686</div>
+        <div class="cs-item"><span class="cs-label">Email</span>Saul@mexausafg.com</div>
+        <div class="cs-item"><span class="cs-label">Platform</span>loaf.mexausafg.com</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+#loaf-chat-bubble{position:fixed;bottom:24px;right:24px;z-index:9999}
+#loaf-chat-btn{width:56px;height:56px;border-radius:50%;background:#0F7B41;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(15,123,65,0.4);display:flex;align-items:center;justify-content:center}
+#loaf-chat-btn svg{width:24px;height:24px;fill:#fff}
+#loaf-chat-panel{display:none;position:absolute;bottom:68px;right:0;width:360px;background:#131b24;border:1px solid rgba(201,165,92,0.2);border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5);flex-direction:column}
+#loaf-chat-panel.open{display:flex}
+#loaf-chat-header{background:#0F1419;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(201,165,92,0.15)}
+#loaf-chat-header .ch-title{font-family:monospace;font-size:11px;letter-spacing:2px;color:#C9A55C;text-transform:uppercase;font-weight:600}
+#loaf-agent-select{background:#1a2433;border:1px solid rgba(201,165,92,0.2);color:#94a3b8;font-size:10px;padding:4px 8px;border-radius:4px;letter-spacing:1px}
+#loaf-chat-close{background:none;border:none;color:#64748b;cursor:pointer;font-size:18px;line-height:1;padding:0 4px}
+#loaf-chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:320px;min-height:120px}
+.lc-msg-user{align-self:flex-end;background:#0F7B41;color:#fff;padding:10px 14px;border-radius:12px 12px 2px 12px;font-size:13px;max-width:85%;line-height:1.5}
+.lc-msg-agent{align-self:flex-start;background:#1a2433;border:1px solid rgba(201,165,92,0.12);color:#cbd5e1;padding:10px 14px;border-radius:12px 12px 12px 2px;font-size:13px;max-width:90%;line-height:1.6}
+.lc-msg-typing{align-self:flex-start;color:#64748b;font-size:12px;font-style:italic;padding:4px 0}
+.lc-agent-label{font-family:monospace;font-size:9px;letter-spacing:2px;color:#C9A55C;text-transform:uppercase;margin-bottom:4px}
+#loaf-chat-input-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid rgba(201,165,92,0.1);background:#0F1419}
+#loaf-chat-input{flex:1;background:#1a2433;border:1px solid rgba(201,165,92,0.15);border-radius:6px;color:#e2e8f0;font-size:13px;padding:10px 12px;outline:none;resize:none;font-family:inherit}
+#loaf-chat-input::placeholder{color:#475569}
+#loaf-chat-send{background:#0F7B41;border:none;border-radius:6px;color:#fff;cursor:pointer;padding:0 14px;font-size:11px;letter-spacing:1px;font-weight:700;transition:background 0.15s}
+#loaf-chat-send:hover{background:#1a9e54}
+#loaf-chat-send:disabled{background:#1e293b;color:#475569;cursor:not-allowed}
+</style>
+<div id="loaf-chat-bubble">
+  <div id="loaf-chat-panel">
+    <div id="loaf-chat-header">
+      <span class="ch-title">LOAF Support</span>
+      <select id="loaf-agent-select">
+        <option value="">Auto-Route</option>
+        <option value="INTAKE">Intake</option>
+        <option value="GROWER">Grower / Packer</option>
+        <option value="BUYER">Buyer / Wholesale</option>
+        <option value="FINANCE">Trade Finance</option>
+        <option value="COMPLIANCE">Compliance</option>
+      </select>
+      <button id="loaf-chat-close">&times;</button>
+    </div>
+    <div id="loaf-chat-msgs">
+      <div class="lc-agent-label">Intake Specialist</div>
+      <div class="lc-msg-agent">Welcome to the LOAF Platform. I can connect you with a specialist in grower onboarding, buyer sourcing, trade finance, or compliance. What brings you here today?</div>
+    </div>
+    <div id="loaf-chat-input-row">
+      <textarea id="loaf-chat-input" placeholder="Ask anything about joining or using LOAF..." rows="2"></textarea>
+      <button id="loaf-chat-send">SEND</button>
+    </div>
+  </div>
+  <button id="loaf-chat-btn" title="Talk to a LOAF specialist">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+  </button>
+</div>
+<script>
+(function(){
+  var API = '/api/loaf/agent/chat';
+  var sessionId = null;
+  var btn = document.getElementById('loaf-chat-btn');
+  var panel = document.getElementById('loaf-chat-panel');
+  var closeBtn = document.getElementById('loaf-chat-close');
+  var msgs = document.getElementById('loaf-chat-msgs');
+  var input = document.getElementById('loaf-chat-input');
+  var send = document.getElementById('loaf-chat-send');
+  var agentSel = document.getElementById('loaf-agent-select');
+
+  btn.addEventListener('click', function(){ panel.classList.toggle('open'); if(panel.classList.contains('open')) input.focus(); });
+  closeBtn.addEventListener('click', function(){ panel.classList.remove('open'); });
+
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); fire(); } });
+  send.addEventListener('click', fire);
+
+  function addMsg(text, role, agentName){
+    if(agentName){ var lbl=document.createElement('div'); lbl.className='lc-agent-label'; lbl.textContent=agentName; msgs.appendChild(lbl); }
+    var d=document.createElement('div');
+    d.className = role==='user' ? 'lc-msg-user' : 'lc-msg-agent';
+    d.textContent=text;
+    msgs.appendChild(d);
+    msgs.scrollTop=msgs.scrollHeight;
+    return d;
+  }
+
+  function fire(){
+    var msg = input.value.trim();
+    if(!msg) return;
+    addMsg(msg, 'user');
+    input.value='';
+    send.disabled=true;
+    var typing=document.createElement('div');
+    typing.className='lc-msg-typing';
+    typing.textContent='Agent is responding...';
+    msgs.appendChild(typing);
+    msgs.scrollTop=msgs.scrollHeight;
+
+    fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message: msg, agent: agentSel.value || undefined, session_id: sessionId })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      typing.remove();
+      if(d.ok){
+        sessionId = d.session_id;
+        addMsg(d.response, 'agent', d.agent_display);
+      } else {
+        addMsg('Something went wrong. Please try again or contact Saul@mexausafg.com directly.', 'agent');
+      }
+    })
+    .catch(function(){
+      typing.remove();
+      addMsg('Connection error. Reach us directly: Saul@mexausafg.com | +1-831-251-3116', 'agent');
+    })
+    .finally(function(){ send.disabled=false; input.focus(); });
+  }
+})();
+</script>
+</body>
+</html>

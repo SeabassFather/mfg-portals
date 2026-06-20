@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WE LINK — Mexausa Food Group</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,sans-serif;background:linear-gradient(135deg,#c5cad1 0%,#d8dce2 50%,#c2c7ce 100%);min-height:100vh;padding:0 0 60px}
+.hdr{background:rgba(255,255,255,0.65);backdrop-filter:blur(12px);border-bottom:1px solid rgba(15,20,25,0.10);padding:18px 24px;display:flex;align-items:center;gap:12px}
+.logo{height:36px}
+.hdr-text h1{font-size:20px;font-weight:800;color:#0F1419;letter-spacing:-0.5px}
+.hdr-text p{font-size:11px;color:#475569;margin-top:1px}
+.hero{text-align:center;padding:40px 24px 28px}
+.hero h2{font-size:28px;font-weight:800;color:#0F1419;letter-spacing:-0.5px;margin-bottom:8px}
+.hero p{font-size:14px;color:#475569;max-width:480px;margin:0 auto;line-height:1.6}
+.type-row{display:flex;gap:12px;justify-content:center;padding:0 24px 28px;flex-wrap:wrap}
+.type-btn{flex:1;max-width:200px;padding:20px 16px;background:rgba(255,255,255,0.65);border:2px solid transparent;border-radius:12px;cursor:pointer;text-align:center;transition:border-color 0.15s}
+.type-btn.active-lo{border-color:#0F7B41}
+.type-btn.active-gr{border-color:#C9A55C}
+.type-btn.active-sp{border-color:#3b82f6}
+.type-icon{font-size:28px;margin-bottom:8px}
+.type-btn h3{font-size:14px;font-weight:800;color:#0F1419;margin-bottom:4px}
+.type-btn p{font-size:11px;color:#475569;line-height:1.4}
+.form-wrap{max-width:520px;margin:0 auto;padding:0 20px}
+.card{background:rgba(255,255,255,0.65);backdrop-filter:blur(12px);border:1px solid rgba(15,20,25,0.10);border-radius:12px;padding:24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border-radius:7px;border:1px solid rgba(15,20,25,0.15);background:rgba(255,255,255,0.85);font-size:13px;color:#0F1419;font-family:inherit}
+.field textarea{height:80px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-submit{width:100%;padding:14px;background:#0F7B41;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:0.5px;margin-top:8px}
+.btn-submit:disabled{opacity:0.6;cursor:not-allowed}
+.note{font-size:11px;color:#475569;font-style:italic;margin-top:10px;text-align:center;line-height:1.5}
+.success{display:none;text-align:center;padding:40px 20px}
+.success-card{background:rgba(255,255,255,0.65);border:1px solid rgba(15,123,65,0.3);border-radius:12px;padding:32px 24px;max-width:400px;margin:0 auto}
+.success-card h2{font-size:22px;font-weight:800;color:#0F7B41;margin-bottom:8px}
+.blind-id-box{background:#0F7B41;color:#fff;font-size:28px;font-weight:800;padding:16px;border-radius:8px;margin:16px 0;letter-spacing:2px}
+.success-card p{font-size:13px;color:#475569;line-height:1.6}
+.loaf-link{display:block;margin:16px auto 0;text-align:center;color:#0F7B41;font-size:13px;font-weight:700;text-decoration:none}
+.lang-toggle{margin-left:auto;display:flex;gap:6px}
+.lang-btn{padding:5px 12px;border-radius:5px;border:1px solid rgba(15,20,25,0.15);background:rgba(255,255,255,0.5);font-size:11px;font-weight:700;cursor:pointer;color:#475569}
+.lang-btn.active{background:#0F1419;color:#fff;border-color:#0F1419}
+</style>
+
+<script>
+var PIN='4321',PLEN=4,entered='';
+function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
+function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
+
+var _lang=(localStorage.getItem('WL_GL_lang')||'es');
+var _STRINGS={
+  en:{
+    hdr:'WE LINK — MFG',sub:'MFG · Agricultural Intelligence · Americas',
+    lock:'Lock',welink:'WE LINK',wesource:'WE SOURCE',aglab:'AG-LAB',
+    factor:'Factoring / PO',agents:'AI Agents',
+    loafBtn:'Open LOAF Portal',
+    greeting:'Welcome',note:'Language / Idioma',
+  },
+  es:{
+    hdr:'WE LINK — MFG',sub:'MFG · Inteligencia Agrícola · Américas',
+    lock:'Salir',welink:'WE LINK',wesource:'WE SOURCE',aglab:'AG-LAB',
+    factor:'Factoraje / PO',agents:'Agentes IA',
+    loafBtn:'Abrir Portal LOAF',
+    greeting:'Bienvenido',note:'Idioma / Language',
+  }
+};
+function _T(k){return(_STRINGS[_lang]||_STRINGS.en)[k]||'';}
+function _setLang(l){
+  _lang=l;
+  localStorage.setItem('WL_GL_lang',l);
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    el.textContent=l==='es'?(el.getAttribute('data-es')||el.getAttribute('data-en')):el.getAttribute('data-en');
+  });
+  var en=document.getElementById('_lt_en'),es=document.getElementById('_lt_es');
+  if(en){en.style.fontWeight=l==='en'?'900':'400';en.style.color=l==='en'?'#C9A55C':'rgba(255,255,255,0.4)';}
+  if(es){es.style.fontWeight=l==='es'?'900':'400';es.style.color=l==='es'?'#C9A55C':'rgba(255,255,255,0.4)';}
+}
+window.addEventListener('DOMContentLoaded',function(){_setLang(_lang);});
+</script>
+</head>
+<body>
+<div class="hdr">
+  <img src="/AuditDNALOGO.png" class="logo" alt="Mexausa Food Group"/>
+  <div class="hdr-text">
+    <h1 id="hdr-title">WE LINK</h1>
+    <p id="hdr-sub">Land + Grower + Capital + Supplier Marketplace</p>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+  </div>
+</div>
+
+<div class="hero">
+  <h2 id="hero-h2">Connect Land with Growers</h2>
+  <p id="hero-p">Land owners and growers connect anonymously. You receive a private WE LINK ID. Your identity is protected until you choose to proceed.</p>
+</div>
+
+<div class="type-row">
+  <div class="type-btn" id="btn-lo" onclick="selectType('land_owner')">
+    <div class="type-icon">&#127807;</div>
+    <h3 id="lbl-lo">Land Owner</h3>
+    <p id="sub-lo">I have land available for lease or partnership</p>
+  </div>
+  <div class="type-btn" id="btn-gr" onclick="selectType('grower')">
+    <div class="type-icon">&#128247;</div>
+    <h3 id="lbl-gr">Grower</h3>
+    <p id="sub-gr">I have experience and need land to work</p>
+  </div>
+  <div class="type-btn" id="btn-sp" onclick="selectType('supplier')">
+    <div class="type-icon">&#128666;</div>
+    <h3 id="lbl-sp">Supplier</h3>
+    <p id="sub-sp">I supply seeds, inputs, equipment or services</p>
+  </div>
+</div>
+
+<div class="form-wrap" id="form-wrap" style="display:none">
+  <div class="card">
+    <div class="grid2">
+      <div class="field">
+        <label id="lbl-name">Company / Ranch Name</label>
+        <input id="f-name" type="text" placeholder="Rancho El Sol"/>
+      </div>
+      <div class="field">
+        <label id="lbl-region">Region</label>
+        <input id="f-region" type="text" placeholder="Mexicali Valley"/>
+      </div>
+      <div class="field">
+        <label id="lbl-state">State</label>
+        <input id="f-state" type="text" placeholder="Baja California"/>
+      </div>
+      <div class="field">
+        <label id="lbl-ha">Hectares</label>
+        <input id="f-ha" type="number" placeholder="0"/>
+      </div>
+    </div>
+    <div class="field">
+      <label id="lbl-crops">Crops (comma separated)</label>
+      <input id="f-crops" type="text" placeholder="Broccoli, Lettuce, Cabbage"/>
+    </div>
+    <div class="field">
+      <label id="lbl-water">Water Source</label>
+      <input id="f-water" type="text" placeholder="Canal, Well, District"/>
+    </div>
+    <div class="field">
+      <label id="lbl-seeking">Seeking</label>
+      <select id="f-seeking">
+        <option value="grower">Grower / Productor</option>
+        <option value="land_owner">Land / Tierra</option>
+        <option value="capital">Capital / Financing</option>
+        <option value="buyer">Buyer / Comprador</option>
+        <option value="supplier">Supplier / Proveedor</option>
+      </select>
+    </div>
+    <div class="field">
+      <label id="lbl-desc">Description</label>
+      <textarea id="f-desc" placeholder="Describe your land, operation, or what you offer..."></textarea>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label id="lbl-contact">Contact Name</label>
+        <input id="f-contact" type="text"/>
+      </div>
+      <div class="field">
+        <label id="lbl-phone">Phone</label>
+        <input id="f-phone" type="tel"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input id="f-email" type="email"/>
+    </div>
+    <button class="btn-submit" id="btn-submit" onclick="submitForm()">REGISTER</button>
+    <p class="note" id="note-privacy">Your contact info stays private. You receive a blind WE LINK ID. Identities are only disclosed after mutual agreement, NDA, and term sheet acceptance. Managed by Mexausa Food Group Inc.</p>
+  </div>
+</div>
+
+<div class="success" id="success-wrap">
+  <div class="success-card">
+    <h2 id="success-h2">You are registered.</h2>
+    <p id="success-p1">Your WE LINK ID:</p>
+    <div class="blind-id-box" id="blind-id-display">WL-LO-0000</div>
+    <p id="success-p2">Save this ID. Mexausa Food Group will contact you when a match is found. Your identity stays private until you approve.</p>
+    <a class="loaf-link" href="https://mexausafg.com" id="loaf-back-link">Back to mexausafg.com</a>
+  </div>
+</div>
+
+<script>
+var lang = 'en';
+var profileType = '';
+var T = {
+  en: {
+    'hdr-title':'WE LINK','hdr-sub':'Land + Grower + Capital + Supplier Marketplace',
+    'hero-h2':'Connect Land with Growers','hero-p':'Land owners and growers connect anonymously. You receive a private WE LINK ID. Your identity is protected until you choose to proceed.',
+    'lbl-lo':'Land Owner','sub-lo':'I have land available for lease or partnership',
+    'lbl-gr':'Grower','sub-gr':'I have experience and need land to work',
+    'lbl-sp':'Supplier','sub-sp':'I supply seeds, inputs, equipment or services',
+    'lbl-name':'Company / Ranch Name','lbl-region':'Region','lbl-state':'State','lbl-ha':'Hectares',
+    'lbl-crops':'Crops (comma separated)','lbl-water':'Water Source','lbl-seeking':'Seeking','lbl-desc':'Description',
+    'lbl-contact':'Contact Name','lbl-phone':'Phone',
+    'note-privacy':'Your contact info stays private. You receive a blind WE LINK ID. Identities are only disclosed after mutual agreement, NDA, and term sheet acceptance. Managed by Mexausa Food Group Inc.',
+    'success-h2':'You are registered.','success-p1':'Your WE LINK ID:','success-p2':'Save this ID. Mexausa Food Group will contact you when a match is found. Your identity stays private until you approve.',
+  },
+  es: {
+    'hdr-title':'WE LINK','hdr-sub':'Tierra + Productor + Capital + Proveedores',
+    'hero-h2':'Conectamos Tierras con Productores','hero-p':'Propietarios y productores se conectan de forma anonima. Recibe un ID privado de WE LINK. Tu identidad esta protegida hasta que decidas continuar.',
+    'lbl-lo':'Propietario','sub-lo':'Tengo tierra disponible para renta o sociedad',
+    'lbl-gr':'Productor','sub-gr':'Tengo experiencia y necesito tierra para trabajar',
+    'lbl-sp':'Proveedor','sub-sp':'Proveo semillas, insumos, equipo o servicios',
+    'lbl-name':'Empresa / Rancho','lbl-region':'Region','lbl-state':'Estado','lbl-ha':'Hectareas',
+    'lbl-crops':'Cultivos (separados por coma)','lbl-water':'Fuente de Agua','lbl-seeking':'Buscando','lbl-desc':'Descripcion',
+    'lbl-contact':'Nombre de Contacto','lbl-phone':'Telefono',
+    'note-privacy':'Tu informacion de contacto es privada. Recibes un ID ciego de WE LINK. Las identidades solo se revelan despues de acuerdo mutuo, NDA y aceptacion de terminos. Gestionado por Mexausa Food Group Inc.',
+    'success-h2':'Estas registrado.','success-p1':'Tu ID de WE LINK:','success-p2':'Guarda este ID. Mexausa Food Group te contactara cuando encontremos un match. Tu identidad es privada hasta que apruebes.',
+  }
+};
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===l.toUpperCase())});
+  var t=T[l];
+  Object.keys(t).forEach(function(k){var el=document.getElementById(k);if(el)el.textContent=t[k]});
+}
+function selectType(type){
+  profileType=type;
+  document.getElementById('btn-lo').className='type-btn'+(type==='land_owner'?' active-lo':'');
+  document.getElementById('btn-gr').className='type-btn'+(type==='grower'?' active-gr':'');
+  document.getElementById('btn-sp').className='type-btn'+(type==='supplier'?' active-sp':'');
+  document.getElementById('form-wrap').style.display='block';
+  document.getElementById('form-wrap').scrollIntoView({behavior:'smooth'});
+}
+function submitForm(){
+  var btn=document.getElementById('btn-submit');
+  btn.disabled=true; btn.textContent='Sending...';
+  var payload={
+    profile_type:profileType,
+    display_name:document.getElementById('f-name').value,
+    region:document.getElementById('f-region').value,
+    state:document.getElementById('f-state').value,
+    hectares:document.getElementById('f-ha').value||null,
+    commodities:document.getElementById('f-crops').value.split(',').map(function(s){return s.trim()}).filter(Boolean),
+    water_source:document.getElementById('f-water').value,
+    seeking:document.getElementById('f-seeking').value,
+    description:document.getElementById('f-desc').value,
+    contact_name:document.getElementById('f-contact').value,
+    contact_phone:document.getElementById('f-phone').value,
+    contact_email:document.getElementById('f-email').value
+  };
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/we-link/profiles',{
+    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+  }).then(function(r){return r.json()}).then(function(d){
+    document.getElementById('blind-id-display').textContent=d.blind_id||'WL-OK';
+    document.getElementById('form-wrap').style.display='none';
+    document.querySelector('.type-row').style.display='none';
+    document.querySelector('.hero').style.display='none';
+    document.getElementById('success-wrap').style.display='block';
+    setLang(lang);
+  }).catch(function(){
+    btn.disabled=false; btn.textContent='REGISTER';
+    alert('Error submitting. Please try again.');
+  });
+}
+</script>
+
+<!-- LOAF FEATURE QUICK NAV — injected by MFG platform sprint -->
+<div id="loaf-feature-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:8px 10px;display:flex;gap:5px;align-items:center">
+  <a href="/mfginc-loaf.html" style="flex:1;text-align:center;text-decoration:none">
+    <div style="font-size:7px;font-weight:900;color:#C9A55C;letter-spacing:1px">LOAF</div>
+  </a>
+  <a href="/mfginc-loaf.html#welink" onclick="sessionStorage.setItem('loaf_goto','welink')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(15,123,65,0.12);border:1px solid rgba(15,123,65,0.25);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#4ade80;line-height:1.4">WE<br>LINK</div>
+  </a>
+  <a href="/mfginc-loaf.html#wesource" onclick="sessionStorage.setItem('loaf_goto','wesource')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#C9A55C;line-height:1.4">WE<br>SOURCE</div>
+  </a>
+  <a href="/mfginc-loaf.html#aglab" onclick="sessionStorage.setItem('loaf_goto','aglab')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#60a5fa;line-height:1.4">AG<br>LAB</div>
+  </a>
+  <a href="/mfginc-loaf.html#factor" onclick="sessionStorage.setItem('loaf_goto','factor')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#a78bfa;line-height:1.4">FACTOR<br>PO</div>
+  </a>
+  <a href="/mfginc-loaf.html#aiagents" onclick="sessionStorage.setItem('loaf_goto','aiagents')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:6px">
+    <div style="font-size:7px;font-weight:700;color:#fbbf24;line-height:1.4">AI<br>AGENTS</div>
+  </a>
+</div>
+<script>
+// Auto-route to feature on LOAF page if arriving from staff portal
+(function(){
+  var goto=sessionStorage.getItem('loaf_goto');
+  if(goto&&window.loafShowFeature){sessionStorage.removeItem('loaf_goto');window.loafShowFeature(goto);}
+})();
+</script>
+
+
+<div id="_lang_toggle" style="position:fixed;top:10px;right:10px;z-index:10000;display:flex;gap:4px;background:rgba(2,9,18,0.9);border:1px solid rgba(201,165,92,0.3);border-radius:20px;padding:3px 8px">
+  <button id="_lt_en" onclick="_setLang('en')" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:10px;font-weight:400;cursor:pointer;padding:2px 4px">EN</button>
+  <span style="color:rgba(255,255,255,0.2);font-size:10px;line-height:1.8">|</span>
+  <button id="_lt_es" onclick="_setLang('es')" style="background:none;border:none;color:#C9A55C;font-size:10px;font-weight:900;cursor:pointer;padding:2px 4px">ES</button>
+</div>
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;">
+  <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:6px;">WE-LINK</div>
+  <div style="font-size:11px;color:#64748b;margin-bottom:28px;letter-spacing:1px;">SECURE ACCESS — ENTER PIN</div>
+  <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+  <div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+  <div style="font-size:9px;color:#1e3a4a;margin-top:20px;">Powered by AuditDNA Intelligence</div>
+</div>
+
+<div id="app" style="display:none;">
+</body>
+</html>

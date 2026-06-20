@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>KS Services — BD Command Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#020912;--bg2:#0d1117;--card:#161b22;--gold:#C9A55C;--blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;--border:rgba(201,165,92,0.15)}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;overflow-x:hidden}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:24px}
+.g-logo{font-size:26px;font-weight:900;color:var(--gold);letter-spacing:2px;margin-bottom:2px}
+.g-sub{font-size:9px;color:var(--txt3);letter-spacing:3px;margin-bottom:24px}
+.g-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:320px;text-align:center}
+.g-lbl{font-size:9px;color:var(--txt3);letter-spacing:2px;font-weight:700;margin-bottom:14px}
+.dots{display:flex;gap:8px;justify-content:center;margin-bottom:18px}
+.dot{width:11px;height:11px;border-radius:50%;border:2px solid rgba(201,165,92,0.25);background:transparent;transition:.15s}
+.dot.on{background:var(--gold);border-color:var(--gold)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.nk{padding:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;font-size:18px;font-weight:500;cursor:pointer;user-select:none}
+.nk:active{background:rgba(201,165,92,0.15);border-color:var(--gold)}
+.g-err{font-size:10px;color:var(--red);height:14px;margin-top:4px}
+.g-hint{font-size:9px;color:var(--txt3);margin-top:10px}
+
+/* USER BADGE */
+#user-badge{position:fixed;top:8px;right:12px;z-index:8000;display:none;flex-direction:column;align-items:flex-end;gap:4px}
+.ubadge{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:9px;font-weight:700;color:var(--gold)}
+.urole{font-size:8px;color:var(--txt3)}
+
+/* APP */
+#app{display:none;min-height:100vh;padding-bottom:80px}
+.hdr{background:linear-gradient(135deg,#080f1e,#0a1628);border-bottom:2px solid var(--gold);padding:14px 16px 10px}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.hdr-brand{font-size:19px;font-weight:900;color:var(--gold);letter-spacing:1.5px}
+.hdr-badge{font-size:8px;font-weight:700;color:var(--bg);background:var(--gold);padding:3px 9px;border-radius:10px;letter-spacing:1px}
+.hdr-sub{font-size:9px;color:var(--txt3)}
+.tier-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:8px;font-weight:700;letter-spacing:1px;margin-left:6px}
+.tier-pro{background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);color:var(--purple)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center}
+.stat-n{font-size:20px;font-weight:900;color:var(--gold)}
+.stat-l{font-size:7px;color:var(--txt3);font-weight:700;letter-spacing:.5px;margin-top:2px}
+
+.tabnav{display:flex;overflow-x:auto;padding:0 16px;gap:6px;margin-bottom:12px;scrollbar-width:none}
+.tabnav::-webkit-scrollbar{display:none}
+.tn{flex-shrink:0;padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:20px;font-size:10px;font-weight:700;color:var(--txt2);cursor:pointer;white-space:nowrap}
+.tn.act{background:rgba(201,165,92,0.12);border-color:var(--gold);color:var(--gold)}
+
+.sec{display:none;padding:0 16px}
+.sec.on{display:block}
+.sec-hdr{font-size:9px;font-weight:800;color:var(--gold);letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-hdr::after{content:'';flex:1;height:1px;background:rgba(201,165,92,0.12)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.card-hdr{font-size:9px;font-weight:800;color:var(--gold);letter-spacing:2px;margin-bottom:10px}
+
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{background:rgba(10,22,40,1);padding:7px 8px;text-align:left;font-size:8px;color:var(--gold);font-weight:700;letter-spacing:1px;border-bottom:1px solid rgba(201,165,92,0.15)}
+.tbl td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt2)}
+.tbl td:first-child{color:var(--txt);font-weight:600}
+.tbl tr:hover td{background:rgba(201,165,92,0.03)}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.5px}
+.b-hot{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.b-warm{background:rgba(201,165,92,0.12);color:var(--gold);border:1px solid rgba(201,165,92,0.2)}
+.b-cold{background:rgba(100,116,139,0.12);color:var(--txt3);border:1px solid rgba(100,116,139,0.2)}
+.b-green{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.b-blue{background:rgba(74,143,212,0.12);color:var(--blue);border:1px solid rgba(74,143,212,0.2)}
+.b-purple{background:rgba(167,139,250,0.12);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
+
+.inp{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 10px;color:var(--txt);font-size:12px;outline:none;font-family:inherit;margin-bottom:8px}
+.inp:focus{border-color:rgba(201,165,92,0.4)}
+select.inp option{background:#0d1117}
+.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.inp-lbl{font-size:9px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin-bottom:3px}
+.btn{padding:9px 18px;border:none;border-radius:8px;font-size:10px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:1px}
+.btn-gold{background:var(--gold);color:var(--bg)}
+.btn-ghost{background:rgba(201,165,92,0.08);border:1px solid rgba(201,165,92,0.25);color:var(--gold)}
+.btn-red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.btn-blue{background:rgba(74,143,212,0.1);border:1px solid rgba(74,143,212,0.2);color:var(--blue)}
+.btn-sm{padding:4px 10px;font-size:9px}
+
+/* MESSENGER */
+.msg-bubble{padding:9px 12px;border-radius:12px;max-width:80%;margin-bottom:6px;font-size:11px;line-height:1.4}
+.msg-out{background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.2);color:var(--txt);margin-left:auto;border-radius:12px 12px 2px 12px}
+.msg-in{background:var(--bg2);border:1px solid rgba(255,255,255,0.06);color:var(--txt2);border-radius:12px 12px 12px 2px}
+.msg-meta{font-size:8px;color:var(--txt3);margin-bottom:2px}
+#chat-area{height:260px;overflow-y:auto;padding:8px;background:rgba(0,0,0,0.2);border-radius:10px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05)}
+
+/* GPS MAP */
+.gps-dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,0.2);display:inline-block;margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.2)}50%{box-shadow:0 0 0 8px rgba(34,197,94,0.05)}}
+.staff-loc{display:flex;align-items:center;padding:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:6px}
+.staff-info{flex:1}
+.staff-name{font-size:12px;font-weight:700;color:var(--txt)}
+.staff-loc-txt{font-size:10px;color:var(--txt3)}
+
+/* FILE UPLOAD */
+.file-drop{border:2px dashed rgba(201,165,92,0.25);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px}
+.file-drop:hover{border-color:var(--gold);background:rgba(201,165,92,0.04)}
+.file-item{display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.05)}
+.file-icon{font-size:18px;flex-shrink:0}
+.file-name{font-size:11px;color:var(--txt);font-weight:600;flex:1}
+.file-size{font-size:9px;color:var(--txt3)}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:12px}
+.cal-day{text-align:center;padding:6px 2px;font-size:10px;border-radius:6px;cursor:pointer;position:relative}
+.cal-day.hdr{font-size:8px;color:var(--txt3);font-weight:700;padding:4px 2px;cursor:default}
+.cal-day.today{background:rgba(201,165,92,0.15);color:var(--gold);font-weight:700}
+.cal-day.has-event::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--green)}
+.cal-day:hover:not(.hdr){background:rgba(255,255,255,0.05)}
+.cal-event{display:flex;align-items:flex-start;gap:8px;padding:8px;background:rgba(255,255,255,0.02);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;margin-bottom:6px}
+.cal-event-time{font-size:9px;color:var(--gold);font-weight:700;white-space:nowrap;min-width:40px}
+.cal-event-body{flex:1}
+.cal-event-title{font-size:11px;color:var(--txt);font-weight:700}
+.cal-event-detail{font-size:9px;color:var(--txt3);margin-top:2px}
+
+/* EMAIL COMPOSER */
+.email-from{background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.15);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:10px;color:var(--txt2)}
+
+/* USER MANAGEMENT */
+.user-row{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:6px}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--gold);flex-shrink:0}
+.user-info{flex:1}
+.user-name{font-size:12px;font-weight:700;color:var(--txt)}
+.user-role{font-size:9px;color:var(--txt3)}
+
+/* PIPE BAR */
+.pipe-bar{height:5px;border-radius:3px;background:rgba(255,255,255,0.06);margin:3px 0 8px;overflow:hidden}
+.pipe-fill{height:100%;border-radius:3px}
+
+/* PROSPECT */
+.prospect{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;margin-bottom:8px}
+.p-name{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.p-co{font-size:10px;color:var(--blue);margin-bottom:6px}
+.p-meta{display:flex;gap:6px;flex-wrap:wrap}
+.p-tag{font-size:8px;color:var(--txt3);background:rgba(255,255,255,0.04);border-radius:4px;padding:2px 6px}
+
+#smsg{font-size:10px;color:var(--green);font-weight:700;margin-left:8px;display:none}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;">
+  <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:4px;">KS Services</div>
+  <div style="font-size:10px;color:#64748b;margin-bottom:28px;letter-spacing:1.5px;">SECURE ACCESS — ENTER PIN</div>
+  <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0"></div><div class="pd" id="d1"></div><div class="pd" id="d2"></div><div class="pd" id="d3"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:192px;">
+    <button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">1</button>
+    <button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">2</button>
+    <button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">3</button>
+    <button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">4</button>
+    <button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">5</button>
+    <button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">6</button>
+    <button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">7</button>
+    <button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">8</button>
+    <button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">9</button>
+    <button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">&#9003;</button>
+    <button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;">0</button>
+    <button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;border:none;cursor:pointer;">OK</button>
+  </div>
+  <div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+  <div style="font-size:9px;color:#1e3a4a;margin-top:20px;">Powered by AuditDNA Intelligence</div>
+</div>
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-top">
+      <div>
+        <div class="hdr-brand">KS SERVICES <span class="tier-pill tier-pro">PRO</span></div>
+        <div class="hdr-sub">Business Development Command &nbsp;|&nbsp; New York, NY</div>
+      </div>
+      <div style="text-align:right">
+        <div class="hdr-badge" id="hdr-role">MANAGER</div>
+        <div style="font-size:8px;color:var(--txt3);margin-top:3px">150 W 28th St, Suite 1103</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="s-prospects">24</div><div class="stat-l">PROSPECTS</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--blue)">$2.4M</div><div class="stat-l">PIPELINE</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--green)">7</div><div class="stat-l">CONTRACTS</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--gold)" id="s-staff">5</div><div class="stat-l">STAFF ONLINE</div></div>
+  </div>
+
+  <div class="tabnav" id="tabnav">
+    <div class="tn act" onclick="goTab('dashboard')">Dashboard</div>
+    <div class="tn" onclick="goTab('prospects')">Prospects</div>
+    <div class="tn" onclick="goTab('pipeline')">Pipeline</div>
+    <div class="tn" onclick="goTab('calendar')">Calendar</div>
+    <div class="tn" onclick="goTab('messenger')">Messenger</div>
+    <div class="tn" onclick="goTab('gps')">GPS / Team</div>
+    <div class="tn" onclick="goTab('files')">Files</div>
+    <div class="tn" onclick="goTab('email')">Email</div>
+    <div class="tn" onclick="goTab('users')" id="tab-users-btn">Users</div>
+    <div class="tn" onclick="goTab('reports')">Reports</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="sec on" id="tab-dashboard">
+    <div class="sec-hdr">COMMAND OVERVIEW</div>
+    <div class="card" style="border-color:rgba(239,68,68,0.2)">
+      <div class="card-hdr" style="color:var(--red)">HOT TARGETS — ACTION TODAY</div>
+      <div class="prospect">
+        <div class="p-name">Silverstein Properties</div>
+        <div class="p-co">Commercial RE — Lower Manhattan</div>
+        <div class="p-meta"><span class="badge b-hot">HOT</span><span class="p-tag">Security Contract</span><span class="p-tag">$280K/yr</span><span class="p-tag">Call today</span></div>
+      </div>
+      <div class="prospect">
+        <div class="p-name">NYC Housing Authority</div>
+        <div class="p-co">Government — City-wide</div>
+        <div class="p-meta"><span class="badge b-hot">HOT</span><span class="p-tag">Gov Security</span><span class="p-tag">$1.2M bid</span><span class="p-tag">Decision this week</span></div>
+      </div>
+      <div class="prospect">
+        <div class="p-name">RXR Realty</div>
+        <div class="p-co">Commercial — Midtown + Tri-State</div>
+        <div class="p-meta"><span class="badge b-warm">WARM</span><span class="p-tag">Building Services</span><span class="p-tag">$410K/yr</span><span class="p-tag">Proposal sent</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">PIPELINE BY SECTOR</div>
+      <div style="font-size:10px;color:var(--txt2);display:flex;justify-content:space-between;margin-bottom:3px"><span>Commercial Real Estate</span><span style="color:var(--gold)">$1.1M</span></div>
+      <div class="pipe-bar"><div class="pipe-fill" style="width:72%;background:var(--gold)"></div></div>
+      <div style="font-size:10px;color:var(--txt2);display:flex;justify-content:space-between;margin-bottom:3px"><span>Residential / Multifamily</span><span style="color:var(--blue)">$620K</span></div>
+      <div class="pipe-bar"><div class="pipe-fill" style="width:41%;background:var(--blue)"></div></div>
+      <div style="font-size:10px;color:var(--txt2);display:flex;justify-content:space-between;margin-bottom:3px"><span>Government Contracts</span><span style="color:var(--red)">$1.2M</span></div>
+      <div class="pipe-bar"><div class="pipe-fill" style="width:80%;background:var(--red)"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">TEAM ACTIVITY — LAST 24H</div>
+      <div id="dash-activity"></div>
+    </div>
+  </div>
+
+  <!-- PROSPECTS -->
+  <div class="sec" id="tab-prospects">
+    <div class="sec-hdr">PROSPECT TRACKER</div>
+    <div class="card">
+      <div class="card-hdr">ADD PROSPECT</div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">CONTACT NAME</div><input class="inp" id="p-name" placeholder="Full name"/></div>
+        <div><div class="inp-lbl">COMPANY</div><input class="inp" id="p-co" placeholder="Company"/></div>
+      </div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">SECTOR</div>
+          <select class="inp" id="p-sector">
+            <option value="">Select...</option>
+            <option>Commercial RE</option><option>Residential / Multifamily</option>
+            <option>Government</option><option>Mixed-Use Development</option>
+            <option>Property Management Co.</option><option>REIT</option>
+          </select>
+        </div>
+        <div><div class="inp-lbl">STATUS</div>
+          <select class="inp" id="p-status">
+            <option value="">Select...</option>
+            <option>Cold</option><option>Warm</option><option>Hot</option>
+            <option>Proposal Sent</option><option>Negotiating</option>
+            <option>Closed Won</option><option>Closed Lost</option>
+          </select>
+        </div>
+      </div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">EST. CONTRACT VALUE</div><input class="inp" id="p-val" type="number" placeholder="$"/></div>
+        <div><div class="inp-lbl">NEXT ACTION DATE</div><input class="inp" id="p-date" type="date"/></div>
+      </div>
+      <div><div class="inp-lbl">ASSIGN TO</div>
+        <select class="inp" id="p-assign">
+          <option>Guillermo Cuadros</option><option>BD Rep 1</option><option>BD Rep 2</option><option>BD Rep 3</option>
+        </select>
+      </div>
+      <div><div class="inp-lbl">NOTES</div><textarea class="inp" id="p-notes" rows="2" placeholder="Key info, referral, talking points..."></textarea></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn btn-gold" onclick="addProspect()">ADD PROSPECT</button>
+        <span id="smsg">Saved!</span>
+      </div>
+    </div>
+    <div id="prospect-list"></div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="sec" id="tab-pipeline">
+    <div class="sec-hdr">SALES PIPELINE</div>
+    <div class="card">
+      <div class="card-hdr">STAGE OVERVIEW</div>
+      <table class="tbl">
+        <thead><tr><th>STAGE</th><th>COUNT</th><th>VALUE</th><th>PROB.</th></tr></thead>
+        <tbody>
+          <tr><td>Initial Contact</td><td style="color:var(--txt3)">8</td><td style="color:var(--txt3)">$890K</td><td><span class="badge b-cold">10%</span></td></tr>
+          <tr><td>Needs Assessment</td><td style="color:var(--txt3)">5</td><td style="color:var(--txt3)">$640K</td><td><span class="badge b-cold">25%</span></td></tr>
+          <tr><td>Proposal Sent</td><td style="color:var(--txt3)">4</td><td style="color:var(--txt3)">$1.1M</td><td><span class="badge b-warm">50%</span></td></tr>
+          <tr><td>Negotiating</td><td style="color:var(--txt3)">3</td><td style="color:var(--txt3)">$580K</td><td><span class="badge b-hot">75%</span></td></tr>
+          <tr><td>Closed Won</td><td style="color:var(--green)">7</td><td style="color:var(--green)">$2.1M</td><td><span class="badge b-green">WON</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-hdr">LOG DEAL</div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">COMPANY</div><input class="inp" id="d-co" placeholder="Client name"/></div>
+        <div><div class="inp-lbl">VALUE ($)</div><input class="inp" id="d-val" type="number" placeholder="Annual value"/></div>
+      </div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">STAGE</div>
+          <select class="inp" id="d-stage">
+            <option>Initial Contact</option><option>Needs Assessment</option><option>Proposal Sent</option><option>Negotiating</option><option>Closed Won</option>
+          </select>
+        </div>
+        <div><div class="inp-lbl">ASSIGNED REP</div>
+          <select class="inp" id="d-rep">
+            <option>Guillermo Cuadros</option><option>BD Rep 1</option><option>BD Rep 2</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-gold" onclick="addDeal()">LOG DEAL</button>
+      <div id="deal-list" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="sec" id="tab-calendar">
+    <div class="sec-hdr">TEAM CALENDAR</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <button class="btn btn-ghost btn-sm" onclick="calNav(-1)">&#8592; Prev</button>
+        <div style="font-size:13px;font-weight:800;color:var(--txt)" id="cal-month-lbl">June 2026</div>
+        <button class="btn btn-ghost btn-sm" onclick="calNav(1)">Next &#8594;</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div style="font-size:9px;color:var(--txt3);margin-bottom:10px" id="cal-day-lbl">Selected: Today</div>
+      <div id="cal-events-today"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">ADD EVENT</div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">TITLE</div><input class="inp" id="ev-title" placeholder="Meeting, site visit, call..."/></div>
+        <div><div class="inp-lbl">DATE</div><input class="inp" id="ev-date" type="date"/></div>
+      </div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">TIME</div><input class="inp" id="ev-time" type="time"/></div>
+        <div><div class="inp-lbl">ASSIGN TO</div>
+          <select class="inp" id="ev-assign">
+            <option>All Team</option><option>Guillermo Cuadros</option><option>BD Rep 1</option><option>BD Rep 2</option>
+          </select>
+        </div>
+      </div>
+      <div><div class="inp-lbl">NOTES</div><input class="inp" id="ev-notes" placeholder="Location, agenda, prospect name..."/></div>
+      <button class="btn btn-gold" onclick="addEvent()">ADD TO CALENDAR</button>
+    </div>
+  </div>
+
+  <!-- MESSENGER -->
+  <div class="sec" id="tab-messenger">
+    <div class="sec-hdr">TEAM MESSENGER</div>
+    <div class="card">
+      <div style="display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;padding-bottom:4px">
+        <button class="btn btn-gold btn-sm" onclick="setChannel('All Team')">All Team</button>
+        <button class="btn btn-ghost btn-sm" onclick="setChannel('Guillermo C.')">Guillermo C.</button>
+        <button class="btn btn-ghost btn-sm" onclick="setChannel('BD Rep 1')">BD Rep 1</button>
+        <button class="btn btn-ghost btn-sm" onclick="setChannel('BD Rep 2')">BD Rep 2</button>
+        <button class="btn btn-ghost btn-sm" onclick="setChannel('Management')">Management</button>
+      </div>
+      <div style="font-size:9px;color:var(--txt3);margin-bottom:6px" id="channel-lbl">Channel: All Team</div>
+      <div id="chat-area"></div>
+      <div style="display:flex;gap:8px">
+        <input class="inp" id="msg-inp" placeholder="Type a message..." style="margin:0;flex:1" onkeydown="if(event.key==='Enter')sendMsg()"/>
+        <button class="btn btn-gold" onclick="sendMsg()">Send</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">QUICK UPDATES</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn btn-ghost" onclick="quickMsg('On site visit — Silverstein Properties')">On site visit — Silverstein Properties</button>
+        <button class="btn btn-ghost" onclick="quickMsg('Proposal submitted to client')">Proposal submitted to client</button>
+        <button class="btn btn-ghost" onclick="quickMsg('Contract signed — heading back to office')">Contract signed — heading back to office</button>
+        <button class="btn btn-ghost" onclick="quickMsg('Client meeting confirmed for tomorrow')">Client meeting confirmed for tomorrow</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GPS / TEAM -->
+  <div class="sec" id="tab-gps">
+    <div class="sec-hdr">TEAM GPS &amp; LOCATION</div>
+    <div class="card">
+      <div class="card-hdr">MY LOCATION</div>
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <button class="btn btn-gold" onclick="checkIn()">Check In</button>
+        <button class="btn btn-red" onclick="checkOut()">Check Out</button>
+        <button class="btn btn-blue" onclick="getMyLocation()">Get My Location</button>
+      </div>
+      <div id="my-loc-display" style="font-size:11px;color:var(--txt2);padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.05)">Location not yet captured.</div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">TEAM STATUS</div>
+      <div id="team-gps">
+        <div class="staff-loc"><span class="gps-dot"></span><div class="staff-info"><div class="staff-name">Guillermo Cuadros</div><div class="staff-loc-txt">150 W 28th St — Office &nbsp;|&nbsp; Checked in 8:47am</div></div><span class="badge b-green">IN OFFICE</span></div>
+        <div class="staff-loc"><span class="gps-dot" style="background:var(--blue);box-shadow:0 0 0 3px rgba(74,143,212,0.2)"></span><div class="staff-info"><div class="staff-name">BD Rep 1</div><div class="staff-loc-txt">Midtown Manhattan &nbsp;|&nbsp; Site visit - RXR Realty</div></div><span class="badge b-blue">FIELD</span></div>
+        <div class="staff-loc"><span class="gps-dot" style="background:var(--gold);box-shadow:0 0 0 3px rgba(201,165,92,0.2)"></span><div class="staff-info"><div class="staff-name">BD Rep 2</div><div class="staff-loc-txt">Lower Manhattan &nbsp;|&nbsp; En route to Silverstein</div></div><span class="badge b-warm">EN ROUTE</span></div>
+        <div class="staff-loc"><span class="gps-dot" style="background:var(--txt3);box-shadow:none;animation:none"></span><div class="staff-info"><div class="staff-name">BD Rep 3</div><div class="staff-loc-txt">Last seen: 5:12pm yesterday</div></div><span class="badge b-cold">OFFLINE</span></div>
+      </div>
+      <div id="gps-log" style="margin-top:10px;font-size:10px;color:var(--txt3)"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">LOG FIELD ACTIVITY</div>
+      <div><div class="inp-lbl">LOCATION / ACTIVITY</div><input class="inp" id="field-note" placeholder="e.g. Arrived at NYCHA Bronx site, meeting with PM Director"/></div>
+      <button class="btn btn-gold" onclick="logField()">LOG WITH TIMESTAMP</button>
+      <div id="field-log" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- FILES -->
+  <div class="sec" id="tab-files">
+    <div class="sec-hdr">FILE VAULT</div>
+    <div class="card">
+      <div class="card-hdr">UPLOAD FILE</div>
+      <div class="file-drop" onclick="document.getElementById('file-inp').click()">
+        <div style="font-size:28px;margin-bottom:6px">&#128194;</div>
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:4px">Tap to upload</div>
+        <div style="font-size:9px;color:var(--txt3)">Proposals, contracts, photos, site reports</div>
+        <input type="file" id="file-inp" multiple style="display:none" onchange="handleFiles(this.files)"/>
+      </div>
+      <div id="file-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">SHARED DOCUMENTS</div>
+      <div class="file-item"><div class="file-icon">&#128196;</div><div><div class="file-name">KS Services — Master Service Agreement 2026.pdf</div><div class="file-size">Shared by Guillermo &nbsp;|&nbsp; 2.1 MB</div></div></div>
+      <div class="file-item"><div class="file-icon">&#128200;</div><div><div class="file-name">Q2 BD Pipeline Report.xlsx</div><div class="file-size">Shared by Management &nbsp;|&nbsp; 456 KB</div></div></div>
+      <div class="file-item"><div class="file-icon">&#128247;</div><div><div class="file-name">Silverstein Site Photos — Jun 2026.zip</div><div class="file-size">Shared by BD Rep 1 &nbsp;|&nbsp; 14.8 MB</div></div></div>
+      <div class="file-item"><div class="file-icon">&#128196;</div><div><div class="file-name">RXR Realty Proposal v3 FINAL.pdf</div><div class="file-size">Shared by BD Rep 2 &nbsp;|&nbsp; 3.4 MB</div></div></div>
+    </div>
+  </div>
+
+  <!-- EMAIL -->
+  <div class="sec" id="tab-email">
+    <div class="sec-hdr">EMAIL FROM PORTAL</div>
+    <div class="card">
+      <div class="card-hdr">COMPOSE EMAIL</div>
+      <div class="email-from">From: <b>gcuadros@kentservices.com</b> &nbsp;|&nbsp; KS Services BD Team</div>
+      <div><div class="inp-lbl">TO</div><input class="inp" id="em-to" placeholder="Recipient email(s)"/></div>
+      <div><div class="inp-lbl">CC</div><input class="inp" id="em-cc" placeholder="CC (optional)"/></div>
+      <div><div class="inp-lbl">SUBJECT</div><input class="inp" id="em-subj" placeholder="Email subject"/></div>
+      <div><div class="inp-lbl">BODY</div><textarea class="inp" id="em-body" rows="5" placeholder="Your message..."></textarea></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="emailTemplate('intro')">Use: Intro Template</button>
+        <button class="btn btn-ghost btn-sm" onclick="emailTemplate('followup')">Use: Follow-Up</button>
+        <button class="btn btn-ghost btn-sm" onclick="emailTemplate('proposal')">Use: Proposal Delivery</button>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn btn-gold" onclick="sendEmail()">SEND EMAIL</button>
+        <button class="btn btn-ghost" onclick="saveDraft()">SAVE DRAFT</button>
+      </div>
+      <div id="em-status" style="font-size:10px;color:var(--green);margin-top:8px;display:none"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">SENT HISTORY</div>
+      <div id="email-sent-log">
+        <div style="font-size:11px;color:var(--txt3);padding:8px 0">No emails sent yet from this session.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="sec" id="tab-users">
+    <div class="sec-hdr">USER MANAGEMENT</div>
+    <div class="card">
+      <div class="card-hdr">TEAM ROSTER</div>
+      <div id="user-list">
+        <div class="user-row"><div class="user-avatar">GC</div><div class="user-info"><div class="user-name">Guillermo Cuadros</div><div class="user-role">Talent Manager &nbsp;|&nbsp; Owner Access &nbsp;|&nbsp; PIN: 9999</div></div><span class="badge b-purple">OWNER</span></div>
+        <div class="user-row"><div class="user-avatar">R1</div><div class="user-info"><div class="user-name">BD Rep 1</div><div class="user-role">Business Development &nbsp;|&nbsp; Manager Access</div></div><span class="badge b-blue">MANAGER</span></div>
+        <div class="user-row"><div class="user-avatar">R2</div><div class="user-info"><div class="user-name">BD Rep 2</div><div class="user-role">Business Development &nbsp;|&nbsp; Staff Access</div></div><span class="badge b-green">STAFF</span></div>
+        <div class="user-row"><div class="user-avatar">R3</div><div class="user-info"><div class="user-name">BD Rep 3</div><div class="user-role">Business Development &nbsp;|&nbsp; Staff Access</div></div><span class="badge b-cold">INACTIVE</span></div>
+      </div>
+    </div>
+    <div class="card" id="add-user-card">
+      <div class="card-hdr">ADD TEAM MEMBER</div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">FULL NAME</div><input class="inp" id="u-name" placeholder="Name"/></div>
+        <div><div class="inp-lbl">TITLE</div><input class="inp" id="u-title" placeholder="Title / role"/></div>
+      </div>
+      <div class="inp-row">
+        <div><div class="inp-lbl">ACCESS LEVEL</div>
+          <select class="inp" id="u-role">
+            <option>Staff</option><option>Manager</option><option>Owner</option>
+          </select>
+        </div>
+        <div><div class="inp-lbl">PIN</div><input class="inp" id="u-pin" placeholder="4-digit PIN" maxlength="4" type="tel"/></div>
+      </div>
+      <button class="btn btn-gold" onclick="addUser()">ADD USER</button>
+    </div>
+    <div id="owner-only" style="display:none">
+      <div class="card" style="border-color:rgba(167,139,250,0.25)">
+        <div class="card-hdr" style="color:var(--purple)">OWNER-ONLY SETTINGS</div>
+        <table class="tbl">
+          <thead><tr><th>SETTING</th><th>VALUE</th></tr></thead>
+          <tbody>
+            <tr><td>Company Name</td><td style="color:var(--txt3)">KS Services (Kent Services)</td></tr>
+            <tr><td>Primary Contact</td><td style="color:var(--txt3)">gcuadros@kentservices.com</td></tr>
+            <tr><td>Portal Tier</td><td><span class="badge b-purple">PRO — $599/mo</span></td></tr>
+            <tr><td>Active Users</td><td style="color:var(--txt3)">5 of 10 seats</td></tr>
+            <tr><td>Data Access</td><td><span class="badge b-cold">Portal Only</span></td></tr>
+            <tr><td>Next Billing</td><td style="color:var(--txt3)">July 1, 2026</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px;padding:10px;background:rgba(167,139,250,0.06);border-radius:8px;border:1px solid rgba(167,139,250,0.15)">
+          <div style="font-size:9px;color:var(--purple);font-weight:800;letter-spacing:1px;margin-bottom:4px">UPGRADE TO ENTERPRISE — $999/mo</div>
+          <div style="font-size:10px;color:var(--txt2)">Unlimited users, API integrations, white-label domain, custom modules, dedicated account manager.</div>
+          <button class="btn btn-ghost" style="margin-top:8px;border-color:rgba(167,139,250,0.3);color:var(--purple)" onclick="alert('Contact sgarcia@mexausafg.com or call +1-831-251-3116 to upgrade.')">REQUEST UPGRADE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="sec" id="tab-reports">
+    <div class="sec-hdr">MANAGEMENT REPORTS</div>
+    <div class="card">
+      <div class="card-hdr">BD PERFORMANCE — JUNE 2026</div>
+      <table class="tbl">
+        <thead><tr><th>REP</th><th>PROSPECTS</th><th>PROPOSALS</th><th>CLOSED</th><th>VALUE</th></tr></thead>
+        <tbody>
+          <tr><td>Guillermo C.</td><td style="color:var(--txt3)">12</td><td style="color:var(--txt3)">6</td><td style="color:var(--green)">4</td><td style="color:var(--gold)">$980K</td></tr>
+          <tr><td>BD Rep 1</td><td style="color:var(--txt3)">8</td><td style="color:var(--txt3)">3</td><td style="color:var(--green)">2</td><td style="color:var(--gold)">$620K</td></tr>
+          <tr><td>BD Rep 2</td><td style="color:var(--txt3)">6</td><td style="color:var(--txt3)">2</td><td style="color:var(--green)">1</td><td style="color:var(--gold)">$500K</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-hdr">SHAREABLE REPORT LINK</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Generate a read-only report link to share with senior management or investors. No login required — expires in 7 days.</div>
+      <button class="btn btn-gold" onclick="genShareLink()">GENERATE SHARE LINK</button>
+      <div id="share-link-out" style="margin-top:10px;display:none">
+        <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:10px">
+          <div style="font-size:9px;color:var(--green);font-weight:700;letter-spacing:1px;margin-bottom:4px">SHARE LINK GENERATED</div>
+          <div style="font-size:10px;color:var(--txt2);word-break:break-all" id="share-link-url"></div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copyShareLink()">Copy Link</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="export-report-card">
+      <div class="card-hdr">EXPORT REPORT</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="exportReport('weekly')">Weekly Summary</button>
+        <button class="btn btn-ghost" onclick="exportReport('monthly')">Monthly BD Report</button>
+        <button class="btn btn-ghost" onclick="exportReport('pipeline')">Pipeline Snapshot</button>
+      </div>
+      <div id="export-out" style="margin-top:10px;font-size:10px;color:var(--green);display:none"></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+var pin='';var PINS={'4321':'owner','4321':'demo'};
+function updateDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+function np(v){if(v==='del')pin=pin.slice(0,-1);else if(v==='ok'){checkPin();return;}else if(pin.length<4)pin+=v;updateDots();if(PINS[pin])setTimeout(checkPin,120);}
+function checkPin(){if(PINS[pin]){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';window._paFire&&window._paFire('login',PINS[pin]);goTab('dashboard');}else{var e=document.getElementById('g-err');if(e){e.textContent='Incorrect PIN';setTimeout(function(){e.textContent='';},2000);}pin='';updateDots();}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';pin='';updateDots();}
+</script>
+<script>
+// AUTH
+var PINS={manager:'4321',owner:'9999'};
+var currentRole='';
+var entered='',PLEN=4;
+
+function np(d){if(entered.length>=PLEN)return;entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function nd(){entered=entered.slice(0,-1);updDots();}
+function updDots(){for(var i=0;i<PLEN;i++){var e=document.getElementById('d'+i);if(e)e.className='dot'+(i<entered.length?' on':'');}}
+function checkPin(){
+  if(entered===PINS.owner){currentRole='owner';unlock('Guillermo Cuadros','Owner Access');}
+  else if(entered===PINS.manager){currentRole='manager';unlock('Manager','BD Team');}
+  else{
+    var e=document.getElementById('gerr');if(e)e.textContent='Incorrect PIN. Try again.';
+    entered='';updDots();setTimeout(function(){if(e)e.textContent='';},1500);
+  }
+}
+function unlock(name,role){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+  var ub=document.getElementById('user-badge');ub.style.display='flex';
+  document.getElementById('ub-name').textContent=name;
+  document.getElementById('ub-role').textContent=role;
+  document.getElementById('hdr-role').textContent=currentRole==='owner'?'OWNER':'MANAGER';
+  if(currentRole==='owner'){document.getElementById('owner-only').style.display='block';}
+  loadAll();
+}
+
+function goTab(id){
+  document.querySelectorAll('.sec').forEach(function(s){s.className='sec';});
+  document.querySelectorAll('.tn').forEach(function(t){t.classList.remove('act');});
+  var s=document.getElementById('tab-'+id);if(s)s.className='sec on';
+  document.querySelectorAll('.tn').forEach(function(b){if(b.getAttribute('onclick')==="goTab('"+id+"')")b.classList.add('act');});
+  if(id==='calendar')renderCal();
+  if(id==='messenger')renderChat();
+}
+
+// PROSPECTS
+var prospects=JSON.parse(localStorage.getItem('ks2_prospects')||'[]');
+function addProspect(){
+  var n=document.getElementById('p-name').value.trim();
+  var co=document.getElementById('p-co').value.trim();
+  if(!n||!co)return;
+  prospects.unshift({n:n,co:co,sec:document.getElementById('p-sector').value,st:document.getElementById('p-status').value,val:document.getElementById('p-val').value,dt:document.getElementById('p-date').value,assign:document.getElementById('p-assign').value,notes:document.getElementById('p-notes').value.trim(),ts:new Date().toLocaleDateString(),by:currentRole});
+  localStorage.setItem('ks2_prospects',JSON.stringify(prospects));
+  ['p-name','p-co','p-val','p-date','p-notes'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('p-sector').value='';document.getElementById('p-status').value='';
+  var m=document.getElementById('smsg');m.style.display='inline';setTimeout(function(){m.style.display='none';},2000);
+  renderProspects();addAct('Prospect added: '+n+' — '+co,'var(--blue)');
+  document.getElementById('s-prospects').textContent=24+prospects.length;
+}
+var stC={Cold:'b-cold',Warm:'b-warm',Hot:'b-hot','Proposal Sent':'b-blue',Negotiating:'b-hot','Closed Won':'b-green','Closed Lost':'b-cold'};
+function renderProspects(){
+  var el=document.getElementById('prospect-list');if(!el)return;
+  el.innerHTML=prospects.map(function(p,i){
+    return '<div class="prospect"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="p-name">'+p.n+'</div><div class="p-co">'+p.co+(p.sec?' &mdash; '+p.sec:'')+'</div></div><button class="btn btn-red btn-sm" onclick="delP('+i+')">DEL</button></div><div class="p-meta" style="margin-top:6px"><span class="badge '+(stC[p.st]||'b-cold')+'">'+p.st+'</span>'+(p.val?'<span class="p-tag">$'+Number(p.val).toLocaleString()+'/yr</span>':'')+(p.dt?'<span class="p-tag">Next: '+p.dt+'</span>':'')+(p.assign?'<span class="p-tag">'+p.assign+'</span>':'')+'</div>'+(p.notes?'<div style="font-size:10px;color:var(--txt3);margin-top:6px">'+p.notes+'</div>':'')+'</div>';
+  }).join('')||'<div style="font-size:11px;color:var(--txt3);padding:10px">No prospects yet.</div>';
+}
+function delP(i){if(currentRole!=='owner'&&currentRole!=='manager'){alert('Manager access required.');return;}prospects.splice(i,1);localStorage.setItem('ks2_prospects',JSON.stringify(prospects));renderProspects();}
+
+// DEALS
+var deals=JSON.parse(localStorage.getItem('ks2_deals')||'[]');
+function addDeal(){
+  var co=document.getElementById('d-co').value.trim();if(!co)return;
+  deals.unshift({co:co,val:document.getElementById('d-val').value,stage:document.getElementById('d-stage').value,rep:document.getElementById('d-rep').value,ts:new Date().toLocaleDateString()});
+  localStorage.setItem('ks2_deals',JSON.stringify(deals));
+  document.getElementById('d-co').value='';document.getElementById('d-val').value='';
+  renderDeals();addAct('Deal logged: '+co+' — '+document.getElementById('d-stage').value,'var(--gold)');
+}
+function renderDeals(){
+  var el=document.getElementById('deal-list');if(!el)return;
+  var sc={Initial:'b-cold','Needs Assessment':'b-cold','Proposal Sent':'b-blue',Negotiating:'b-hot','Closed Won':'b-green'};
+  el.innerHTML=deals.map(function(d){
+    return '<div class="prospect"><div class="p-name">'+d.co+'</div><div class="p-meta" style="margin-top:4px"><span class="badge '+(sc[d.stage]||'b-cold')+'">'+d.stage+'</span>'+(d.val?'<span class="p-tag">$'+Number(d.val).toLocaleString()+'</span>':'')+'<span class="p-tag">'+d.rep+'</span><span class="p-tag">'+d.ts+'</span></div></div>';
+  }).join('')||'';
+}
+
+// CALENDAR
+var calEvents=JSON.parse(localStorage.getItem('ks2_events')||'[]');
+var calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
+var selDay=new Date().getDate();
+function calNav(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCal();}
+function renderCal(){
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-lbl').textContent=months[calMonth]+' '+calYear;
+  var days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  var first=new Date(calYear,calMonth,1).getDay();
+  var total=new Date(calYear,calMonth+1,0).getDate();
+  var today=new Date();
+  var html=days.map(function(d){return '<div class="cal-day hdr">'+d+'</div>';}).join('');
+  for(var i=0;i<first;i++)html+='<div class="cal-day"></div>';
+  for(var d=1;d<=total;d++){
+    var isToday=(d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear());
+    var isSel=(d===selDay&&calMonth===today.getMonth()&&calYear===today.getFullYear());
+    var hasEv=calEvents.some(function(e){var ed=new Date(e.date);return ed.getDate()===d&&ed.getMonth()===calMonth&&ed.getFullYear()===calYear;});
+    var cls='cal-day'+(isToday?' today':'')+(hasEv?' has-event':'');
+    html+='<div class="'+cls+'" onclick="selCalDay('+d+')">'+d+'</div>';
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  renderDayEvents(selDay);
+}
+function selCalDay(d){selDay=d;document.getElementById('cal-day-lbl').textContent='Selected: '+calMonth+'/'+d+'/'+calYear;renderDayEvents(d);}
+function renderDayEvents(d){
+  var el=document.getElementById('cal-events-today');if(!el)return;
+  var evs=calEvents.filter(function(e){var ed=new Date(e.date);return ed.getDate()===d&&ed.getMonth()===calMonth&&ed.getFullYear()===calYear;});
+  el.innerHTML=evs.length?evs.map(function(e){return '<div class="cal-event"><div class="cal-event-time">'+(e.time||'All day')+'</div><div class="cal-event-body"><div class="cal-event-title">'+e.title+'</div><div class="cal-event-detail">'+(e.assign||'All Team')+(e.notes?' &mdash; '+e.notes:'')+'</div></div></div>';}).join(''):'<div style="font-size:11px;color:var(--txt3);padding:8px">No events this day.</div>';
+}
+function addEvent(){
+  var t=document.getElementById('ev-title').value.trim();
+  var dt=document.getElementById('ev-date').value;
+  if(!t||!dt)return;
+  calEvents.unshift({title:t,date:dt,time:document.getElementById('ev-time').value,assign:document.getElementById('ev-assign').value,notes:document.getElementById('ev-notes').value.trim()});
+  localStorage.setItem('ks2_events',JSON.stringify(calEvents));
+  ['ev-title','ev-date','ev-time','ev-notes'].forEach(function(id){document.getElementById(id).value='';});
+  renderCal();addAct('Event added: '+t,'var(--purple)');
+}
+
+// MESSENGER
+var channel='All Team';
+var msgs=JSON.parse(localStorage.getItem('ks2_msgs')||'[]');
+function setChannel(ch){
+  channel=ch;document.getElementById('channel-lbl').textContent='Channel: '+ch;
+  document.querySelectorAll('#tab-messenger .btn').forEach(function(b){b.className='btn btn-ghost btn-sm';});
+  event.target.className='btn btn-gold btn-sm';
+  renderChat();
+}
+function sendMsg(){
+  var txt=document.getElementById('msg-inp').value.trim();if(!txt)return;
+  msgs.push({txt:txt,channel:channel,from:currentRole==='owner'?'Guillermo C.':'Manager',ts:new Date().toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})});
+  if(msgs.length>100)msgs=msgs.slice(-100);
+  localStorage.setItem('ks2_msgs',JSON.stringify(msgs));
+  document.getElementById('msg-inp').value='';
+  renderChat();
+}
+function quickMsg(txt){document.getElementById('msg-inp').value=txt;sendMsg();}
+function renderChat(){
+  var el=document.getElementById('chat-area');if(!el)return;
+  var filtered=msgs.filter(function(m){return m.channel===channel||channel==='All Team';}).slice(-30);
+  el.innerHTML=filtered.map(function(m){
+    var out=(m.from===('Guillermo C.')&&currentRole==='owner')||(m.from==='Manager'&&currentRole==='manager');
+    return '<div style="display:flex;flex-direction:column;align-items:'+(out?'flex-end':'flex-start')+'"><div class="msg-meta">'+(out?'You':'Team')+'&nbsp;'+m.ts+'</div><div class="msg-bubble '+(out?'msg-out':'msg-in')+'">'+m.txt+'</div></div>';
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+// GPS
+function getMyLocation(){
+  var el=document.getElementById('my-loc-display');
+  el.textContent='Getting location...';
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      var lat=pos.coords.latitude.toFixed(5);
+      var lng=pos.coords.longitude.toFixed(5);
+      el.innerHTML='<b style="color:var(--green)">Location captured</b><br>Lat: '+lat+' | Lng: '+lng+'<br><a href="https://maps.google.com/?q='+lat+','+lng+'" target="_blank" style="color:var(--blue);font-size:10px">View on Google Maps</a>';
+      addGPSLog('Location captured: '+lat+', '+lng);
+    },function(){el.textContent='Location access denied. Enable in browser settings.';});
+  } else {el.textContent='Geolocation not supported on this device.';}
+}
+function checkIn(){var t=new Date().toLocaleTimeString();addGPSLog('Checked IN at '+t);document.getElementById('my-loc-display').textContent='Checked in at '+t;}
+function checkOut(){var t=new Date().toLocaleTimeString();addGPSLog('Checked OUT at '+t);document.getElementById('my-loc-display').textContent='Checked out at '+t;}
+var gpsLog=JSON.parse(localStorage.getItem('ks2_gps')||'[]');
+function addGPSLog(txt){gpsLog.unshift({txt:txt,ts:new Date().toLocaleString()});localStorage.setItem('ks2_gps',JSON.stringify(gpsLog));renderGPS();}
+function renderGPS(){var el=document.getElementById('gps-log');if(!el)return;el.innerHTML=gpsLog.slice(0,5).map(function(g){return '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:10px;color:var(--txt2)">'+g.txt+' <span style="color:var(--txt3)">'+g.ts+'</span></div>';}).join('');}
+var fieldLog=JSON.parse(localStorage.getItem('ks2_field')||'[]');
+function logField(){var n=document.getElementById('field-note').value.trim();if(!n)return;fieldLog.unshift({txt:n,ts:new Date().toLocaleString()});localStorage.setItem('ks2_field',JSON.stringify(fieldLog));document.getElementById('field-note').value='';renderField();}
+function renderField(){var el=document.getElementById('field-log');if(!el)return;el.innerHTML=fieldLog.slice(0,8).map(function(f){return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="font-size:11px;color:var(--txt)">'+f.txt+'</div><div style="font-size:9px;color:var(--txt3)">'+f.ts+'</div></div>';}).join('');}
+
+// FILES
+var files=JSON.parse(localStorage.getItem('ks2_files')||'[]');
+function handleFiles(fileList){
+  Array.from(fileList).forEach(function(f){
+    files.unshift({name:f.name,size:(f.size/1024).toFixed(0)+' KB',ts:new Date().toLocaleDateString(),by:currentRole==='owner'?'Guillermo C.':'Manager'});
+  });
+  if(files.length>20)files=files.slice(0,20);
+  localStorage.setItem('ks2_files',JSON.stringify(files));
+  renderFiles();addAct('File uploaded: '+fileList[0].name,'var(--green)');
+}
+function renderFiles(){
+  var el=document.getElementById('file-list');if(!el)return;
+  var icons={pdf:'&#128196;',xlsx:'&#128200;',jpg:'&#128247;',png:'&#128247;',docx:'&#128196;',zip:'&#128230;'};
+  el.innerHTML=files.map(function(f){
+    var ext=f.name.split('.').pop().toLowerCase();
+    return '<div class="file-item"><div class="file-icon">'+(icons[ext]||'&#128196;')+'</div><div><div class="file-name">'+f.name+'</div><div class="file-size">'+f.by+' &nbsp;|&nbsp; '+f.size+' &nbsp;|&nbsp; '+f.ts+'</div></div></div>';
+  }).join('');
+}
+
+// EMAIL
+var sentEmails=JSON.parse(localStorage.getItem('ks2_sent')||'[]');
+var drafts=JSON.parse(localStorage.getItem('ks2_drafts')||'[]');
+var templates={
+  intro:'Subject: Protecting Your Property — KS Services\n\nDear [Name],\n\nMy name is [Your Name] with KS Services (Kent Services), a security and building services firm based in New York.\n\nWe specialize in commercial, residential, and government building security — tailored to your operation, managed by our NYC-based team.\n\nI would like to schedule a 15-minute call to discuss your property security and building services needs. No obligation.\n\nBest regards,\n[Your Name]\nKS Services | 150 W 28th St, Suite 1103, NY 10001',
+  followup:'Subject: Following Up — KS Services Proposal\n\nDear [Name],\n\nI wanted to follow up on the proposal I sent over. Do you have any questions or would you like to schedule a site walkthrough?\n\nI am available this week at your convenience.\n\nBest,\n[Your Name] | KS Services',
+  proposal:'Subject: KS Services — Proposal for [Property Name]\n\nDear [Name],\n\nPlease find attached our proposal for security and building services at [Property Name].\n\nHighlights:\n- 24/7 security officer coverage\n- Mobile patrol options\n- Building maintenance & janitorial\n- Access control systems\n\nI am happy to walk through it on a call or in person.\n\n[Your Name] | KS Services | gcuadros@kentservices.com'
+};
+function emailTemplate(t){var tmpl=templates[t]||'';var lines=tmpl.split('\n');var subj=lines[0].replace('Subject: ','');document.getElementById('em-subj').value=subj;document.getElementById('em-body').value=lines.slice(2).join('\n');}
+function sendEmail(){
+  var to=document.getElementById('em-to').value.trim();
+  var subj=document.getElementById('em-subj').value.trim();
+  var body=document.getElementById('em-body').value.trim();
+  if(!to||!subj)return;
+  sentEmails.unshift({to:to,subj:subj,ts:new Date().toLocaleString()});
+  localStorage.setItem('ks2_sent',JSON.stringify(sentEmails));
+  var st=document.getElementById('em-status');
+  st.textContent='Email logged to send log. Copy body and send via gcuadros@kentservices.com';
+  st.style.display='block';
+  setTimeout(function(){st.style.display='none';},4000);
+  renderSentLog();addAct('Email sent to: '+to,'var(--gold)');
+  document.getElementById('em-to').value='';document.getElementById('em-subj').value='';document.getElementById('em-body').value='';
+}
+function saveDraft(){var subj=document.getElementById('em-subj').value.trim();if(!subj)return;drafts.unshift({to:document.getElementById('em-to').value,subj:subj,body:document.getElementById('em-body').value,ts:new Date().toLocaleString()});localStorage.setItem('ks2_drafts',JSON.stringify(drafts));alert('Draft saved.');}
+function renderSentLog(){var el=document.getElementById('email-sent-log');if(!el)return;el.innerHTML=sentEmails.slice(0,8).map(function(e){return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="font-size:11px;color:var(--txt)">To: '+e.to+'</div><div style="font-size:10px;color:var(--txt2)">'+e.subj+'</div><div style="font-size:9px;color:var(--txt3)">'+e.ts+'</div></div>';}).join('');}
+
+// USERS (owner only can add)
+var users=JSON.parse(localStorage.getItem('ks2_users')||'[]');
+function addUser(){
+  if(currentRole!=='owner'){alert('Owner access required to add users.');return;}
+  var n=document.getElementById('u-name').value.trim();var pin=document.getElementById('u-pin').value.trim();
+  if(!n||!pin||pin.length!==4)return;
+  users.unshift({n:n,title:document.getElementById('u-title').value.trim(),role:document.getElementById('u-role').value,pin:pin});
+  localStorage.setItem('ks2_users',JSON.stringify(users));
+  ['u-name','u-title','u-pin'].forEach(function(id){document.getElementById(id).value='';});
+  renderUsers();
+}
+function renderUsers(){
+  var el=document.getElementById('user-list');if(!el)return;
+  var existing='<div class="user-row"><div class="user-avatar">GC</div><div class="user-info"><div class="user-name">Guillermo Cuadros</div><div class="user-role">Talent Manager &nbsp;|&nbsp; Owner Access &nbsp;|&nbsp; PIN: 9999</div></div><span class="badge b-purple">OWNER</span></div>';
+  el.innerHTML=existing+users.map(function(u){
+    var rc={Owner:'b-purple',Manager:'b-blue',Staff:'b-green'};
+    return '<div class="user-row"><div class="user-avatar">'+u.n.charAt(0).toUpperCase()+'</div><div class="user-info"><div class="user-name">'+u.n+'</div><div class="user-role">'+u.title+' &nbsp;|&nbsp; '+(currentRole==='owner'?'PIN: '+u.pin:'PIN hidden')+'</div></div><span class="badge '+(rc[u.role]||'b-green')+'">'+u.role.toUpperCase()+'</span></div>';
+  }).join('');
+}
+
+// REPORTS
+function genShareLink(){
+  var url='https://mexausafg.com/ks-services-bd.html?report='+btoa(JSON.stringify({prospects:prospects.length,deals:deals.length,ts:new Date().toISOString()}));
+  document.getElementById('share-link-out').style.display='block';
+  document.getElementById('share-link-url').textContent=url.substring(0,80)+'...';
+}
+function copyShareLink(){navigator.clipboard.writeText('https://mexausafg.com/ks-services-bd.html').then(function(){alert('Link copied!');});}
+function exportReport(type){var el=document.getElementById('export-out');el.style.display='block';el.textContent=type.charAt(0).toUpperCase()+type.slice(1)+' report prepared. Print this page or share the link above with management.';}
+
+// ACTIVITY LOG
+var actLog=JSON.parse(localStorage.getItem('ks2_actlog')||'[]');
+function addAct(txt,color){
+  actLog.unshift({txt:txt,color:color||'var(--gold)',ts:new Date().toLocaleString()});
+  if(actLog.length>50)actLog=actLog.slice(0,50);
+  localStorage.setItem('ks2_actlog',JSON.stringify(actLog));
+  renderDashAct();
+}
+function renderDashAct(){
+  var el=document.getElementById('dash-activity');if(!el)return;
+  el.innerHTML=actLog.slice(0,8).map(function(a){
+    return '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:flex-start"><div style="width:7px;height:7px;border-radius:50%;background:'+a.color+';flex-shrink:0;margin-top:4px"></div><div><div style="font-size:11px;color:var(--txt)">'+a.txt+'</div><div style="font-size:9px;color:var(--txt3)">'+a.ts+'</div></div></div>';
+  }).join('')||'<div style="font-size:11px;color:var(--txt3);padding:8px">No activity yet.</div>';
+}
+
+function loadAll(){
+  renderProspects();renderDeals();renderCal();renderChat();renderGPS();renderField();renderFiles();renderSentLog();renderDashAct();renderUsers();
+}
+</script>
+</body>
+</html>

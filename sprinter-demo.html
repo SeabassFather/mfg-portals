@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate"/>
+<title>SPRINTER HQ — Monterey Bay Party Sprinter</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:root{
+  --bg:#0a0a06;
+  --card:#111109;
+  --card2:#1a1a12;
+  --gold:#c9a020;
+  --gold2:#e8b830;
+  --text:#f5f0e0;
+  --muted:#7a7060;
+  --border:rgba(201,160,32,0.2);
+  --radius:999px;
+  --rcard:16px;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
+}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── GATE ── */
+#gate{
+  position:fixed;inset:0;background:#020912;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:9999;padding:28px;
+  text-align:center;
+}
+.gate-logo-wrap{width:100%;max-width:360px;margin-bottom:28px}
+.gate-logo-wrap img{width:100%;border-radius:12px;display:block}
+.gate-logo-fallback{width:100%;max-width:360px;background:linear-gradient(135deg,#111,#1a1a00);border:1px solid var(--border);border-radius:12px;padding:28px 20px;text-align:center;margin-bottom:28px}
+.gate-box{width:100%;max-width:340px;text-align:center}
+.gate-sub{font-size:9px;color:#64748b;letter-spacing:3px;font-weight:600;margin-bottom:18px}
+.pd-row{display:flex;justify-content:center;gap:12px;margin-bottom:10px}
+.pd{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(201,160,32,0.3);transition:all 0.2s}
+.pd.on{background:#C9A55C;border-color:#C9A55C;box-shadow:0 0 10px rgba(201,160,32,0.5)}
+.pd.err{background:#ef4444;border-color:#ef4444}
+.gate-err{font-size:11px;color:#ef4444;min-height:14px;margin-bottom:6px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:8px}
+.nb{background:rgba(201,160,32,0.06);border:1px solid rgba(201,160,32,0.2);color:var(--text);font-size:18px;font-weight:500;border-radius:var(--radius);padding:12px 0;cursor:pointer;font-family:inherit;transition:all 0.15s;letter-spacing:1px}
+.nb:active{background:rgba(201,160,32,0.2);border-color:#C9A55C;color:#C9A55C}
+.gate-clear{font-size:9px;color:rgba(255,255,255,0.12);display:block;text-align:center;cursor:pointer;letter-spacing:1px;text-decoration:none}
+
+/* ── APP ── */
+#app{display:none;min-height:100vh;padding-bottom:72px}
+
+/* TOPBAR */
+.topbar{background:rgba(0,0,0,0.97);border-bottom:1px solid var(--border);padding:0 14px;height:54px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;backdrop-filter:blur(16px)}
+.tb-icon{width:36px;height:36px;border-radius:var(--radius);background:linear-gradient(135deg,var(--gold),#8a6010);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.tb-name{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px}
+.tb-sub{font-size:8px;color:var(--muted);letter-spacing:1px}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:1px solid var(--border);display:none;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.bni{display:flex;overflow-x:auto;scrollbar-width:none}
+.bni::-webkit-scrollbar{display:none}
+.bn{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 10px 6px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:7px;font-weight:700;letter-spacing:0.5px;gap:2px;font-family:inherit;transition:color 0.2s;min-width:56px}
+.bn.on{color:var(--gold)}
+.bn-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin-top:2px;opacity:0}
+.bn.on .bn-dot{opacity:1}
+.bn-lbl{font-size:18px;line-height:1}
+
+/* SECTIONS */
+.sec{display:none;padding:14px}
+.sec.on{display:block}
+.sec-hdr{font-size:8px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--rcard);padding:14px;margin-bottom:12px;border-left:2px solid rgba(201,160,32,0.4)}
+.ct{font-size:8px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:10px}
+
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--rcard);padding:13px;text-align:center;border-top:2px solid rgba(201,160,32,0.35)}
+.sn{font-size:26px;font-weight:700;color:var(--gold);letter-spacing:1px}
+.sl{font-size:7px;color:var(--muted);letter-spacing:2px;margin-top:3px;font-weight:600}
+
+/* INPUTS */
+.inp{width:100%;padding:11px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);font-size:13px;border-radius:var(--radius);outline:none;font-family:inherit;margin-bottom:10px;display:block;transition:border 0.2s}
+.inp:focus{border-color:var(--gold)}
+select.inp{cursor:pointer}
+textarea.inp{border-radius:16px;resize:vertical;min-height:80px;line-height:1.6}
+.lbl{font-size:8px;color:var(--muted);letter-spacing:2px;font-weight:700;margin-bottom:5px;display:block}
+
+/* BUTTONS */
+.btn{width:100%;padding:13px;border:none;border-radius:var(--radius);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1.5px;font-family:inherit;margin-bottom:8px;transition:all 0.2s}
+.btn-g{background:linear-gradient(135deg,var(--gold),#a07010);color:#0a0a06;box-shadow:0 4px 16px rgba(201,160,32,0.25)}
+.btn-g:active{transform:scale(0.98)}
+.btn-gr{background:linear-gradient(135deg,#4ade80,#22c55e);color:#020912}
+.btn-r{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-s{padding:8px 18px;width:auto;display:inline-block;font-size:10px;margin-bottom:0}
+
+/* ACCORDION */
+.acc{background:var(--card);border:1px solid var(--border);border-radius:var(--rcard);margin-bottom:8px;overflow:hidden}
+.acc-h{padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--text)}
+.acc-h:active{background:rgba(201,160,32,0.06)}
+.acc-arrow{color:var(--gold);transition:transform 0.25s;font-size:12px}
+.acc-b{display:none;padding:0 16px 14px;font-size:11px;color:var(--muted);line-height:1.75}
+.acc.open .acc-arrow{transform:rotate(180deg)}
+.acc.open .acc-b{display:block}
+
+/* BADGE */
+.badge{display:inline-block;padding:4px 12px;border-radius:var(--radius);font-size:9px;font-weight:700;letter-spacing:1px}
+.bg{background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.25)}
+.br{background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.25)}
+.bo{background:rgba(201,160,32,0.12);color:var(--gold);border:1px solid rgba(201,160,32,0.25)}
+.bb{background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25)}
+
+/* CALENDAR */
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cd{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;border-radius:var(--radius);cursor:pointer;font-weight:600;transition:all 0.15s}
+.cd.today{background:rgba(201,160,32,0.18);color:var(--gold);border:1px solid rgba(201,160,32,0.4)}
+.cd.booked{background:rgba(239,68,68,0.15);color:#ef4444}
+.cd.avail{background:rgba(74,222,128,0.07);color:#4ade80}
+.cd:hover{background:rgba(201,160,32,0.12)}
+
+/* SIGNATURE */
+.sig-c{border:1.5px dashed rgba(201,160,32,0.5);border-radius:16px;width:100%;height:110px;cursor:crosshair;background:#fff;display:block;touch-action:none}
+
+/* CONTRACT */
+.cp{background:#fff;color:#000;padding:20px;border-radius:var(--rcard);font-size:10px;font-family:Georgia,serif;line-height:1.65;margin-bottom:12px}
+.cr{display:flex;justify-content:space-between;padding:2px 0}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:200;display:none;overflow-y:auto}
+.modal.open{display:block}
+.mcl{position:fixed;top:12px;right:14px;background:rgba(201,160,32,0.12);border:1px solid var(--border);color:var(--gold);font-size:18px;width:38px;height:38px;border-radius:var(--radius);cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center}
+
+/* PAY CARD */
+.pay-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--rcard);padding:18px;margin-bottom:12px}
+
+/* TOAST */
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),#a07010);color:#0a0a06;padding:8px 22px;border-radius:var(--radius);font-size:12px;font-weight:700;z-index:500;pointer-events:none;opacity:0;transition:opacity 0.3s;white-space:nowrap;letter-spacing:1px}
+.toast.show{opacity:1}
+
+/* VEHICLE CARD */
+.vcard{background:var(--card);border:1px solid var(--border);border-radius:var(--rcard);overflow:hidden;margin-bottom:12px}
+.vcard-img{height:160px;background:linear-gradient(135deg,#111109,#1a1a12);display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;overflow:hidden}
+.vcard-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+
+/* GPS CONSENT BOX */
+.gps-box{background:rgba(201,160,32,0.05);border:1px solid rgba(201,160,32,0.2);border-radius:var(--rcard);padding:14px;margin-bottom:10px}
+</style>
+<script>(function(){var g=document.getElementById('gate');var a=document.getElementById('app');if(g){g.style.cssText='position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center';}if(a)a.style.display='none';})()</script>
+</head>
+<body>
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center">
+<img id="gate-img" src="/sprinter-logo.png"
+  style="width:100%;max-width:280px;border-radius:10px;margin-bottom:14px;display:block"
+  onerror="this.style.display='none';document.getElementById('gate-logo-fb').style.display='block'">
+<div id="gate-logo-fb" style="display:none;width:100%;max-width:300px;background:#000;border:1px solid rgba(201,160,32,0.25);border-radius:10px;padding:16px 14px;text-align:center;margin-bottom:14px">
+  <div style="font-size:20px;font-weight:800;color:var(--gold);letter-spacing:3px;line-height:1.1">MONTEREY BAY</div>
+  <div style="font-size:15px;font-weight:700;color:var(--gold);letter-spacing:4px;margin-bottom:3px">PARTY SPRINTER</div>
+  <div style="font-size:9px;color:var(--muted);letter-spacing:1px;font-style:italic;margin-bottom:5px">Luxury Transportation &amp; Chauffeur Services</div>
+  <div style="font-size:13px;color:var(--gold);font-weight:600;letter-spacing:1px">(555) 123-4567</div>
+</div>
+<div class="gate-box" style="padding-top:0">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <div style="font-size:8px;color:var(--muted);letter-spacing:3px;font-weight:700">SPRINTER HQ</div>
+    
+  </div>
+  <div id="gate-access-lbl" style="font-size:7px;color:rgba(255,255,255,0.15);letter-spacing:2px;margin-bottom:8px">OWNER ACCESS</div>
+  <div style="background:rgba(201,160,32,0.04);border:1px solid rgba(201,160,32,0.15);border-radius:10px;padding:8px 10px;margin-bottom:10px">
+    <div id="instructions-title" style="font-size:8px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:5px">WELCOME TO MONTEREY BAY PARTY SPRINTER</div>
+    <div id="instructions-body">
+      <div style="padding:3px 0;border-bottom:1px solid rgba(201,160,32,0.08);font-size:9px;color:var(--muted);line-height:1.5">OWNER: Enter your 4-digit PIN for the business dashboard.</div>
+      <div style="padding:3px 0;border-bottom:1px solid rgba(201,160,32,0.08);font-size:9px;color:var(--muted);line-height:1.5">GUESTS: Tap "Book a Sprinter" to register or check your reservation.</div>
+      <div style="padding:3px 0;border-bottom:1px solid rgba(201,160,32,0.08);font-size:9px;color:var(--muted);line-height:1.5">GPS tracking consent required for all rentals.</div>
+      <div style="padding:3px 0;font-size:9px;color:var(--muted);line-height:1.5">Questions? Call or text (555) 123-4567</div>
+    </div>
+  </div>
+  <div class="pd-row" style="margin-bottom:10px"><div class="pd" id="pd0"></div><div class="pd" id="pd1"></div><div class="pd" id="pd2"></div><div class="pd" id="pd3"></div></div>
+  <div class="gate-err" id="gerr"></div>
+  <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+<div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+<div class="pd" id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div>
+<div class="numpad">
+    <button class="nb" onclick="kp('1')">1</button><button class="nb" onclick="kp('2')">2</button><button class="nb" onclick="kp('3')">3</button>
+    <button class="nb" onclick="kp('4')">4</button><button class="nb" onclick="kp('5')">5</button><button class="nb" onclick="kp('6')">6</button>
+    <button class="nb" onclick="kp('7')">7</button><button class="nb" onclick="kp('8')">8</button><button class="nb" onclick="kp('9')">9</button>
+    <button class="nb" onclick="kp('clr')" style="font-size:11px;color:var(--muted)">CLR</button>
+    <button class="nb" onclick="kp('0')">0</button>
+    <button class="nb" onclick="kp('del')" style="font-size:14px;color:var(--muted)">&#9003;</button>
+  </div>
+  <a href="#" onclick="localStorage.removeItem('sh_auth');pinBuf='';updDots();return false" id="gate-clear-lbl" class="gate-clear">CLEAR SESSION</a>
+  <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+    <button class="btn btn-o" onclick="openModal('client-portal')" style="padding:11px;font-size:10px">&#128640; BOOK A SPRINTER / CLIENT PORTAL</button>
+  </div>
+</div>
+</div>
+<div id="app" style="display:none">
+<div class="topbar">
+  <div class="tb-icon">&#128656;</div>
+  <div style="flex:1"><div class="tb-name">SPRINTER HQ</div><div class="tb-sub">MONTEREY BAY PARTY SPRINTER</div></div>
+  <div style="font-size:10px;color:var(--gold);font-weight:600;letter-spacing:1px">831&#8239;235-4999</div>
+  <button id="lock-btn" onclick="lockApp()" title="Lock / Logout" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;font-size:10px;font-weight:700;letter-spacing:1px;padding:6px 12px;border-radius:999px;cursor:pointer;font-family:inherit;margin-left:8px;flex-shrink:0">&#128274; LOCK</button>
+</div>
+<div class="sec on" id="sec-home">
+<div class="sec-hdr"><span>&#9670;</span> DASHBOARD</div>
+<div class="sg">
+  <div class="sc"><div class="sn" id="s-bk">0</div><div class="sl">BOOKINGS / MONTH</div></div>
+  <div class="sc"><div class="sn" style="color:#4ade80" id="s-rev">$0</div><div class="sl">REVENUE / MONTH</div></div>
+  <div class="sc"><div class="sn" id="s-pen">0</div><div class="sl">DEPOSITS PENDING</div></div>
+  <div class="sc"><div class="sn" id="s-flt">1</div><div class="sl">FLEET ACTIVE</div></div>
+</div>
+<div class="card"><div class="ct">&#9670; TODAY'S SCHEDULE</div><div id="home-today" style="font-size:11px;color:var(--muted)">No bookings scheduled today.</div></div>
+<div class="card"><div class="ct">&#9670; QUICK ACTIONS</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <button class="btn btn-g btn-s" onclick="goTab('book')" style="padding:10px;width:100%">+ NEW BOOKING</button>
+    <button class="btn btn-o btn-s" onclick="goTab('contracts')" style="padding:10px;width:100%">&#128196; CONTRACT</button>
+    <button class="btn btn-o btn-s" onclick="goTab('payments')" style="padding:10px;width:100%">&#128179; COLLECT PAY</button>
+    <button class="btn btn-o btn-s" onclick="goTab('clients')" style="padding:10px;width:100%">&#128101; ADD CLIENT</button>
+  </div>
+</div>
+<div class="card"><div class="ct">&#9670; FLEET STATUS</div>
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div><div style="font-size:13px;font-weight:700">Mercedes-Benz Party Sprinter</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Up to 12 Passengers</div></div>
+    <span class="badge bg" id="flt-status">AVAILABLE</span>
+  </div>
+</div>
+<div class="card"><div class="ct">&#9670; RECENT BOOKINGS</div><div id="home-recent" style="font-size:11px;color:var(--muted)">No recent bookings.</div></div>
+</div>
+<div class="sec" id="sec-fleet">
+<div class="sec-hdr"><span>&#128656;</span> FLEET MANAGEMENT</div>
+<button class="btn btn-g" onclick="openModal('vehicle-modal')">+ ADD VEHICLE</button>
+<div class="vcard">
+  <div class="vcard-img">&#128656;</div>
+  <div style="padding:14px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div><div style="font-size:15px;font-weight:700">Mercedes-Benz Party Sprinter</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Up to 12 Passengers &middot; 2024</div></div>
+      <span class="badge bg" id="van0">AVAILABLE</span>
+    </div>
+    <div style="font-size:20px;font-weight:700;color:var(--gold);margin-bottom:12px">$900 <span style="font-size:11px;color:var(--muted);font-weight:400">/ charter</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn btn-o btn-s" onclick="cycleStatus('van0')" style="padding:10px;width:100%">&#8635; STATUS</button>
+      <button class="btn btn-g btn-s" onclick="goTab('book')" style="padding:10px;width:100%">&#128197; BOOK NOW</button>
+    </div>
+  </div>
+</div>
+<div id="extra-v"></div>
+</div>
+<div class="sec" id="sec-book">
+<div class="sec-hdr"><span>&#128197;</span> BOOKING CALENDAR</div>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <button class="btn btn-o btn-s" onclick="calPrev()" style="padding:8px 16px">&#8592; PREV</button>
+    <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:2px" id="cal-title">JUNE 2026</div>
+    <button class="btn btn-o btn-s" onclick="calNext()" style="padding:8px 16px">NEXT &#8594;</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px">
+    <div style="text-align:center;font-size:8px;color:var(--muted);font-weight:700;padding:4px">S</div>
+    <div style="text-align:center;font-size:8px;color:var(--muted);font-weight:700;padding:4px">M</div>
+    <div style="text-align:center;font-size:8px;color:var(--muted);font-weight:700;padding:4px">T</div>
+    <div style="text-align:center;font-size:8px;color:var(--muted);font-weight:700;padding:4px">W</div>
+    <div style="text-align:center;font-size:8px;color:var(--muted);font-weight:700;padding:4px">T</div>
+    <div style="text-align:center;font-size:8px;color:var(--muted);font-weight:700;padding:4px">F</div>
+    <div style="text-align:center;font-size:8px;color:var(--muted);font-weight:700;padding:4px">S</div>
+  </div>
+  <div class="cg" id="cal-grid"></div>
+  <div style="display:flex;gap:14px;font-size:9px;color:var(--muted);margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">
+    <span><span style="color:#4ade80">&#9679;</span> Available</span>
+    <span><span style="color:#ef4444">&#9679;</span> Booked</span>
+    <span><span style="color:var(--gold)">&#9679;</span> Today</span>
+  </div>
+</div>
+<div class="card"><div class="ct">+ NEW BOOKING</div>
+  <label class="lbl">CLIENT FULL LEGAL NAME</label><input class="inp" id="bk-name" placeholder="e.g. Claudia Prieto">
+  <label class="lbl">PHONE NUMBER</label><input class="inp" id="bk-phone" placeholder="(831) 261-6175" type="tel">
+  <label class="lbl">EMAIL ADDRESS</label><input class="inp" id="bk-email" placeholder="client@email.com" type="email">
+  <label class="lbl">EVENT TYPE</label>
+  <select class="inp" id="bk-event">
+    <option value="">Select event type...</option>
+    <option>Quincea&#241;era</option><option>Wedding</option><option>Birthday Party</option>
+    <option>Corporate Event</option><option>Airport Transfer</option><option>Prom Night</option>
+    <option>Graduation</option><option>Concert / Show</option><option>Wine Tour</option>
+    <option>Bachelor / Bachelorette</option><option>Private Charter</option><option>Other</option>
+  </select>
+  <label class="lbl">EVENT DATE</label><input class="inp" id="bk-date" type="date">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div><label class="lbl">START TIME</label><input class="inp" id="bk-st" type="time" value="12:00"></div>
+    <div><label class="lbl">END TIME</label><input class="inp" id="bk-et" type="time" value="16:00"></div>
+  </div>
+  <label class="lbl">PICK-UP ADDRESS</label><input class="inp" id="bk-pu" placeholder="1255 Moreno Dr, Salinas CA 93905">
+  <label class="lbl">DESTINATION / VENUE</label><input class="inp" id="bk-dest" placeholder="General Stilwell Community Center">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div><label class="lbl">CHARTER RATE ($)</label><input class="inp" id="bk-rate" type="number" value="900"></div>
+    <div><label class="lbl">DEPOSIT ($)</label><input class="inp" id="bk-dep" type="number" value="200"></div>
+  </div>
+  <label class="lbl">SPECIAL NOTES</label><textarea class="inp" id="bk-notes" placeholder="Decorations, special stops, requests..."></textarea>
+  <button class="btn btn-g" onclick="createBooking()">&#10003; CREATE BOOKING + GENERATE CONTRACT</button>
+</div>
+<div class="card"><div class="ct">&#9670; ALL BOOKINGS</div><div id="bk-list" style="font-size:11px;color:var(--muted)">No bookings yet.</div></div>
+</div>
+<div class="sec" id="sec-contracts">
+<div class="sec-hdr"><span>&#128196;</span> CONTRACTS &amp; DOCUMENTS</div>
+<div class="card"><div class="ct">SELECT BOOKING</div>
+  <select class="inp" id="con-sel" onchange="preloadCon(this.value)"><option value="">Select a booking to contract...</option></select>
+  <button class="btn btn-g" onclick="openContractModal()">&#128196; GENERATE + E-SIGN CONTRACT</button>
+</div>
+<div class="card">
+  <div class="ct" style="color:#4ade80">&#9670; GPS TRACKING CONSENT — EMBEDDED IN ALL CONTRACTS</div>
+  <div style="font-size:11px;color:var(--muted);line-height:1.75">By executing this agreement, Client expressly consents to continuous GPS vehicle tracking throughout the rental period for safety, insurance compliance, and vehicle protection. Location data is retained 30 days and is not shared with third parties. <strong style="color:var(--gold)">Refusal to consent constitutes cancellation with forfeiture of the non-refundable deposit.</strong></div>
+</div>
+<div class="sec-hdr" style="margin-top:8px"><span>&#9670;</span> TERMS &amp; CONDITIONS</div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>1. Deposit &amp; Payment Policy</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">Non-refundable deposit of $200.00 secures your booking and date. Balance due in cash, Zelle, or Venmo on day of charter. Failure to pay balance may result in cancellation without refund.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>2. Cancellation Policy</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">Cancellations 7+ days prior forfeit deposit. Within 7 days of event: fully non-refundable. Force majeure cancellation by MBPS: full refund including deposit.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>3. Changes to Itinerary</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">Changes subject to approval. Additional charges may apply for extra time or stops beyond original contract.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>4. Late Fees</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">$100.00 per hour beyond agreed end time. Client notified at 15-minute mark prior to end.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>5. Passenger Policy</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">Maximum 12 passengers at all times. MBPS reserves right to refuse boarding exceeding this limit for safety and insurance compliance.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>6. Conduct Policy</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">Disruptive, illegal, or unsafe behavior may result in immediate termination of service without refund.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>7. No Smoking / Vaping</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">$250.00 minimum cleaning fee if violated. MBPS may terminate service immediately without refund.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>8. Damage Policy</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">Client responsible for all damage costs payable within 72 hours of service completion.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>9. Force Majeure</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">MBPS not liable for delays from weather, traffic, mechanical failure, or unforeseen events. Full refund issued if MBPS cannot fulfill.</div></div>
+<div class="acc" onclick="this.classList.toggle('open')"><div class="acc-h"><span>10. GPS Tracking Consent (Required)</span><span class="acc-arrow">&#9660;</span></div><div class="acc-b">Client consents to continuous GPS tracking throughout rental period. This is a required condition of service. Refusal constitutes cancellation with deposit forfeiture.</div></div>
+<div class="card" style="margin-top:12px"><div class="ct">&#9670; SAVED CONTRACTS</div><div id="con-list" style="font-size:11px;color:var(--muted)">No contracts yet.</div></div>
+</div>
+<div class="sec" id="sec-payments">
+<div class="sec-hdr"><span>&#128179;</span> PAYMENTS &amp; INVOICING</div>
+<div class="card"><div class="ct">&#9670; STRIPE SETUP — YOUR ACCOUNT, YOUR BANK</div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.7">Enter your Stripe publishable key. All payments go directly to your Stripe account — no middleman, 100% yours.</div>
+  <label class="lbl">STRIPE PUBLISHABLE KEY</label><input class="inp" id="stripe-key" placeholder="pk_live_..." type="password">
+  <label class="lbl">YOUR EMAIL FOR RECEIPTS</label><input class="inp" id="stripe-email" value="demo@sprinter.com" type="email">
+  <button class="btn btn-g" onclick="saveStripe()">&#10003; CONNECT STRIPE</button>
+  <div id="stripe-st" style="font-size:10px;color:var(--muted);text-align:center;margin-top:4px"></div>
+</div>
+<div class="card"><div class="ct">&#9670; COLLECT PAYMENT</div>
+  <select class="inp" id="pay-sel" onchange="loadPaySum(this.value)"><option value="">Select booking...</option></select>
+  <div id="pay-sum" style="display:none">
+    <div class="pay-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:var(--muted)">Charter Rate</span><span style="font-size:12px;font-weight:700;color:var(--gold)" id="ps-total">$900</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:var(--muted)">Deposit</span><span style="font-size:12px;color:#4ade80" id="ps-dep">-$200</span></div>
+      <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)"><span style="font-size:13px;font-weight:700">Balance Due</span><span style="font-size:22px;font-weight:700;color:var(--gold)" id="ps-bal">$700</span></div>
+    </div>
+  </div>
+  <label class="lbl">PAYMENT TYPE</label>
+  <select class="inp" id="pay-type"><option value="deposit">Deposit</option><option value="balance">Balance Due</option><option value="full">Full Payment</option><option value="custom">Custom Amount</option></select>
+  <label class="lbl">AMOUNT ($)</label><input class="inp" id="pay-amt" type="number" placeholder="200">
+  <label class="lbl">PAYMENT METHOD</label>
+  <select class="inp" id="pay-meth"><option value="cash">Cash</option><option value="zelle">Zelle</option><option value="venmo">Venmo</option><option value="card">Credit / Debit Card (Stripe)</option></select>
+  <label class="lbl">CLIENT EMAIL FOR RECEIPT</label><input class="inp" id="pay-email" type="email" placeholder="client@email.com">
+  <button class="btn btn-gr" onclick="processPayment()">&#128179; PROCESS &amp; SEND RECEIPT</button>
+  <div id="pay-st" style="font-size:11px;color:var(--muted);text-align:center;display:none;margin-top:6px"></div>
+</div>
+<div class="card"><div class="ct">&#9670; PAYMENT HISTORY</div><div id="pay-hist" style="font-size:11px;color:var(--muted)">No payments recorded.</div></div>
+</div>
+<div class="sec" id="sec-marketing">
+<div class="sec-hdr"><span>&#128140;</span> MARKETING &amp; OUTREACH</div>
+<div class="card"><div class="ct">&#9670; EMAIL TEMPLATES</div>
+  <div style="display:flex;flex-direction:column;gap:7px">
+    <button class="btn btn-o" onclick="loadTpl('quinc')" style="text-align:left;padding:11px 16px;margin-bottom:0">&#127881; Quincea&#241;era Package</button>
+    <button class="btn btn-o" onclick="loadTpl('wedding')" style="text-align:left;padding:11px 16px;margin-bottom:0">&#128146; Wedding Charter</button>
+    <button class="btn btn-o" onclick="loadTpl('bday')" style="text-align:left;padding:11px 16px;margin-bottom:0">&#127874; Birthday Party</button>
+    <button class="btn btn-o" onclick="loadTpl('corp')" style="text-align:left;padding:11px 16px;margin-bottom:0">&#128188; Corporate Event</button>
+    <button class="btn btn-o" onclick="loadTpl('airport')" style="text-align:left;padding:11px 16px;margin-bottom:0">&#9992; Airport Transfer</button>
+    <button class="btn btn-o" onclick="loadTpl('wine')" style="text-align:left;padding:11px 16px;margin-bottom:0">&#127863; Wine Country Tour</button>
+    <button class="btn btn-o" onclick="loadTpl('prom')" style="text-align:left;padding:11px 16px;margin-bottom:0">&#10024; Prom Night</button>
+    <button class="btn btn-o" onclick="loadTpl('grad')" style="text-align:left;padding:11px 16px;margin-bottom:0">&#127891; Graduation Night</button>
+  </div>
+</div>
+<div class="card"><div class="ct">&#9670; COMPOSE &amp; SEND</div>
+  <label class="lbl">TO (EMAIL)</label><input class="inp" id="mkt-to" placeholder="client@email.com">
+  <label class="lbl">SUBJECT</label><input class="inp" id="mkt-subj">
+  <label class="lbl">MESSAGE</label><textarea class="inp" id="mkt-body" style="min-height:150px"></textarea>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <button class="btn btn-o" onclick="prevMkt()">&#128065; PREVIEW</button>
+    <button class="btn btn-g" onclick="sendMkt()">&#128140; SEND</button>
+  </div>
+  <div id="mkt-st" style="font-size:11px;color:var(--muted);text-align:center;display:none;margin-top:8px"></div>
+</div>
+</div>
+<div class="sec" id="sec-clients">
+<div class="sec-hdr"><span>&#128101;</span> CLIENT CRM</div>
+<button class="btn btn-g" onclick="openModal('add-client-modal')">+ ADD CLIENT</button>
+<div class="card"><input class="inp" id="cl-search" placeholder="&#128269; Search by name, phone, email..." oninput="filterCls(this.value)" style="margin-bottom:0"></div>
+<div id="cl-list" style="font-size:11px;color:var(--muted);text-align:center;padding:20px">No clients yet.</div>
+</div>
+<div class="sec" id="sec-gps">
+<div class="sec-hdr"><span>&#128205;</span> FLEET GPS TRACKING</div>
+<div class="card"><div class="ct" style="color:#ef4444">&#9679; LIVE VEHICLE LOCATION</div>
+  <div style="background:var(--card2);border-radius:var(--rcard);height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:10px;border:1px solid var(--border)" id="gps-map">
+    <div style="font-size:40px;margin-bottom:10px">&#128205;</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Tap to start live vehicle tracking</div>
+    <button class="btn btn-g btn-s" onclick="startGPS()" style="padding:10px 24px">START GPS TRACKING</button>
+  </div>
+  <div id="gps-coords" style="font-size:10px;color:var(--muted);text-align:center"></div>
+</div>
+<div class="card"><div class="ct">&#9670; VEHICLE STATUS</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+    <div><div style="font-size:12px;font-weight:700">Mercedes-Benz Party Sprinter</div><div style="font-size:10px;color:var(--muted);margin-top:2px" id="van-loc">Location: Not tracked</div></div>
+    <span class="badge bg" id="van-gps">IN GARAGE</span>
+  </div>
+</div>
+<div class="card"><div class="ct">&#9670; GPS LOG</div><div id="gps-log" style="font-size:10px;color:var(--muted);max-height:180px;overflow-y:auto;line-height:1.8">GPS tracking log will appear during active rentals.</div></div>
+<div class="card"><div class="ct" style="color:#4ade80">&#10003; GPS CONSENT STATUS</div>
+  <div style="font-size:11px;color:var(--muted);line-height:1.75">GPS tracking consent is embedded in every contract. All clients who have signed have acknowledged GPS tracking as a required condition of service. Location data is confidential per MBPS privacy policy.</div>
+</div>
+</div>
+<div class="sec" id="sec-finance">
+<div class="sec-hdr"><span>&#9670;</span> FINANCIALS</div>
+<div class="sg">
+  <div class="sc" style="grid-column:span 2"><div class="sn" style="color:#4ade80;font-size:28px" id="fin-net">$0</div><div class="sl">NET INCOME THIS MONTH</div></div>
+  <div class="sc"><div class="sn" id="fin-gross">$0</div><div class="sl">GROSS INCOME</div></div>
+  <div class="sc"><div class="sn" style="color:#ef4444" id="fin-exp">$0</div><div class="sl">EXPENSES</div></div>
+</div>
+<div class="card"><div class="ct">+ LOG INCOME</div>
+  <label class="lbl">DESCRIPTION</label><input class="inp" id="inc-desc" placeholder="e.g. Quincea&#241;era Charter — Claudia Prieto">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div><label class="lbl">AMOUNT ($)</label><input class="inp" id="inc-amt" type="number" placeholder="900"></div>
+    <div><label class="lbl">DATE</label><input class="inp" id="inc-date" type="date"></div>
+  </div>
+  <select class="inp" id="inc-cat"><option>Charter Revenue</option><option>Deposit Received</option><option>Balance Payment</option><option>Tip</option><option>Other</option></select>
+  <button class="btn btn-gr" onclick="logInc()">+ ADD INCOME</button>
+</div>
+<div class="card"><div class="ct">- LOG EXPENSE</div>
+  <label class="lbl">DESCRIPTION</label><input class="inp" id="exp-desc" placeholder="e.g. Fuel — June 20">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div><label class="lbl">AMOUNT ($)</label><input class="inp" id="exp-amt" type="number" placeholder="150"></div>
+    <div><label class="lbl">DATE</label><input class="inp" id="exp-date" type="date"></div>
+  </div>
+  <select class="inp" id="exp-cat"><option>Fuel</option><option>Maintenance</option><option>Insurance</option><option>Registration / DMV</option><option>Cleaning</option><option>Marketing</option><option>Other</option></select>
+  <button class="btn btn-r" onclick="logExp()">- ADD EXPENSE</button>
+</div>
+<div class="card"><div class="ct">&#9670; TRANSACTION LEDGER</div><div id="ledger" style="font-size:11px;color:var(--muted)">No transactions yet.</div></div>
+<div class="card"><div class="ct">&#9670; EXPORT</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <button class="btn btn-o btn-s" onclick="doExport('finance')" style="padding:10px;width:100%">EXPORT P&L</button>
+    <button class="btn btn-o btn-s" onclick="doExport('bookings')" style="padding:10px;width:100%">EXPORT BOOKINGS</button>
+  </div>
+</div>
+</div>
+<div class="sec" id="sec-settings">
+<div class="sec-hdr"><span>&#9881;</span> SETTINGS</div>
+<div class="card"><div class="ct">&#9670; BUSINESS PROFILE</div>
+  <label class="lbl">BUSINESS NAME</label><input class="inp" id="set-biz" value="Monterey Bay Party Sprinter">
+  <label class="lbl">OWNER NAME</label><input class="inp" id="set-own" value="Demo Owner">
+  <label class="lbl">PHONE</label><input class="inp" id="set-ph" value="(555) 123-4567" type="tel">
+  <label class="lbl">EMAIL</label><input class="inp" id="set-em" value="demo@sprinter.com" type="email">
+  <label class="lbl">BASE RATE ($ / CHARTER)</label><input class="inp" id="set-rate" value="900" type="number">
+  <label class="lbl">DEPOSIT ($)</label><input class="inp" id="set-dep" value="200" type="number">
+  <label class="lbl">LATE FEE ($ / HOUR)</label><input class="inp" id="set-late" value="100" type="number">
+  <button class="btn btn-g" onclick="saveSettings()">&#10003; SAVE SETTINGS</button>
+</div>
+<div class="card"><div class="ct">&#9670; CHANGE OWNER PIN</div>
+  <label class="lbl">NEW PIN (4 DIGITS)</label><input class="inp" id="np1" type="password" maxlength="4" placeholder="&#8226;&#8226;&#8226;&#8226;">
+  <label class="lbl">CONFIRM PIN</label><input class="inp" id="np2" type="password" maxlength="4" placeholder="&#8226;&#8226;&#8226;&#8226;">
+  <button class="btn btn-o" onclick="changePin()">UPDATE PIN</button>
+</div>
+<div class="card"><div class="ct">&#9670; DANGER ZONE</div>
+  <button class="btn btn-r" onclick="clearAll()">CLEAR ALL DATA</button>
+</div>
+</div>
+</div>
+
+<div class="bnav" id="bnav"><div class="bni">
+  <button class="bn on" id="bn-home" onclick="goTab('home')"><span class="bn-lbl">&#8962;</span><span id="bn-lbl-home">HQ</span><div class="bn-dot"></div></button>
+  <button class="bn" id="bn-fleet" onclick="goTab('fleet')"><span class="bn-lbl">&#128656;</span><span id="bn-lbl-fleet">FLEET</span><div class="bn-dot"></div>
+<div class="tn" onclick="goTab('maint')">Maintenance</div>
+<div class="tn" onclick="goTab('dot')">DOT Compliance</div>
+</button>
+  <button class="bn" id="bn-book" onclick="goTab('book')"><span class="bn-lbl">&#128197;</span><span id="bn-lbl-book">BOOK</span><div class="bn-dot"></div></button>
+  <button class="bn" id="bn-contracts" onclick="goTab('contracts')"><span class="bn-lbl">&#128196;</span><span id="bn-lbl-contracts">DOCS</span><div class="bn-dot"></div></button>
+  <button class="bn" id="bn-payments" onclick="goTab('payments')"><span class="bn-lbl">&#128179;</span><span id="bn-lbl-payments">PAY</span><div class="bn-dot"></div></button>
+  <button class="bn" id="bn-marketing" onclick="goTab('marketing')"><span class="bn-lbl">&#128140;</span><span id="bn-lbl-marketing">MKTG</span><div class="bn-dot"></div></button>
+  <button class="bn" id="bn-clients" onclick="goTab('clients')"><span class="bn-lbl">&#128101;</span><span id="bn-lbl-clients">CRM</span><div class="bn-dot"></div></button>
+  <button class="bn" id="bn-gps" onclick="goTab('gps')"><span class="bn-lbl">&#128205;</span><span id="bn-lbl-gps">GPS</span><div class="bn-dot"></div></button>
+  <button class="bn" id="bn-finance" onclick="goTab('finance')"><span class="bn-lbl">&#9670;</span><span id="bn-lbl-finance">FIN</span><div class="bn-dot"></div></button>
+  <button class="bn" id="bn-settings" onclick="goTab('settings')"><span class="bn-lbl">&#9881;</span><span id="bn-lbl-settings">SET</span><div class="bn-dot"></div></button>
+</div></div>
+
+<div class="modal" id="contract-modal">
+  <button class="mcl" onclick="closeModal('contract-modal')">&#10005;</button>
+  <div style="max-width:480px;margin:52px auto;padding:0 12px 40px">
+    <div class="cp" id="con-body"></div>
+    <div class="card"><div class="ct">&#128393; CLIENT E-SIGNATURE</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Sign below to confirm GPS consent and all terms and conditions:</div>
+      <canvas class="sig-c" id="sig-c" width="320" height="110"></canvas>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-o btn-s" onclick="clearSig()" style="padding:9px 16px">CLEAR</button>
+        <button class="btn btn-g btn-s" onclick="dlContract()" style="padding:9px 16px">DOWNLOAD</button>
+        <button class="btn btn-gr btn-s" onclick="emailContract()" style="padding:9px 16px">EMAIL ALL PARTIES</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="vehicle-modal">
+  <button class="mcl" onclick="closeModal('vehicle-modal')">&#10005;</button>
+  <div style="max-width:480px;margin:52px auto;padding:0 12px 40px">
+    <div class="card"><div class="ct">&#128656; ADD VEHICLE</div>
+      <label class="lbl">VEHICLE NAME</label><input class="inp" id="v-name" placeholder="Mercedes-Benz Sprinter 2024">
+      <label class="lbl">MAX PASSENGERS</label><input class="inp" id="v-pax" type="number" value="12">
+      <label class="lbl">CHARTER RATE ($)</label><input class="inp" id="v-rate" type="number" value="900">
+      <label class="lbl">VEHICLE PHOTO (optional)</label>
+      <input type="file" accept="image/*" id="v-photo" onchange="pvPhoto(this)" style="margin-bottom:10px;color:var(--muted);font-size:11px;width:100%">
+      <div id="v-prev" style="display:none;margin-bottom:10px"><img id="v-img" style="width:100%;height:150px;object-fit:cover;border-radius:var(--rcard)"></div>
+      <button class="btn btn-g" onclick="addVehicle()">&#10003; SAVE VEHICLE</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="add-client-modal">
+  <button class="mcl" onclick="closeModal('add-client-modal')">&#10005;</button>
+  <div style="max-width:480px;margin:52px auto;padding:0 12px 40px">
+    <div class="card"><div class="ct">&#128101; ADD CLIENT</div>
+      <label class="lbl">FULL LEGAL NAME</label><input class="inp" id="ac-name" placeholder="Full Name">
+      <label class="lbl">PHONE NUMBER</label><input class="inp" id="ac-phone" placeholder="(831) 000-0000" type="tel">
+      <label class="lbl">EMAIL ADDRESS</label><input class="inp" id="ac-email" placeholder="client@email.com" type="email">
+      <label class="lbl">NOTES</label><textarea class="inp" id="ac-notes" placeholder="VIP notes, event preferences..."></textarea>
+      <button class="btn btn-g" onclick="addClient()">&#10003; SAVE CLIENT</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="client-portal">
+  <button class="mcl" onclick="closeModal('client-portal')">&#10005;</button>
+  <div style="max-width:480px;margin:52px auto;padding:0 12px 40px">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:22px;font-weight:800;color:var(--gold);letter-spacing:3px">MONTEREY BAY</div>
+      <div style="font-size:16px;font-weight:700;color:var(--gold);letter-spacing:4px;margin-bottom:4px">PARTY SPRINTER</div>
+      <div style="font-size:9px;color:var(--muted);letter-spacing:2px">CLIENT PORTAL &mdash; (555) 123-4567</div>
+    </div>
+    <div class="card"><div class="ct">&#128640; NEW CLIENT REGISTRATION</div>
+      <label class="lbl">FULL LEGAL NAME</label><input class="inp" id="cp-name" placeholder="Your Full Name">
+      <label class="lbl">PHONE NUMBER</label><input class="inp" id="cp-phone" placeholder="(831) 000-0000" type="tel">
+      <label class="lbl">EMAIL ADDRESS</label><input class="inp" id="cp-email" placeholder="your@email.com" type="email">
+      <label class="lbl">EVENT TYPE</label>
+      <select class="inp" id="cp-event"><option>Quincea&#241;era</option><option>Wedding</option><option>Birthday</option><option>Corporate</option><option>Airport Transfer</option><option>Other</option></select>
+      <label class="lbl">PREFERRED DATE</label><input class="inp" id="cp-date" type="date">
+      <div class="gps-box">
+        <div style="font-size:9px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:8px">&#128205; GPS TRACKING CONSENT — REQUIRED</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.7;margin-bottom:10px">I understand the rented vehicle will be GPS-tracked throughout the rental for safety, insurance compliance, and vehicle protection. Location data is confidential and not sold to third parties.</div>
+        <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer">
+          <input type="checkbox" id="cp-gps" style="accent-color:var(--gold);margin-top:3px;flex-shrink:0">
+          <span style="font-size:10px;color:var(--text)">I consent to GPS vehicle tracking. I understand that refusal results in cancellation and forfeiture of deposit.</span>
+        </label>
+      </div>
+      <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin-bottom:10px">
+        <input type="checkbox" id="cp-terms" style="accent-color:var(--gold);margin-top:3px;flex-shrink:0">
+        <span style="font-size:10px;color:var(--muted)">I agree to all Terms and Conditions including cancellation policy, damage policy, no-smoking policy, and all associated fees.</span>
+      </label>
+      <button class="btn btn-g" onclick="registerClient()">&#10003; CREATE ACCOUNT &amp; REQUEST BOOKING</button>
+      <div id="cp-st" style="font-size:11px;text-align:center;margin-top:8px;display:none"></div>
+    </div>
+    <div class="card"><div style="font-size:9px;color:var(--muted);text-align:center;margin-bottom:10px;letter-spacing:1px">EXISTING CLIENT &mdash; ENTER YOUR PIN</div>
+      <div style="display:flex;gap:8px">
+        <input class="inp" id="cp-pin" maxlength="4" type="password" placeholder="&#8226;&#8226;&#8226;&#8226;" style="margin-bottom:0;text-align:center;letter-spacing:6px">
+        <button class="btn btn-g btn-s" onclick="clientLogin()" style="flex-shrink:0;padding:11px 20px">LOGIN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="text" id="_pin" readonly style="position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0;font-size:16px;pointer-events:none">
+<script>
+var PIN='4321',PLEN=4,entered='';
+function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
+function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
+
+
+var LANG = 'en';
+var TX = {
+  en: {
+    hq: 'SPRINTER HQ', access: 'OWNER ACCESS',
+    book_btn: 'BOOK A SPRINTER / CLIENT PORTAL',
+    clear: 'CLEAR SESSION',
+    wrong_pin: 'Incorrect PIN — try again',
+    instructions_title: 'WELCOME TO MONTEREY BAY PARTY SPRINTER',
+    instructions: [
+      'OWNER: Enter your 4-digit PIN to access the full business dashboard.',
+      'GUESTS & RENTERS: Tap "Book a Sprinter / Client Portal" below to register, request a booking, or check your reservation.',
+      'GPS tracking consent is required for all rentals — your safety and asset protection.',
+      'Questions? Call or text (555) 123-4567 at any time.'
+    ],
+    tab_home:'HQ', tab_fleet:'FLEET', tab_book:'BOOK', tab_contracts:'DOCS',
+    tab_pay:'PAY', tab_mktg:'MKTG', tab_crm:'CRM', tab_gps:'GPS',
+    tab_fin:'FIN', tab_set:'SET',
+    lock:'LOCK',
+  },
+  es: {
+    hq: 'SPRINTER HQ', access: 'ACCESO PROPIETARIO',
+    book_btn: 'RESERVAR UN SPRINTER / PORTAL CLIENTE',
+    clear: 'CERRAR SESIÓN',
+    wrong_pin: 'PIN incorrecto — intenta de nuevo',
+    instructions_title: 'BIENVENIDO A MONTEREY BAY PARTY SPRINTER',
+    instructions: [
+      'PROPIETARIO: Ingrese su PIN de 4 dígitos para acceder al panel de negocios.',
+      'HUÉSPEDES Y RENTADORES: Toque "Reservar un Sprinter / Portal Cliente" para registrarse, solicitar una reserva o verificar su cita.',
+      'El consentimiento de rastreo GPS es obligatorio para todos los arrendamientos.',
+      '¿Preguntas? Llame o escriba al (555) 123-4567 en cualquier momento.'
+    ],
+    tab_home:'INICIO', tab_fleet:'FLOTA', tab_book:'RESERVA', tab_contracts:'DOCS',
+    tab_pay:'PAGO', tab_mktg:'MKTG', tab_crm:'CRM', tab_gps:'GPS',
+    tab_fin:'FIN', tab_set:'CONFIG',
+    lock:'CERRAR',
+  }
+};
+function t(k){ return TX[LANG][k] || TX.en[k] || k; }
+function toggleLang(){
+  LANG = LANG==='en'?'es':'en';
+  applyLang();
+}
+function applyLang(){
+  // Toggle button
+  var btn = document.getElementById('lang-toggle');
+  if(btn) btn.textContent = LANG==='en'?'ES':'EN';
+  // Gate text
+  var acc = document.getElementById('gate-access-lbl');
+  if(acc) acc.textContent = t('access');
+  var bb = document.getElementById('gate-book-btn');
+  if(bb) bb.textContent = t('book_btn');
+  var cl = document.getElementById('gate-clear-lbl');
+  if(cl) cl.textContent = t('clear');
+  // Instructions
+  var it = document.getElementById('instructions-title');
+  if(it) it.textContent = t('instructions_title');
+  var ib = document.getElementById('instructions-body');
+  if(ib) ib.innerHTML = t('instructions').map(function(s){
+    return '<div style="padding:2px 0;border-bottom:1px solid rgba(201,160,32,0.08);font-size:9px;color:var(--muted);line-height:1.5">'+s+'</div>';
+  }).join('');
+  // Bottom nav labels
+  var tabs = ['home','fleet','book','contracts','payments','marketing','clients','gps','finance','settings'];
+  var keys = ['tab_home','tab_fleet','tab_book','tab_contracts','tab_pay','tab_mktg','tab_crm','tab_gps','tab_fin','tab_set'];
+  tabs.forEach(function(tab,i){
+    var el = document.getElementById('bn-lbl-'+tab);
+    if(el) el.textContent = t(keys[i]);
+  });
+  // Lock button
+  var lb = document.getElementById('lock-btn');
+  if(lb) lb.textContent = '\uD83D\uDD12 '+t('lock');
+}
+
+var OPIN='4321',OEMAIL='demo@sprinter.com',ONAME='Demo Owner',BIZ='Bay Area Party Sprinter',BPHONE='(555) 123-4567';
+var pinBuf='',calNow=new Date(),curBk=null,sigDrw=false;
+
+function ls(k,v){if(v===undefined)return JSON.parse(localStorage.getItem('sh_'+k)||'null');localStorage.setItem('sh_'+k,JSON.stringify(v));}
+function getBks(){return ls('bks')||[];}
+function getCls(){return ls('cls')||[];}
+function getPays(){return ls('pays')||[];}
+function getLed(){return ls('led')||[];}
+function getSet(){return ls('set')||{rate:900,dep:200,late:100,pin:OPIN};}
+
+(function(){
+  if(localStorage.getItem('sh_auth')==='owner'){
+    show();setTimeout(initApp,200);
+  }
+})();
+
+function show(){
+  document.getElementById('gate').style.display='none';window._paFire&&window._paFire('login','demo');
+  document.getElementById('app').style.display='block';
+  document.getElementById('bnav').style.display='block';
+}
+
+}
+
+function kp(v){
+  if(v==='clr'){pinBuf='';updDots();document.getElementById('gerr').textContent='';return;}
+  if(v==='del'){pinBuf=pinBuf.slice(0,-1);updDots();return;}
+  if(pinBuf.length>=4)return;
+  pinBuf+=v;updDots();
+  if(pinBuf.length===4){
+    var pin=getSet().pin||OPIN;
+    if(pinBuf===pin){localStorage.setItem('sh_auth','owner');show();setTimeout(initApp,200);}
+    else{document.querySelectorAll('.pd').forEach(function(d){d.className='pd err';});document.getElementById('gerr').textContent='Incorrect PIN';setTimeout(function(){pinBuf='';updDots();document.getElementById('gerr').textContent='';},900);}
+  }
+}
+
+function lockApp(){
+  localStorage.removeItem('sh_auth');
+  document.getElementById('app').style.display='none';
+  document.getElementById('bnav').style.display='none';
+  document.getElementById('gate').style.display='flex';
+  pinBuf='';updDots();
+  document.getElementById('gerr').textContent='';
+  toast('Locked');
+}
+function openModal(id){document.getElementById(id).className='modal open';}
+function closeModal(id){document.getElementById(id).className='modal';}
+function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast';},2600);}
+
+function goTab(t){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.bn').forEach(function(b){b.classList.remove('on');});
+  var s=document.getElementById('sec-'+t),b=document.getElementById('bn-'+t);
+  if(s)s.classList.add('on');if(b)b.classList.add('on');
+  window.scrollTo(0,0);
+  if(t==='home')refreshHome();
+  if(t==='book'){buildCal();renderBks();}
+  if(t==='clients')renderCls();
+  if(t==='finance')renderFin();
+  if(t==='payments'){popPayDd();renderPayHist();}
+  if(t==='contracts'){popConDd();renderConList();}
+}
+
+function initApp(){
+  var today=new Date().toISOString().slice(0,10);
+  document.getElementById('bk-date').value=today;
+  document.getElementById('inc-date').value=today;
+  document.getElementById('exp-date').value=today;
+  var s=getSet();
+  if(s.rate)document.getElementById('set-rate').value=s.rate;
+  if(s.dep)document.getElementById('set-dep').value=s.dep;
+  initSig();buildCal();refreshHome();renderCls();renderFin();
+  popPayDd();popConDd();renderPayHist();renderConList();renderBks();
+  loadStripeCfg();
+}
+
+function refreshHome(){
+  var bks=getBks(),now=new Date(),m=now.getMonth(),y=now.getFullYear();
+  var mb=bks.filter(function(b){var d=new Date(b.date);return d.getMonth()===m&&d.getFullYear()===y;});
+  document.getElementById('s-bk').textContent=mb.length;
+  var rev=getPays().filter(function(p){var d=new Date(p.date);return d.getMonth()===m&&d.getFullYear()===y;}).reduce(function(s,p){return s+p.amt;},0);
+  document.getElementById('s-rev').textContent='$'+rev.toLocaleString();
+  document.getElementById('s-pen').textContent=bks.filter(function(b){return !b.paid;}).length;
+  var today=now.toISOString().slice(0,10);
+  var tb=bks.filter(function(b){return b.date===today;});
+  var te=document.getElementById('home-today');
+  if(tb.length){te.innerHTML=tb.map(function(b){return '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-size:13px;font-weight:700">'+b.client+'</div><div style="font-size:10px;color:var(--muted);margin-top:2px">'+b.event+' &nbsp;&middot;&nbsp; '+b.st+' &mdash; '+b.et+'</div><div style="font-size:10px;color:#c9a020;margin-top:1px">'+b.pu+'</div></div>';}).join('');}
+  else{te.innerHTML='<div style="color:var(--muted);font-size:11px">No bookings scheduled today.</div>';}
+  var re=document.getElementById('home-recent');
+  if(bks.length){re.innerHTML=bks.slice(-4).reverse().map(function(b){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12px;font-weight:700">'+b.client+'</div><div style="font-size:9px;color:var(--muted);margin-top:1px">'+b.event+' &middot; '+b.date+'</div></div><div style="font-size:14px;font-weight:700;color:var(--gold)">$'+b.rate+'</div></div>';}).join('');}
+}
+
+function buildCal(){
+  var months=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  document.getElementById('cal-title').textContent=months[calNow.getMonth()]+' '+calNow.getFullYear();
+  var fd=new Date(calNow.getFullYear(),calNow.getMonth(),1).getDay();
+  var dim=new Date(calNow.getFullYear(),calNow.getMonth()+1,0).getDate();
+  var today=new Date();
+  var booked=getBks().map(function(b){return b.date;});
+  var html='';
+  for(var i=0;i<fd;i++)html+='<div></div>';
+  for(var d=1;d<=dim;d++){
+    var ds=calNow.getFullYear()+'-'+String(calNow.getMonth()+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var iT=today.getDate()===d&&today.getMonth()===calNow.getMonth()&&today.getFullYear()===calNow.getFullYear();
+    var iB=booked.indexOf(ds)>=0;
+    html+='<div class="cd '+(iT?'today':iB?'booked':'avail')+'" onclick="selDate(\''+ds+'\')" title="'+ds+'">'+d+'</div>';
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+}
+function calPrev(){calNow.setMonth(calNow.getMonth()-1);buildCal();}
+function calNext(){calNow.setMonth(calNow.getMonth()+1);buildCal();}
+function selDate(d){document.getElementById('bk-date').value=d;toast('Date selected: '+d);}
+
+function createBooking(){
+  var name=document.getElementById('bk-name').value.trim();
+  var phone=document.getElementById('bk-phone').value.trim();
+  var event=document.getElementById('bk-event').value;
+  var date=document.getElementById('bk-date').value;
+  var pu=document.getElementById('bk-pu').value.trim();
+  if(!name||!phone||!event||!date||!pu){toast('Please fill all required fields');return;}
+  var b={id:'BK'+Date.now(),client:name,phone:phone,email:document.getElementById('bk-email').value,event:event,date:date,st:document.getElementById('bk-st').value,et:document.getElementById('bk-et').value,pu:pu,dest:document.getElementById('bk-dest').value,rate:parseFloat(document.getElementById('bk-rate').value)||900,dep:parseFloat(document.getElementById('bk-dep').value)||200,notes:document.getElementById('bk-notes').value,paid:false,depPaid:false,gps:true,created:new Date().toISOString()};
+  var bks=getBks();bks.push(b);ls('bks',bks);
+  var cls=getCls();if(!cls.find(function(c){return c.phone===phone;})){cls.push({id:'CL'+Date.now(),name:name,phone:phone,email:b.email,added:date});ls('cls',cls);}
+  toast('Booking created — opening contract...');
+  buildCal();renderBks();refreshHome();popPayDd();popConDd();
+  setTimeout(function(){curBk=b;buildCon(b);openModal('contract-modal');},600);
+}
+
+function renderBks(){
+  var bks=getBks(),el=document.getElementById('bk-list');
+  if(!bks.length){el.innerHTML='<div style="color:var(--muted)">No bookings yet.</div>';return;}
+  el.innerHTML=bks.slice().reverse().map(function(b){return '<div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:13px;font-weight:700">'+b.client+'</div><div style="font-size:10px;color:var(--muted);margin-top:2px">'+b.event+' &middot; '+b.date+' &middot; '+b.st+'</div><div style="font-size:10px;color:var(--muted)">'+b.pu+'</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:700;color:var(--gold)">$'+b.rate+'</div><span class="badge '+(b.paid?'bg':'bo')+'" style="margin-top:4px;display:inline-block">'+(b.paid?'PAID':'PENDING')+'</span></div></div><div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap"><button class="btn btn-o btn-s" onclick="viewCon(\''+b.id+'\')">CONTRACT</button><button class="btn btn-o btn-s" onclick="mkPaid(\''+b.id+'\')">MARK PAID</button><button class="btn btn-r btn-s" onclick="delBk(\''+b.id+'\')">DELETE</button></div></div>';}).join('');}
+
+function mkPaid(id){var bks=getBks(),b=bks.find(function(x){return x.id===id;});if(b){b.paid=true;ls('bks',bks);renderBks();refreshHome();toast('Marked as paid');}}
+function delBk(id){if(!confirm('Delete this booking?'))return;ls('bks',getBks().filter(function(b){return b.id!==id;}));renderBks();buildCal();refreshHome();toast('Booking deleted');}
+
+function buildCon(b){
+  var bal=b.rate-b.dep;
+  document.getElementById('con-body').innerHTML='<h2 style="text-align:center;font-size:15px;margin-bottom:3px">BOOKING CONFIRMATION &amp; CONTRACT</h2><p style="text-align:center;font-size:9px;color:#555;margin-bottom:12px">'+BIZ+' &nbsp;&mdash;&nbsp; Luxury Transportation &amp; Chauffeur Services<br>'+BPHONE+' &nbsp;|&nbsp; '+OEMAIL+'</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px"><div><h3 style="font-size:10px;border-bottom:1px solid #000;margin-bottom:5px;padding-bottom:2px;text-transform:uppercase">Client Information</h3><div class="cr"><span><b>Client Name:</b></span><span>'+b.client+'</span></div><div class="cr"><span><b>Phone:</b></span><span>'+b.phone+'</span></div><div class="cr"><span><b>Email:</b></span><span>'+(b.email||'N/A')+'</span></div><div class="cr"><span><b>Event:</b></span><span>'+b.event+'</span></div><div class="cr"><span><b>Date:</b></span><span>'+b.date+'</span></div><div class="cr"><span><b>Start Time:</b></span><span>'+b.st+'</span></div><div class="cr"><span><b>End Time:</b></span><span>'+b.et+'</span></div><div class="cr"><span><b>Vehicle:</b></span><span>Mercedes-Benz Party Sprinter (12 max)</span></div><div class="cr"><span><b>Service Type:</b></span><span>Private Charter</span></div></div><div><h3 style="font-size:10px;border-bottom:1px solid #000;margin-bottom:5px;padding-bottom:2px;text-transform:uppercase">Itinerary</h3><p style="font-size:9px;margin-bottom:6px"><b>1. PICK-UP:</b><br>'+b.pu+'<br><i>'+b.st+'</i></p>'+(b.dest?'<p style="font-size:9px"><b>2. DESTINATION:</b><br>'+b.dest+'</p>':'')+'<p style="font-size:8px;color:#777;margin-top:8px">*Itinerary subject to change based on traffic and client preference.</p></div></div><h3 style="font-size:10px;border-bottom:1px solid #000;margin-bottom:6px;padding-bottom:2px;text-transform:uppercase">Investment Summary</h3><div class="cr"><span>Total Charter Rate (Flat Rate)</span><span><b>$'+b.rate.toFixed(2)+'</b></span></div><div class="cr"><span>Non-Refundable Deposit</span><span>$'+b.dep.toFixed(2)+'</span></div><div class="cr"><span><b>Balance Due (Day of Service)</b></span><span><b>$'+bal.toFixed(2)+'</b></span></div><p style="font-size:9px;color:#555;margin-top:5px;font-style:italic">Balance of $'+bal+' is due in cash, Zelle, or Venmo on day of charter.</p><h3 style="font-size:10px;border-bottom:1px solid #000;margin:10px 0 5px;padding-bottom:2px;text-transform:uppercase">GPS Tracking Consent</h3><p style="font-size:9px;line-height:1.6">By signing, Client expressly consents to continuous GPS vehicle tracking throughout the rental period for safety, insurance compliance, and vehicle protection. Data is confidential and not shared with third parties. Refusal constitutes cancellation with forfeiture of deposit.</p><h3 style="font-size:10px;border-bottom:1px solid #000;margin:10px 0 5px;padding-bottom:2px;text-transform:uppercase">Terms &amp; Conditions Summary</h3><p style="font-size:9px;line-height:1.5"><b>Cancellation:</b> 7+ days prior = deposit forfeited. Within 7 days = non-refundable. <b>Late Fee:</b> $100/hr beyond end time. <b>No Smoking/Vaping:</b> $250 cleaning fee. <b>Damage:</b> Client liable for all costs. <b>Capacity:</b> 12 passengers maximum. <b>Conduct:</b> MBPS may terminate service for unsafe behavior without refund.</p><h3 style="font-size:10px;border-bottom:1px solid #000;margin:10px 0 5px;padding-bottom:2px;text-transform:uppercase">Agreed &amp; Accepted</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px"><div><p style="font-size:9px">Client Signature:</p><div style="border-bottom:1px solid #000;height:44px;margin-bottom:4px;background:#fafafa"></div><p style="font-size:9px">Date: '+b.date+'</p></div><div><p style="font-size:9px">'+BIZ+':</p><p style="font-size:11px;font-weight:700;margin-top:6px">'+ONAME+'</p><p style="font-size:9px">Date: '+new Date().toLocaleDateString()+'</p></div></div>'+(b.notes?'<p style="font-size:9px;margin-top:8px"><b>Special Notes:</b> '+b.notes+'</p>':'')+'<p style="font-size:8px;color:#aaa;margin-top:10px;text-align:center">Contract ID: '+b.id+' &nbsp;|&nbsp; GPS Consent: Required &amp; Included &nbsp;|&nbsp; '+new Date().toLocaleString()+'</p>';}
+
+function viewCon(id){var b=getBks().find(function(x){return x.id===id;});if(b){curBk=b;buildCon(b);openModal('contract-modal');}}
+function openContractModal(){var id=document.getElementById('con-sel').value;if(!id){toast('Select a booking first');return;}var b=getBks().find(function(x){return x.id===id;});if(b){curBk=b;buildCon(b);openModal('contract-modal');}}
+function preloadCon(id){if(!id)return;var b=getBks().find(function(x){return x.id===id;});if(b)curBk=b;}
+function popConDd(){var opts=getBks().map(function(b){return '<option value="'+b.id+'">'+b.client+' — '+b.event+' ('+b.date+')</option>';}).join('');var el=document.getElementById('con-sel');if(el)el.innerHTML='<option value="">Select booking...</option>'+opts;renderConList();}
+function renderConList(){var el=document.getElementById('con-list'),bks=getBks();if(!bks.length){el.innerHTML='<div style="color:var(--muted)">No contracts yet.</div>';return;}el.innerHTML=bks.map(function(b){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12px;font-weight:700">'+b.client+'</div><div style="font-size:9px;color:var(--muted);margin-top:1px">'+b.event+' — '+b.date+'</div></div><button class="btn btn-o btn-s" onclick="viewCon(\''+b.id+'\')">VIEW</button></div>';}).join('');}
+
+function dlContract(){if(!curBk){toast('No contract loaded');return;}var html=document.getElementById('con-body').innerHTML;var full='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Contract — '+curBk.client+'</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:20px;color:#000}.cr{display:flex;justify-content:space-between;padding:2px 0}h2,h3{margin:8px 0 5px}</style></head><body>'+html+'<br><p style="font-size:9px;color:#aaa;text-align:center">GPS Tracking Consent Acknowledged — Signed: '+new Date().toLocaleString()+'</p>
+<div id="tab-maint" class="tab-section" style="display:none">
+  <div class="sec-hdr">Vehicle Maintenance Log</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:10px">Log Maintenance</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Vehicle / Unit</div><input id="mt-unit" class="inp" placeholder="Unit # or plate"/></div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Service Type</div>
+        <select id="mt-type" class="inp"><option>Oil Change</option><option>Tire Rotation</option><option>Brake Service</option><option>Engine Repair</option><option>Transmission</option><option>AC / Heating</option><option>Annual Inspection</option><option>Other</option></select>
+      </div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Mileage</div><input id="mt-miles" class="inp" type="number" placeholder="0"/></div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Cost ($)</div><input id="mt-cost" class="inp" type="number" placeholder="0"/></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end">
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Next Service Due</div><input id="mt-next" class="inp" type="date"/></div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Shop / Vendor</div><input id="mt-shop" class="inp" placeholder="Shop name"/></div>
+      <button onclick="mtAdd()" class="btn" style="height:36px">Log</button>
+    </div>
+  </div>
+  <div class="card"><table class="tbl"><thead><tr><th>Date</th><th>Unit</th><th>Service</th><th>Mileage</th><th>Cost</th><th>Next Due</th><th>Shop</th></tr></thead><tbody id="mt-tbody"></tbody></table></div>
+</div>
+
+<div id="tab-dot" class="tab-section" style="display:none">
+  <div class="sec-hdr">DOT Compliance &amp; Driver Records</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+    <div class="card" style="text-align:center;border-left:3px solid var(--green)"><div style="font-size:9px;color:var(--muted)">CDL CURRENT</div><div id="dot-cdl-ok" style="font-size:22px;font-weight:900;color:var(--green)">0</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--red)"><div style="font-size:9px;color:var(--muted)">EXPIRING &lt; 60 DAYS</div><div id="dot-cdl-exp" style="font-size:22px;font-weight:900;color:var(--red)">0</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--gold)"><div style="font-size:9px;color:var(--muted)">INSPECTIONS DUE</div><div id="dot-insp" style="font-size:22px;font-weight:900;color:var(--gold)">0</div></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:10px">Add Driver Record</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;align-items:end">
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">Driver Name</div><input id="dot-name" class="inp" placeholder="Full name"/></div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">CDL Number</div><input id="dot-cdl" class="inp" placeholder="CDL #"/></div>
+      <div><div style="font-size:9px;color:var(--muted);margin-bottom:3px">CDL Expiration</div><input id="dot-exp" class="inp" type="date"/></div>
+      <button onclick="dotAdd()" class="btn" style="height:36px">Add Driver</button>
+    </div>
+  </div>
+  <div class="card"><table class="tbl"><thead><tr><th>Driver</th><th>CDL #</th><th>CDL Expires</th><th>Days Remaining</th><th>Status</th></tr></thead><tbody id="dot-tbody"></tbody></table></div>
+</div>
+
+<script>
+var mtData=JSON.parse(localStorage.getItem('spr_mt')||'[]');
+function mtAdd(){var u=document.getElementById('mt-unit').value.trim(),t=document.getElementById('mt-type').value,m=document.getElementById('mt-miles').value,c=parseFloat(document.getElementById('mt-cost').value)||0,n=document.getElementById('mt-next').value,s=document.getElementById('mt-shop').value.trim();if(!u)return;mtData.unshift({date:new Date().toLocaleDateString(),unit:u,type:t,miles:m,cost:c,next:n,shop:s});localStorage.setItem('spr_mt',JSON.stringify(mtData));mtRender();['mt-unit','mt-miles','mt-cost','mt-shop'].forEach(function(id){document.getElementById(id).value='';});}
+function mtRender(){var tb=document.getElementById('mt-tbody');if(!tb)return;var today=new Date();tb.innerHTML=mtData.map(function(r){var due=new Date(r.next);var past=due<today;return'<tr><td>'+r.date+'</td><td>'+r.unit+'</td><td>'+r.type+'</td><td>'+r.miles+'</td><td>$'+r.cost.toLocaleString()+'</td><td style="color:'+(past?'var(--red)':'var(--green)')+'">'+r.next+'</td><td>'+r.shop+'</td></tr>';}).join('');}
+var dotData=JSON.parse(localStorage.getItem('spr_dot')||'[]');
+function dotAdd(){var n=document.getElementById('dot-name').value.trim(),c=document.getElementById('dot-cdl').value.trim(),e=document.getElementById('dot-exp').value;if(!n)return;dotData.push({name:n,cdl:c,exp:e});localStorage.setItem('spr_dot',JSON.stringify(dotData));dotRender();}
+function dotRender(){var tb=document.getElementById('dot-tbody');if(!tb)return;var today=new Date();var ok=0,exp=0;tb.innerHTML=dotData.map(function(r){var d=new Date(r.exp);var days=Math.round((d-today)/(1000*60*60*24));var col=days<0?'var(--red)':days<60?'var(--gold)':'var(--green)';var status=days<0?'EXPIRED':days<60?'EXPIRING SOON':'Current';if(days>=60)ok++;else exp++;return'<tr><td style="font-weight:600">'+r.name+'</td><td>'+r.cdl+'</td><td>'+r.exp+'</td><td style="color:'+col+';font-weight:700">'+days+' days</td><td style="color:'+col+';font-weight:700">'+status+'</td></tr>';}).join('');var ok_el=document.getElementById('dot-cdl-ok');var exp_el=document.getElementById('dot-cdl-exp');if(ok_el)ok_el.textContent=ok;if(exp_el)exp_el.textContent=exp;}
+document.addEventListener('DOMContentLoaded',function(){mtRender();dotRender();});
+</script>
+
+<div id="tab-earnings" class="tab-section" style="display:none">
+  <div class="sec-hdr">Driver Earnings Tracker</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;margin-bottom:10px">Log Earning</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end">
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Driver</label><input id="ea-driver" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="Driver name"/></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Trip / Job</label><input id="ea-job" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="Client / trip"/></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Date</label><input id="ea-date" type="date" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none"/></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Amount ($)</label><input id="ea-amt" type="number" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="0.00"/></div>
+      <button onclick="eaAdd()" style="padding:9px 16px;background:#C9A55C;border:none;border-radius:8px;color:#020912;font-size:11px;font-weight:700;cursor:pointer;height:36px">Log</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center"><div style="font-size:9px;color:#64748b;letter-spacing:1px;margin-bottom:4px">TOTAL EARNED</div><div id="ea-total" style="font-size:22px;font-weight:900;color:#C9A55C">$0</div></div>
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center"><div style="font-size:9px;color:#64748b;letter-spacing:1px;margin-bottom:4px">THIS WEEK</div><div id="ea-week" style="font-size:22px;font-weight:900;color:#22c55e">$0</div></div>
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center"><div style="font-size:9px;color:#64748b;letter-spacing:1px;margin-bottom:4px">TRIPS LOGGED</div><div id="ea-count" style="font-size:22px;font-weight:900;color:#4a8fd4">0</div></div>
+  </div>
+  <div style="background:#161b22;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px"><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,0.08)">Driver</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,0.08)">Trip</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,0.08)">Date</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,0.08)">Amount</th></tr></thead><tbody id="ea-tbody"></tbody></table></div>
+</div>
+<div id="tab-reviews" class="tab-section" style="display:none">
+  <div class="sec-hdr">Client Reviews & Feedback</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end">
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Client Name</label><input id="rv-client" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="Client"/></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Driver</label><input id="rv-driver" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="Driver"/></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Rating (1-5)</label><select id="rv-rating" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none"><option>5 — Excellent</option><option>4 — Good</option><option>3 — Average</option><option>2 — Poor</option><option>1 — Unacceptable</option></select></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Comment</label><input id="rv-comment" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="Client feedback"/></div>
+      <button onclick="rvAdd()" style="padding:9px 16px;background:#C9A55C;border:none;border-radius:8px;color:#020912;font-size:11px;font-weight:700;cursor:pointer;height:36px">Log</button>
+    </div>
+  </div>
+  <div style="background:#161b22;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px"><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Date</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Client</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Driver</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Rating</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Comment</th></tr></thead><tbody id="rv-tbody"></tbody></table></div>
+</div>
+<div id="tab-sos" class="tab-section" style="display:none">
+  <div class="sec-hdr" style="color:#ef4444">Emergency SOS Log</div>
+  <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:14px;margin-bottom:14px;font-size:10px;color:#94a3b8">
+    <strong style="color:#ef4444">EMERGENCY PROTOCOL:</strong> Any driver SOS or incident must be logged immediately. Contact driver, notify client, and document all actions taken.
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end">
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Driver</label><input id="sos-driver" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="Driver name"/></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Location</label><input id="sos-loc" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="Last known location"/></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Incident Type</label><select id="sos-type" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none"><option>Vehicle Breakdown</option><option>Accident</option><option>Medical Emergency</option><option>Hostile Passenger</option><option>Unsafe Situation</option><option>Other</option></select></div>
+      <div><label style="font-size:9px;color:#64748b;display:block;margin-bottom:3px">Actions Taken</label><input id="sos-action" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:11px;outline:none" placeholder="Called 911, dispatched help..."/></div>
+      <button onclick="sosAdd()" style="padding:9px 16px;background:#ef4444;border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;height:36px">LOG SOS</button>
+    </div>
+  </div>
+  <div style="background:#161b22;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px"><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Date/Time</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Driver</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Location</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Incident</th><th style="padding:8px 10px;text-align:left;color:#64748b;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.08)">Actions</th></tr></thead><tbody id="sos-tbody"></tbody></table></div>
+</div>
+<script>
+var eaData=JSON.parse(localStorage.getItem('spr_ea')||'[]');
+function eaAdd(){var d=document.getElementById('ea-driver').value.trim(),j=document.getElementById('ea-job').value.trim(),dt=document.getElementById('ea-date').value,a=parseFloat(document.getElementById('ea-amt').value)||0;if(!d||!a)return;eaData.unshift({driver:d,job:j,date:dt,amt:a});localStorage.setItem('spr_ea',JSON.stringify(eaData));eaRender();['ea-driver','ea-job','ea-amt'].forEach(function(id){document.getElementById(id).value='';}); }
+function eaRender(){var tb=document.getElementById('ea-tbody');if(!tb)return;var tot=eaData.reduce(function(s,r){return s+r.amt;},0);var today=new Date();var weekAgo=new Date(today);weekAgo.setDate(today.getDate()-7);var week=eaData.filter(function(r){return r.date&&new Date(r.date)>=weekAgo;}).reduce(function(s,r){return s+r.amt;},0);var te=document.getElementById('ea-total');var we=document.getElementById('ea-week');var ce=document.getElementById('ea-count');if(te)te.textContent='$'+tot.toLocaleString(undefined,{maximumFractionDigits:0});if(we)we.textContent='$'+week.toLocaleString(undefined,{maximumFractionDigits:0});if(ce)ce.textContent=eaData.length;tb.innerHTML=eaData.map(function(r){return'<tr><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;color:#e2e8f0">'+r.driver+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8">'+r.job+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8">'+r.date+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#C9A55C;font-weight:700">$'+r.amt.toLocaleString()+'</td></tr>';}).join('');}
+var rvData=JSON.parse(localStorage.getItem('spr_rv')||'[]');
+function rvAdd(){var c=document.getElementById('rv-client').value.trim(),d=document.getElementById('rv-driver').value.trim(),r=document.getElementById('rv-rating').value,co=document.getElementById('rv-comment').value.trim();if(!c)return;rvData.unshift({date:new Date().toLocaleDateString(),client:c,driver:d,rating:r,comment:co});localStorage.setItem('spr_rv',JSON.stringify(rvData));rvRender();['rv-client','rv-driver','rv-comment'].forEach(function(id){document.getElementById(id).value='';}); }
+function rvRender(){var tb=document.getElementById('rv-tbody');if(!tb)return;tb.innerHTML=rvData.map(function(r){var stars=parseInt(r.rating)||5;var col=stars>=4?'#22c55e':stars===3?'#f59e0b':'#ef4444';return'<tr><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8;font-size:10px">'+r.date+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;color:#e2e8f0">'+r.client+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8">'+r.driver+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:'+col+';font-weight:700">'+stars+'/5</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8;font-style:italic">'+r.comment+'</td></tr>';}).join('');}
+var sosData=JSON.parse(localStorage.getItem('spr_sos')||'[]');
+function sosAdd(){var d=document.getElementById('sos-driver').value.trim(),l=document.getElementById('sos-loc').value.trim(),t=document.getElementById('sos-type').value,a=document.getElementById('sos-action').value.trim();if(!d)return;sosData.unshift({datetime:new Date().toLocaleString(),driver:d,loc:l,type:t,action:a});localStorage.setItem('spr_sos',JSON.stringify(sosData));sosRender();['sos-driver','sos-loc','sos-action'].forEach(function(id){document.getElementById(id).value='';}); }
+function sosRender(){var tb=document.getElementById('sos-tbody');if(!tb)return;tb.innerHTML=sosData.map(function(r){return'<tr><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#ef4444;font-size:10px;font-weight:700">'+r.datetime+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;color:#e2e8f0">'+r.driver+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8">'+r.loc+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#f59e0b">'+r.type+'</td><td style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8">'+r.action+'</td></tr>';}).join('');}
+document.addEventListener('DOMContentLoaded',function(){eaRender();rvRender();sosRender();});
+</script>
+<script>
+
+// ── PORTAL ACTIVITY TRACKER ───────────────────────────────────────────────
+(function(){
+var _PA_PORTAL='Sprinter HQ';
+var _PA_API='https://auditdna-backend-1-production.up.railway.app/api/portal-activity';
+var _PA_SID=Math.random().toString(36).slice(2)+Date.now().toString(36);
+function paFire(event,role,tab){
+  try{
+    fetch(_PA_API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({portal:_PA_PORTAL,event:event,pin_role:role||'demo',tab:tab||null,session_id:_PA_SID})
+    }).catch(function(){});
+  }catch(e){}
+}
+window._paFire=paFire;
+// Patch logout
+var _origLock=window.lock;
+window.lock=function(){paFire('logout');if(_origLock)_origLock();else{var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';}};
+// Tab change tracking — patch goTab
+var _origGoTab=window.goTab;
+window.goTab=function(id){paFire('tab_change',null,id);if(_origGoTab)_origGoTab(id);};
+})();
+</script>
+
+</body></html>';var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([full],{type:'text/html'}));a.download='Contract_'+curBk.client.replace(/s+/g,'_')+'_'+curBk.date+'.html';a.click();toast('Contract downloaded');}
+
+function emailContract(){if(!curBk){toast('No contract loaded');return;}var b=curBk,bal=b.rate-b.dep;var subj=encodeURIComponent('Booking Confirmation & Contract — '+BIZ);var body=encodeURIComponent('Dear '+b.client+', your booking with '+BIZ+' is confirmed. EVENT: '+b.event+'. DATE: '+b.date+'. TIME: '+b.st+' to '+b.et+'. PICK-UP: '+b.pu+(b.dest?'. DESTINATION: '+b.dest:'')+'. RATE: $'+b.rate+'. DEPOSIT: $'+b.dep+'. BALANCE DUE DAY OF SERVICE: $'+bal+'. GPS TRACKING CONSENT: Included. CANCELLATION: 7+ days forfeits deposit. Questions? '+BPHONE+'. Sincerely, '+ONAME+' | '+BIZ+' | '+BPHONE+' | '+OEMAIL);window.open('mailto:'+b.email+'?cc='+OEMAIL+'&subject='+subj+'&body='+body);toast('Email opened — sending to all parties');}
+function initSig(){var c=document.getElementById('sig-c');if(!c)return;var ctx=c.getContext('2d');c.width=c.offsetWidth||320;ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.lineCap='round';ctx.lineJoin='round';function pt(e){var r=c.getBoundingClientRect();if(e.touches)return{x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top};return{x:e.clientX-r.left,y:e.clientY-r.top};}c.addEventListener('mousedown',function(e){sigDrw=true;var p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y);});c.addEventListener('mousemove',function(e){if(!sigDrw)return;var p=pt(e);ctx.lineTo(p.x,p.y);ctx.stroke();});c.addEventListener('mouseup',function(){sigDrw=false;});c.addEventListener('touchstart',function(e){e.preventDefault();sigDrw=true;var p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y);},{passive:false});c.addEventListener('touchmove',function(e){e.preventDefault();if(!sigDrw)return;var p=pt(e);ctx.lineTo(p.x,p.y);ctx.stroke();},{passive:false});c.addEventListener('touchend',function(){sigDrw=false;});}
+function clearSig(){var c=document.getElementById('sig-c');c.getContext('2d').clearRect(0,0,c.width,c.height);}
+
+function loadStripeCfg(){var k=ls('sk');if(k)document.getElementById('stripe-key').value=k;}
+function saveStripe(){var k=document.getElementById('stripe-key').value.trim();if(!k){toast('Enter your Stripe publishable key');return;}ls('sk',k);document.getElementById('stripe-st').textContent='✓ Stripe key saved — payments active';toast('Stripe configured successfully');}
+
+function popPayDd(){var opts=getBks().map(function(b){return '<option value="'+b.id+'">'+b.client+' — '+b.event+' ('+b.date+')</option>';}).join('');var el=document.getElementById('pay-sel');if(el)el.innerHTML='<option value="">Select booking...</option>'+opts;}
+function loadPaySum(id){if(!id){document.getElementById('pay-sum').style.display='none';return;}var b=getBks().find(function(x){return x.id===id;});if(!b)return;document.getElementById('pay-sum').style.display='block';document.getElementById('ps-total').textContent='$'+b.rate;document.getElementById('ps-dep').textContent='-$'+b.dep;document.getElementById('ps-bal').textContent='$'+(b.rate-(b.depPaid?b.dep:0));document.getElementById('pay-email').value=b.email||'';}
+
+function processPayment(){
+  var amt=parseFloat(document.getElementById('pay-amt').value)||0;
+  var meth=document.getElementById('pay-meth').value;
+  var email=document.getElementById('pay-email').value;
+  var bid=document.getElementById('pay-sel').value;
+  if(!amt){toast('Enter payment amount');return;}
+  var bks=getBks(),b=bks.find(function(x){return x.id===bid;});
+  var p={id:'PAY'+Date.now(),bkId:bid,client:b?b.client:'',amt:amt,meth:meth,date:new Date().toISOString().slice(0,10)};
+  var pays=getPays();pays.push(p);ls('pays',pays);
+  if(b){if(amt>=b.dep&&!b.depPaid)b.depPaid=true;if(amt>=b.rate)b.paid=true;ls('bks',bks);}
+  var led=getLed();led.push({type:'income',desc:'Payment from '+(b?b.client:'client')+' ('+meth+')',amt:amt,date:p.date,cat:'Charter Revenue',id:'T'+Date.now()});ls('led',led);
+  renderPayHist();renderFin();refreshHome();renderBks();
+  if(email){var subj=encodeURIComponent('Payment Receipt — '+BIZ);var body=encodeURIComponent('Dear '+(b?b.client:'')+', your payment of $'+amt+' via '+meth+' on '+p.date+' has been received. Thank you for choosing '+BIZ+'. '+ONAME+' | '+BPHONE);window.open('mailto:'+email+'?cc='+OEMAIL+'&subject='+subj+'&body='+body);}
+  toast('Payment recorded: $'+amt+' ('+meth+')');
+  var st=document.getElementById('pay-st');st.style.display='block';st.style.color='#4ade80';st.textContent='✓ Payment recorded. Receipt email opened.';
+}
+
+function renderPayHist(){var el=document.getElementById('pay-hist'),pays=getPays();if(!pays.length){el.innerHTML='<div style="color:var(--muted)">No payments yet.</div>';return;}el.innerHTML=pays.slice().reverse().map(function(p){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12px;font-weight:700">'+p.client+'</div><div style="font-size:9px;color:var(--muted);margin-top:1px">'+p.meth+' · '+p.date+'</div></div><div style="font-size:15px;font-weight:700;color:#4ade80">$'+p.amt+'</div></div>';}).join('');}
+
+function logInc(){var d=document.getElementById('inc-desc').value.trim(),a=parseFloat(document.getElementById('inc-amt').value)||0;if(!d||!a){toast('Fill description and amount');return;}var l=getLed();l.push({type:'income',desc:d,amt:a,date:document.getElementById('inc-date').value,cat:document.getElementById('inc-cat').value,id:'T'+Date.now()});ls('led',l);renderFin();document.getElementById('inc-desc').value='';document.getElementById('inc-amt').value='';toast('Income logged: $'+a);}
+function logExp(){var d=document.getElementById('exp-desc').value.trim(),a=parseFloat(document.getElementById('exp-amt').value)||0;if(!d||!a){toast('Fill description and amount');return;}var l=getLed();l.push({type:'expense',desc:d,amt:a,date:document.getElementById('exp-date').value,cat:document.getElementById('exp-cat').value,id:'T'+Date.now()});ls('led',l);renderFin();document.getElementById('exp-desc').value='';document.getElementById('exp-amt').value='';toast('Expense logged: $'+a);}
+
+function renderFin(){var l=getLed(),now=new Date(),m=now.getMonth(),y=now.getFullYear();var ml=l.filter(function(t){var d=new Date(t.date);return d.getMonth()===m&&d.getFullYear()===y;});var inc=ml.filter(function(t){return t.type==='income';}).reduce(function(s,t){return s+t.amt;},0);var exp=ml.filter(function(t){return t.type==='expense';}).reduce(function(s,t){return s+t.amt;},0);document.getElementById('fin-gross').textContent='$'+inc.toLocaleString();document.getElementById('fin-exp').textContent='$'+exp.toLocaleString();document.getElementById('fin-net').textContent='$'+(inc-exp).toLocaleString();var el=document.getElementById('ledger');if(!l.length){el.innerHTML='<div style="color:var(--muted)">No transactions yet.</div>';return;}el.innerHTML=l.slice().reverse().map(function(t){return '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:11px;font-weight:600">'+t.desc+'</div><div style="font-size:9px;color:var(--muted);margin-top:1px">'+t.cat+' · '+t.date+'</div></div><div style="font-size:14px;font-weight:700;color:'+(t.type==='income'?'#4ade80':'#ef4444')+';">'+(t.type==='income'?'+':'-')+'$'+t.amt+'</div></div>';}).join('');}
+
+function renderCls(filter){var cls=getCls();if(filter)cls=cls.filter(function(c){return c.name.toLowerCase().includes(filter.toLowerCase())||(c.phone||'').includes(filter)||(c.email||'').toLowerCase().includes(filter.toLowerCase());});var el=document.getElementById('cl-list');if(!cls.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px">No clients yet.</div>';return;}el.innerHTML=cls.map(function(c,ci){window._cls=window._cls||[];window._cls[ci]=c;var bk=getBks().filter(function(b){return b.phone===c.phone;});var ph=c.phone.replace(/[^0-9]/g,'');return '<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rcard);padding:13px;margin-bottom:9px;border-left:2px solid rgba(201,160,32,0.35)"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><div style="font-size:14px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--muted);margin-top:2px">'+c.phone+(c.email?' - '+c.email:'')+'</div></div><span class="badge bb">'+bk.length+' booking'+(bk.length!==1?'s':'')+'</span></div><div style="display:flex;gap:7px"><a href="tel:'+ph+'" class="btn btn-o btn-s" style="text-decoration:none;padding:8px 14px;font-size:10px;font-weight:700">CALL</a><a href="sms:'+ph+'" class="btn btn-o btn-s" style="text-decoration:none;padding:8px 14px;font-size:10px;font-weight:700">TEXT</a><button class="btn btn-g btn-s" onclick="bookClient('+ci+')" style="padding:8px 14px">BOOK</button></div></div>';}).join('');}
+function bookClient(i){var c=(window._cls||[])[i];if(!c)return;prefillBook(c.name,c.phone.replace(/[^0-9]/g,''),c.email||'');}
+function filterCls(q){renderCls(q);}
+function prefillBook(n,p,e){document.getElementById('bk-name').value=n;document.getElementById('bk-phone').value=p;document.getElementById('bk-email').value=e||'';goTab('book');toast('Client loaded into booking form');}
+function addClient(){var n=document.getElementById('ac-name').value.trim(),p=document.getElementById('ac-phone').value.trim();if(!n||!p){toast('Name and phone required');return;}var cls=getCls();cls.push({id:'CL'+Date.now(),name:n,phone:p,email:document.getElementById('ac-email').value,notes:document.getElementById('ac-notes').value,added:new Date().toISOString().slice(0,10)});ls('cls',cls);renderCls();closeModal('add-client-modal');document.getElementById('ac-name').value='';document.getElementById('ac-phone').value='';document.getElementById('ac-email').value='';document.getElementById('ac-notes').value='';toast('Client added successfully');}
+
+function startGPS(){if(!navigator.geolocation){toast('GPS not available on this device');return;}navigator.geolocation.watchPosition(function(pos){var lat=pos.coords.latitude.toFixed(5),lng=pos.coords.longitude.toFixed(5),acc=Math.round(pos.coords.accuracy);document.getElementById('gps-coords').textContent='Lat: '+lat+' · Lng: '+lng+' (±'+acc+'m)';document.getElementById('van-loc').textContent='Location: '+lat+', '+lng;document.getElementById('van-gps').textContent='LIVE';document.getElementById('van-gps').className='badge bb';document.getElementById('gps-map').innerHTML='<div style="text-align:center"><div style="font-size:44px;margin-bottom:8px">&#128205;</div><div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:2px">LIVE TRACKING ACTIVE</div><div style="font-size:11px;color:var(--muted);margin-top:5px">'+lat+', '+lng+'</div><div style="font-size:10px;color:var(--muted)">Accuracy: ±'+acc+'m</div><div style="margin-top:12px"><a href="https://maps.google.com/?q='+lat+','+lng+'" target="_blank" style="color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1px">OPEN IN GOOGLE MAPS ↗</a></div></div>';var log=document.getElementById('gps-log');log.innerHTML=new Date().toLocaleTimeString()+' — '+lat+', '+lng+' (±'+acc+'m)<br>'+log.innerHTML;var gpsLog=JSON.parse(localStorage.getItem('sh_gpslog')||'[]');gpsLog.unshift({lat:lat,lng:lng,acc:acc,t:new Date().toISOString()});if(gpsLog.length>100)gpsLog=gpsLog.slice(0,100);localStorage.setItem('sh_gpslog',JSON.stringify(gpsLog));},function(e){toast('GPS error: '+e.message);},{enableHighAccuracy:true,timeout:15000,maximumAge:5000});}
+
+var TPLS={quinc:{s:'Quinceañera Package — Monterey Bay Party Sprinter',b:'Dear [Name], Congratulations! Monterey Bay Party Sprinter would be honored to be part of your Quinceañera. Private Mercedes-Benz Party Sprinter. Up to 12 guests. Professional chauffeur. $900 flat rate. $200 deposit secures your date. Call or text: (555) 123-4567. Demo Owner, Bay Area Party Sprinter'},wedding:{s:'Wedding Transportation — Monterey Bay Party Sprinter',b:'Dear [Name], Your wedding day deserves the finest. Mercedes-Benz Party Sprinter for up to 12 guests. Professional attired chauffeur. $900 flat rate. (555) 123-4567 | demo@sprinter.com. Demo Owner'},bday:{s:'Birthday Charter — Monterey Bay Party Sprinter',b:'Dear [Name], Make it unforgettable! Private Sprinter for up to 12. $900 flat rate. $200 deposit. (555) 123-4567. Demo Owner'},corp:{s:'Corporate Transportation — Monterey Bay Party Sprinter',b:'Dear [Name], Professional group transportation for executive events. Up to 12 passengers. $900 flat rate. (555) 123-4567 | demo@sprinter.com'},airport:{s:'Airport Transfer — Monterey Bay Party Sprinter',b:'Dear [Name], Premium airport group transfers. SFO OAK SJC MRY. Up to 12 passengers. Starting at $900. (555) 123-4567 | demo@sprinter.com'},wine:{s:'Wine Country Tour — Monterey Bay Party Sprinter',b:'Dear [Name], Explore Monterey wine country in luxury. Carmel Valley, Santa Cruz Mountains. Up to 12 guests. $900 flat rate. (555) 123-4567'},prom:{s:'Prom Night — Monterey Bay Party Sprinter',b:'Dear [Name], Arrive in style. Private Sprinter for up to 12. $900 flat rate. Book early — prom dates fill fast. (555) 123-4567 | demo@sprinter.com'},grad:{s:'Graduation Night — Monterey Bay Party Sprinter',b:'Dear [Name], Celebrate in style. Private Sprinter for up to 12. $900 flat rate. (555) 123-4567. Demo Owner'}};
+function loadTpl(id){var t=TPLS[id];if(!t)return;document.getElementById('mkt-subj').value=t.s;document.getElementById('mkt-body').value=t.b;toast('Template loaded');}
+function prevMkt(){var subj=document.getElementById('mkt-subj').value,body=document.getElementById('mkt-body').value;var w=window.open('','_blank');if(w){w.document.write('<html><body style="font-family:Arial;padding:30px;max-width:600px;margin:0 auto"><b style="font-size:16px">'+subj+'</b><hr><pre style="white-space:pre-wrap;font-family:Arial;font-size:14px;line-height:1.7">'+body+'</pre></body></html>');}}
+function sendMkt(){var to=document.getElementById('mkt-to').value.trim(),s=document.getElementById('mkt-subj').value,b=document.getElementById('mkt-body').value;if(!to){toast('Enter recipient email');return;}window.open('mailto:'+to+'?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b));var st=document.getElementById('mkt-st');st.style.display='block';st.style.color='#4ade80';st.textContent='✓ Email client opened';toast('Email opened');}
+
+function registerClient(){
+  var n=document.getElementById('cp-name').value.trim(),p=document.getElementById('cp-phone').value.trim(),e=document.getElementById('cp-email').value.trim();
+  var gps=document.getElementById('cp-gps').checked,terms=document.getElementById('cp-terms').checked;
+  if(!n||!p||!e){cpSt('Name, phone and email required','#ef4444');return;}
+  if(!gps){cpSt('GPS tracking consent is required to proceed','#ef4444');return;}
+  if(!terms){cpSt('Please agree to Terms and Conditions','#ef4444');return;}
+  var pin=String(Math.floor(1000+Math.random()*9000));
+  var cls=getCls(),ex=cls.find(function(c){return c.phone===p||c.email===e;});
+  if(!ex){cls.push({id:'CL'+Date.now(),name:n,phone:p,email:e,pin:pin,gps:true,registered:new Date().toISOString().slice(0,10)});ls('cls',cls);}
+  else{pin=ex.pin||pin;}
+  var ev=document.getElementById('cp-event').value,dt=document.getElementById('cp-date').value;
+  var subj=encodeURIComponent('Welcome to '+BIZ+' — Your Client PIN');
+  var body=encodeURIComponent('Dear '+n+', Welcome to '+BIZ+'! Your account has been created. YOUR CLIENT PIN: '+pin+'. Keep this safe — you will need it to check your booking status. Event: '+ev+'. Preferred Date: '+(dt||'To be confirmed')+'. GPS CONSENT: You have acknowledged and consented to GPS vehicle tracking throughout the rental period. We will contact you shortly to confirm availability. Questions? Call or text '+BPHONE+'. Sincerely, '+ONAME+' | '+BIZ+' | '+BPHONE+' | '+OEMAIL);
+  window.open('mailto:'+e+'?cc='+OEMAIL+'&subject='+subj+'&body='+body);
+  cpSt('Account created! Your PIN: '+pin+'. Check your email.','#4ade80');
+  renderCls();
+}
+function cpSt(m,c){var st=document.getElementById('cp-st');st.style.display='block';st.style.color=c;st.textContent=m;}
+function clientLogin(){var pin=document.getElementById('cp-pin').value.trim();if(!pin){toast('Enter your PIN');return;}var c=getCls().find(function(x){return x.pin===pin;});if(c){toast('Welcome back, '+c.name+'!');closeModal('client-portal');}else{toast('PIN not found — please register above');}}
+
+function cycleStatus(id){var el=document.getElementById(id);if(!el)return;var st=el.textContent;if(st==='AVAILABLE'){el.textContent='IN SERVICE';el.className='badge br';}else if(st==='IN SERVICE'){el.textContent='MAINTENANCE';el.className='badge bo';}else{el.textContent='AVAILABLE';el.className='badge bg';}}
+function pvPhoto(inp){if(!inp.files||!inp.files[0])return;var r=new FileReader();r.onload=function(e){document.getElementById('v-img').src=e.target.result;document.getElementById('v-prev').style.display='block';};r.readAsDataURL(inp.files[0]);}
+function addVehicle(){var n=document.getElementById('v-name').value.trim();if(!n){toast('Enter vehicle name');return;}var vs=ls('vs')||[];vs.push({id:'V'+Date.now(),name:n,pax:document.getElementById('v-pax').value,rate:document.getElementById('v-rate').value,photo:document.getElementById('v-img').src||''});ls('vs',vs);closeModal('vehicle-modal');renderExtraV();toast('Vehicle added: '+n);}
+function renderExtraV(){var vs=ls('vs')||[];var el=document.getElementById('extra-v');if(!vs.length){el.innerHTML='';return;}el.innerHTML=vs.map(function(v){return '<div class="vcard"><div class="vcard-img">'+(v.photo&&v.photo.length>10?'<img src="'+v.photo+'">':'&#128656;')+'</div><div style="padding:13px"><div style="font-size:14px;font-weight:700">'+v.name+'</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Up to '+v.pax+' passengers</div><div style="font-size:18px;font-weight:700;color:var(--gold);margin:9px 0">$'+v.rate+' <span style="font-size:11px;color:var(--muted);font-weight:400">/ charter</span></div><button class="btn btn-g btn-s" onclick="goTab(\'book\')" style="padding:9px 16px">BOOK NOW</button></div></div>';}).join('');}
+
+function saveSettings(){var s={rate:parseFloat(document.getElementById('set-rate').value)||900,dep:parseFloat(document.getElementById('set-dep').value)||200,late:parseFloat(document.getElementById('set-late').value)||100,pin:getSet().pin||OPIN};ls('set',s);BIZ=document.getElementById('set-biz').value||BIZ;ONAME=document.getElementById('set-own').value||ONAME;BPHONE=document.getElementById('set-ph').value||BPHONE;OEMAIL=document.getElementById('set-em').value||OEMAIL;toast('Settings saved successfully');}
+function changePin(){var p1=document.getElementById('np1').value.trim(),p2=document.getElementById('np2').value.trim();if(p1.length!==4||!/^d{4}$/.test(p1)){toast('PIN must be exactly 4 digits');return;}if(p1!==p2){toast('PINs do not match');return;}var s=getSet();s.pin=p1;ls('set',s);document.getElementById('np1').value='';document.getElementById('np2').value='';toast('PIN updated successfully');}
+function clearAll(){if(!confirm('This will permanently delete ALL data. Are you absolutely sure?'))return;['bks','cls','pays','led','set','vs','sk','gpslog'].forEach(function(k){localStorage.removeItem('sh_'+k);});toast('All data cleared');setTimeout(function(){location.reload();},1200);}
+function doExport(t){var d=t==='finance'?getLed():getBks();var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download='MBPS_'+t+'_'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Exported successfully');}
+
+// ── PORTAL USAGE PING ────────────────────────────────────────────────────
+function pingPortalAccess(portalName, pin) {
+  try {
+    fetch('https://auditdna-backend-1-production.up.railway.app/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        source: 'portal-access',
+        portal: portalName,
+        pin: pin,
+        timestamp: new Date().toISOString(),
+        url: window.location.href,
+        message: 'PORTAL ACCESS: ' + portalName + ' was opened with PIN ' + pin + ' at ' + new Date().toLocaleString()
+      })
+    }).catch(function(){});
+  } catch(e) {}
+}
+
+</script></body></html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Your Law Firm  Legal Accounting & Escrow Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#020912;color:#e2e8f0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+:root{--gold:#C9A55C;--dark:#020912;--navy:#0d1117;--card:#161b22;--bord:rgba(255,255,255,0.07);--txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;--green:#22c55e;--red:#ef4444;--blue:#4a8fd4;--purple:#8b5cf6}
+#gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
+.gate-card{background:var(--card);border:1px solid rgba(201,165,92,0.3);border-radius:20px;padding:36px 28px;width:90%;max-width:340px;text-align:center;box-shadow:0 0 60px rgba(201,165,92,0.07)}
+.gate-logo{width:62px;height:62px;background:linear-gradient(135deg,#C9A55C,#8a6930);border-radius:15px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:14px;font-weight:900;color:#020912}
+.gate-brand{font-size:15px;font-weight:900;color:#e2e8f0;margin-bottom:3px}
+.gate-title{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.gate-sub{font-size:10px;color:var(--muted);margin-bottom:22px;line-height:1.5}
+#dots{font-size:26px;letter-spacing:10px;color:var(--gold);min-height:34px;margin-bottom:8px}
+#g-err{font-size:11px;color:var(--red);min-height:16px;margin-bottom:10px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nb{background:#0d1117;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:15px 0;font-size:20px;font-weight:700;color:var(--txt);cursor:pointer;user-select:none;touch-action:manipulation;transition:background .15s}
+.nb:hover{background:#1e293b}
+.nb:active{background:rgba(201,165,92,0.2)}
+.nb.del{color:var(--red);font-size:14px}
+.powered{font-size:9px;color:#1a2744;margin-top:6px}
+#app{display:none;min-height:100vh}
+.topbar{background:#0d1117;border-bottom:1px solid var(--bord);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
+.logo-row{display:flex;align-items:center;gap:12px}
+.logo-sq{width:36px;height:36px;background:linear-gradient(135deg,#C9A55C,#8a6930);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#020912;flex-shrink:0}
+.co-name{font-size:13px;font-weight:900;color:var(--gold)}
+.co-sub{font-size:9px;color:var(--muted);letter-spacing:.8px;margin-top:1px}
+.tabs{display:flex;gap:4px;padding:10px 20px;background:#0d1117;border-bottom:1px solid var(--bord);overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{padding:7px 13px;border-radius:7px;font-size:10px;font-weight:800;letter-spacing:.5px;cursor:pointer;border:1px solid var(--bord);background:transparent;color:var(--muted);white-space:nowrap;transition:all .15s;touch-action:manipulation}
+.tab-btn.active{background:var(--gold);color:#020912;border-color:var(--gold)}
+.tab-btn:hover:not(.active){border-color:rgba(201,165,92,0.4);color:var(--gold)}
+.body{padding:20px;max-width:1300px;margin:0 auto}
+.section{display:none}.section.active{display:block}
+.card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-title{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px}
+.kpi-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.kpi-val{font-size:22px;font-weight:900;color:var(--gold)}
+.kpi-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 10px;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;border-bottom:1px solid var(--bord);text-transform:uppercase;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt)}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.badge-green{background:rgba(34,197,94,0.15);color:#22c55e}
+.badge-red{background:rgba(239,68,68,0.15);color:#ef4444}
+.badge-gold{background:rgba(201,165,92,0.15);color:#C9A55C}
+.badge-blue{background:rgba(74,143,212,0.15);color:#4a8fd4}
+.badge-purple{background:rgba(139,92,246,0.15);color:#8b5cf6}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+input,select,textarea{background:rgba(255,255,255,0.04);border:1px solid rgba(74,143,212,0.2);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:16px;outline:none;font-family:inherit;transition:border-color .2s;width:100%}
+input:focus,select:focus{border-color:rgba(201,165,92,0.5)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.btn{padding:10px 18px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:none;letter-spacing:.5px;transition:opacity .2s;touch-action:manipulation}
+.btn-gold{background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912}
+.btn-blue{background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.3);color:#4a8fd4}
+.btn-red{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+.btn-purple{background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);color:#8b5cf6}
+.btn-green{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
+.btn:hover{opacity:.85}
+.audit-banner{background:linear-gradient(135deg,rgba(201,165,92,0.1),rgba(74,143,212,0.1));border:1px solid rgba(201,165,92,0.3);border-radius:12px;padding:16px;margin-bottom:14px}
+.progress-wrap{background:rgba(255,255,255,0.05);border-radius:4px;height:6px;margin-top:5px}
+.progress-bar{height:100%;border-radius:4px}
+.footer-bar{background:#0d1117;border-top:1px solid var(--bord);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:480px){.kpi-val{font-size:18px}.body{padding:12px}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">LAW</div>
+    <div class="gate-brand">YOUR FIRM NAME HERE</div>
+    <div class="gate-title">Legal Accounting & Escrow Portal</div>
+    <div class="gate-sub">IOLTA &bull; Escrow &bull; Settlements &bull; A/P &bull; Reconciliation<br/>Secured by AuditDNA Intelligence &bull; Patent Pending</div>
+    <div id="dots"></div>
+    <div id="g-err"></div>
+    <div class="numpad">
+      <div class="nb" onclick="np('1')">1</div><div class="nb" onclick="np('2')">2</div><div class="nb" onclick="np('3')">3</div>
+      <div class="nb" onclick="np('4')">4</div><div class="nb" onclick="np('5')">5</div><div class="nb" onclick="np('6')">6</div>
+      <div class="nb" onclick="np('7')">7</div><div class="nb" onclick="np('8')">8</div><div class="nb" onclick="np('9')">9</div>
+      <div class="nb del" onclick="nd()">DEL</div><div class="nb" onclick="np('0')">0</div><div class="nb del" onclick="nc()">CLR</div>
+    </div>
+  </div>
+  <div class="powered">Powered by AuditDNA Intelligence &bull; Mexausa Food Group, Inc. &bull; Patent Pending</div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="logo-row">
+      <div class="logo-sq">LAW</div>
+      <div>
+        <div class="co-name">YOUR FIRM NAME HERE</div>
+        <div class="co-sub">LEGAL ACCOUNTING &bull; ESCROW &bull; SETTLEMENTS &bull; AUDITDNA VERIFIED</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="badge badge-gold">IOLTA</span>
+        <span class="badge badge-blue">ESCROW</span>
+        <span class="badge badge-green">AUDIT VERIFIED</span>
+      </div>
+      <div id="clock" style="font-size:10px;color:var(--muted)"></div>
+      <button class="btn btn-red" onclick="lock()" style="padding:7px 12px;font-size:10px">LOCK</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="goTab('dashboard')">DASHBOARD</button>
+    <button class="tab-btn" onclick="goTab('escrow')">ESCROW ACCOUNTS</button>
+    <button class="tab-btn" onclick="goTab('settlements')">SETTLEMENTS</button>
+    <button class="tab-btn" onclick="goTab('iolta')">IOLTA TRUST</button>
+    <button class="tab-btn" onclick="goTab('ap')">A/P</button>
+    <button class="tab-btn" onclick="goTab('reconcile')">RECONCILE</button>
+    <button class="tab-btn" onclick="goTab('audit')">AUDIT TRAIL</button>
+    <button class="tab-btn" onclick="goTab('reports')">REPORTS</button>
+    <button class="tab-btn" onclick="goTab('tasks')">TASKS</button>
+  </div>
+
+  <div class="body">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="section active">
+      <div class="audit-banner">
+        <div style="font-size:11px;font-weight:800;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px">AUDITDNA VERIFIED & CONFIRMED</div>
+        <div style="font-size:10px;color:var(--dim);line-height:1.6">Every transaction in this portal is tracked, timestamped, and audit-trailed. We verify, confirm, and audit all results. Full compliance with NYS Bar Association escrow and trust accounting rules. IOLTA compliant.</div>
+      </div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Total Escrow Held</div><div class="kpi-val" style="color:var(--blue)">$2.84M</div><div class="kpi-sub">24 active matters</div></div>
+        <div class="kpi"><div class="kpi-lbl">IOLTA Balance</div><div class="kpi-val" style="color:var(--blue)">$384,200</div><div class="kpi-sub">Fully segregated</div></div>
+        <div class="kpi"><div class="kpi-lbl">Settlements Pending</div><div class="kpi-val" style="color:var(--gold)">7</div><div class="kpi-sub">$1.2M in pipeline</div></div>
+        <div class="kpi"><div class="kpi-lbl">A/P Outstanding</div><div class="kpi-val" style="color:var(--red)">$42,800</div><div class="kpi-sub">8 vendor invoices</div></div>
+        <div class="kpi"><div class="kpi-lbl">Reconciled Accounts</div><div class="kpi-val" style="color:var(--green)">12/14</div><div class="kpi-sub">2 pending review</div></div>
+        <div class="kpi"><div class="kpi-lbl">Monthly Revenue</div><div class="kpi-val" style="color:var(--green)">$284,000</div><div class="kpi-sub">Fees + settlements</div></div>
+        <div class="kpi"><div class="kpi-lbl">Audit Status</div><div class="kpi-val" style="color:var(--green)">CLEAN</div><div class="kpi-sub">Last verified today</div></div>
+        <div class="kpi"><div class="kpi-lbl">Open Tasks</div><div class="kpi-val" style="color:var(--gold)">11</div><div class="kpi-sub">3 urgent</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Recent Transactions  All Accounts</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Date</th><th>Matter</th><th>Account</th><th>Description</th><th>Debit</th><th>Credit</th><th>Audit</th></tr></thead>
+          <tbody>
+            <tr><td>Jun 17</td><td>[Matter #]</td><td><span class="badge badge-blue">IOLTA</span></td><td>Settlement receipt from defendant</td><td>--</td><td style="color:var(--green)">$284,000</td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+            <tr><td>Jun 16</td><td>[Matter #]</td><td><span class="badge badge-gold">ESCROW</span></td><td>Disbursement to client per settlement</td><td style="color:var(--red)">$124,000</td><td>--</td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+            <tr><td>Jun 15</td><td>[Matter #]</td><td><span class="badge badge-blue">IOLTA</span></td><td>Attorney fee transfer to operating</td><td style="color:var(--red)">$42,000</td><td>--</td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+            <tr><td>Jun 14</td><td>[Matter #]</td><td><span class="badge badge-gold">ESCROW</span></td><td>Retainer received</td><td>--</td><td style="color:var(--green)">$15,000</td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+            <tr><td>Jun 13</td><td>Operating</td><td><span class="badge badge-muted" style="background:rgba(100,116,139,0.15);color:#64748b">OPERATING</span></td><td>Vendor payment  court reporter</td><td style="color:var(--red)">$2,800</td><td>--</td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ESCROW ACCOUNTS -->
+    <div id="tab-escrow" class="section">
+      <div class="card" style="border-color:rgba(74,143,212,0.3)">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px">ESCROW ACCOUNT TRACKING  CASE BY CASE</div>
+        <div style="font-size:10px;color:var(--dim);line-height:1.6">Each matter has its own escrow ledger. Every dollar is tracked from receipt to disbursement. AuditDNA verifies and timestamps all entries. NYS Bar compliant.</div>
+      </div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Total Escrow Held</div><div class="kpi-val" style="color:var(--blue)">$2.84M</div></div>
+        <div class="kpi"><div class="kpi-lbl">Active Escrow Matters</div><div class="kpi-val">24</div></div>
+        <div class="kpi"><div class="kpi-lbl">Pending Disbursements</div><div class="kpi-val" style="color:var(--gold)">$840,000</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Escrow Ledger  By Matter</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Matter #</th><th>Client</th><th>Case Type</th><th>Received</th><th>Disbursed</th><th>Balance</th><th>Status</th><th>Audit</th></tr></thead>
+          <tbody>
+            <tr><td>2026-441</td><td>[Client]</td><td>Personal Injury</td><td style="color:var(--green)">$284,000</td><td style="color:var(--red)">$124,000</td><td style="color:var(--blue);font-weight:700">$160,000</td><td><span class="badge badge-gold">PENDING DISBURSE</span></td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+            <tr><td>2026-438</td><td>[Client]</td><td>Real Estate</td><td style="color:var(--green)">$480,000</td><td style="color:var(--red)">$480,000</td><td style="color:var(--green)">$0</td><td><span class="badge badge-green">CLOSED</span></td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+            <tr><td>2026-435</td><td>[Client]</td><td>Commercial Dispute</td><td style="color:var(--green)">$124,000</td><td style="color:var(--red)">$0</td><td style="color:var(--blue);font-weight:700">$124,000</td><td><span class="badge badge-blue">HELD</span></td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+            <tr><td>2026-429</td><td>[Client]</td><td>Employment</td><td style="color:var(--green)">$84,000</td><td style="color:var(--red)">$42,000</td><td style="color:var(--blue);font-weight:700">$42,000</td><td><span class="badge badge-gold">PARTIAL</span></td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+            <tr><td>2026-421</td><td>[Client]</td><td>Divorce Settlement</td><td style="color:var(--green)">$224,000</td><td style="color:var(--red)">$112,000</td><td style="color:var(--blue);font-weight:700">$112,000</td><td><span class="badge badge-gold">PENDING ORDER</span></td><td><span class="badge badge-green">VERIFIED</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- SETTLEMENTS -->
+    <div id="tab-settlements" class="section">
+      <div class="card">
+        <div class="card-title">Settlement Pipeline</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Matter #</th><th>Client</th><th>Case Type</th><th>Settlement Amt</th><th>Attorney Fee</th><th>Client Net</th><th>Disbursed</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>2026-441</td><td>[Client]</td><td>Personal Injury</td><td style="color:var(--green)">$284,000</td><td style="color:var(--gold)">$94,667 (33%)</td><td style="color:var(--green)">$189,333</td><td style="color:var(--red)">$0</td><td><span class="badge badge-gold">AWAITING RELEASE</span></td></tr>
+            <tr><td>2026-432</td><td>[Client]</td><td>Medical Malpractice</td><td style="color:var(--green)">$840,000</td><td style="color:var(--gold)">$280,000 (33%)</td><td style="color:var(--green)">$560,000</td><td style="color:var(--red)">$0</td><td><span class="badge badge-blue">NEGOTIATING</span></td></tr>
+            <tr><td>2026-428</td><td>[Client]</td><td>Slip & Fall</td><td style="color:var(--green)">$48,000</td><td style="color:var(--gold)">$16,000 (33%)</td><td style="color:var(--green)">$32,000</td><td style="color:var(--green)">$32,000</td><td><span class="badge badge-green">COMPLETE</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Settlement Disbursement Checklist</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span class="badge badge-green">DONE</span>
+            <div style="font-size:11px;color:var(--txt)">Settlement agreement signed by all parties</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span class="badge badge-green">DONE</span>
+            <div style="font-size:11px;color:var(--txt)">Lien search completed and medical liens resolved</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+            <span class="badge badge-gold">PENDING</span>
+            <div style="font-size:11px;color:var(--txt)">Court order or release received  awaiting from opposing counsel</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+            <span class="badge badge-gold">PENDING</span>
+            <div style="font-size:11px;color:var(--txt)">Client disbursement authorization signed</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <span class="badge badge-red">NOT DONE</span>
+            <div style="font-size:11px;color:var(--txt)">Wire transfer or check issued to client</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IOLTA -->
+    <div id="tab-iolta" class="section">
+      <div class="card" style="border-color:rgba(74,143,212,0.4)">
+        <div style="font-size:11px;font-weight:800;color:var(--blue);margin-bottom:6px">IOLTA TRUST ACCOUNT  STRICTLY SEGREGATED FROM OPERATING</div>
+        <div style="font-size:10px;color:var(--dim);line-height:1.6">Interest on Lawyer Trust Accounts. Client funds held in trust. Never commingled with operating funds. AuditDNA verifies every transfer in and out. Full NYS Bar compliance. Monthly reconciliation required.</div>
+      </div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">IOLTA Balance</div><div class="kpi-val" style="color:var(--blue)">$384,200</div><div class="kpi-sub">Client trust funds</div></div>
+        <div class="kpi"><div class="kpi-lbl">Retainers Held</div><div class="kpi-val" style="color:var(--blue)">$228,000</div><div class="kpi-sub">12 active clients</div></div>
+        <div class="kpi"><div class="kpi-lbl">Settlement Funds</div><div class="kpi-val" style="color:var(--blue)">$156,200</div><div class="kpi-sub">Awaiting disbursement</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">IOLTA Ledger  By Client</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Client</th><th>Matter #</th><th>Type</th><th>Balance</th><th>Last Activity</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>[Client]</td><td>2026-441</td><td><span class="badge badge-gold">SETTLEMENT</span></td><td style="color:var(--blue)">$160,000</td><td>Jun 17</td><td><span class="badge badge-gold">PENDING RELEASE</span></td></tr>
+            <tr><td>[Client]</td><td>2026-435</td><td><span class="badge badge-blue">RETAINER</span></td><td style="color:var(--blue)">$75,000</td><td>Jun 12</td><td><span class="badge badge-green">ACTIVE</span></td></tr>
+            <tr><td>[Client]</td><td>2026-429</td><td><span class="badge badge-gold">SETTLEMENT</span></td><td style="color:var(--blue)">$42,000</td><td>Jun 10</td><td><span class="badge badge-gold">PARTIAL</span></td></tr>
+            <tr><td>[Client]</td><td>2026-421</td><td><span class="badge badge-gold">SETTLEMENT</span></td><td style="color:var(--blue)">$112,000</td><td>Jun 8</td><td><span class="badge badge-gold">PENDING ORDER</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- A/P -->
+    <div id="tab-ap" class="section">
+      <div class="card">
+        <div class="card-title">Accounts Payable  Vendor Management</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Vendor</th><th>Category</th><th>Invoice</th><th>Amount</th><th>Due</th><th>Matter</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>[Court Reporter]</td><td><span class="badge badge-blue">COURT COSTS</span></td><td>INV-2441</td><td style="color:var(--red)">$2,800</td><td>Jun 20</td><td>2026-441</td><td><span class="badge badge-gold">PENDING</span></td></tr>
+            <tr><td>[Expert Witness]</td><td><span class="badge badge-purple">EXPERT</span></td><td>INV-2440</td><td style="color:var(--red)">$8,400</td><td>Jun 22</td><td>2026-432</td><td><span class="badge badge-gold">PENDING</span></td></tr>
+            <tr><td>[Process Server]</td><td><span class="badge badge-blue">COURT COSTS</span></td><td>INV-2439</td><td style="color:var(--green)">$480</td><td>Jun 18</td><td>2026-435</td><td><span class="badge badge-green">APPROVED</span></td></tr>
+            <tr><td>[Filing Fee - NY Court]</td><td><span class="badge badge-gold">FILING FEES</span></td><td>INV-2438</td><td style="color:var(--green)">$210</td><td>Jun 15</td><td>2026-429</td><td><span class="badge badge-green">PAID</span></td></tr>
+            <tr><td>[Office Supplies]</td><td><span class="badge badge-muted" style="background:rgba(100,116,139,0.15);color:#64748b">OVERHEAD</span></td><td>INV-2437</td><td style="color:var(--green)">$1,240</td><td>Jun 25</td><td>General</td><td><span class="badge badge-gold">PENDING</span></td></tr>
+          </tbody>
+        </table></div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-gold">APPROVE SELECTED</button>
+          <button class="btn btn-blue">EXPORT TO EXCEL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECONCILE -->
+    <div id="tab-reconcile" class="section">
+      <div class="card">
+        <div class="card-title">Multi-Account Reconciliation  June 2026</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Account</th><th>Type</th><th>Bank Balance</th><th>Book Balance</th><th>Difference</th><th>Last Reconciled</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Chase IOLTA Trust</td><td><span class="badge badge-blue">IOLTA</span></td><td>$384,200</td><td>$384,200</td><td style="color:var(--green)">$0</td><td>Jun 17</td><td><span class="badge badge-green">RECONCILED</span></td></tr>
+            <tr><td>Chase Escrow #1</td><td><span class="badge badge-gold">ESCROW</span></td><td>$1,240,000</td><td>$1,238,400</td><td style="color:var(--gold)">$1,600</td><td>Jun 15</td><td><span class="badge badge-gold">REVIEW</span></td></tr>
+            <tr><td>Chase Escrow #2</td><td><span class="badge badge-gold">ESCROW</span></td><td>$1,600,000</td><td>$1,600,000</td><td style="color:var(--green)">$0</td><td>Jun 16</td><td><span class="badge badge-green">RECONCILED</span></td></tr>
+            <tr><td>Chase Operating</td><td><span class="badge badge-muted" style="background:rgba(100,116,139,0.15);color:#64748b">OPERATING</span></td><td>$284,800</td><td>$284,800</td><td style="color:var(--green)">$0</td><td>Jun 17</td><td><span class="badge badge-green">RECONCILED</span></td></tr>
+            <tr><td>Citi Operating #2</td><td><span class="badge badge-muted" style="background:rgba(100,116,139,0.15);color:#64748b">OPERATING</span></td><td>$48,400</td><td>$46,820</td><td style="color:var(--red)">$1,580</td><td>Jun 10</td><td><span class="badge badge-red">DISCREPANCY</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- AUDIT TRAIL -->
+    <div id="tab-audit" class="section">
+      <div class="audit-banner">
+        <div style="font-size:11px;font-weight:800;color:var(--gold);letter-spacing:1.5px;margin-bottom:4px">AUDITDNA VERIFICATION ENGINE</div>
+        <div style="font-size:10px;color:var(--dim);line-height:1.6">Every transaction is verified, confirmed, and permanently logged. Tamper-evident audit trail. Full NYS Bar compliance. Available for bar audits, court production, and regulatory review at any time.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Audit Log  All Transactions</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Matter</th><th>Account</th><th>Amount</th><th>Hash</th></tr></thead>
+          <tbody>
+            <tr><td>Jun 17 14:22:08</td><td>System</td><td><span class="badge badge-green">VERIFIED</span></td><td>2026-441</td><td>IOLTA</td><td style="color:var(--green)">+$284,000</td><td style="font-size:9px;color:var(--muted);font-family:monospace">a8f3d2...c91e</td></tr>
+            <tr><td>Jun 16 11:04:33</td><td>[User]</td><td><span class="badge badge-gold">DISBURSED</span></td><td>2026-438</td><td>ESCROW</td><td style="color:var(--red)">-$124,000</td><td style="font-size:9px;color:var(--muted);font-family:monospace">b7e2c1...d84f</td></tr>
+            <tr><td>Jun 15 09:18:52</td><td>[User]</td><td><span class="badge badge-blue">TRANSFER</span></td><td>2026-441</td><td>IOLTA</td><td style="color:var(--red)">-$42,000</td><td style="font-size:9px;color:var(--muted);font-family:monospace">c4a9e8...f12b</td></tr>
+            <tr><td>Jun 14 16:44:21</td><td>[User]</td><td><span class="badge badge-green">RECEIVED</span></td><td>2026-435</td><td>ESCROW</td><td style="color:var(--green)">+$15,000</td><td style="font-size:9px;color:var(--muted);font-family:monospace">d2f7a3...e94c</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Compliance Checklist  NYS Bar Rules</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px"><span class="badge badge-green">PASS</span><div style="font-size:11px;color:var(--txt)">IOLTA funds never commingled with operating funds</div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px"><span class="badge badge-green">PASS</span><div style="font-size:11px;color:var(--txt)">Monthly bank reconciliation completed for all accounts</div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px"><span class="badge badge-green">PASS</span><div style="font-size:11px;color:var(--txt)">Client ledgers maintained  case by case escrow tracking</div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:8px"><span class="badge badge-green">PASS</span><div style="font-size:11px;color:var(--txt)">All disbursements authorized before release</div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px"><span class="badge badge-gold">REVIEW</span><div style="font-size:11px;color:var(--txt)">Citi Operating #2 -- $1,580 discrepancy -- locate and clear</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="tab-reports" class="section">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Available Reports</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-gold" style="text-align:left">IOLTA Monthly Reconciliation Report</button>
+            <button class="btn btn-blue" style="text-align:left">Escrow Ledger by Matter</button>
+            <button class="btn btn-blue" style="text-align:left">Settlement Pipeline Report</button>
+            <button class="btn btn-blue" style="text-align:left">A/P Aging Report</button>
+            <button class="btn btn-purple" style="text-align:left">Audit Trail Export  Full Log</button>
+            <button class="btn btn-blue" style="text-align:left">Multi-Account Reconciliation</button>
+            <button class="btn btn-blue" style="text-align:left">Client File Summary</button>
+            <button class="btn btn-gold" style="text-align:left">NYS Bar Compliance Report</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Financial Summary</div>
+          <table><tbody>
+            <tr><td style="color:var(--dim)">Monthly Revenue (Fees)</td><td style="color:var(--green);text-align:right">$284,000</td></tr>
+            <tr><td style="color:var(--dim)">Settlement Fees Earned</td><td style="color:var(--green);text-align:right">$142,667</td></tr>
+            <tr><td style="color:var(--dim)">Total A/P Due</td><td style="color:var(--red);text-align:right">-$42,800</td></tr>
+            <tr><td style="color:var(--dim)">Overhead Expenses</td><td style="color:var(--red);text-align:right">-$84,200</td></tr>
+            <tr style="border-top:1px solid var(--bord)"><td style="font-weight:900;padding-top:8px">NET INCOME MTD</td><td style="color:var(--green);font-weight:900;font-size:16px;text-align:right;padding-top:8px">$299,667</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div id="tab-tasks" class="section">
+      <div class="card">
+        <div class="card-title">Junior Accountant Task Queue</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Resolve Citi Operating #2 discrepancy -- $1,580 -- locate missing transaction</div><div style="font-size:10px;color:var(--muted)">Bar rule violation risk if unresolved -- due today</div></div>
+            <span class="badge badge-red">URGENT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Escrow #1 reconciliation -- $1,600 difference -- 2 outstanding checks</div><div style="font-size:10px;color:var(--muted)">Due Jun 20</div></div>
+            <span class="badge badge-red">URGENT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Matter 2026-441 -- disbursement ready -- awaiting court release order</div><div style="font-size:10px;color:var(--muted)">$160,000 held in IOLTA -- follow up with opposing counsel</div></div>
+            <span class="badge badge-red">URGENT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Pay expert witness invoice -- $8,400 -- approved by partner</div><div style="font-size:10px;color:var(--muted)">Due Jun 22</div></div>
+            <span class="badge badge-gold">HIGH</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(74,143,212,0.05);border:1px solid rgba(74,143,212,0.2);border-radius:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0"></div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--txt)">Monthly IOLTA reconciliation report -- June 2026 -- due to managing partner</div><div style="font-size:10px;color:var(--muted)">Due Jun 30</div></div>
+            <span class="badge badge-blue">NORMAL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bar">
+    <div style="font-size:9px;color:var(--muted)">AuditDNA Intelligence &bull; Patent Pending &bull; Mexausa Food Group, Inc. &bull; Legal Accounting Portal &bull; NYS Bar Compliant</div>
+    <div style="font-size:9px;color:var(--muted)">Saul Garcia &bull; NMLS #337526 &bull; (831) 251-3116 &bull; sgarcia1911@gmail.com</div>
+  </div>
+</div>
+
+<script>
+var entered='',PIN='5847';
+function updDots(){var d=document.getElementById('dots');d.textContent='';for(var i=0;i<entered.length;i++)d.textContent+='\u25CF ';}
+function np(v){if(entered.length>=6)return;entered+=v;updDots();if(entered.length===4)checkPin();}
+function nd(){entered=entered.slice(0,-1);updDots();}
+function nc(){entered='';updDots();}
+function checkPin(){
+  if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';startClock();}
+  else{var e=document.getElementById('g-err');e.textContent='Incorrect PIN. Try again.';entered='';updDots();setTimeout(function(){e.textContent='';},2000);}
+}
+function lock(){entered='';updDots();document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';}
+function goTab(t){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  var sec=document.getElementById('tab-'+t);if(sec)sec.classList.add('active');
+  event.target.classList.add('active');
+}
+function startClock(){
+  function tick(){var n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+  tick();setInterval(tick,1000);
+}
+</script>
+</body>
+</html>

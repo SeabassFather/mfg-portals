@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Walter Rodriguez — Agroindustria Mike SAC | AuditDNA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;transition:background .25s,color .25s,border-color .25s;}
+:root{
+  --bg:#020912;--bg2:#0d1424;--bg3:#0a1020;--bg4:#060e1a;
+  --border:rgba(201,165,92,0.18);--border2:rgba(201,165,92,0.28);
+  --text:#e2e8f0;--text2:rgba(226,232,240,0.5);--text3:rgba(226,232,240,0.3);
+  --gold:#C9A55C;--green:#0F7B41;--blue:#4a8fd4;
+}
+.light{
+  --bg:#f5f5f0;--bg2:#ffffff;--bg3:#f0ede8;--bg4:#e8e4dc;
+  --border:rgba(160,120,48,0.25);--border2:rgba(160,120,48,0.4);
+  --text:#111827;--text2:rgba(17,24,39,0.55);--text3:rgba(17,24,39,0.35);
+  --gold:#8a6020;--green:#0a5a2f;--blue:#1a4d8f;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+.topbar{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center;}
+.topbar-left{font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:700;text-transform:uppercase;}
+.toggles{display:flex;gap:8px;}
+.toggle-btn{padding:5px 14px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text);font-size:11px;font-weight:600;cursor:pointer;letter-spacing:0.5px;font-family:'Inter',sans-serif;}
+.toggle-btn:hover{background:var(--border);color:var(--gold);}
+.toggle-btn.active{background:var(--gold);color:#020912;border-color:var(--gold);}
+.wrap{max-width:660px;margin:0 auto;padding:32px 24px;}
+.header{border-bottom:1px solid var(--border);padding-bottom:24px;margin-bottom:28px;}
+.platform-tag{font-size:8px;letter-spacing:4px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:10px;}
+.platform-name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.platform-sub{font-size:11px;color:var(--text2);letter-spacing:0.5px;}
+.profile-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px;}
+.profile-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;}
+.avatar{width:50px;height:50px;border-radius:50%;background:rgba(201,165,92,0.1);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.profile-name{font-size:17px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.profile-title{font-size:11px;color:var(--gold);font-weight:600;letter-spacing:0.3px;margin-bottom:2px;}
+.profile-company{font-size:12px;color:var(--text2);}
+.welink-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(15,123,65,0.1);border:1px solid rgba(15,123,65,0.25);border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--green);letter-spacing:1px;font-family:monospace;}
+.section-lbl{font-size:8px;letter-spacing:3px;color:var(--text3);text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.info-item{background:var(--bg3);border-radius:8px;padding:10px 12px;}
+.info-item .lbl{font-size:9px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;}
+.info-item .val{font-size:13px;font-weight:500;color:var(--text);}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.pill-zone{display:inline-block;background:rgba(74,143,212,0.1);border:1px solid rgba(74,143,212,0.2);border-radius:5px;padding:3px 10px;font-size:10px;color:var(--blue);margin:2px;font-weight:500;}
+.pill-comm{display:inline-block;background:rgba(15,123,65,0.1);border:1px solid rgba(15,123,65,0.2);border-radius:5px;padding:3px 10px;font-size:10px;color:var(--green);margin:2px;font-weight:500;}
+.cred-box{background:var(--bg4);border:1px solid var(--border2);border-radius:10px;padding:18px;margin-bottom:16px;}
+.cred-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+.cred-row:last-child{border-bottom:none;}
+.cred-lbl{font-size:10px;color:var(--text2);font-weight:500;}
+.cred-val{font-size:13px;font-weight:600;color:var(--text);font-family:monospace;background:rgba(201,165,92,0.07);padding:3px 10px;border-radius:5px;}
+.cred-val.gold{color:var(--gold);}
+.access-btn{display:block;width:100%;padding:13px;background:var(--gold);border:none;border-radius:10px;color:#020912;font-size:13px;font-weight:700;text-align:center;text-decoration:none;letter-spacing:1px;cursor:pointer;margin-bottom:10px;}
+.access-note{font-size:11px;color:var(--text3);text-align:center;margin-bottom:20px;}
+.what-box{background:var(--bg2);border:1px solid rgba(74,143,212,0.15);border-radius:10px;padding:16px;margin-bottom:16px;}
+.feature-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.feature-row:last-child{border-bottom:none;}
+.fdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ftext{font-size:12px;color:var(--text2);line-height:1.5;}
+.contact-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.contact-lbl{font-size:8px;letter-spacing:2px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:10px;}
+.contact-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.contact-row a{color:var(--blue);text-decoration:none;font-size:12px;}
+.footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:9px;color:var(--text3);line-height:1.8;}
+
+.toggle-btn#wr-mic{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);color:rgba(239,68,68,0.8);}
+.toggle-btn#wr-mic.rec{background:rgba(239,68,68,0.25);border-color:#ef4444;color:#ef4444;animation:wr-pulse 0.8s infinite;}
+@keyframes wr-pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">AuditDNA · mexausafg.com</div>
+  <div class="toggles">
+    <button class="toggle-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="toggle-btn" id="btn-es" onclick="setLang('es')">ES</button><button class="toggle-btn" id="wr-mic" onclick="wrMicToggle()" title="Voice input">&#x1F3A4;</button>
+    <button class="toggle-btn" id="btn-dark" onclick="setMode('dark')">NIGHT</button>
+    <button class="toggle-btn" id="btn-light" onclick="setMode('light')">DAY</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="platform-tag" id="t-platform-tag">AuditDNA · Mexausa Food Group, Inc.</div>
+    <div class="platform-name" id="t-platform-name">Supplier Portal Access</div>
+    <div class="platform-sub" id="t-platform-sub">mexausafg.com &nbsp;·&nbsp; Agricultural Intelligence Platform</div>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-top">
+      <div class="avatar">WR</div>
+      <div>
+        <div class="profile-name">Walter Rodriguez Poma</div>
+        <div class="profile-title" id="t-role-title">Supplier &amp; Procurement — Peru</div>
+        <div class="profile-company">Agroindustria Mike SAC</div>
+      </div>
+    </div>
+    <div class="welink-badge">WL-PE-1001 &nbsp;·&nbsp; <span id="t-peru-supplier">PERU SUPPLIER</span></div>
+
+    <hr class="divider"/>
+
+    <div class="section-lbl" id="t-company-profile">Company Profile</div>
+    <div class="info-grid">
+      <div class="info-item"><div class="lbl" id="t-company-lbl">Company</div><div class="val">Agroindustria Mike SAC</div></div>
+      <div class="info-item"><div class="lbl">RUC</div><div class="val" style="font-family:monospace;">20537997100</div></div>
+      <div class="info-item"><div class="lbl">DNI</div><div class="val" style="font-family:monospace;">16022091</div></div>
+      <div class="info-item"><div class="lbl" id="t-country-lbl">Country</div><div class="val">Peru</div></div>
+    </div>
+
+    <div class="section-lbl" id="t-zones-lbl">Active Zones</div>
+    <div style="margin-bottom:14px;">
+      <span class="pill-zone">Piura</span>
+      <span class="pill-zone">Ancash</span>
+      <span class="pill-zone">Ica</span>
+      <span class="pill-zone">Arequipa</span>
+      <span class="pill-zone">San Martin</span>
+    </div>
+
+    <div class="section-lbl" id="t-comm-lbl">Commodities</div>
+    <div>
+      <span class="pill-comm" id="t-c1">Mango</span>
+      <span class="pill-comm" id="t-c2">Blueberry</span>
+      <span class="pill-comm" id="t-c3">Avocado</span>
+      <span class="pill-comm" id="t-c4">Asparagus</span>
+      <span class="pill-comm" id="t-c5">Grape</span>
+      <span class="pill-comm" id="t-c6">Mandarin</span>
+    </div>
+  </div>
+
+  <div class="cred-box">
+    <div class="section-lbl" id="t-cred-lbl">Your Login Credentials</div>
+    <div class="cred-row">
+      <span class="cred-lbl" id="t-platform-lbl">Platform</span>
+      <span class="cred-val gold">mexausafg.com</span>
+    </div>
+    <div class="cred-row">
+      <span class="cred-lbl" id="t-user-lbl">Username</span>
+      <span class="cred-val">walter.rodriguez</span>
+    </div>
+    <div class="cred-row">
+      <span class="cred-lbl" id="t-pass-lbl">Password</span>
+      <span class="cred-val">AgroMike2026#</span>
+    </div>
+    <div class="cred-row">
+      <span class="cred-lbl" id="t-ac-lbl">Access Code</span>
+      <span class="cred-val">AGRO26</span>
+    </div>
+    <div class="cred-row">
+      <span class="cred-lbl">PIN</span>
+      <span class="cred-val">8821</span>
+    </div>
+    <div class="cred-row">
+      <span class="cred-lbl">WeLink ID</span>
+      <span class="cred-val gold">WL-PE-1001</span>
+    </div>
+  </div>
+
+  <a href="https://mexausafg.com" class="access-btn" id="t-access-btn">ACCESS GROWER PORTAL →</a>
+  <p class="access-note" id="t-access-note">Log in at mexausafg.com with your credentials above</p>
+
+  <div class="what-box" style="border-color:rgba(201,165,92,0.2);margin-bottom:16px;">
+    <div class="section-lbl" id="t-loaf-lbl">Your Field Office — Register Growers</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:3px;">LOAF</div>
+        <div style="font-size:11px;color:var(--text2);" id="t-loaf-sub">Field Operations · Grower Registration · Product Submissions</div>
+      </div>
+      <a href="https://loaf.mexausafg.com" target="_blank" style="padding:8px 18px;background:var(--gold);border-radius:8px;color:#020912;font-size:11px;font-weight:700;text-decoration:none;letter-spacing:1px;white-space:nowrap;" id="t-loaf-btn">OPEN LOAF →</a>
+    </div>
+    <div class="feature-row">
+      <div class="fdot" style="background:var(--gold);"></div>
+      <div class="ftext" id="t-loaf-f1">Register growers from your Peru zones directly into the AuditDNA network</div>
+    </div>
+    <div class="feature-row">
+      <div class="fdot" style="background:var(--gold);"></div>
+      <div class="ftext" id="t-loaf-f2">Submit product availability, harvest dates, and pricing from the field</div>
+    </div>
+    <div class="feature-row">
+      <div class="fdot" style="background:var(--gold);"></div>
+      <div class="ftext" id="t-loaf-f3">Connect growers directly with buyers on the platform — real time</div>
+    </div>
+    <div class="feature-row">
+      <div class="fdot" style="background:#4a8fd4;"></div>
+      <div class="ftext" id="t-loaf-f4">All grower registrations submitted by you are reviewed and approved by Pablo Alatorre</div>
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;background:rgba(201,165,92,0.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;gap:10px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4a8fd4;flex-shrink:0;">PA</div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text);">Pablo Alatorre</div>
+        <div style="font-size:10px;color:var(--text2);" id="t-pablo-role">Approves all grower registrations from your downline · Mexausa Food Group</div>
+      </div>
+    </div>
+  </div>
+
+    <div class="section-lbl" id="t-access-lbl">What You Access on the Platform</div>
+    <div class="feature-row">
+      <div class="fdot" style="background:#0F7B41;"></div>
+      <div class="ftext" id="t-f1">Grower Portal — submit product availability, pricing, and harvest schedules</div>
+    </div>
+    <div class="feature-row">
+      <div class="fdot" style="background:#0F7B41;"></div>
+      <div class="ftext" id="t-f2">WeLink — connect with buyers and view deal proposals (WL-PE-1001)</div>
+    </div>
+    <div class="feature-row">
+      <div class="fdot" style="background:#0F7B41;"></div>
+      <div class="ftext" id="t-f3">WeSource — submit your product catalog and availability to the MFG network</div>
+    </div>
+    <div class="feature-row">
+      <div class="fdot" style="background:#4a8fd4;"></div>
+      <div class="ftext" id="t-f4">Deal notifications — receive purchase orders and sourcing requests from Mexausa buyers</div>
+    </div>
+    <div class="feature-row">
+      <div class="fdot" style="background:#4a8fd4;"></div>
+      <div class="ftext" id="t-f5">Compliance documents — FSMA 204, phytosanitary cert tracking, SENASA compliance</div>
+    </div>
+  </div>
+
+  <div class="contact-box">
+    <div class="contact-lbl" id="t-contact-lbl">Your MFG Contacts</div>
+    <div class="contact-row">
+      <div style="font-size:12px;font-weight:600;color:var(--text);">Saul Garcia</div>
+      <div style="font-size:10px;color:var(--text2);margin-left:auto;" id="t-saul-title">Mexausa Food Group</div>
+    </div>
+    <div class="contact-row"><a href="tel:+18312513116">+1 (831) 251-3116 (US)</a></div>
+    <div class="contact-row"><a href="tel:+526463402686">+52 (646) 340-2686 (MX)</a></div>
+    <div class="contact-row"><a href="mailto:sgarcia1911@gmail.com">sgarcia1911@gmail.com</a></div>
+    <div class="contact-row"><a href="https://mexausafg.com" target="_blank">mexausafg.com</a></div>
+    <hr class="divider" style="margin:12px 0;"/>
+    <div class="contact-row">
+      <div style="font-size:12px;font-weight:600;color:var(--text);">Pablo Alatorre</div>
+      <div style="font-size:10px;color:var(--text2);margin-left:auto;" id="t-pablo-title">Mexausa Food Group</div>
+    </div>
+    <div class="contact-row"><a href="mailto:pablo@mexausafg.com">pablo@mexausafg.com</a></div>
+  </div>
+
+  <div class="footer">
+    <p id="t-footer">Mexausa Food Group, Inc. · mexausafg.com · Agricultural Intelligence Platform<br>
+    AuditDNA · SAM.gov UEI HSEAQ56U6JG1 · Salinas, CA USA · Ensenada, Baja California Mexico<br>
+    Confidential — For Walter Rodriguez Poma / Agroindustria Mike SAC only</p>
+  </div>
+
+</div>
+
+<script>
+var PIN='4321',PLEN=4,entered='';
+function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
+function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
+
+var T = {
+  en: {
+    'platform-tag':   'AuditDNA · Mexausa Food Group, Inc.',
+    'platform-name':  'Supplier Portal Access',
+    'platform-sub':   'mexausafg.com \u00b7 Agricultural Intelligence Platform',
+    'role-title':     'Supplier &amp; Procurement \u2014 Peru',
+    'peru-supplier':  'PERU SUPPLIER',
+    'company-profile':'Company Profile',
+    'company-lbl':    'Company',
+    'country-lbl':    'Country',
+    'zones-lbl':      'Active Zones',
+    'comm-lbl':       'Commodities',
+    'c1':'Mango','c2':'Blueberry','c3':'Avocado','c4':'Asparagus','c5':'Grape','c6':'Mandarin',
+    'cred-lbl':       'Your Login Credentials',
+    'platform-lbl':   'Platform',
+    'user-lbl':       'Username',
+    'pass-lbl':       'Password',
+    'ac-lbl':         'Access Code',
+    'access-btn':     'ACCESS GROWER PORTAL \u2192',
+    'access-note':    'Log in at mexausafg.com with your credentials above',
+    'access-lbl':     'What You Access on the Platform',
+    'f1': 'Grower Portal \u2014 submit product availability, pricing, and harvest schedules',
+    'f2': 'WeLink \u2014 connect with buyers and view deal proposals (WL-PE-1001)',
+    'f3': 'WeSource \u2014 submit your product catalog and availability to the MFG network',
+    'f4': 'Deal notifications \u2014 receive purchase orders and sourcing requests from Mexausa buyers',
+    'f5': 'Compliance documents \u2014 FSMA 204, phytosanitary cert tracking, SENASA compliance',
+    'loaf-lbl':    'Your Field Office — Register Growers',
+    'loaf-sub':    'Field Operations \u00b7 Grower Registration \u00b7 Product Submissions',
+    'loaf-btn':    'OPEN LOAF \u2192',
+    'loaf-f1':     'Register growers from your Peru zones directly into the AuditDNA network',
+    'loaf-f2':     'Submit product availability, harvest dates, and pricing from the field',
+    'loaf-f3':     'Connect growers directly with buyers on the platform \u2014 real time',
+    'loaf-f4':     'All grower registrations submitted by you are reviewed and approved by Pablo Alatorre',
+    'pablo-role':  'Approves all grower registrations from your downline \u00b7 Mexausa Food Group',
+    'contact-lbl':    'Your MFG Contacts',
+    'saul-title':     'Mexausa Food Group',
+    'pablo-title':    'Mexausa Food Group',
+    'footer':         'Mexausa Food Group, Inc. \u00b7 mexausafg.com \u00b7 Agricultural Intelligence Platform<br>AuditDNA \u00b7 SAM.gov UEI HSEAQ56U6JG1 \u00b7 Salinas, CA USA \u00b7 Ensenada, Baja California Mexico<br>Confidential \u2014 For Walter Rodriguez Poma / Agroindustria Mike SAC only'
+  },
+  es: {
+    'platform-tag':   'AuditDNA · Mexausa Food Group, Inc.',
+    'platform-name':  'Acceso al Portal de Proveedores',
+    'platform-sub':   'mexausafg.com \u00b7 Plataforma de Inteligencia Agricola',
+    'role-title':     'Proveedor y Abastecimiento \u2014 Peru',
+    'peru-supplier':  'PROVEEDOR PERU',
+    'company-profile':'Perfil de la Empresa',
+    'company-lbl':    'Empresa',
+    'country-lbl':    'Pais',
+    'zones-lbl':      'Zonas Activas',
+    'comm-lbl':       'Productos',
+    'c1':'Mango','c2':'Arandano','c3':'Palta','c4':'Esparrago','c5':'Uva','c6':'Mandarina',
+    'cred-lbl':       'Sus Credenciales de Acceso',
+    'platform-lbl':   'Plataforma',
+    'user-lbl':       'Usuario',
+    'pass-lbl':       'Contrasena',
+    'ac-lbl':         'Codigo de Acceso',
+    'access-btn':     'ACCEDER AL PORTAL DE PROVEEDORES \u2192',
+    'access-note':    'Ingrese en mexausafg.com con sus credenciales arriba',
+    'access-lbl':     'Lo Que Accede en la Plataforma',
+    'f1': 'Portal de Proveedores \u2014 envie disponibilidad de productos, precios y cronogramas de cosecha',
+    'f2': 'WeLink \u2014 conectese con compradores y vea propuestas de negocios (WL-PE-1001)',
+    'f3': 'WeSource \u2014 envie su catalogo de productos y disponibilidad a la red MFG',
+    'f4': 'Notificaciones de negocios \u2014 reciba ordenes de compra y solicitudes de Mexausa',
+    'f5': 'Documentos de cumplimiento \u2014 FSMA 204, rastreo de certificados fitosanitarios, SENASA',
+    'loaf-lbl':    'Su Oficina de Campo \u2014 Registrar Productores',
+    'loaf-sub':    'Operaciones de Campo \u00b7 Registro de Productores \u00b7 Envio de Productos',
+    'loaf-btn':    'ABRIR LOAF \u2192',
+    'loaf-f1':     'Registre productores de sus zonas de Peru directamente en la red AuditDNA',
+    'loaf-f2':     'Envie disponibilidad de productos, fechas de cosecha y precios desde el campo',
+    'loaf-f3':     'Conecte productores directamente con compradores en la plataforma \u2014 en tiempo real',
+    'loaf-f4':     'Todos los registros de productores enviados por usted son revisados y aprobados por Pablo Alatorre',
+    'pablo-role':  'Aprueba todos los registros de productores de su red \u00b7 Mexausa Food Group',
+    'contact-lbl':    'Sus Contactos en MFG',
+    'saul-title':     'Mexausa Food Group',
+    'pablo-title':    'Mexausa Food Group',
+    'footer':         'Mexausa Food Group, Inc. \u00b7 mexausafg.com \u00b7 Plataforma de Inteligencia Agricola<br>AuditDNA \u00b7 SAM.gov UEI HSEAQ56U6JG1 \u00b7 Salinas, CA USA \u00b7 Ensenada, Baja California Mexico<br>Confidencial \u2014 Para Walter Rodriguez Poma / Agroindustria Mike SAC unicamente'
+  }
+};
+
+var lang = 'en';
+var mode = 'dark';
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-es').classList.toggle('active', l==='es');
+  var t = T[l];
+  for (var k in t) {
+    var el = document.getElementById('t-'+k);
+    if (el) el.innerHTML = t[k];
+  }
+  document.getElementById('t-access-btn').innerHTML = t['access-btn'];
+}
+
+function setMode(m) {
+  mode = m;
+  document.body.classList.toggle('light', m==='light');
+  document.getElementById('btn-dark').classList.toggle('active', m==='dark');
+  document.getElementById('btn-light').classList.toggle('active', m==='light');
+}
+
+// ── Walter Voice Input
+var _wrRec = null;
+var _wrLang = 'en';
+
+function wrMicToggle() {
+  var SpeechRecog = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var btn = document.getElementById('wr-mic');
+  if (!SpeechRecog) {
+    alert('Voice not supported in this browser. / Voz no soportada en este navegador.');
+    return;
+  }
+  if (_wrRec) {
+    _wrRec.stop(); _wrRec = null;
+    if (btn) btn.classList.remove('rec');
+    return;
+  }
+  _wrRec = new SpeechRecog();
+  _wrRec.lang = (_wrLang === 'es') ? 'es-PE' : 'en-US';
+  _wrRec.continuous = false;
+  _wrRec.interimResults = false;
+  _wrRec.onstart = function() { if (btn) btn.classList.add('rec'); };
+  _wrRec.onresult = function(e) {
+    var transcript = e.results[0][0].transcript;
+    // Find first visible input/textarea on page
+    var inputs = document.querySelectorAll('input[type="text"],input:not([type]),textarea');
+    var filled = false;
+    for (var i = 0; i < inputs.length; i++) {
+      var el = inputs[i];
+      var style = window.getComputedStyle(el);
+      if (style.display !== 'none' && style.visibility !== 'hidden') {
+        el.value = transcript;
+        el.dispatchEvent(new Event('input'));
+        filled = true;
+        break;
+      }
+    }
+    if (!filled) {
+      // Show transcript as toast
+      var toast = document.createElement('div');
+      toast.textContent = transcript;
+      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e2e8f0;padding:10px 20px;border-radius:10px;font-size:13px;border:1px solid rgba(201,165,92,0.3);z-index:9999;';
+      document.body.appendChild(toast);
+      setTimeout(function() { toast.remove(); }, 3000);
+    }
+    if (btn) btn.classList.remove('rec');
+    _wrRec = null;
+  };
+  _wrRec.onerror = function() {
+    if (btn) btn.classList.remove('rec');
+    _wrRec = null;
+  };
+  _wrRec.start();
+}
+
+
+// ── Walter Voice Input ─────────────────────────────────────────────────────
+var _wrRec = null;
+var _wrLang = 'en';
+
+// Sync _wrLang when setLang fires
+var _origSetLang = typeof setLang === 'function' ? setLang : null;
+if (_origSetLang) {
+  var _setLangWrap = function(l) { _wrLang = l; _origSetLang(l); };
+  // Will be patched below after setLang is defined
+}
+
+function wrMicToggle() {
+  var SpeechRecog = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var btn = document.getElementById('wr-mic');
+  if (!SpeechRecog) { alert('Voice not supported. / Voz no soportada.'); return; }
+  if (_wrRec) { _wrRec.stop(); _wrRec = null; if (btn) btn.classList.remove('rec'); return; }
+  _wrRec = new SpeechRecog();
+  _wrRec.lang = (_wrLang === 'es') ? 'es-PE' : 'en-US';
+  _wrRec.continuous = false; _wrRec.interimResults = false;
+  _wrRec.onstart = function() { if (btn) btn.classList.add('rec'); };
+  _wrRec.onresult = function(e) {
+    var t = e.results[0][0].transcript;
+    var inputs = document.querySelectorAll('input[type="text"],input:not([type]),textarea');
+    var filled = false;
+    for (var i = 0; i < inputs.length; i++) {
+      var s = window.getComputedStyle(inputs[i]);
+      if (s.display !== 'none' && s.visibility !== 'hidden') { inputs[i].value = t; inputs[i].dispatchEvent(new Event('input')); filled = true; break; }
+    }
+    if (!filled) {
+      var toast = document.createElement('div');
+      toast.textContent = t;
+      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e2e8f0;padding:10px 20px;border-radius:10px;font-size:13px;border:1px solid rgba(201,165,92,0.3);z-index:9999;';
+      document.body.appendChild(toast);
+      setTimeout(function(){ toast.remove(); }, 3000);
+    }
+    if (btn) btn.classList.remove('rec'); _wrRec = null;
+  };
+  _wrRec.onerror = function() { if (btn) btn.classList.remove('rec'); _wrRec = null; };
+  _wrRec.start();
+}
+
+// Sync lang on toggle
+document.addEventListener("DOMContentLoaded",function(){var _orig=window.setLang;if(_orig)window.setLang=function(l){_wrLang=l;_orig(l);}});
+</script>
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;">
+  <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:6px;">WALTER RODRIGUEZ</div>
+  <div style="font-size:11px;color:#64748b;margin-bottom:28px;letter-spacing:1px;">SECURE ACCESS — ENTER PIN</div>
+  <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+  <div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+  <div style="font-size:9px;color:#1e3a4a;margin-top:20px;">Powered by AuditDNA Intelligence</div>
+</div>
+
+<div id="app" style="display:none;">
+</body>
+</html>

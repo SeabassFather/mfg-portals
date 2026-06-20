@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="MFG Blast"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>MFG Blast</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+--bg:#0F1419;--card:rgba(255,255,255,0.06);--border:rgba(201,165,92,0.20);
+--gold:#C9A55C;--green:#0F7B41;--text:#e2e8f0;--dim:#64748b;--slate:#1e293b;
+--red:#ef4444;--blue:#3b82f6;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto}
+
+/* TOP BAR */
+.topbar{background:linear-gradient(135deg,#c5cad1 0%,#d8dce2 50%,#c2c7ce 100%);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:800;color:#0F1419;letter-spacing:.5px}
+.topbar-sub{font-size:10px;color:#475569;font-weight:600}
+.badge{background:var(--gold);color:#0F1419;font-size:10px;font-weight:800;padding:3px 8px;border-radius:12px}
+
+/* TABS */
+.tabs{display:flex;background:#001020;flex-shrink:0;border-bottom:1px solid rgba(201,165,92,0.15)}
+.tab{flex:1;padding:11px 4px;font-size:11px;font-weight:700;text-align:center;color:var(--dim);border:none;background:none;cursor:pointer;letter-spacing:.5px}
+.tab.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+
+/* SCREEN */
+.screen{flex:1;overflow-y:auto;padding:12px;display:none}
+.screen.active{display:block}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:8px}
+.search-wrap input{width:100%;background:var(--slate);border:1px solid var(--border);border-radius:10px;padding:9px 12px 9px 34px;color:var(--text);font-size:14px}
+.search-wrap::before{content:'⌕';position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:16px;pointer-events:none}
+
+/* MULTI-COMMODITY PILLS */
+.pills-label{font-size:9px;font-weight:700;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.pills{display:flex;gap:5px;margin-bottom:8px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.pill{flex-shrink:0;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--dim);cursor:pointer}
+.pill.active{background:rgba(201,165,92,0.15);border-color:var(--gold);color:var(--gold)}
+.pill.role-active{background:rgba(15,123,65,0.15);border-color:var(--green);color:#4ade80}
+
+/* ACTION ROW */
+.action-row{display:flex;gap:6px;margin-bottom:8px;align-items:center}
+.sel-all-btn{flex:1;padding:8px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.35);border-radius:8px;color:#60a5fa;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:.5px}
+.clear-all-btn{padding:8px 12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:8px;color:#f87171;font-size:11px;font-weight:700;cursor:pointer}
+
+/* MANUAL ADD */
+.manual-row{display:flex;gap:6px;margin-bottom:8px}
+.manual-row input{flex:1;background:var(--slate);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px}
+.add-btn{padding:8px 14px;background:var(--green);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:800;cursor:pointer}
+
+/* SELECT BAR */
+.select-bar{background:rgba(15,123,65,0.12);border:1px solid rgba(15,123,65,0.3);border-radius:8px;padding:8px 12px;margin-bottom:8px;display:none;justify-content:space-between;align-items:center}
+.select-bar span{color:var(--green);font-weight:700;font-size:13px}
+.clear-btn{font-size:11px;color:var(--dim);background:none;border:none;cursor:pointer}
+
+/* CONTACT ROWS */
+.contact-list{display:flex;flex-direction:column;gap:6px}
+.contact-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:rgba(201,165,92,0.1)}
+.contact-row.selected{border-color:var(--gold);background:rgba(201,165,92,0.08)}
+.contact-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.contact-row.selected .contact-check{background:var(--gold);border-color:var(--gold);color:#0F1419}
+.contact-info{flex:1;min-width:0}
+.contact-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contact-meta{font-size:10px;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contact-tag{font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;flex-shrink:0;letter-spacing:.5px}
+.tag-grower{background:rgba(15,123,65,0.2);color:#4ade80}
+.tag-buyer{background:rgba(201,165,92,0.15);color:var(--gold)}
+.tag-shipper{background:rgba(59,130,246,0.15);color:#60a5fa}
+.tag-owner{background:rgba(124,58,237,0.2);color:#a78bfa}
+
+.load-more{width:100%;margin-top:10px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:12px;cursor:pointer;display:none}
+.loading-row{display:flex;align-items:center;gap:8px;padding:12px;color:var(--dim);font-size:13px}
+
+/* COMPOSE */
+.compose-section{margin-bottom:14px}
+.compose-label{font-size:9px;font-weight:800;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.compose-input{width:100%;background:var(--slate);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px}
+.compose-textarea{width:100%;background:var(--slate);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;min-height:180px;line-height:1.6;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.chip{background:rgba(15,123,65,0.15);border:1px solid rgba(15,123,65,0.3);border-radius:16px;padding:3px 9px;font-size:11px;color:#4ade80;display:flex;align-items:center;gap:4px}
+.chip-x{cursor:pointer;color:var(--dim);font-size:13px;line-height:1}
+
+/* AI BOX */
+.ai-box{background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:13px;margin-bottom:14px}
+.ai-title{font-size:10px;font-weight:800;color:#a78bfa;letter-spacing:2px;margin-bottom:8px}
+.ai-commodities{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.ai-comm-pill{padding:4px 10px;border-radius:14px;font-size:10px;font-weight:700;border:1px solid rgba(124,58,237,0.3);color:#a78bfa;background:rgba(124,58,237,0.08)}
+.ai-input{width:100%;background:rgba(15,20,40,0.5);border:1px solid rgba(124,58,237,0.25);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;margin-bottom:8px}
+.ai-generate-btn{width:100%;padding:11px;background:rgba(124,58,237,0.85);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.5px}
+.ai-generate-btn:disabled{opacity:.5;cursor:not-allowed}
+.ai-spinning{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TEMPLATES */
+.tpl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tpl-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 4px;color:var(--dim);font-size:10px;font-weight:700;cursor:pointer;text-align:center;line-height:1.4}
+.tpl-btn:active{border-color:var(--gold);color:var(--gold)}
+
+/* SEND */
+.send-btn{width:100%;padding:15px;background:var(--green);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:.5px;margin-top:8px}
+.send-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* HISTORY */
+.hist-row{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:7px}
+.hist-subj{font-size:13px;font-weight:700;color:var(--text)}
+.hist-meta{font-size:10px;color:var(--dim);margin-top:3px}
+.hist-count{font-size:11px;color:var(--green);font-weight:700}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,20,35,0.95);border:1px solid rgba(201,165,92,0.3);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--text);opacity:0;transition:all .25s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* PIN */
+#pin-gate{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;z-index:1000}
+.pin-logo{font-size:28px;font-weight:900;color:var(--gold);margin-bottom:6px}
+.pin-sub{font-size:12px;color:var(--dim);margin-bottom:32px}
+.pin-display{font-size:32px;letter-spacing:12px;color:var(--text);font-weight:700;margin-bottom:24px}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px}
+.pin-key{background:var(--slate);border:1px solid var(--border);border-radius:12px;padding:18px;font-size:22px;font-weight:700;color:var(--text);cursor:pointer;text-align:center}
+.pin-key:active{background:rgba(201,165,92,0.15);border-color:var(--gold)}
+.pin-error{color:var(--red);font-size:12px;margin-top:12px;min-height:18px}
+
+</style>
+</head>
+<body>
+
+
+<!-- PIN GATE -->
+<div id="pin-gate">
+  <div class="pin-logo">MFG BLAST</div>
+  <div class="pin-sub">Mexausa Food Group · Owner Access</div>
+  <div class="pin-display" id="pin-display">· · · · · · · · · ·</div>
+  <div class="pin-grid">
+    <button class="pin-key" onclick="pinKey('1')">1</button>
+    <button class="pin-key" onclick="pinKey('2')">2</button>
+    <button class="pin-key" onclick="pinKey('3')">3</button>
+    <button class="pin-key" onclick="pinKey('4')">4</button>
+    <button class="pin-key" onclick="pinKey('5')">5</button>
+    <button class="pin-key" onclick="pinKey('6')">6</button>
+    <button class="pin-key" onclick="pinKey('7')">7</button>
+    <button class="pin-key" onclick="pinKey('8')">8</button>
+    <button class="pin-key" onclick="pinKey('9')">9</button>
+    <button class="pin-key" onclick="pinKey('clr')" style="font-size:14px;color:var(--dim)">CLR</button>
+    <button class="pin-key" onclick="pinKey('0')">0</button>
+    <button class="pin-key" onclick="pinKey('del')" style="font-size:16px;color:var(--dim)">⌫</button>
+  </div>
+  <button onclick="checkPin()" style="width:100%;max-width:280px;margin-top:14px;padding:16px;background:var(--green);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer">UNLOCK</button>
+  <div class="pin-error" id="pin-error"></div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">MFG BLAST</div>
+      <div class="topbar-sub">CRM Multi-Blast Tool</div>
+    </div>
+    <span class="badge" id="sel-badge">0 selected</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('contacts')">CONTACTS</button>
+    <button class="tab" onclick="showTab('compose')">COMPOSE</button>
+    <button class="tab" onclick="showTab('history')">HISTORY</button>
+  </div>
+
+  <!-- CONTACTS TAB -->
+  <div class="screen active" id="tab-contacts">
+    <div class="search-wrap">
+      <input type="search" id="search-input" placeholder="Search name, company, email..." oninput="onSearch()"/>
+    </div>
+
+    <!-- COMMODITY MULTI-SELECT -->
+    <div class="pills-label" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+  <span>PRODUCTS — select any combo, AI writes ONE email</span>
+  <button onclick="selectAllComms()" style="font-size:9px;padding:2px 8px;background:rgba(15,123,65,0.15);border:1px solid rgba(15,123,65,0.4);color:#4ade80;border-radius:4px;cursor:pointer;font-weight:700;letter-spacing:.5px">ALL</button>
+</div>
+    <div class="pills" id="comm-pills"></div>
+
+    <!-- ROLE FILTER -->
+    <div class="pills-label">ROLE</div>
+    <div class="pills" id="role-pills">
+      <button class="pill role-active" onclick="setRole('all',this)">All</button>
+      <button class="pill" onclick="setRole('grower',this)">Growers</button>
+      <button class="pill" onclick="setRole('buyer',this)">Buyers</button>
+      <button class="pill" onclick="setRole('shipper',this)">Shippers</button>
+      <button class="pill" onclick="setRole('broker',this)">Brokers</button>
+    </div>
+
+    <!-- MANUAL ADD -->
+    <div class="manual-row">
+      <input id="manual-email" type="email" placeholder="Add email manually..."/>
+      <button class="add-btn" onclick="addManualEmail()">ADD</button>
+    </div>
+
+    <!-- SELECT ALL / CLEAR -->
+    <div class="action-row">
+      <button class="sel-all-btn" onclick="selectAll()">SELECT ALL (<span id="filtered-count">0</span>)</button>
+      <button class="clear-all-btn" onclick="clearAll()">CLEAR</button>
+    </div>
+
+    <div class="select-bar" id="select-bar">
+      <span id="sel-count-text">0 selected</span>
+      <button class="clear-btn" onclick="clearAll()">Clear all</button>
+    </div>
+
+    <div class="contact-list" id="contact-list">
+      <div class="loading-row">Loading contacts...</div>
+    </div>
+    <button class="load-more" id="load-more-btn" onclick="loadMore()">Load more</button>
+    <div style="height:80px"></div>
+  </div>
+
+  <!-- COMPOSE TAB -->
+  <div class="screen" id="tab-compose">
+    <div class="compose-section">
+      <div class="compose-label">To (<span id="recip-count">0</span> recipients)</div>
+      <div class="chips" id="recip-chips"></div>
+      <div id="no-recip" style="font-size:12px;color:var(--dim);padding:6px 0">No contacts selected — go to Contacts tab.</div>
+    </div>
+
+    <!-- SELECTED PRODUCTS SUMMARY -->
+<div id="compose-comms-summary" style="display:none;margin-bottom:10px;padding:10px 12px;background:rgba(15,123,65,0.08);border:1px solid rgba(15,123,65,0.25);border-radius:8px">
+  <div style="font-size:9px;color:#4ade80;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Products in this email</div>
+  <div id="compose-comms-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+</div>
+<!-- AI GENERATOR -->
+    <div class="ai-box">
+      <div class="ai-title">✦ AI LETTER GENERATOR</div>
+      <div id="ai-comm-display" class="ai-commodities" style="display:none"></div>
+      <input class="ai-input" id="ai-topic" placeholder="Topic or angle (e.g. pricing update, availability, introduce AuditDNA)..."/>
+      <button class="ai-generate-btn" onclick="generateAI()" id="ai-btn">Generate Email with AI</button>
+    </div>
+
+    <!-- SUBJECT -->
+    <div class="compose-section">
+      <div class="compose-label">Subject</div>
+      <input class="compose-input" id="subj-input" placeholder="Email subject..."/>
+    </div>
+
+    <!-- TEMPLATES -->
+    <div class="compose-section">
+      <div class="compose-label">Quick Templates</div>
+      <div class="tpl-grid">
+        <button class="tpl-btn" onclick="loadTemplate('intro')">Intro<br/>AuditDNA</button>
+        <button class="tpl-btn" onclick="loadTemplate('pricing')">Pricing<br/>Update</button>
+        <button class="tpl-btn" onclick="loadTemplate('sourcing')">Sourcing<br/>Inquiry</button>
+        <button class="tpl-btn" onclick="loadTemplate('followup')">Follow<br/>Up</button>
+        <button class="tpl-btn" onclick="loadTemplate('availability')">Product<br/>Avail.</button>
+        <button class="tpl-btn" onclick="loadTemplate('compliance')">FSMA<br/>204</button>
+        <button class="tpl-btn" onclick="loadTemplate('invitation')">Platform<br/>Invite</button>
+        <button class="tpl-btn" onclick="loadTemplate('payment')">Payment<br/>Terms</button>
+<button class="tpl-btn" onclick="loadTemplate('agrimaxx_intro')" style="border-color:rgba(15,123,65,0.5);color:#5eead4">Agri-Maxx<br/>Intro</button>
+<button class="tpl-btn" onclick="loadTemplate('agrimaxx_demo')" style="border-color:rgba(15,123,65,0.5);color:#5eead4">Agri-Maxx<br/>Demo</button>
+<button class="tpl-btn" onclick="loadTemplate('agrimaxx_latam')" style="border-color:rgba(15,123,65,0.5);color:#5eead4">Agri-Maxx<br/>LATAM</button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="compose-section">
+      <div class="compose-label">Body — use {{name}}, {{company}}</div>
+      <textarea class="compose-textarea" id="body-input" placeholder="Write your email here or use AI generator above..."></textarea>
+    </div>
+
+    <button class="send-btn" id="send-btn" onclick="sendBlast()">SEND BLAST</button>
+    <div style="height:60px"></div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div class="screen" id="tab-history">
+    <div id="hist-list"><div class="loading-row">No blasts yet.</div></div>
+    <div style="height:60px"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────────────────────
+const API  = 'https://api.mexausafg.com';
+const RAIL = 'https://auditdna-backend-1-production.up.railway.app';
+const CORRECT_PIN = '0609051974';
+const COMMODITIES = ['Strawberry','Avocado','Tomato','Lettuce','Blueberry','Broccoli','Cilantro','Cucumber','Mango','Lime','Pepper','Garlic'];
+
+// ── PIN ───────────────────────────────────────────────────────────────────────
+let pinVal = '';
+function pinKey(k) {
+  if (k==='clr') pinVal='';
+  else if (k==='del') pinVal=pinVal.slice(0,-1);
+  else if (pinVal.length<10) pinVal+=k;
+  updatePinDisplay();
+  if (pinVal.length===CORRECT_PIN.length) setTimeout(checkPin,150);
+}
+function updatePinDisplay() {
+  const d=document.getElementById('pin-display');
+  d.textContent=(pinVal.replace(/./g,'●')+'·'.repeat(Math.max(0,CORRECT_PIN.length-pinVal.length))).split('').join(' ');
+}
+function checkPin() {
+  if (pinVal===CORRECT_PIN) {
+    document.getElementById('pin-gate').style.display='none';
+    document.getElementById('app').style.display='flex';
+    init();
+  } else if (pinVal.length===CORRECT_PIN.length) {
+    document.getElementById('pin-error').textContent='Incorrect PIN';
+    pinVal=''; updatePinDisplay();
+    setTimeout(()=>document.getElementById('pin-error').textContent='',2000);
+  }
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let contacts=[], filtered=[], selected=new Map();
+let page=0, pageSize=50, currentRole='all', searchQ='';
+let selectedCommodities=new Set(); // multi-select
+let sendHistory=JSON.parse(localStorage.getItem('mfg_blast_hist')||'[]');
+let jwt='';
+let liveprices={}; // commodity → price string
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init() {
+  buildCommPills();
+  await login();
+  loadContacts();
+  fetchLivePrices();
+  renderHistory();
+}
+
+function buildCommPills() {
+  const el = document.getElementById('comm-pills');
+  el.innerHTML = COMMODITIES.map(c =>
+    `<button class="pill" id="cpill-${c}" onclick="toggleCommodity('${c}',this)">${c}</button>`
+  ).join('');
+}
+
+async function login() {
+  try {
+    const r=await fetch(API+'/api/auth/login',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({password:'Dsg060905#321',accessCode:'060905Dsg#321',pin:'0609051974'})});
+    const d=await r.json(); jwt=d.token||'';
+  } catch(e){}
+}
+
+function authHeaders() {
+  return {'Content-Type':'application/json',Authorization:'Bearer '+jwt};
+}
+
+async function fetchLivePrices() {
+  try {
+    const commodityList = ['strawberries','avocados','tomatoes','broccoli','lettuce','blueberries','cilantro','cucumbers','mangoes','limes'];
+    for (const c of commodityList) {
+      const r = await fetch(RAIL+'/api/usda/nass?commodity='+c.toUpperCase()+'&year=2026');
+      if (r.ok) {
+        const d = await r.json();
+        const rows = (d.data&&d.data.data||[]).filter(x=>x.Value&&!isNaN(parseFloat(x.Value)));
+        if (rows.length) {
+          const avg = (rows.reduce((s,r)=>s+parseFloat(r.Value),0)/rows.length).toFixed(2);
+          liveprices[c.charAt(0).toUpperCase()+c.slice(1)] = avg;
+        }
+      }
+      await new Promise(r=>setTimeout(r,200));
+    }
+  } catch(e){}
+}
+
+// ── CONTACTS ─────────────────────────────────────────────────────────────────
+async function loadContacts() {
+  document.getElementById('contact-list').innerHTML='<div class="loading-row">Loading contacts...</div>';
+  try {
+    const [bRes,gRes,cRes,cRes2] = await Promise.allSettled([
+      fetch(RAIL+'/api/buyers?limit=5000'),
+      fetch(RAIL+'/api/growers?limit=5000'),
+      fetch(RAIL+'/api/crm/contacts?limit=5000', {headers: jwt ? {'Authorization':'Bearer '+jwt} : {}}),
+      fetch(RAIL+'/api/crm-contacts?limit=5000', {headers: jwt ? {'Authorization':'Bearer '+jwt} : {}}),
+    ]);
+    let all=[];
+    if (bRes.status==='fulfilled'&&bRes.value.ok) {
+      const d=await bRes.value.json();
+      (d.data||d.buyers||[]).filter(c=>c.email).forEach(c=>all.push({
+        id:'b_'+c.id, name:c.contact_name||c.trade_name||c.legal_name||'',
+        email:c.email||'', company:c.legal_name||c.trade_name||'',
+        role:'buyer', state:c.state_region||c.state||'',
+        commodity:c.commodity||''
+      }));
+    }
+    if (gRes.status==='fulfilled'&&gRes.value.ok) {
+      const d=await gRes.value.json();
+      (d.data||d.growers||[]).filter(c=>c.email).forEach(c=>all.push({
+        id:'g_'+c.id,
+        name:((c.first_name||'')+' '+(c.last_name||'')).trim()||c.company_name||'',
+        email:c.email||'', company:c.company_name||c.operation_name||'',
+        role:'grower', state:c.state||c.city||'',
+        commodity:Array.isArray(c.commodities)?c.commodities.join(', '):(c.commodity||'')
+      }));
+    }
+    if (cRes.status==='fulfilled'&&cRes.value.ok) {
+      const d=await cRes.value.json();
+      (d.data||d.contacts||[]).filter(c=>c.email).forEach(c=>all.push({
+        id:'c_'+c.id, name:c.contact_name||c.name||'',
+        email:c.email||'', company:c.company||'',
+        role:(c.contact_type||c.category||c.role||'contact').toLowerCase(),
+        state:c.state_region||c.state||'', commodity:c.commodity||''
+      }));
+    }
+    const seen=new Set();
+    contacts=all.filter(c=>{
+      if(!c.email||seen.has(c.email.toLowerCase())) return false;
+      seen.add(c.email.toLowerCase()); return true;
+    });
+    seedOwnerContact();
+    applyFilter();
+  } catch(e) {
+    seedOwnerContact(); applyFilter();
+    document.getElementById('contact-list').innerHTML='<div class="loading-row" style="color:var(--red)">Backend offline — Railway is restarting. Try again in 2 minutes.mails manually</div>';
+  }
+}
+
+function seedOwnerContact() {
+  const o={id:'owner_saul',name:'Saul Garcia',email:'sgarcia1911@gmail.com',
+    company:'Mexausa Food Group',role:'owner',state:'CA',commodity:''};
+  if (!contacts.find(c=>c.email===o.email)) contacts.unshift(o);
+}
+
+function applyFilter() {
+  const q=searchQ.toLowerCase();
+  filtered=contacts.filter(c=>{
+    const role=(c.role||'').toLowerCase();
+    if (currentRole!=='all') {
+      if (currentRole==='grower'  && !role.includes('grower')) return false;
+      if (currentRole==='buyer'   && !role.includes('buyer'))  return false;
+      if (currentRole==='shipper' && !role.includes('ship')&&!role.includes('pack')) return false;
+      if (currentRole==='broker'  && !role.includes('broker')&&!role.includes('agent')) return false;
+    }
+    // Multi-commodity filter — buyers always show (they purchase any commodity)
+    // Growers and contacts only show if their commodity matches
+    if (selectedCommodities.size>0) {
+      const role=(c.role||'').toLowerCase();
+      const isBuyer=role.includes('buyer')||role.includes('wholesale')||role.includes('distributor')||role==='contact';
+      if (!isBuyer) {
+        const comm=(c.commodity||'').toLowerCase();
+        if (!comm) { /* grower with no commodity set — skip */ return false; }
+        let match=false;
+        for (const sc of selectedCommodities) {
+          if (comm.includes(sc.toLowerCase())) { match=true; break; }
+        }
+        if (!match) return false;
+      }
+    }
+    if (q) return (c.name+c.email+c.company+c.commodity).toLowerCase().includes(q);
+    return true;
+  });
+  page=0;
+  document.getElementById('filtered-count').textContent=filtered.length.toLocaleString();
+  renderContacts();
+}
+
+function renderContacts() {
+  const list=document.getElementById('contact-list');
+  const slice=filtered.slice(0,(page+1)*pageSize);
+  if (filtered.length===0) {
+    list.innerHTML='<div class="loading-row">No contacts found</div>';
+    document.getElementById('load-more-btn').style.display='none';
+    return;
+  }
+  list.innerHTML=slice.map(c=>{
+    const sel=selected.has(c.email);
+    const tagClass=c.role.includes('grower')?'tag-grower':c.role.includes('buyer')?'tag-buyer':c.role.includes('owner')?'tag-owner':'tag-shipper';
+    return `<div class="contact-row${sel?' selected':''}" onclick="toggleContact('${c.email}','${escHtml(c.name)}','${escHtml(c.company)}')">
+      <div class="contact-check">${sel?'✓':''}</div>
+      <div class="contact-info">
+        <div class="contact-name">${escHtml(c.name||c.email)}</div>
+        <div class="contact-meta">${escHtml(c.email)}${c.company?' · '+escHtml(c.company):''}</div>
+      </div>
+      <span class="contact-tag ${tagClass}">${(c.role||'').slice(0,6).toUpperCase()}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('load-more-btn').style.display=slice.length<filtered.length?'block':'none';
+  updateSelBar();
+}
+
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
+
+function toggleContact(email,name,company) {
+  if (selected.has(email)) selected.delete(email);
+  else selected.set(email,{email,name,company});
+  renderContacts(); updateSelBar();
+}
+
+function selectAll() {
+  filtered.forEach(c=>selected.set(c.email,{email:c.email,name:c.name,company:c.company}));
+  renderContacts(); updateSelBar();
+  showToast('Selected '+filtered.length.toLocaleString()+' contacts');
+}
+
+function clearAll() { selected.clear(); renderContacts(); updateSelBar(); }
+function loadMore() { page++; renderContacts(); }
+
+function selectAllComms() {
+  COMMODITIES.forEach(c=>{
+    selectedCommodities.add(c.toLowerCase());
+    const btn=document.getElementById('cpill-'+c.toLowerCase());
+    if(btn) btn.classList.add('active');
+  });
+  applyFilter();updateAICommDisplay();
+  showToast('All '+COMMODITIES.length+' products selected — AI will cover all in one email');
+}
+function toggleCommodity(c, btn) {
+  if (selectedCommodities.has(c)) {
+    selectedCommodities.delete(c);
+    btn.classList.remove('active');
+  } else {
+    selectedCommodities.add(c);
+    btn.classList.add('active');
+  }
+  applyFilter();
+  updateAICommDisplay();
+}
+
+function updateAICommDisplay() {
+  const el=document.getElementById('ai-comm-display');
+  if (selectedCommodities.size===0) { el.style.display='none'; return; }
+  el.style.display='flex';
+  el.innerHTML=[...selectedCommodities].map(c=>{
+    const p=liveprices[c]?` · $${liveprices[c]}/unit`:'';
+    return `<span class="ai-comm-pill">${c}${p}</span>`;
+  }).join('');
+}
+
+function setRole(f,btn) {
+  currentRole=f;
+  document.querySelectorAll('#role-pills .pill').forEach(p=>p.classList.remove('role-active'));
+  btn.classList.add('role-active');
+  applyFilter();
+}
+
+function onSearch() { searchQ=document.getElementById('search-input').value; applyFilter(); }
+
+function updateSelBar() {
+  const n=selected.size;
+  document.getElementById('sel-badge').textContent=n.toLocaleString()+' selected';
+  document.getElementById('select-bar').style.display=n>0?'flex':'none';
+  document.getElementById('sel-count-text').textContent=n.toLocaleString()+' selected';
+  renderChips();
+}
+
+function addManualEmail() {
+  const input=document.getElementById('manual-email');
+  const email=(input.value||'').trim().toLowerCase();
+  if (!email||!email.includes('@')) { showToast('Enter a valid email'); return; }
+  const name=email.split('@')[0];
+  selected.set(email,{email,name,company:''});
+  if (!contacts.find(c=>c.email===email)) {
+    contacts.unshift({id:'m_'+Date.now(),name,email,company:'',role:'contact',state:'',commodity:''});
+  }
+  input.value=''; renderContacts(); updateSelBar();
+  showToast('Added: '+email);
+}
+
+// ── CHIPS ─────────────────────────────────────────────────────────────────────
+function renderChips() {
+  const chips=document.getElementById('recip-chips');
+  const cnt=document.getElementById('recip-count');
+  const noR=document.getElementById('no-recip');
+  cnt.textContent=selected.size.toLocaleString();
+  noR.style.display=selected.size===0?'block':'none';
+  // Show first 12 chips + overflow count
+  const vals=[...selected.values()];
+  const show=vals.slice(0,12);
+  const overflow=vals.length-12;
+  chips.innerHTML=show.map(c=>
+    `<div class="chip">${escHtml((c.name||c.email).split(' ')[0])} <span class="chip-x" onclick="removeRecip('${c.email}')">×</span></div>`
+  ).join('')+(overflow>0?`<div class="chip" style="background:rgba(100,116,139,0.15);color:var(--dim)">+${overflow} more</div>`:'');
+}
+function removeRecip(email) { selected.delete(email); updateSelBar(); renderContacts(); }
+
+// ── TEMPLATES ─────────────────────────────────────────────────────────────────
+const TEMPLATES = {
+  intro:{subject:'Introducing AuditDNA — Grower-Buyer Intelligence Platform',
+    body:`Hi {{name}},\n\nMy name is Saul Garcia, CEO of Mexausa Food Group, Inc. I wanted to personally introduce you to AuditDNA — our agricultural intelligence platform built for growers, buyers, packers, and shippers across the US-Mexico corridor.\n\nAuditDNA gives your team real-time USDA market pricing, FSMA 204 compliance tools, and direct access to verified grower and buyer contacts across California, Arizona, and Baja California.\n\nWe're inviting key industry partners to join as founding members. Would you be open to a brief call to explore how AuditDNA can support {{company}}?\n\nBest regards,\nSaul Garcia\nCEO, Mexausa Food Group, Inc.\n+1 (831) 251-3116 | mexausafg.com`},
+  pricing:{subject:'Current FOB Pricing Update — {{commodity}} Season',
+    body:`Hi {{name}},\n\nWanted to share current FOB pricing from our USDA market intelligence feed for your planning:\n\n· Salinas, CA: Market prices available on request\n· Yuma, AZ: Contact us for current movement\n· Baja California: Cross-border options available\n\nOur platform provides live pricing across 20 terminal markets. Reply to this email or visit mexausafg.com.\n\nBest regards,\nSaul Garcia\nMexausa Food Group, Inc. · +1 (831) 251-3116`},
+  sourcing:{subject:'Sourcing Inquiry — {{company}}',
+    body:`Hi {{name}},\n\nWe are actively sourcing on behalf of buyers in our network and wanted to reach out to {{company}} directly.\n\nWe work with growers, packers, and shippers across California, Arizona, and Baja California. If you have current or upcoming programs available, please reply with details or call me directly.\n\n+1 (831) 251-3116\n\nBest regards,\nSaul Garcia · Mexausa Food Group, Inc. | mexausafg.com`},
+  followup:{subject:'Following Up — {{company}}',
+    body:`Hi {{name}},\n\nI wanted to follow up on my previous message regarding our agricultural intelligence platform and potential business opportunities.\n\nOur network includes verified contacts across 27,000+ growers, buyers, and shippers in the US-Mexico corridor. Do you have 15 minutes this week for a quick call?\n\nBest regards,\nSaul Garcia · Mexausa Food Group, Inc.\n+1 (831) 251-3116`},
+  availability:{subject:'Product Availability — Fresh Produce Programs',
+    body:`Hi {{name}},\n\nWe have current availability across multiple commodity programs through our grower network in California, Arizona, and Baja California.\n\nReply to this email or call +1 (831) 251-3116 to discuss programs, volume, and pricing.\n\nBest regards,\nSaul Garcia · Mexausa Food Group, Inc. | mexausafg.com`},
+  compliance:{subject:'FSMA 204 Compliance Tools — AuditDNA Platform',
+    body:`Hi {{name}},\n\nWith FDA's FSMA Section 204 traceability requirements now in effect, we wanted to reach out to {{company}} about digital compliance tools.\n\nAuditDNA offers:\n· Digital lot tracking and QR-coded chain-of-custody\n· FSMA 204-compliant Critical Tracking Event documentation\n· Mobile-first field tools for small and mid-size operations\n\nFree for qualifying growers in our founding member program.\n\nBest regards,\nSaul Garcia | Mexausa Food Group, Inc.`},
+  invitation:{subject:'Founding Member Invitation — AuditDNA Agriculture Platform',
+    body:`Hi {{name}},\n\nYou are invited to join AuditDNA as a founding member.\n\nAuditDNA is an agricultural intelligence platform for growers, buyers, packers, and shippers across the US-Mexico-LATAM corridor:\n\n· USDA live market pricing across 20 terminal markets\n· FSMA 204 traceability tools\n· Verified grower-buyer matching\n· Invoice factoring and PO financing access\n\nInvitation only. Reply to this email to activate your account.\n\nBest regards,\nSaul Garcia · CEO, Mexausa Food Group, Inc.\nmexausafg.com`},
+  agrimaxx_intro:{
+  subject:'Agri-Maxx Water Conditioning Technology — Exclusive LATAM Distribution | Mexausa Food Group',
+  body:`Dear {{NAME}},
+
+My name is Saul Garcia, Owner of Mexausa Food Group, Inc. (EIN: 88-1698129). We hold exclusive wholesale distribution rights for Agri-Maxx water conditioning technology across Mexico, Central America, and South America.
+
+Agri-Maxx is a proven, chemical-free water treatment system that restructures irrigation water at the molecular level — improving absorption, reducing input costs, and measurably increasing crop yields.
+
+Key results our growers are reporting:
+- 15–30% reduction in water usage
+- Improved nutrient uptake and soil health
+- Reduced fertilizer and chemical inputs
+- Higher Brix scores and marketable yield
+
+We are actively expanding our grower network across {{COMPANY}}'s region and would like to schedule a brief call to explore how Agri-Maxx can support your operation.
+
+Would you be available for a 15-minute call this week?
+
+Respectfully,
+Saul Garcia
+Mexausa Food Group, Inc.
++1 (831) 251-3116 | sgarcia1911@gmail.com
+Authorized Agri-Maxx Distributor — Mexico, Central & South America`
+},
+agrimaxx_demo:{
+  subject:'Agri-Maxx Field Demo Invitation — See the Results in Your Operation',
+  body:`Dear {{NAME}},
+
+Following up on Agri-Maxx water conditioning technology — Mexausa Food Group is scheduling on-site field demonstrations across the region for qualified growers.
+
+This is a no-cost, no-obligation demonstration on your own fields using your existing irrigation system.
+
+What we measure during the demo:
+- Water conductivity before and after
+- Soil penetration and absorption rate
+- Comparison block yield tracking (30/60/90 day)
+
+{{COMPANY}} would be an ideal candidate based on your operation profile. Slots are limited and filling quickly for this season.
+
+To reserve your demonstration, simply reply to this email or call me directly at +1 (831) 251-3116.
+
+Saul Garcia
+Mexausa Food Group, Inc.
+Exclusive Agri-Maxx Distributor — Latin America`
+},
+agrimaxx_latam:{
+  subject:'Agri-Maxx LATAM Partnership Opportunity — Wholesale Distribution',
+  body:`Dear {{NAME}},
+
+Mexausa Food Group holds exclusive wholesale distribution rights for Agri-Maxx water conditioning technology across Mexico, Central America, and South America.
+
+We are seeking regional sub-distributors and agricultural cooperatives to expand market penetration in {{COMPANY}}'s territory.
+
+Partnership tiers available:
+- Regional Sub-Distributor (exclusive territory rights)
+- Cooperative Program (volume pricing for member growers)
+- Trial Program (pilot units for demonstration purposes)
+
+Agri-Maxx requires no chemicals, no filters, and no electricity. It installs directly on the main irrigation line and requires zero maintenance. ROI is typically achieved within one growing season.
+
+If {{COMPANY}} operates in the agricultural input or cooperative space, I would welcome a conversation about a formal distribution agreement.
+
+Saul Garcia, Owner
+Mexausa Food Group, Inc. | EIN: 88-1698129
++1 (831) 251-3116 | mexausafg.com
+Authorized Agri-Maxx Distributor — Mexico, Central & South America`
+},
+payment:{subject:'Payment Terms & Financing Options — Mexausa Food Group',
+    body:`Hi {{name}},\n\nWe offer flexible payment and financing options for qualified buyers and growers through our partner lender network.\n\nPrograms available for {{company}}:\n· Net 30/60/90 terms for established buyers\n· Purchase Order financing for growers\n· Invoice factoring for immediate liquidity\n· Escrow services for large transactions\n\nAll financing through verified partner lenders. No upfront cost.\n\nBest regards,\nSaul Garcia · Mexausa Food Group, Inc. | +1 (831) 251-3116`}
+};
+
+function loadTemplate(key) {
+  const t=TEMPLATES[key]; if (!t) return;
+  document.getElementById('subj-input').value=t.subject;
+  document.getElementById('body-input').value=t.body;
+  showToast('Template loaded');
+}
+
+// ── AI GENERATOR (multi-commodity + live prices) ──────────────────────────────
+async function generateAI() {
+  const topic=document.getElementById('ai-topic').value.trim();
+  if (!topic) { showToast('Enter a topic first'); return; }
+  const btn=document.getElementById('ai-btn');
+  btn.innerHTML='<span class="ai-spinning">⟳</span> Generating...';
+  btn.disabled=true;
+
+  // Build commodity + price context
+  let commContext='';
+  if (selectedCommodities.size>0) {
+    const lines=[...selectedCommodities].map(c=>{
+      const price=liveprices[c];
+      return price?`${c}: $${price}/unit (USDA live data)`:c;
+    });
+    commContext=`\n\nCommodities to cover in this email:\n${lines.join('\n')}`;
+  }
+
+  const prompt=`You are writing a professional agricultural business email for Saul Garcia, CEO of Mexausa Food Group, Inc. (PACA Application Pending, mexausafg.com, Salinas CA).
+
+Topic: ${topic}
+
+${selectedCommodities.size>0?('Products in this email:\\n'+[...selectedCommodities].map(c=>{const p=liveprices[c]||liveprices[c.charAt(0).toUpperCase()+c.slice(1)];return '- '+(c.charAt(0).toUpperCase()+c.slice(1))+(p?' — $'+p+'/unit (USDA live data)':'');}).join('\\n')):''}
+
+Rules:
+- Professional and direct — produce industry tone. No fluff.
+- EVERY product listed above MUST appear in the body with its pricing if available
+- Format products as a short bulleted list in the email body
+- Use {{name}} for recipient name, {{company}} for their company name
+- Subject must reference the specific products offered
+- Sign off: Saul Garcia | CEO, Mexausa Food Group, Inc. | saul@mexausafg.com | +1-831-251-3116 | PACA Application Pending
+- Under 220 words
+- No emojis, no hashtags, no exclamation points
+
+Return ONLY valid JSON: {"subject":"...","body":"..."} — no markdown fences, no explanation.`;
+
+  try {
+    const r=await fetch(API+'/api/ai/generate',{
+      method:'POST', headers:authHeaders(),
+      body:JSON.stringify({prompt, type:'email', commodity:[...selectedCommodities].join(', ')})
+    });
+    const d=await r.json();
+    if (d.subject||d.body) {
+      document.getElementById('subj-input').value=d.subject||'';
+      document.getElementById('body-input').value=d.body||d.content||'';
+      showToast('AI email generated');
+    } else throw new Error('no content');
+  } catch(e) {
+    // Direct Claude fallback
+    try {
+      const r2=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':ANTHRO_KEY,'anthropic-version':'2023-06-01'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})
+      });
+      const d2=await r2.json();
+      if (d2.content&&d2.content[0]) {
+        const text=d2.content[0].text.trim().replace(/```json|```/g,'').trim();
+        const parsed=JSON.parse(text);
+        document.getElementById('subj-input').value=parsed.subject||'';
+        document.getElementById('body-input').value=parsed.body||'';
+        showToast('AI email generated');
+      } else throw new Error('api error');
+    } catch(e2) {
+      showToast('AI unavailable — check API key in Railway');
+    }
+  }
+  btn.innerHTML='Generate Email with AI';
+  btn.disabled=false;
+}
+
+// ── SEND BLAST ─────────────────────────────────────────────────────────────────
+async function sendBlast() {
+  const subject=document.getElementById('subj-input').value.trim();
+  const body=document.getElementById('body-input').value.trim();
+  if (selected.size===0) { showToast('Select recipients first'); showTab('contacts'); return; }
+  if (!subject) { showToast('Subject required'); return; }
+  if (!body) { showToast('Email body required'); return; }
+  const btn=document.getElementById('send-btn');
+  btn.disabled=true; btn.textContent='SENDING...';
+
+  const recipients=[...selected.values()].map(c=>({email:c.email,name:c.name||'',company:c.company||''}));
+
+  try {
+    const r=await fetch(API+'/api/gmail/send-bulk',{
+      method:'POST', headers:authHeaders(),
+      body:JSON.stringify({recipients,subject,body,html:bodyToHtml(body),delayMs:800})
+    });
+    const d=await r.json();
+    const sent=d.sent||d.results?.filter(r=>r.status==='sent').length||recipients.length;
+    showToast('Sent to '+sent+' contacts');
+    sendHistory.unshift({subject,count:recipients.length,sent,date:new Date().toLocaleDateString(),ts:Date.now()});
+    if (sendHistory.length>100) sendHistory=sendHistory.slice(0,100);
+    localStorage.setItem('mfg_blast_hist',JSON.stringify(sendHistory));
+    renderHistory();
+    selected.clear(); updateSelBar();
+    document.getElementById('subj-input').value='';
+    document.getElementById('body-input').value='';
+    showTab('history');
+  } catch(e) {
+    showToast('Send failed — check connection');
+  }
+  btn.disabled=false; btn.textContent='SEND BLAST';
+}
+
+function bodyToHtml(text) {
+  return `<div style="font-family:-apple-system,sans-serif;font-size:14px;line-height:1.7;color:#1e293b;max-width:600px">
+    ${text.split('\n').map(l=>l.trim()?`<p style="margin:0 0 10px">${l}</p>`:'<br/>').join('')}
+  </div>`;
+}
+
+// ── HISTORY ──────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const el=document.getElementById('hist-list');
+  if (sendHistory.length===0) { el.innerHTML='<div class="loading-row">No blasts sent yet.</div>'; return; }
+  el.innerHTML=sendHistory.map(h=>`
+    <div class="hist-row">
+      <div class="hist-subj">${escHtml(h.subject)}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+        <div class="hist-meta">${h.date}</div>
+        <div class="hist-count">${h.sent||h.count} sent</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const names=['contacts','compose','history'];
+    t.classList.toggle('active',names[i]===name);
+  });
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name==='compose') { renderChips(); updateAICommDisplay(); }
+  if (name==='history') renderHistory();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function syncComposeProductSummary() {
+  var summary=document.getElementById('compose-comms-summary');
+  var list=document.getElementById('compose-comms-list');
+  if(!summary||!list) return;
+  if(selectedCommodities.size===0){summary.style.display='none';return;}
+  summary.style.display='block';
+  list.innerHTML=[...selectedCommodities].map(function(c){
+    var p=liveprices[c]||liveprices[c.charAt(0).toUpperCase()+c.slice(1)];
+    var name=c.charAt(0).toUpperCase()+c.slice(1);
+    return '<span style="background:rgba(15,123,65,0.15);border:1px solid rgba(15,123,65,0.3);color:#4ade80;font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px">'+name+(p?' — $'+p:'')+'</span>';
+  }).join('');
+}
+
+
+
+</script>
+</body>
+</html>

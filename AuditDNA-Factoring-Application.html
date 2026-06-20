@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuditDNA Agriculture Intelligence — Factoring Application</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #1e293b; font-size: 13px; }
+
+  /* PRINT STYLES */
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white; font-size: 11px; }
+    .page { box-shadow: none; margin: 0; padding: 16px; }
+    .section { break-inside: avoid; }
+  }
+
+  .page { max-width: 900px; margin: 20px auto; background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+
+  /* HEADER */
+  .header { background: #0F1419; padding: 24px 32px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .brand { color: #C9A55C; font-size: 18px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .brand-sub { color: #64748b; font-size: 10px; letter-spacing: 1px; margin-top: 3px; }
+  .lc-badge { background: rgba(201,165,92,0.1); border: 1px solid rgba(201,165,92,0.3); border-radius: 4px; padding: 8px 14px; text-align: right; }
+  .lc-badge-title { color: #C9A55C; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+  .lc-badge-sub { color: #64748b; font-size: 9px; margin-top: 2px; }
+  .header-title { color: white; font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+  .header-sub { color: #94a3b8; font-size: 11px; margin-top: 4px; }
+  .header-notice { background: rgba(201,165,92,0.08); border: 1px solid rgba(201,165,92,0.2); border-radius: 4px; padding: 10px 14px; margin-top: 14px; color: #94a3b8; font-size: 10px; line-height: 1.6; }
+  .header-notice strong { color: #C9A55C; }
+
+  /* LANG TOGGLE */
+  .lang-bar { background: #f1f5f9; border-bottom: 1px solid #e2e8f0; padding: 8px 32px; display: flex; gap: 8px; align-items: center; }
+  .lang-btn { padding: 4px 14px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; font-size: 11px; font-weight: 600; cursor: pointer; color: #64748b; }
+  .lang-btn.active { background: #0F1419; color: #C9A55C; border-color: #C9A55C; }
+
+  /* BODY */
+  .body { padding: 24px 32px; }
+
+  /* SECTIONS */
+  .section { margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; }
+  .section-header { background: #0F1419; color: #C9A55C; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; padding: 8px 14px; text-transform: uppercase; display: flex; justify-content: space-between; }
+  .section-body { padding: 16px; }
+
+  /* FIELDS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 9px; font-weight: 700; color: #64748b; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
+  .field label .es { color: #94a3b8; font-weight: 400; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 3px;
+    font-size: 12px; color: #1e293b; background: white; font-family: inherit;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none; border-color: #C9A55C; box-shadow: 0 0 0 2px rgba(201,165,92,0.1);
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field.required label::after { content: ' *'; color: #ef4444; }
+
+  /* DEBTOR ROWS */
+  .debtor-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 6px; align-items: end; }
+  .debtor-num { font-size: 10px; font-weight: 700; color: #94a3b8; align-self: end; padding-bottom: 8px; }
+
+  /* CHECKBOXES */
+  .checkbox-group { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 6px; }
+  .checkbox-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #374151; cursor: pointer; }
+  .checkbox-item input[type=checkbox] { width: 14px; height: 14px; accent-color: #C9A55C; cursor: pointer; }
+
+  /* SIGNATURE */
+  .sig-block { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 8px; }
+  .sig-line { border-bottom: 1px solid #1e293b; padding-bottom: 4px; min-height: 36px; margin-bottom: 6px; }
+  .sig-label { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; }
+
+  /* DISCLAIMER */
+  .disclaimer { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 12px 14px; font-size: 10px; color: #64748b; line-height: 1.6; margin-top: 16px; }
+  .disclaimer strong { color: #374151; }
+
+  /* ACTION BAR */
+  .action-bar { background: #0F1419; padding: 16px 32px; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+  .btn { padding: 10px 24px; border-radius: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; border: none; }
+  .btn-gold { background: #C9A55C; color: #0F1419; }
+  .btn-outline { background: transparent; border: 1px solid rgba(201,165,92,0.4); color: #C9A55C; }
+  .btn-green { background: #22c55e; color: white; }
+  .action-note { color: #64748b; font-size: 10px; }
+
+  /* FILLED NOTICE */
+  .filled-notice { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3); border-radius: 4px; padding: 10px 14px; margin-bottom: 16px; font-size: 11px; color: #166534; display: none; }
+
+  /* WATERMARK AREA */
+  .footer-strip { background: #0F1419; padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-strip span { color: #475569; font-size: 9px; letter-spacing: 0.5px; }
+  .footer-strip .nmls { color: #64748b; font-size: 9px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="brand">AuditDNA Agriculture Intelligence</div>
+        <div class="brand-sub">Mexausa Food Group, Inc. &nbsp;|&nbsp; Saul Garcia &nbsp;|&nbsp; +1 (831) 251-3116 &nbsp;|&nbsp; saul@mexausafg.com</div>
+      </div>
+      <div class="lc-badge">
+        <div class="lc-badge-title">FACTORING PARTNER</div>
+        <div class="lc-badge-sub">Liquid Capital Group</div>
+        <div class="lc-badge-sub">First Right of Refusal</div>
+      </div>
+    </div>
+    <div class="header-title" id="t-title">INVOICE FACTORING &amp; PO FINANCE APPLICATION</div>
+    <div class="header-sub" id="t-sub">Agriculture &bull; Produce &bull; US-Mexico Corridor &bull; LATAM</div>
+    <div class="header-notice">
+      <strong id="t-notice-label">CONFIDENTIAL —</strong>
+      <span id="t-notice">Complete all required fields (*), sign, and email to <strong>saul@mexausafg.com</strong> or WhatsApp <strong>+52 646 340-2686</strong>. 
+      You may also submit directly at <strong>mexausafg.com</strong>. Same-day review on approved invoices. 
+      No banks. No waiting 30-60 days. / Sin bancos. Sin esperar 30-60 dias.</span>
+    </div>
+  </div>
+
+  <!-- LANG TOGGLE -->
+  <div class="lang-bar no-print">
+    <span style="font-size:10px;color:#64748b;font-weight:600;">Language:</span>
+    <button class="lang-btn active" onclick="setLang('en')">English</button>
+    <button class="lang-btn" onclick="setLang('es')">Español</button>
+  </div>
+
+  <div class="body">
+
+    <div class="filled-notice" id="filled-notice">
+      Application saved as PDF / downloaded. Email to saul@mexausafg.com or WhatsApp +52 646 340-2686.
+    </div>
+
+    <!-- SECTION 1: BUSINESS INFORMATION -->
+    <div class="section">
+      <div class="section-header">
+        <span id="s1-title">1. BUSINESS INFORMATION / INFORMACIÓN DE LA EMPRESA</span>
+        <span style="color:#64748b;font-weight:400;font-size:9px;">Required / Requerido</span>
+      </div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="field required">
+            <label><span id="f-legal-name">Legal Business Name</span> <span class="es" id="f-legal-name-es">/ Nombre Legal</span></label>
+            <input type="text" name="legal_name" placeholder="Full legal company name">
+          </div>
+          <div class="field">
+            <label><span id="f-dba">DBA / Trade Name</span> <span class="es" id="f-dba-es">/ Nombre Comercial</span></label>
+            <input type="text" name="dba" placeholder="If different from legal name">
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="field required">
+            <label><span id="f-entity">Entity Type</span> <span class="es" id="f-entity-es">/ Tipo Entidad</span></label>
+            <select name="entity_type">
+              <option value="">Select / Seleccionar</option>
+              <option>Corporation / Corporación</option>
+              <option>LLC / Sociedad de Responsabilidad</option>
+              <option>Partnership / Sociedad</option>
+              <option>Sole Proprietor / Propietario Único</option>
+              <option>S.A. de C.V. (Mexico)</option>
+              <option>S. de R.L. de C.V. (Mexico)</option>
+            </select>
+          </div>
+          <div class="field required">
+            <label><span id="f-ein">EIN / Tax ID</span> <span class="es" id="f-ein-es">/ RFC / CURP</span></label>
+            <input type="text" name="ein" placeholder="XX-XXXXXXX">
+          </div>
+          <div class="field required">
+            <label><span id="f-years">Years in Business</span> <span class="es" id="f-years-es">/ Años en Operación</span></label>
+            <input type="number" name="years_in_business" placeholder="e.g. 5">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field required">
+            <label><span id="f-address">Business Address</span> <span class="es" id="f-address-es">/ Dirección</span></label>
+            <input type="text" name="address" placeholder="Street address">
+          </div>
+          <div class="field required">
+            <label><span id="f-city-state">City, State, Zip</span> <span class="es" id="f-city-state-es">/ Ciudad, Estado, CP</span></label>
+            <input type="text" name="city_state_zip" placeholder="City, State ZIP / Ciudad, Estado CP">
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="field required">
+            <label><span id="f-phone">Phone</span> <span class="es" id="f-phone-es">/ Teléfono</span></label>
+            <input type="tel" name="phone" placeholder="+1 (XXX) XXX-XXXX or +52...">
+          </div>
+          <div class="field required">
+            <label><span id="f-email">Email</span> <span class="es" id="f-email-es">/ Correo</span></label>
+            <input type="email" name="email" placeholder="your@email.com">
+          </div>
+          <div class="field">
+            <label><span id="f-website">Website</span> <span class="es" id="f-website-es">/ Sitio Web</span></label>
+            <input type="text" name="website" placeholder="www.yourcompany.com">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: FACTORING / PO DETAILS -->
+    <div class="section">
+      <div class="section-header">
+        <span id="s2-title">2. FACTORING / PO FINANCE DETAILS / DETALLES DE FACTORAJE</span>
+      </div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="field required">
+            <label><span id="f-monthly-vol">Monthly Invoice Volume (USD)</span> <span class="es" id="f-monthly-vol-es">/ Volumen Mensual</span></label>
+            <input type="text" name="monthly_volume" placeholder="e.g. $250,000">
+          </div>
+          <div class="field required">
+            <label><span id="f-avg-terms">Avg Payment Terms</span> <span class="es" id="f-avg-terms-es">/ Términos Pago Promedio</span></label>
+            <select name="avg_terms">
+              <option value="">Select</option>
+              <option>NET 7</option><option>NET 15</option><option>NET 21</option>
+              <option>NET 30</option><option>NET 45</option><option>NET 60</option><option>NET 90+</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field required">
+            <label><span id="f-cur-ar">Current AR Balance</span> <span class="es" id="f-cur-ar-es">/ Balance CxC Actual</span></label>
+            <input type="text" name="current_ar" placeholder="e.g. $150,000">
+          </div>
+          <div class="field">
+            <label><span id="f-cur-financing">Current Financing (if any)</span> <span class="es" id="f-cur-financing-es">/ Financiamiento Actual</span></label>
+            <input type="text" name="current_financing" placeholder="Bank line, factoring, etc.">
+          </div>
+        </div>
+        <div class="field required">
+          <label><span id="f-fin-type">Financing Type Requested</span> <span class="es" id="f-fin-type-es">/ Tipo Financiamiento</span></label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="fin_factoring"> <span id="cb-factor">Invoice Factoring (Sell Receivables) / Factoraje</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="fin_po"> <span id="cb-po">PO Financing (Fund Purchase Orders) / Financiamiento PO</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="fin_both"> <span id="cb-both">Both / Ambos</span></label>
+          </div>
+        </div>
+        <div class="field required">
+          <label><span id="f-commodity">Commodity / Product</span> <span class="es" id="f-commodity-es">/ Producto / Mercancía</span></label>
+          <input type="text" name="commodity" placeholder="e.g. Avocado, Strawberry, Broccoli, Mixed Produce...">
+        </div>
+        <div class="field required">
+          <label><span id="f-invoice-desc">Invoice / PO Description</span> <span class="es" id="f-invoice-desc-es">/ Descripción Factura / PO</span></label>
+          <textarea name="invoice_desc" placeholder="Describe the invoice or purchase order being factored — buyer name, commodity, amount, payment due date...&#10;Describa la factura o PO — nombre del comprador, producto, monto, fecha de vencimiento..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: TOP DEBTORS / CUSTOMERS -->
+    <div class="section">
+      <div class="section-header">
+        <span id="s3-title">3. TOP 3 DEBTORS / CUSTOMERS / PRINCIPALES DEUDORES / CLIENTES</span>
+      </div>
+      <div class="section-body">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:4px;padding:0 0 4px 0;border-bottom:1px solid #e2e8f0;">
+          <div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;" id="th-debtor">Company Name / Nombre</div>
+          <div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;" id="th-monthly">Monthly Vol / Vol. Mensual</div>
+          <div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;" id="th-terms">Terms / Términos</div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:6px;align-items:center;">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:10px;font-weight:700;color:#94a3b8;width:14px;">1.</span>
+            <input type="text" name="debtor1_name" style="flex:1;padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;" placeholder="Company name">
+          </div>
+          <input type="text" name="debtor1_volume" style="padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;" placeholder="$50,000">
+          <select name="debtor1_terms" style="padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;">
+            <option value="">Terms</option>
+            <option>NET 7</option><option>NET 15</option><option>NET 21</option><option>NET 30</option><option>NET 45</option><option>NET 60</option><option>NET 90+</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:6px;align-items:center;">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:10px;font-weight:700;color:#94a3b8;width:14px;">2.</span>
+            <input type="text" name="debtor2_name" style="flex:1;padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;" placeholder="Company name">
+          </div>
+          <input type="text" name="debtor2_volume" style="padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;" placeholder="$50,000">
+          <select name="debtor2_terms" style="padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;">
+            <option value="">Terms</option>
+            <option>NET 7</option><option>NET 15</option><option>NET 21</option><option>NET 30</option><option>NET 45</option><option>NET 60</option><option>NET 90+</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:6px;align-items:center;">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:10px;font-weight:700;color:#94a3b8;width:14px;">3.</span>
+            <input type="text" name="debtor3_name" style="flex:1;padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;" placeholder="Company name">
+          </div>
+          <input type="text" name="debtor3_volume" style="padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;" placeholder="$50,000">
+          <select name="debtor3_terms" style="padding:6px 8px;border:1px solid #cbd5e1;border-radius:3px;font-size:12px;">
+            <option value="">Terms</option>
+            <option>NET 7</option><option>NET 15</option><option>NET 21</option><option>NET 30</option><option>NET 45</option><option>NET 60</option><option>NET 90+</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: PRINCIPAL OFFICERS -->
+    <div class="section">
+      <div class="section-header">
+        <span id="s4-title">4. PRINCIPAL OFFICERS / PROPIETARIOS Y EJECUTIVOS</span>
+      </div>
+      <div class="section-body">
+        
+        <div style="margin-bottom:16px;">
+          <div style="font-size:9px;font-weight:700;color:#C9A55C;letter-spacing:1px;margin-bottom:8px;">PRINCIPAL 1</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div class="field required">
+              <label>Full Name / Nombre</label>
+              <input type="text" name="principal1_name" placeholder="First Last">
+            </div>
+            <div class="field required">
+              <label>Title / Título</label>
+              <input type="text" name="principal1_title" placeholder="CEO, Owner, etc.">
+            </div>
+            <div class="field required">
+              <label>Ownership % / Porcentaje</label>
+              <input type="text" name="principal1_pct" placeholder="e.g. 100%">
+            </div>
+            <div class="field required">
+              <label>SSN / CURP / ID</label>
+              <input type="text" name="principal1_ssn" placeholder="XXX-XX-XXXX or CURP">
+            </div>
+            <div class="field required">
+              <label>Phone / Teléfono</label>
+              <input type="tel" name="principal1_phone" placeholder="+1 or +52...">
+            </div>
+            <div class="field required">
+              <label>Email / Correo</label>
+              <input type="email" name="principal1_email" placeholder="email@company.com">
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:0;padding-top:12px;border-top:1px solid #e2e8f0;">
+          <div style="font-size:9px;font-weight:700;color:#C9A55C;letter-spacing:1px;margin-bottom:8px;">PRINCIPAL 2</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div class="field ">
+              <label>Full Name / Nombre</label>
+              <input type="text" name="principal2_name" placeholder="First Last">
+            </div>
+            <div class="field ">
+              <label>Title / Título</label>
+              <input type="text" name="principal2_title" placeholder="CEO, Owner, etc.">
+            </div>
+            <div class="field ">
+              <label>Ownership % / Porcentaje</label>
+              <input type="text" name="principal2_pct" placeholder="e.g. 100%">
+            </div>
+            <div class="field ">
+              <label>SSN / CURP / ID</label>
+              <input type="text" name="principal2_ssn" placeholder="XXX-XX-XXXX or CURP">
+            </div>
+            <div class="field ">
+              <label>Phone / Teléfono</label>
+              <input type="tel" name="principal2_phone" placeholder="+1 or +52...">
+            </div>
+            <div class="field ">
+              <label>Email / Correo</label>
+              <input type="email" name="principal2_email" placeholder="email@company.com">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: BANK INFORMATION -->
+    <div class="section">
+      <div class="section-header">
+        <span id="s5-title">5. BANK INFORMATION / INFORMACIÓN BANCARIA</span>
+      </div>
+      <div class="section-body">
+        <div class="grid-3">
+          <div class="field required">
+            <label>Bank Name / Banco</label>
+            <input type="text" name="bank_name" placeholder="e.g. Chase, Banamex, BBVA">
+          </div>
+          <div class="field required">
+            <label>Account # / Cuenta</label>
+            <input type="text" name="bank_account" placeholder="XXXXXXXXXX">
+          </div>
+          <div class="field">
+            <label>Routing # / CLABE</label>
+            <input type="text" name="bank_routing" placeholder="XXXXXXXXX or CLABE 18 digits">
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="field">
+            <label>Bank Phone / Teléfono Banco</label>
+            <input type="tel" name="bank_phone" placeholder="+1 or +52...">
+          </div>
+          <div class="field">
+            <label>Account Type / Tipo Cuenta</label>
+            <select name="bank_type">
+              <option value="">Select</option>
+              <option>Checking / Cheques</option>
+              <option>Savings / Ahorros</option>
+              <option>Business Checking / Empresarial</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Avg Monthly Balance / Saldo Promedio</label>
+            <input type="text" name="bank_balance" placeholder="e.g. $25,000">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- DUE DILIGENCE CHECKLIST SECTION -->
+    <div class="section">
+      <div class="section-header">
+        <span>REQUIRED DOCUMENTS — DUE DILIGENCE CHECKLIST / DOCUMENTOS REQUERIDOS</span>
+        <span style="color:#64748b;font-weight:400;font-size:9px;">Check all that apply / Marque todos los que apliquen</span>
+      </div>
+      <div class="section-body">
+
+        <div style="background:#fef9f0;border:1px solid rgba(201,165,92,0.3);border-radius:4px;padding:10px 14px;margin-bottom:16px;font-size:10px;color:#374151;line-height:1.6;" id="dd-notice">
+          <strong style="color:#C9A55C;">IMPORTANT:</strong> All items marked as REQUIRED must be submitted with or immediately following this application.
+          Items marked CONDITIONAL are required based on your business type or deal structure.
+          Email documents to <strong>saul@mexausafg.com</strong> or WhatsApp <strong>+52 646 340-2686</strong>.
+          <br><em>IMPORTANTE: Todos los items marcados como REQUERIDO deben enviarse con o inmediatamente después de esta solicitud.</em>
+        </div>
+
+        <!-- CATEGORY 1: BUSINESS ENTITY -->
+        <div style="margin-bottom:18px;">
+          <div style="background:#0F1419;color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:6px 10px;border-radius:3px 3px 0 0;margin-bottom:0;">
+            1. BUSINESS ENTITY DOCUMENTS / DOCUMENTOS DE LA EMPRESA
+          </div>
+          <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 4px 4px;overflow:hidden;">
+            
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Articles of Incorporation or LLC Formation Documents / Acta Constitutiva o Documentos de Formación LLC</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">US Corporations, LLCs · Corporaciones y LLCs</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Business License / Licencia Comercial</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">All entities · Todas las entidades</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">EIN Confirmation Letter (IRS) / RFC Document (Mexico) / Carta de Confirmación EIN o RFC</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">US and MX entities · Entidades EE.UU. y México</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">DBA Certificate / Certificado de Nombre Comercial</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">If operating under a trade name · Si opera bajo nombre comercial</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Partnership Agreement / Acuerdo de Sociedad</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Partnerships only · Solo sociedades</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">S.A. de C.V. or S. de R.L. de C.V. Corporate Documents / Documentos Corporativos</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Mexican entities · Entidades Mexicanas</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">SENASICA Registration / USDA Registration</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Agriculture producers/exporters · Productores/exportadores agrícolas</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORY 2: FINANCIAL DOCUMENTS -->
+        <div style="margin-bottom:18px;">
+          <div style="background:#0F1419;color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:6px 10px;border-radius:3px 3px 0 0;">
+            2. FINANCIAL DOCUMENTS / DOCUMENTOS FINANCIEROS
+          </div>
+          <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 4px 4px;overflow:hidden;">
+            
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Last 3 Months Bank Statements (All Accounts) / Últimos 3 Meses de Estados Bancarios</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">All accounts used for business · Todas las cuentas comerciales</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Accounts Receivable Aging Report / Reporte de Antigüedad de CxC</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Must be dated within 30 days / Debe ser de los últimos 30 días</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Most Recent Invoice(s) to be Factored / Facturas a Factorear</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Copies of all invoices submitted for factoring</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Last 2 Years Business Tax Returns / Últimas 2 Declaraciones Fiscales Empresariales</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Deals over $100K / Tratos mayores de $100K</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Most Recent Financial Statements (P&L, Balance Sheet) / Estados Financieros</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Deals over $250K · Audited preferred / Auditados preferiblemente</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Accounts Payable Aging Report / Reporte de Antigüedad de CxP</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">If AP exceeds $50K · Si CxP supera $50K</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Personal Tax Returns (Last 2 Years) / Declaraciones Personales (Últimos 2 Años)</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">For principal officers with 20%+ ownership / Para propietarios con 20%+</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORY 3: IDENTITY / KYC -->
+        <div style="margin-bottom:18px;">
+          <div style="background:#0F1419;color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:6px 10px;border-radius:3px 3px 0 0;">
+            3. IDENTITY / KYC — ALL PRINCIPALS / IDENTIDAD DE TODOS LOS PROPIETARIOS
+          </div>
+          <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 4px 4px;overflow:hidden;">
+            
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Government-Issued Photo ID (Passport or Driver's License) / Identificación con Foto</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">All principals with 20%+ ownership · Todos los propietarios con 20%+</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Proof of Address (Utility Bill or Bank Statement <90 days) / Comprobante de Domicilio</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Same principals · Mismos propietarios</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">ITIN or SSN Documentation / Documentación ITIN o SSN</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">US-based principals / Propietarios en EE.UU.</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">CURP and INE/Passport / CURP e INE o Pasaporte</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Mexico-based principals / Propietarios en México</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Visa / Work Authorization / Visa o Permiso de Trabajo</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Non-US citizens operating in the US / Ciudadanos no estadounidenses</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORY 4: PRODUCE / AGRICULTURE SPECIFIC -->
+        <div style="margin-bottom:18px;">
+          <div style="background:#0F1419;color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:6px 10px;border-radius:3px 3px 0 0;">
+            4. PRODUCE &amp; AGRICULTURE SPECIFIC / ESPECÍFICO PARA PRODUCE Y AGRÍCOLA
+          </div>
+          <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 4px 4px;overflow:hidden;">
+            
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Food Safety Certification (GlobalGAP / PrimusGFS / FSMA 204) / Certificación de Inocuidad</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Growers and packers / Productores y empacadores</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">USDA or FDA Inspection Reports / Reportes de Inspección USDA o FDA</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">If applicable to commodity / Si aplica al producto</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">SENASICA Phytosanitary Certificate / Certificado Fitosanitario SENASICA</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Mexico-origin produce exports / Exportaciones de produce de México</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Organic Certification / Certificación Orgánica</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Organic produce only / Solo produce orgánico</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Water Analysis Report / Análisis de Agua</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Growers — must be within 12 months / Productores — debe ser de los últimos 12 meses</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Soil Analysis Report / Análisis de Suelo</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Growers — if available / Productores — si disponible</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Pesticide Application Log / Registro de Aplicación de Pesticidas</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Required for fresh produce / Requerido para produce fresco</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Bill of Lading / Carta de Porte or CMR</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">For shipped or in-transit invoices / Para facturas en tránsito</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Cold Chain / Temperature Log / Registro de Cadena de Frío</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Perishables requiring refrigeration / Perecederos que requieren refrigeración</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORY 5: DEBTOR / BUYER VERIFICATION -->
+        <div style="margin-bottom:18px;">
+          <div style="background:#0F1419;color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:6px 10px;border-radius:3px 3px 0 0;">
+            5. DEBTOR / BUYER VERIFICATION / VERIFICACIÓN DEL DEUDOR / COMPRADOR
+          </div>
+          <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 4px 4px;overflow:hidden;">
+            
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Copy of Invoice(s) Being Factored / Copia de Factura(s) a Factorear</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Must include debtor name, amount, due date / Debe incluir nombre del deudor, monto, fecha de vencimiento</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Proof of Delivery (BOL, Signed Receiver Sheet, POD) / Prueba de Entrega</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Confirming debtor received the goods / Confirmando que el deudor recibió la mercancía</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Purchase Order from Buyer / Orden de Compra del Comprador</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">PO Finance only — required / Solo PO Finance — requerido</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Buyer Credit Application / Solicitud de Crédito del Comprador</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">If debtor is not established in our network / Si el deudor no está establecido en nuestra red</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Debtor Contact Verification (AP Department) / Verificación de Contacto AP del Deudor</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Name, email, phone of buyer's AP contact / Nombre, correo, teléfono del contacto de cuentas por pagar</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Notice of Assignment Acknowledgment / Acuse de Notificación de Cesión</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Required when debtor is notified of factoring / Requerido cuando se notifica al deudor del factoraje</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORY 6: CROSS-BORDER / IMPORT-EXPORT -->
+        <div style="margin-bottom:18px;">
+          <div style="background:#0F1419;color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:6px 10px;border-radius:3px 3px 0 0;">
+            6. CROSS-BORDER / IMPORT-EXPORT / COMERCIO TRANSFRONTERIZO
+          </div>
+          <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 4px 4px;overflow:hidden;">
+            
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Customs Entry Documents / Documentos de Aduana (CBP Form 3461 or 7501)</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">US imports / Importaciones a EE.UU.</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Pedimento de Importación / Exportación</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Mexico customs documents / Documentos aduanales de México</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Commercial Invoice (Spanish + English) / Factura Comercial</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Cross-border shipments / Envíos transfronterizos</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">FDA Prior Notice Confirmation / Confirmación de Aviso Previo FDA</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Food imports into the US / Importaciones de alimentos a EE.UU.</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Importer of Record / Exporter of Record Documentation</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">Cross-border deals / Tratos transfronterizos</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+              <input type="checkbox" style="margin-top:2px;accent-color:#C9A55C;flex-shrink:0;">
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e293b;line-height:1.4;">Freight / Carrier Agreement or Contract / Acuerdo o Contrato de Transporte</div>
+                <div style="font-size:9px;color:#64748b;margin-top:2px;">If logistics costs are included in invoice / Si los costos de logística están incluidos en la factura</div>
+              </div>
+              <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHECKLIST LEGEND -->
+        <div style="display:flex;gap:16px;padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;font-size:10px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;background:rgba(239,68,68,0.1);color:#ef4444;">REQUIRED</span>
+            <span style="color:#374151;">Must submit with application / Debe enviarse con la solicitud</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="padding:2px 7px;border-radius:2px;font-size:8px;font-weight:700;background:rgba(201,165,92,0.1);color:#C9A55C;">CONDITIONAL</span>
+            <span style="color:#374151;">Required based on deal type / Requerido según tipo de trato</span>
+          </div>
+        </div>
+
+        <!-- SUBMISSION INSTRUCTIONS -->
+        <div style="margin-top:14px;padding:12px 14px;background:#0F1419;border-radius:4px;">
+          <div style="color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:1.5px;margin-bottom:8px;">DOCUMENT SUBMISSION / ENVÍO DE DOCUMENTOS</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="color:#94a3b8;font-size:10px;line-height:1.7;">
+              <strong style="color:#e2e8f0;">Email:</strong> saul@mexausafg.com<br>
+              <strong style="color:#e2e8f0;">WhatsApp:</strong> +52 646 340-2686<br>
+              <strong style="color:#e2e8f0;">US Phone:</strong> +1 (831) 251-3116<br>
+              <strong style="color:#e2e8f0;">Platform:</strong> mexausafg.com
+            </div>
+            <div style="color:#94a3b8;font-size:10px;line-height:1.7;">
+              <strong style="color:#e2e8f0;">Accepted Formats:</strong> PDF, JPG, PNG, XLSX<br>
+              <strong style="color:#e2e8f0;">Max File Size:</strong> 25MB per email<br>
+              <strong style="color:#e2e8f0;">Review Time:</strong> Same day on complete files<br>
+              <strong style="color:#e2e8f0;">Funding:</strong> 24-48 hrs after approval
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- SECTION 6: AUTHORIZATION -->
+    <div class="section">
+      <div class="section-header">
+        <span id="s6-title">7. AUTHORIZATION &amp; SIGNATURE / AUTORIZACIÓN Y FIRMA</span>
+      </div>
+      <div class="section-body">
+        <div style="background:#fef9f0;border:1px solid rgba(201,165,92,0.3);border-radius:4px;padding:12px 14px;margin-bottom:16px;font-size:11px;color:#374151;line-height:1.7;" id="auth-text">
+          By signing below, I/we authorize Mexausa Food Group, Inc. and its financing partners (including Liquid Capital Group) to:
+          (1) verify all information provided herein, including credit checks on the applicant and listed debtors;
+          (2) contact listed references, banks, and debtors;
+          (3) obtain and review financial statements, tax returns, and accounts receivable aging reports as needed.
+          I/we certify that all information is accurate and complete. I/we understand that approval is subject to
+          debtor creditworthiness and underwriting review. Mexausa Food Group holds first right of refusal on
+          all factoring transactions submitted through this application.
+          <br><br>
+          <em>Al firmar, autorizo a Mexausa Food Group, Inc. y sus socios financieros a verificar la información,
+          realizar verificaciones de crédito y contactar referencias. Certifico que toda la información es correcta.</em>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="checkbox-item">
+            <input type="checkbox" name="agreed" required>
+            <span id="agree-text"><strong>I agree / Acepto</strong> — All information provided is accurate and complete. I authorize credit verification.</span>
+          </label>
+        </div>
+        <div class="sig-block">
+          <div>
+            <div class="sig-line"></div>
+            <div class="sig-label" id="sig1-label">Signature of Principal 1 / Firma del Principal 1</div>
+            <div style="margin-top:10px;">
+              <div class="sig-line"></div>
+              <div class="sig-label">Date / Fecha</div>
+            </div>
+          </div>
+          <div>
+            <div class="sig-line"></div>
+            <div class="sig-label" id="sig2-label">Signature of Principal 2 (if applicable) / Firma del Principal 2</div>
+            <div style="margin-top:10px;">
+              <div class="sig-line"></div>
+              <div class="sig-label">Date / Fecha</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      <strong>DISCLAIMER:</strong>
+      All factoring and PO financing services are subject to debtor verification and underwriting approval by Mexausa Food Group, Inc. and/or Liquid Capital Group.
+      Advance rates and fees may vary based on debtor creditworthiness, invoice age, and volume. This application does not constitute a commitment to fund.
+      Additional documentation including accounts receivable aging, financial statements, and copies of invoices will be required prior to funding.
+      Mexausa Food Group, Inc. acts as broker/intermediary and holds first right of refusal on all submitted transactions.
+      All information is kept strictly confidential. &nbsp;|&nbsp;
+      <em>Toda la información es estrictamente confidencial. Mexausa Food Group actúa como intermediario.</em>
+    </div>
+
+  </div><!-- end body -->
+
+  <!-- ACTION BAR -->
+  <div class="action-bar no-print">
+    <div class="action-note">
+      Complete, then: Print &amp; Sign &nbsp;|&nbsp; Email to saul@mexausafg.com &nbsp;|&nbsp; WhatsApp +52 646 340-2686
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline" onclick="window.print()">Print / Imprimir</button>
+      <button class="btn btn-outline" onclick="downloadHTML()">Download HTML</button>
+      <button class="btn btn-green" onclick="emailApp()">Email Application</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-strip">
+    <span>AuditDNA Agriculture Intelligence &nbsp;&bull;&nbsp; Mexausa Food Group, Inc. &nbsp;&bull;&nbsp; mexausafg.com</span>
+    <span class="nmls">saul@mexausafg.com &nbsp;&bull;&nbsp; +1 (831) 251-3116 &nbsp;&bull;&nbsp; +52 646 340-2686</span>
+  </div>
+
+</div><!-- end page -->
+
+<script>
+// Language translations
+const T = {
+  en: {
+    title: 'INVOICE FACTORING & PO FINANCE APPLICATION',
+    sub: 'Agriculture • Produce • US-Mexico Corridor • LATAM',
+  },
+  es: {
+    title: 'SOLICITUD DE FACTORAJE Y FINANCIAMIENTO PO',
+    sub: 'Agricultura • Productos del Campo • Corredor México-EE.UU. • LATAM',
+  }
+};
+
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.lang-btn[onclick="setLang(\''+lang+'\')"]').classList.add('active');
+  if(lang === 'es') {
+    document.getElementById('t-title').textContent = T.es.title;
+    document.getElementById('t-sub').textContent = T.es.sub;
+  } else {
+    document.getElementById('t-title').textContent = T.en.title;
+    document.getElementById('t-sub').textContent = T.en.sub;
+  }
+}
+
+function downloadHTML() {
+  const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'AuditDNA-Factoring-Application.html';
+  a.click();
+  document.getElementById('filled-notice').style.display = 'block';
+}
+
+function emailApp() {
+  const fields = {};
+  document.querySelectorAll('input,select,textarea').forEach(el => {
+    if(el.name && el.value) fields[el.name] = el.value;
+  });
+  const body = Object.entries(fields).map(([k,v]) => k.replace(/_/g,' ').toUpperCase() + ': ' + v).join('%0A');
+  const subject = 'AuditDNA Factoring Application — ' + (fields.legal_name || 'New Applicant');
+  window.location.href = 'mailto:saul@mexausafg.com?subject=' + encodeURIComponent(subject.replace(/ — /g,' - ')) + '&body=' + body;
+}
+</script>
+</body>
+</html>

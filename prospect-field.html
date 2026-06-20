@@ -1,0 +1,2214 @@
+<!DOC
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+<div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
+TYPE html>
+<html lang="en">
+<head>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="ProspectIQ"/>
+<meta name="application-name" content="ProspectIQ"/>
+<meta name="theme-color" content="#020912"/>
+<meta name="msapplication-TileColor" content="#020912"/>
+<meta name="msapplication-TileImage" content="/icon-192.png"/>
+<link rel="manifest" href="/prospect-field-manifest.json"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/icon-192.png"/>
+<link rel="apple-touch-icon" sizes="152x152" href="/icon-192.png"/>
+<link rel="apple-touch-icon" sizes="120x120" href="/icon-192.png"/>
+<link rel="apple-touch-icon" href="/icon-192.png"/>
+<link rel="icon" type="image/png" href="/icon-192.png"/>
+<meta charset="UTF-8"/>
+<link rel="manifest" href="/prospect-field-manifest.json"/>
+<link rel="apple-touch-icon" href="/icon-192.png"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>ProspectIQ Field Intelligence -- MFG</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#020912;--bg2:#0d1117;--bg3:#060a14;--card:rgba(255,255,255,0.03);
+  --border:rgba(74,143,212,0.18);--border2:rgba(255,255,255,0.07);
+  --gold:#C9A55C;--gold2:#8a6930;--blue:#4a8fd4;--blue2:#60a5fa;
+  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --txt:#e2e8f0;--txt2:#94a3b8;--txt3:#475569;--txt4:#1e293b;
+  --silver:#a0b4dc;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 40%,#0a1628 0%,#020912 70%);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:8px}
+.gate-box{background:rgba(13,17,23,0.95);border:1px solid rgba(201,165,92,0.3);border-radius:18px;padding:40px 32px;width:320px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.7)}
+.gate-logo{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:3px;margin-bottom:12px}
+.gate-title{font-size:22px;font-weight:900;color:var(--txt);margin-bottom:4px}
+.gate-sub{font-size:11px;color:var(--txt3);margin-bottom:28px}
+.gate-dots{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--txt3);transition:.2s}
+.dot.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 12px var(--gold)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.nb{padding:14px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:10px;font-size:16px;font-weight:700;color:var(--txt);cursor:pointer;transition:.15s;-webkit-user-select:none;user-select:none}
+.nb:active{background:rgba(201,165,92,0.15);border-color:var(--gold)}
+.gate-err{color:var(--red);font-size:11px;min-height:16px;margin-top:4px}
+
+/* APP */
+#app{display:none;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(2,9,18,0.96);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(20px)}
+.tb-title{font-size:13px;font-weight:800;color:var(--txt);letter-spacing:.5px;flex:1}
+.tb-sub{font-size:8px;color:var(--txt3)}
+.tb-badge{font-size:8px;font-weight:700;color:var(--gold);background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:4px;padding:2px 6px;letter-spacing:1px}
+.lock-btn{font-size:9px;font-weight:700;color:var(--red);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:6px;padding:5px 10px;cursor:pointer}
+
+/* TABS */
+.tabnav{display:flex;overflow-x:auto;scrollbar-width:none;gap:0;border-bottom:1px solid var(--border);background:var(--bg2)}
+.tabnav::-webkit-scrollbar{display:none}
+.tn{padding:10px 14px;font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1.5px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s;flex-shrink:0}
+.tn.on{color:var(--gold);border-bottom-color:var(--gold);background:rgba(201,165,92,0.04)}
+
+/* CONTENT */
+.sec{padding:14px;display:none}
+.sec.on{display:block}
+.sec-hdr{font-size:9px;font-weight:700;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px}
+.card-hdr{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:8px}
+.card-sub{font-size:9px;color:var(--txt3);margin-bottom:6px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+
+/* INPUTS */
+.fld{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}
+.lbl{font-size:8px;font-weight:700;color:var(--txt3);letter-spacing:1px;text-transform:uppercase}
+input[type=text],input[type=number],input[type=email],select,textarea{
+  background:rgba(2,9,18,0.8);border:1px solid var(--border);border-radius:7px;
+  color:var(--txt);font-size:11px;padding:8px 10px;width:100%;outline:none;
+  transition:.15s;font-family:inherit
+}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+select option{background:#0d1117}
+
+/* BUTTONS */
+.btn{padding:9px 16px;border:none;border-radius:8px;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:.15s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#020912}
+.btn-blue{background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.3);color:var(--blue)}
+.btn-red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:var(--red)}
+.btn-green{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:var(--green)}
+.btn-full{width:100%}
+
+/* STAT BOXES */
+.stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.stat-val{font-size:18px;font-weight:900;color:var(--blue)}
+.stat-lbl{font-size:8px;color:var(--txt3);letter-spacing:.5px;margin-top:2px}
+.stat-sub{font-size:9px;color:var(--txt2);margin-top:2px}
+
+/* RESULT BOXES */
+.result-box{background:rgba(74,143,212,0.06);border:1px solid rgba(74,143,212,0.2);border-radius:8px;padding:12px;margin-top:10px;display:none}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2);font-size:10px}
+.result-row:last-child{border-bottom:none;font-weight:700;font-size:11px}
+.result-key{color:var(--txt2)}
+.result-val{color:var(--txt);font-weight:600}
+.result-val.green{color:var(--green)}
+.result-val.red{color:var(--red)}
+.result-val.gold{color:var(--gold)}
+.result-val.blue{color:var(--blue)}
+
+/* VERDICT */
+.verdict{border-radius:8px;padding:10px 14px;margin-top:10px;font-size:11px;font-weight:700;text-align:center;display:none;letter-spacing:.5px}
+.verdict.buy{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:var(--green)}
+.verdict.hold{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--amber)}
+.verdict.pass{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
+
+/* PROGRESS BAR */
+.pbar{background:rgba(255,255,255,0.06);border-radius:99px;height:6px;margin-top:4px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:99px;transition:width .5s ease}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:9px}
+.tbl th{padding:6px 8px;color:var(--gold);font-weight:700;letter-spacing:1px;border-bottom:1px solid var(--border);text-align:left}
+.tbl td{padding:6px 8px;color:var(--txt2);border-bottom:1px solid var(--border2)}
+.tbl tr:hover td{background:rgba(255,255,255,0.02)}
+.tbl td.pos{color:var(--green);font-weight:700}
+.tbl td.neg{color:var(--red);font-weight:700}
+.tbl td.hl{color:var(--txt);font-weight:600}
+
+/* BADGE */
+.badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:8px;font-weight:700;letter-spacing:.5px}
+.b-green{background:rgba(34,197,94,0.1);color:var(--green)}
+.b-amber{background:rgba(245,158,11,0.1);color:var(--amber)}
+.b-red{background:rgba(239,68,68,0.1);color:var(--red)}
+.b-blue{background:rgba(74,143,212,0.1);color:var(--blue)}
+.b-gold{background:rgba(201,165,92,0.1);color:var(--gold)}
+
+/* TOGGLE */
+.toggle-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tog{padding:5px 12px;border:1px solid var(--border);border-radius:99px;font-size:9px;font-weight:700;color:var(--txt3);cursor:pointer;transition:.15s}
+.tog.on{border-color:var(--gold);color:var(--gold);background:rgba(201,165,92,0.08)}
+
+/* NOD SECTION */
+.nod-link{display:flex;align-items:center;gap:8px;background:rgba(74,143,212,0.06);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;text-decoration:none}
+.nod-link:hover{border-color:var(--blue);background:rgba(74,143,212,0.12)}
+.nod-ico{font-size:16px;flex-shrink:0}
+.nod-info{flex:1}
+.nod-name{font-size:11px;font-weight:700;color:var(--txt)}
+.nod-desc{font-size:9px;color:var(--txt3);margin-top:1px}
+.nod-arr{color:var(--blue);font-size:12px}
+
+/* EMAIL COMPOSER */
+.compose-area{background:rgba(2,9,18,0.8);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:11px;color:var(--txt);width:100%;min-height:140px;resize:vertical;font-family:inherit;line-height:1.6}
+
+/* AMORT TABLE */
+.amort-wrap{max-height:300px;overflow-y:auto;border-radius:8px;border:1px solid var(--border)}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.sec.on{animation:fadeIn .25s ease}
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+#map-container{height:430px;width:100%;border-radius:10px;border:1px solid var(--border);overflow:hidden;position:relative;z-index:1}
+.prop-popup{min-width:190px;font-family:-apple-system,sans-serif;font-size:10px}
+.prop-popup h4{margin:0 0 5px;font-size:12px;color:#1e293b;font-weight:800}
+.prop-popup p{margin:2px 0;color:#334155}
+.badge-pop{display:inline-block;padding:2px 7px;border-radius:99px;font-size:8px;font-weight:700;margin-top:4px}
+.map-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.map-stat-bar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.map-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:6px 10px;text-align:center;flex:1;min-width:70px}
+.map-stat-v{font-size:14px;font-weight:900;color:var(--blue)}
+.map-stat-l{font-size:7px;color:var(--txt3);letter-spacing:.5px}
+.filter-tog{padding:4px 10px;border:1px solid var(--border);border-radius:99px;font-size:8px;font-weight:700;color:var(--txt3);cursor:pointer;transition:.15s}
+.filter-tog.on{border-color:var(--blue);color:var(--blue);background:rgba(74,143,212,0.08)}
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">MFG INTELLIGENCE</div>
+    <div class="gate-title">ProspectIQ Field</div>
+    <div class="gate-sub">Property Intelligence -- Owner Access Only</div>
+    <div class="gate-dots">
+      <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+      <div class="dot" id="d4"></div><div class="dot" id="d5"></div>
+      <div class="dot" id="d6"></div><div class="dot" id="d7"></div>
+      <div class="dot" id="d8"></div><div class="dot" id="d9"></div>
+    </div>
+    <div class="numpad">
+      <div class="nb" onclick="kp('1')">1</div><div class="nb" onclick="kp('2')">2</div><div class="nb" onclick="kp('3')">3</div>
+      <div class="nb" onclick="kp('4')">4</div><div class="nb" onclick="kp('5')">5</div><div class="nb" onclick="kp('6')">6</div>
+      <div class="nb" onclick="kp('7')">7</div><div class="nb" onclick="kp('8')">8</div><div class="nb" onclick="kp('9')">9</div>
+      <div class="nb" onclick="kp('del')" style="color:var(--amber)">DEL</div>
+      <div class="nb" onclick="kp('0')">0</div>
+      <div class="nb" onclick="kp('ok')" style="color:var(--green)">OK</div>
+    </div>
+    <div class="gate-err" id="gerr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="tb-title">ProspectIQ Field Intelligence</div>
+      <div class="tb-sub">MFG Inc. -- Saul Garcia -- NMLS #337526</div>
+    </div>
+    <div class="tb-badge">LIVE</div>
+    <button class="lock-btn" onclick="lock()">LOCK</button>
+  </div>
+
+  <!-- TAB NAV -->
+  <div class="tabnav" id="tabnav"></div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 1: PROPERTY PREDICTOR -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-predict">
+    <div class="sec-hdr">Predictive Property Value Engine</div>
+
+    <div class="card">
+      <div class="card-hdr">Property Input</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Property Address</div><input type="text" id="p-addr" placeholder="123 Main St, El Cajon CA"/></div>
+        <div class="fld"><div class="lbl">Property Type</div>
+          <select id="p-type">
+            <option value="sfr">Single Family (SFR)</option>
+            <option value="multi">Multi-Family (2-4 units)</option>
+            <option value="apt">Apartment Complex (5+)</option>
+            <option value="comm">Commercial</option>
+            <option value="mixed">Mixed Use</option>
+            <option value="land">Land / Lot</option>
+            <option value="condo">Condo / Townhome</option>
+            <option value="mobile">Mobile / Manufactured</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Current Market Value ($)</div><input type="number" id="p-val" placeholder="450000"/></div>
+        <div class="fld"><div class="lbl">Year Built</div><input type="number" id="p-yr" placeholder="1985"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Square Footage</div><input type="number" id="p-sqft" placeholder="1800"/></div>
+        <div class="fld"><div class="lbl">Lot Size (sq ft)</div><input type="number" id="p-lot" placeholder="6000"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Bedrooms</div><input type="number" id="p-beds" placeholder="3"/></div>
+        <div class="fld"><div class="lbl">Bathrooms</div><input type="number" id="p-baths" placeholder="2"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">City / Market</div>
+          <select id="p-city">
+            <option value="elcajon">El Cajon, CA</option>
+            <option value="santee">Santee, CA</option>
+            <option value="lamesa">La Mesa, CA</option>
+            <option value="springvalley">Spring Valley, CA</option>
+            <option value="lakeside">Lakeside, CA</option>
+            <option value="lemongrove">Lemon Grove, CA</option>
+            <option value="alpine">Alpine, CA</option>
+            <option value="sandiego">San Diego, CA</option>
+            <option value="salinas">Salinas, CA</option>
+            <option value="ensenada">Ensenada, BC MX</option>
+            <option value="other">Other</option>
+            <optgroup label="-- SAN DIEGO COUNTY --">
+            <option value="san diego city">San Diego City</option>
+            <option value="chula vista">Chula Vista</option>
+            <option value="national city">National City</option>
+            <option value="el cajon">El Cajon</option>
+            <option value="la mesa">La Mesa</option>
+            <option value="santee">Santee</option>
+            <option value="spring valley">Spring Valley</option>
+            <option value="lakeside">Lakeside</option>
+            <option value="lemon grove">Lemon Grove</option>
+            <option value="alpine">Alpine</option>
+            <option value="jamul">Jamul</option>
+            <option value="escondido">Escondido</option>
+            <option value="vista">Vista</option>
+            <option value="oceanside">Oceanside</option>
+            <option value="carlsbad">Carlsbad</option>
+            <option value="encinitas">Encinitas</option>
+            <option value="poway">Poway</option>
+            <option value="coronado">Coronado</option>
+            <option value="la jolla">La Jolla</option>
+            <option value="pacific beach">Pacific Beach</option>
+            <option value="ocean beach">Ocean Beach</option>
+            <option value="point loma">Point Loma</option>
+            <option value="north park">North Park</option>
+            <option value="mission valley">Mission Valley</option>
+            <option value="mira mesa">Mira Mesa</option>
+            <option value="clairemont">Clairemont</option>
+            <option value="rancho bernardo">Rancho Bernardo</option>
+            <option value="san marcos">San Marcos</option>
+            <option value="san diego north county">North County (General)</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="fld"><div class="lbl">Condition</div>
+          <select id="p-cond">
+            <option value="1">Excellent (move-in)</option>
+            <option value="0.92">Good (minor repairs)</option>
+            <option value="0.82">Fair (cosmetic work)</option>
+            <option value="0.70">Poor (major rehab)</option>
+            <option value="0.55">Distressed (gut job)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-gold btn-full" style="margin-top:6px" onclick="runPredict()">RUN PREDICTIVE ANALYSIS</button>
+    </div>
+
+    <!-- PREDICTION RESULTS -->
+    <div id="pred-results" style="display:none">
+      <div class="card-hdr" style="margin-top:14px;color:var(--blue);font-size:10px;letter-spacing:2px">PROJECTED VALUE TIMELINE</div>
+      <div class="g4" style="margin-bottom:10px">
+        <div class="stat"><div class="stat-val" id="pr-6m">--</div><div class="stat-lbl">6 MONTHS</div><div class="stat-sub" id="pr-6m-pct">--</div></div>
+        <div class="stat"><div class="stat-val" id="pr-12m">--</div><div class="stat-lbl">12 MONTHS</div><div class="stat-sub" id="pr-12m-pct">--</div></div>
+        <div class="stat"><div class="stat-val" id="pr-3y">--</div><div class="stat-lbl">3 YEARS</div><div class="stat-sub" id="pr-3y-pct">--</div></div>
+        <div class="stat"><div class="stat-val" id="pr-5y">--</div><div class="stat-lbl">5 YEARS</div><div class="stat-sub" id="pr-5y-pct">--</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">Price Per Sq Ft Analysis</div>
+        <div class="g3">
+          <div class="stat"><div class="stat-val" id="ppsf-now">--</div><div class="stat-lbl">CURRENT $/SQFT</div></div>
+          <div class="stat"><div class="stat-val" id="ppsf-12m">--</div><div class="stat-lbl">12MO $/SQFT</div></div>
+          <div class="stat"><div class="stat-val" id="ppsf-5y">--</div><div class="stat-lbl">5YR $/SQFT</div></div>
+        </div>
+        <div style="margin-top:10px">
+          <div style="font-size:9px;color:var(--txt3);margin-bottom:4px">Market Appreciation Rate</div>
+          <div class="pbar"><div class="pbar-fill" id="appre-bar" style="background:var(--green);width:0%"></div></div>
+          <div style="font-size:9px;color:var(--txt2);margin-top:3px" id="appre-rate">--</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">Comparable Market Analysis (CMA)</div>
+        <div id="cma-table"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">Market Demand Signals</div>
+        <div id="demand-signals"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 2: INVESTMENT ANALYZER -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-invest">
+    <div class="sec-hdr">Investment Strategy Analyzer</div>
+
+    <div class="toggle-row">
+      <div class="tog on" id="strat-buy" onclick="setStrat('buy')">BUY &amp; HOLD</div>
+      <div class="tog" id="strat-flip" onclick="setStrat('flip')">FIX &amp; FLIP</div>
+      <div class="tog" id="strat-rent" onclick="setStrat('rent')">RENTAL</div>
+      <div class="tog" id="strat-assign" onclick="setStrat('assign')">WHOLESALE</div>
+      <div class="tog" id="strat-comm" onclick="setStrat('comm')">COMMERCIAL</div>
+    </div>
+
+    <!-- BUY & HOLD / RENTAL INPUTS -->
+    <div class="card" id="inv-inputs">
+      <div class="card-hdr">Deal Parameters</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Purchase Price ($)</div><input type="number" id="i-price" placeholder="350000" oninput="calcInvest()"/></div>
+        <div class="fld"><div class="lbl">Down Payment (%)</div><input type="number" id="i-down" placeholder="20" oninput="calcInvest()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Interest Rate (%)</div><input type="number" id="i-rate" placeholder="7.25" step="0.01" oninput="calcInvest()"/></div>
+        <div class="fld"><div class="lbl">Loan Term (years)</div>
+          <select id="i-term" onchange="calcInvest()">
+            <option value="30">30 Year</option>
+            <option value="20">20 Year</option>
+            <option value="15">15 Year</option>
+            <option value="10">10 Year</option>
+            <option value="5">5 Year ARM</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Rehab / Repair Cost ($)</div><input type="number" id="i-rehab" placeholder="0" oninput="calcInvest()"/></div>
+        <div class="fld"><div class="lbl">Closing Costs ($)</div><input type="number" id="i-close" placeholder="8500" oninput="calcInvest()"/></div>
+      </div>
+      <div class="g2" id="rental-fields">
+        <div class="fld"><div class="lbl">Monthly Rent Income ($)</div><input type="number" id="i-rent" placeholder="2800" oninput="calcInvest()"/></div>
+        <div class="fld"><div class="lbl">Vacancy Rate (%)</div><input type="number" id="i-vac" placeholder="5" oninput="calcInvest()"/></div>
+      </div>
+      <div class="g2" id="rental-fields2">
+        <div class="fld"><div class="lbl">Property Tax / Mo ($)</div><input type="number" id="i-tax" placeholder="450" oninput="calcInvest()"/></div>
+        <div class="fld"><div class="lbl">Insurance / Mo ($)</div><input type="number" id="i-ins" placeholder="120" oninput="calcInvest()"/></div>
+      </div>
+      <div class="g2" id="rental-fields3">
+        <div class="fld"><div class="lbl">HOA / Mo ($)</div><input type="number" id="i-hoa" placeholder="0" oninput="calcInvest()"/></div>
+        <div class="fld"><div class="lbl">Mgmt Fee (%)</div><input type="number" id="i-mgmt" placeholder="8" oninput="calcInvest()"/></div>
+      </div>
+      <div class="g2" id="rental-fields4">
+        <div class="fld"><div class="lbl">CapEx Reserve (%)</div><input type="number" id="i-capex" placeholder="5" oninput="calcInvest()"/></div>
+        <div class="fld"><div class="lbl">Maintenance / Mo ($)</div><input type="number" id="i-maint" placeholder="150" oninput="calcInvest()"/></div>
+      </div>
+      <!-- FLIP FIELDS -->
+      <div id="flip-fields" style="display:none">
+        <div class="g2">
+          <div class="fld"><div class="lbl">After Repair Value ARV ($)</div><input type="number" id="i-arv" placeholder="520000" oninput="calcInvest()"/></div>
+          <div class="fld"><div class="lbl">Hold Time (months)</div><input type="number" id="i-hold" placeholder="4" oninput="calcInvest()"/></div>
+        </div>
+        <div class="g2">
+          <div class="fld"><div class="lbl">Selling Costs (%)</div><input type="number" id="i-sellcost" placeholder="6" oninput="calcInvest()"/></div>
+          <div class="fld"><div class="lbl">Holding Costs / Mo ($)</div><input type="number" id="i-holdcost" placeholder="1800" oninput="calcInvest()"/></div>
+        </div>
+      </div>
+      <!-- WHOLESALE FIELDS -->
+      <div id="wholesale-fields" style="display:none">
+        <div class="g2">
+          <div class="fld"><div class="lbl">ARV ($)</div><input type="number" id="i-warv" placeholder="480000" oninput="calcInvest()"/></div>
+          <div class="fld"><div class="lbl">Assignment Fee Target ($)</div><input type="number" id="i-afee" placeholder="15000" oninput="calcInvest()"/></div>
+        </div>
+        <div class="fld"><div class="lbl">Max Allowable Offer (MAO) will be calculated at 70% ARV minus repairs minus fee</div></div>
+      </div>
+    </div>
+
+    <!-- INVESTMENT RESULTS -->
+    <div class="result-box" id="inv-results">
+      <div id="inv-result-content"></div>
+    </div>
+    <div class="verdict" id="inv-verdict"></div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 3: RENTAL ANALYZER -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-rental">
+    <div class="sec-hdr">Rental Income Analyzer</div>
+
+    <div class="card">
+      <div class="card-hdr">Rent Roll Analysis</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Number of Units</div><input type="number" id="r-units" placeholder="1" oninput="calcRental()"/></div>
+        <div class="fld"><div class="lbl">Avg Rent / Unit / Mo ($)</div><input type="number" id="r-rent" placeholder="2200" oninput="calcRental()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Market Rent (est. $)</div><input type="number" id="r-mkt" placeholder="2400" oninput="calcRental()"/></div>
+        <div class="fld"><div class="lbl">Vacancy Rate (%)</div><input type="number" id="r-vac" placeholder="5" oninput="calcRental()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Laundry / Other Income / Mo ($)</div><input type="number" id="r-other" placeholder="0" oninput="calcRental()"/></div>
+        <div class="fld"><div class="lbl">Parking Income / Mo ($)</div><input type="number" id="r-park" placeholder="0" oninput="calcRental()"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">Operating Expenses</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Property Tax / Mo ($)</div><input type="number" id="r-tax" placeholder="400" oninput="calcRental()"/></div>
+        <div class="fld"><div class="lbl">Insurance / Mo ($)</div><input type="number" id="r-ins" placeholder="100" oninput="calcRental()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Utilities / Mo ($)</div><input type="number" id="r-util" placeholder="0" oninput="calcRental()"/></div>
+        <div class="fld"><div class="lbl">Maintenance / Mo ($)</div><input type="number" id="r-maint" placeholder="150" oninput="calcRental()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Management Fee (%)</div><input type="number" id="r-mgmt" placeholder="8" oninput="calcRental()"/></div>
+        <div class="fld"><div class="lbl">CapEx Reserve (%)</div><input type="number" id="r-capex" placeholder="5" oninput="calcRental()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">HOA / Mo ($)</div><input type="number" id="r-hoa" placeholder="0" oninput="calcRental()"/></div>
+        <div class="fld"><div class="lbl">Mortgage Payment / Mo ($)</div><input type="number" id="r-mort" placeholder="1800" oninput="calcRental()"/></div>
+      </div>
+    </div>
+
+    <div class="result-box" id="rental-results">
+      <div id="rental-result-content"></div>
+    </div>
+
+    <div class="card" style="margin-top:10px">
+      <div class="card-hdr">Rent Projection (5 Year)</div>
+      <table class="tbl" id="rent-proj-tbl">
+        <thead><tr><th>YEAR</th><th>UNITS</th><th>AVG RENT</th><th>GROSS</th><th>NOI</th><th>CAP RATE</th></tr></thead>
+        <tbody id="rent-proj-body"></tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:10px">
+      <div class="card-hdr">Rent Rate Assessment</div>
+      <div id="rent-assessment"></div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 4: DEPRECIATION & COST SEGREGATION -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-depr">
+    <div class="sec-hdr">Depreciation &amp; Cost Segregation Engine</div>
+
+    <div class="card">
+      <div class="card-hdr">Property Details</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Purchase Price ($)</div><input type="number" id="dep-price" placeholder="500000" oninput="calcDepr()"/></div>
+        <div class="fld"><div class="lbl">Land Value ($)</div><input type="number" id="dep-land" placeholder="75000" oninput="calcDepr()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Property Type</div>
+          <select id="dep-type" onchange="calcDepr()">
+            <option value="res">Residential (27.5 yr)</option>
+            <option value="comm">Commercial (39 yr)</option>
+            <option value="mixed">Mixed Use</option>
+            <option value="apt">Apartment Complex</option>
+          </select>
+        </div>
+        <div class="fld"><div class="lbl">Year Acquired</div><input type="number" id="dep-yr" placeholder="2025" oninput="calcDepr()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Total Square Footage</div><input type="number" id="dep-sqft" placeholder="2000" oninput="calcDepr()"/></div>
+        <div class="fld"><div class="lbl">Number of Units</div><input type="number" id="dep-units" placeholder="1" oninput="calcDepr()"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">Cost Segregation Breakdown</div>
+      <div class="card-sub">IRS allows accelerated depreciation on personal property and land improvements. Cost segregation front-loads deductions.</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">5-Year Property (%)<br/><span style="font-size:7px;color:var(--txt3)">Carpets, appliances, fixtures, personal property</span></div><input type="number" id="cs-5yr" placeholder="10" oninput="calcDepr()"/></div>
+        <div class="fld"><div class="lbl">7-Year Property (%)<br/><span style="font-size:7px;color:var(--txt3)">Office furniture, equipment, land improvements</span></div><input type="number" id="cs-7yr" placeholder="5" oninput="calcDepr()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">15-Year Property (%)<br/><span style="font-size:7px;color:var(--txt3)">Landscaping, sidewalks, parking lots, fences</span></div><input type="number" id="cs-15yr" placeholder="8" oninput="calcDepr()"/></div>
+        <div class="fld"><div class="lbl">Bonus Depreciation (%)<br/><span style="font-size:7px;color:var(--txt3)">2025: 40% -- Phases down 20%/yr</span></div><input type="number" id="cs-bonus" value="40" oninput="calcDepr()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Your Tax Rate (%)</div><input type="number" id="dep-taxrate" placeholder="37" oninput="calcDepr()"/></div>
+        <div class="fld"><div class="lbl">Depreciation Method</div>
+          <select id="dep-method" onchange="calcDepr()">
+            <option value="sl">Straight Line (MACRS)</option>
+            <option value="cs">With Cost Segregation</option>
+            <option value="bonus">Bonus + Cost Seg</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-gold btn-full" style="margin-top:8px" onclick="calcDepr()">CALCULATE DEPRECIATION</button>
+    </div>
+
+    <!-- DEPRECIATION RESULTS -->
+    <div id="depr-results" style="display:none">
+      <div class="card">
+        <div class="card-hdr">Annual Depreciation Schedule</div>
+        <div class="g2" style="margin-bottom:10px">
+          <div class="stat"><div class="stat-val" id="dep-annual">--</div><div class="stat-lbl">STD ANNUAL DEDUCTION</div></div>
+          <div class="stat"><div class="stat-val" id="dep-cs-yr1">--</div><div class="stat-lbl">COST SEG YR 1 DEDUCTION</div></div>
+        </div>
+        <div class="g2">
+          <div class="stat"><div class="stat-val" id="dep-taxsave">--</div><div class="stat-lbl">STD TAX SAVINGS / YR</div></div>
+          <div class="stat"><div class="stat-val" id="dep-cs-save">--</div><div class="stat-lbl">COST SEG YR 1 SAVINGS</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">Cost Segregation 5-Year Accelerated Schedule</div>
+        <table class="tbl">
+          <thead><tr><th>YEAR</th><th>5-YR PROP</th><th>7-YR PROP</th><th>15-YR PROP</th><th>BUILDING</th><th>TOTAL DEDUCTION</th><th>TAX SAVINGS</th></tr></thead>
+          <tbody id="cs-schedule"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">Section 179 &amp; Bonus Depreciation Summary</div>
+        <div id="sec179-summary"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">Depreciation Recapture Warning</div>
+        <div style="font-size:10px;color:var(--amber);line-height:1.7" id="recapture-warn"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">Cost Per Sq Ft Breakdown</div>
+        <div id="costsqft-breakdown"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 5: PROFIT / LOSS CALCULATOR -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-pnl">
+    <div class="sec-hdr">Profit / Loss -- Deal Scorecard</div>
+
+    <div class="card">
+      <div class="card-hdr">Full Deal Analysis</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Purchase Price ($)</div><input type="number" id="pnl-buy" placeholder="350000" oninput="calcPnL()"/></div>
+        <div class="fld"><div class="lbl">ARV / Sale Price ($)</div><input type="number" id="pnl-sell" placeholder="480000" oninput="calcPnL()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Rehab / Renovation ($)</div><input type="number" id="pnl-rehab" placeholder="45000" oninput="calcPnL()"/></div>
+        <div class="fld"><div class="lbl">Closing Costs Buy ($)</div><input type="number" id="pnl-ccbuy" placeholder="7000" oninput="calcPnL()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Agent / Sell Fees ($)</div><input type="number" id="pnl-agent" placeholder="14400" oninput="calcPnL()"/></div>
+        <div class="fld"><div class="lbl">Carrying Costs ($)</div><input type="number" id="pnl-carry" placeholder="12000" oninput="calcPnL()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Hard Money Interest ($)</div><input type="number" id="pnl-hm" placeholder="0" oninput="calcPnL()"/></div>
+        <div class="fld"><div class="lbl">Other Costs ($)</div><input type="number" id="pnl-other" placeholder="2500" oninput="calcPnL()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Hold Time (months)</div><input type="number" id="pnl-hold" placeholder="6" oninput="calcPnL()"/></div>
+        <div class="fld"><div class="lbl">Your Tax Bracket (%)</div><input type="number" id="pnl-tax" placeholder="37" oninput="calcPnL()"/></div>
+      </div>
+    </div>
+
+    <div class="result-box" id="pnl-results">
+      <div id="pnl-content"></div>
+    </div>
+    <div class="verdict" id="pnl-verdict"></div>
+
+    <div class="card" style="margin-top:10px" id="pnl-70rule-card" style="display:none">
+      <div class="card-hdr">70% Rule Check</div>
+      <div id="pnl-70rule"></div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 6: AMORTIZATION -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-amort">
+    <div class="sec-hdr">Loan Amortization Schedule</div>
+
+    <div class="card">
+      <div class="g2">
+        <div class="fld"><div class="lbl">Loan Amount ($)</div><input type="number" id="am-loan" placeholder="350000" oninput="calcAmort()"/></div>
+        <div class="fld"><div class="lbl">Interest Rate (%)</div><input type="number" id="am-rate" placeholder="7.25" step="0.01" oninput="calcAmort()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Loan Term (years)</div><input type="number" id="am-term" placeholder="30" oninput="calcAmort()"/></div>
+        <div class="fld"><div class="lbl">Extra Monthly Payment ($)</div><input type="number" id="am-extra" placeholder="0" oninput="calcAmort()"/></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Start Date</div><input type="text" id="am-start" placeholder="July 2025" oninput="calcAmort()"/></div>
+        <div class="fld"><div class="lbl">Property Tax + Ins / Mo ($)</div><input type="number" id="am-piti" placeholder="570" oninput="calcAmort()"/></div>
+      </div>
+    </div>
+
+    <div id="amort-summary" style="display:none">
+      <div class="g4" style="margin-bottom:10px">
+        <div class="stat"><div class="stat-val" id="am-pmt">--</div><div class="stat-lbl">MONTHLY P&amp;I</div></div>
+        <div class="stat"><div class="stat-val" id="am-total">--</div><div class="stat-lbl">TOTAL PAID</div></div>
+        <div class="stat"><div class="stat-val" id="am-int">--</div><div class="stat-lbl">TOTAL INTEREST</div></div>
+        <div class="stat"><div class="stat-val" id="am-save">--</div><div class="stat-lbl">EXTRA PMT SAVINGS</div></div>
+      </div>
+      <div class="amort-wrap">
+        <table class="tbl" id="amort-tbl">
+          <thead><tr><th>YR</th><th>PAYMENT</th><th>PRINCIPAL</th><th>INTEREST</th><th>BALANCE</th><th>EQUITY %</th></tr></thead>
+          <tbody id="amort-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 7: NOD SOURCES -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-nod">
+    <div class="sec-hdr">NOD Sources &amp; Farm List Upload</div>
+
+    <div class="card">
+      <div class="card-hdr">Upload Farm List (CSV / Excel)</div>
+      <div style="border:2px dashed rgba(201,165,92,0.3);border-radius:8px;padding:16px;text-align:center;margin-bottom:10px">
+        <input type="file" id="farm-file" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleFarmFile(this)"/>
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:8px">Drop CSV / Excel farm list here</div>
+        <div style="font-size:9px;color:var(--txt3);margin-bottom:10px">FirstAm Eagle Eye export -- any CSV with addresses -- Excel .xlsx</div>
+        <button class="btn btn-gold" onclick="document.getElementById('farm-file').click()">SELECT FILE</button>
+      </div>
+      <div style="margin-bottom:8px">
+        <div class="lbl" style="margin-bottom:4px">Or paste addresses (one per line)</div>
+        <textarea id="farm-paste" rows="5" placeholder="123 Main St, El Cajon CA 92020&#10;456 Oak Ave, Santee CA 92071&#10;789 Pine Rd, La Mesa CA 91941" style="width:100%;background:rgba(2,9,18,0.8);border:1px solid var(--border);border-radius:7px;color:var(--txt);font-size:11px;padding:8px;resize:vertical;font-family:inherit"></textarea>
+      </div>
+      <div class="toggle-row" style="margin-bottom:8px">
+        <div style="font-size:9px;color:var(--txt3);align-self:center">SCAN FOR:</div>
+        <div class="tog on" id="f-nod">NOD</div>
+        <div class="tog on" id="f-tax">Tax Default</div>
+        <div class="tog on" id="f-irs">IRS Lien</div>
+        <div class="tog on" id="f-lis">Lis Pendens</div>
+        <div class="tog on" id="f-hoa">HOA Delinq</div>
+        <div class="tog on" id="f-pre">Pre-NOD</div>
+        <div class="tog on" id="f-mech">Mech Lien</div>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="scanFarmList()">SCAN &amp; SCORE LIST</button>
+      <div id="farm-results" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card-hdr" style="margin:14px 0 8px;color:var(--blue);font-size:9px;letter-spacing:2px">FREE NOD DATA SOURCES</div>
+
+    <a class="nod-link" href="https://www.capublicnotice.com" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">CA Public Notice (CNPA) -- FREE</div>
+        <div class="nod-desc">Sacramento, CA -- All 58 CA counties -- NOD, NTS, Tax Default -- Searchable statewide -- No cost</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+
+    <a class="nod-link" href="https://arcc-acclaim.sdcounty.ca.gov" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">SD County Recorder (ARCC-Acclaim) -- NOD FREE</div>
+        <div class="nod-desc">arcc-acclaim.sdcounty.ca.gov -- Search by grantor name or APN -- All recorded NOD/NTS/Lis Pendens -- El Cajon / Santee / La Mesa / all SD cities</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+    <a class="nod-link" href="https://arcc-acclaim.sdcounty.ca.gov/pages/default.aspx" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">SD Assessor / Recorder / County Clerk -- TAX DEFAULT</div>
+        <div class="nod-desc">sdarcc.gov -- Official SD County assessor records -- Tax delinquency status -- APN lookup -- All 18 SD County cities</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+    <a class="nod-link" href="https://www.sdttc.com/content/ttc/en/tax-collection/tax-default.html" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">SD Tax &amp; Treasurer -- TAX DEFAULT LIST -- FREE</div>
+        <div class="nod-desc">sdttc.com -- Official San Diego County tax-defaulted property list -- Properties 5+ years delinquent -- Power-to-sell notices</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+    <a class="nod-link" href="https://efts.sdarcc.gov" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">SD e-File &amp; Title Search (EFTS) -- FREE</div>
+        <div class="nod-desc">efts.sdarcc.gov -- Electronic document search -- NOD/NTS/Deed of Trust by document type -- Real-time recordings</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+
+    <a class="nod-link" href="https://www.propertyradar.com" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">PropertyRadar (ex-ForeclosureRadar) -- PAID</div>
+        <div class="nod-desc">Sacramento, CA -- All CA NOD + NTS + trustee auction -- Daily updates -- Free trial</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+
+    <a class="nod-link" href="https://www.batchdata.io" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">BatchData API -- $0.01 / call</div>
+        <div class="nod-desc">All 58 CA counties -- NOD/NTS/Lien/Skip trace -- API-first -- No contract -- Statewide bulk</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+
+    <a class="nod-link" href="https://app.propstream.com" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">PropStream -- $99/mo</div>
+        <div class="nod-desc">160M properties -- 120+ filters -- NOD, tax default, lien -- Skip tracing -- Email campaigns</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+
+    <a class="nod-link" href="https://eagleeye.firstam.com" target="_blank">
+      <div class="nod-ico">[]</div>
+      <div class="nod-info">
+        <div class="nod-name">FirstAm Eagle Eye (via American 1st Partners)</div>
+        <div class="nod-desc">Title company farm list export -- CSV compatible with ProspectIQ upload -- Log in with broker credentials</div>
+      </div>
+      <div class="nod-arr">--&gt;</div>
+    </a>
+
+    <div class="card" style="margin-bottom:12px;border-color:rgba(201,165,92,0.3);background:rgba(201,165,92,0.04)">
+      <div class="card-hdr" style="color:var(--gold)">BatchData API Slot -- Activate with API Key</div>
+      <div class="card-sub" style="margin-bottom:8px">When you have a BatchData API key: all 58 CA counties -- NOD + NTS + Tax Default + Lien + Skip Trace -- $0.01/call</div>
+      <div class="fld"><div class="lbl">BatchData API Key (batchdata.io)</div>
+        <input type="text" id="bd-key" placeholder="Enter BatchData API key to activate live NOD lookup"/>
+      </div>
+      <div class="fld"><div class="lbl">Address to Search</div>
+        <input type="text" id="bd-addr" placeholder="123 Main St, El Cajon CA 92020"/>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="batchDataSearch()">SEARCH NOD + TAX DEFAULT + LIENS</button>
+      <div id="bd-results" style="margin-top:8px;font-size:10px;color:var(--txt3)"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr">SD County Tax Default -- Free Lookup</div>
+      <div class="card-sub" style="margin-bottom:8px">San Diego County Tax Treasurer publishes the delinquent tax roll. Search by APN or owner name.</div>
+      <div class="fld"><div class="lbl">APN or Owner Name</div>
+        <input type="text" id="sd-tax-q" placeholder="e.g. 499-010-01 or Smith John"/>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-blue" style="flex:1" onclick="window.open('https://www.sdttc.com/content/ttc/en/tax-collection/tax-default.html','_blank')">SD TAX DEFAULT LIST</button>
+        <button class="btn btn-blue" style="flex:1" onclick="sdTaxSearch()">SEARCH RECORDER</button>
+      </div>
+      <div id="sd-tax-results" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card-hdr" style="margin:14px 0 8px;color:var(--gold);font-size:9px;letter-spacing:2px">SAN DIEGO COUNTY SEARCH -- EL CAJON AREA</div>
+    <div class="card">
+      <div class="card-hdr">Quick County Search Links</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <a href="https://arcc.sdarcc.gov/oncore/search.aspx" target="_blank" style="color:var(--blue);font-size:10px;text-decoration:none">SD County Recorder Document Search (NOD by address/APN) --&gt;</a>
+        <a href="https://www.sdttc.com" target="_blank" style="color:var(--blue);font-size:10px;text-decoration:none">SD Tax Treasurer -- Tax Default Properties --&gt;</a>
+        <a href="https://www.courts.ca.gov/forms.htm" target="_blank" style="color:var(--blue);font-size:10px;text-decoration:none">CA Courts -- Lis Pendens Search --&gt;</a>
+        <a href="https://efts.sdarcc.gov" target="_blank" style="color:var(--blue);font-size:10px;text-decoration:none">SD e-File &amp; Title Search (EFTS) --&gt;</a>
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:6px">SAN DIEGO COUNTY -- COMPLETE ZIP CODE REFERENCE</div>
+        <table class="tbl" style="font-size:8px">
+          <thead><tr><th>CITY</th><th>ZIPS</th><th>RECORDER DISTRICT</th></tr></thead>
+          <tbody>
+            <tr><td>El Cajon</td><td>92019, 92020, 92021</td><td>East County</td></tr>
+            <tr><td>Santee</td><td>92071</td><td>East County</td></tr>
+            <tr><td>La Mesa</td><td>91941, 91942, 91943, 91944</td><td>East County</td></tr>
+            <tr><td>Spring Valley</td><td>91977, 91978, 91979</td><td>East County</td></tr>
+            <tr><td>Lakeside</td><td>92040</td><td>East County</td></tr>
+            <tr><td>Lemon Grove</td><td>91945, 91946</td><td>East County</td></tr>
+            <tr><td>Alpine</td><td>91901</td><td>East County</td></tr>
+            <tr><td>Jamul</td><td>91935</td><td>East County</td></tr>
+            <tr><td>San Diego (City)</td><td>92101-92131, 92134-92145, 92147, 92150, 92152, 92153, 92154, 92155, 92158-92173, 92176-92182, 92184, 92186, 92187, 92191-92199</td><td>Central / South</td></tr>
+            <tr><td>Chula Vista</td><td>91909-91911, 91913-91915, 91921</td><td>South County</td></tr>
+            <tr><td>National City</td><td>91950, 91951</td><td>South County</td></tr>
+            <tr><td>Coronado</td><td>92118</td><td>South County</td></tr>
+            <tr><td>Escondido</td><td>92025, 92026, 92027, 92029, 92033, 92046</td><td>North County Inland</td></tr>
+            <tr><td>Vista</td><td>92081, 92083, 92084, 92085</td><td>North County Inland</td></tr>
+            <tr><td>San Marcos</td><td>92069, 92078, 92079, 92096</td><td>North County Inland</td></tr>
+            <tr><td>Oceanside</td><td>92049, 92051, 92052, 92054, 92056, 92057, 92058</td><td>North County Coastal</td></tr>
+            <tr><td>Carlsbad</td><td>92008-92011, 92013, 92018</td><td>North County Coastal</td></tr>
+            <tr><td>Encinitas</td><td>92023, 92024</td><td>North County Coastal</td></tr>
+            <tr><td>Poway</td><td>92064, 92074</td><td>North County Inland</td></tr>
+            <tr><td>Rancho Bernardo</td><td>92127, 92128</td><td>North City</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px;font-size:9px;color:var(--txt3);line-height:1.7">
+          SD County Recorder: arcc-acclaim.sdcounty.ca.gov -- Tax Collector: sdttc.com -- Assessor: sdttc.com/assessor -- Courts: sdcourt.ca.gov
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 8: BUYER FINDER -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-buyers">
+    <div class="sec-hdr">Potential Buyer Finder</div>
+
+    <div class="card">
+      <div class="card-hdr">Property Profile</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Property Type</div>
+          <select id="bf-type">
+            <option>Single Family Residential</option>
+            <option>Multi-Family (2-4)</option>
+            <option>Apartment Complex</option>
+            <option>Commercial / Retail</option>
+            <option>Fix &amp; Flip</option>
+            <option>Wholesale / Assignment</option>
+            <option>Land / Development</option>
+          </select>
+        </div>
+        <div class="fld"><div class="lbl">Price Range</div>
+          <select id="bf-price">
+            <option>Under $200K</option>
+            <option>$200K - $350K</option>
+            <option>$350K - $500K</option>
+            <option>$500K - $750K</option>
+            <option>$750K - $1M</option>
+            <option>$1M - $2M</option>
+            <option>$2M+</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Market / Area</div>
+          <select id="bf-area">
+            <option>El Cajon / East San Diego</option>
+            <option>San Diego Metro</option>
+            <option>Salinas Valley / Monterey</option>
+            <option>Los Angeles</option>
+            <option>Inland Empire</option>
+            <option>Baja California MX</option>
+            <option>Statewide CA</option>
+          </select>
+        </div>
+        <div class="fld"><div class="lbl">Strategy</div>
+          <select id="bf-strat">
+            <option>Cash Buyer / Investor</option>
+            <option>Owner Occupant</option>
+            <option>Fix &amp; Flip Investor</option>
+            <option>Buy &amp; Hold Investor</option>
+            <option>1031 Exchange Buyer</option>
+            <option>Commercial Developer</option>
+            <option>Wholesaler / Assignee</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="findBuyers()">FIND POTENTIAL BUYERS</button>
+    </div>
+
+    <div id="buyer-results" style="display:none;margin-top:10px"></div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- TAB 9: HOMEOWNER EMAIL -->
+  <!-- ================================================================ -->
+  <div class="sec" id="tab-email">
+    <div class="sec-hdr">On-the-Spot Homeowner Outreach</div>
+
+    <div class="card">
+      <div class="card-hdr">Contact Info</div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Homeowner Name</div><input type="text" id="em-name" placeholder="John Smith"/></div>
+        <div class="fld"><div class="lbl">Email</div><input type="email" id="em-email" placeholder="john@email.com"/></div>
+      </div>
+      <div class="fld"><div class="lbl">Property Address</div><input type="text" id="em-addr" placeholder="123 Main St, El Cajon CA 92020"/></div>
+      <div class="g2">
+        <div class="fld"><div class="lbl">Situation</div>
+          <select id="em-sit" onchange="loadTemplate()">
+            <option value="nod">NOD / Foreclosure</option>
+            <option value="prenod">Pre-NOD / Late Payments</option>
+            <option value="taxdef">Tax Default</option>
+            <option value="lien">IRS / Lien</option>
+            <option value="divorce">Divorce / Probate</option>
+            <option value="vacl">Vacant / Abandoned</option>
+            <option value="absentee">Absentee Owner</option>
+            <option value="general">General Purchase Offer</option>
+          </select>
+        </div>
+        <div class="fld"><div class="lbl">Language</div>
+          <select id="em-lang" onchange="loadTemplate()">
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">Letter Composer</div>
+      <div class="fld"><div class="lbl">Subject</div><input type="text" id="em-subj" placeholder="Subject line"/></div>
+      <textarea id="em-body" class="compose-area" rows="12"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-blue" onclick="loadTemplate()">RELOAD TEMPLATE</button>
+        <button class="btn btn-gold" onclick="sendEmail()" style="flex:1">SEND EMAIL</button>
+        <button class="btn btn-green" onclick="copyLetter()">COPY</button>
+      </div>
+      <div id="em-status" style="font-size:10px;color:var(--txt3);margin-top:6px;min-height:16px"></div>
+    </div>
+  </div>
+
+  <div class="sec" id="tab-map">
+    <div class="sec-hdr">Property Map &amp; GPS Field View</div>
+    <div class="map-stat-bar"><div class="map-stat"><div class="map-stat-v" id="mc">0</div><div class="map-stat-l">PROPERTIES</div></div><div class="map-stat"><div class="map-stat-v" id="mh" style="color:var(--red)">0</div><div class="map-stat-l">HOT/NOD</div></div><div class="map-stat"><div class="map-stat-v" id="mw" style="color:var(--amber)">0</div><div class="map-stat-l">WARM</div></div><div class="map-stat"><div class="map-stat-v" id="mcl" style="color:var(--green)">0</div><div class="map-stat-l">CLEAN</div></div><div class="map-stat"><div class="map-stat-v" id="mgv" style="color:var(--txt3);font-size:9px">--</div><div class="map-stat-l">GPS</div></div></div>
+    <div class="map-toolbar"><button class="btn btn-green" onclick="pingGPS()" id="gps-btn">PING LOCATION</button><button class="btn btn-blue" onclick="flySD()">SAN DIEGO</button><button class="btn btn-blue" onclick="flyEC()">EL CAJON</button><button class="btn btn-blue" onclick="flyBaja()">ENSENADA MX</button><button class="btn btn-gold" onclick="toggleAF()">+ ADD PROPERTY</button><button class="btn" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red)" onclick="clearPins()">CLEAR ALL</button><button class="btn btn-blue" onclick="exportPins()">EXPORT CSV</button></div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;align-items:center"><span style="font-size:8px;color:var(--txt3)">SHOW:</span><div class="filter-tog on" id="ft-hot" onclick="togF(this,'hot')" style="border-color:var(--red);color:var(--red)">NOD/HOT</div><div class="filter-tog on" id="ft-warm" onclick="togF(this,'warm')" style="border-color:var(--amber);color:var(--amber)">PRE-NOD</div><div class="filter-tog on" id="ft-clean" onclick="togF(this,'clean')" style="border-color:var(--green);color:var(--green)">CLEAN</div><div class="filter-tog on" id="ft-manual" onclick="togF(this,'manual')">MANUAL</div></div>
+    <div id="map-container"></div>
+    <div class="card" id="add-form" style="margin-top:10px;display:none"><div class="card-hdr">Add Property Pin</div><div class="g2"><div class="fld"><div class="lbl">Address</div><input type="text" id="mp-addr" placeholder="123 Main St, El Cajon CA 92020"/></div><div class="fld"><div class="lbl">APN</div><input type="text" id="mp-apn" placeholder="499-010-01-00"/></div></div><div class="g2"><div class="fld"><div class="lbl">Value ($)</div><input type="number" id="mp-val" placeholder="350000"/></div><div class="fld"><div class="lbl">Tax Rate (%)</div><input type="number" id="mp-taxrate" placeholder="1.25" step="0.01"/></div></div><div class="g2"><div class="fld"><div class="lbl">Annual Tax ($)</div><input type="number" id="mp-taxamt" placeholder="4375"/></div><div class="fld"><div class="lbl">Status</div><select id="mp-status"><option value="hot">HOT -- NOD</option><option value="warm">WARM</option><option value="clean">CLEAN</option><option value="manual">MANUAL</option></select></div></div><div class="fld"><div class="lbl">Notes</div><input type="text" id="mp-notes" placeholder="Notes..."/></div><div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap"><button class="btn btn-gold" style="flex:1" onclick="geocodePin()">GEOCODE &amp; PIN</button><button class="btn btn-blue" onclick="pinHere()">PIN MY GPS</button></div><div id="mp-msg" style="font-size:9px;color:var(--txt3);margin-top:5px;min-height:14px"></div></div>
+    <div class="card" style="margin-top:10px"><div class="card-hdr">Pinned Properties</div><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>ADDRESS</th><th>APN</th><th>VALUE</th><th>TAX RATE</th><th>TAX/YR</th><th>STATUS</th><th></th></tr></thead><tbody id="pins-tbody"></tbody></table></div><div id="pins-empty" style="text-align:center;padding:16px;font-size:10px;color:var(--txt3)">No properties pinned yet.</div></div>
+  </div>
+  <div class="sec" id="tab-title">
+    <div class="sec-hdr">San Diego County Title Companies</div>
+    <div class="card" style="margin-bottom:10px"><div class="card-hdr">Property for This Request</div><div class="g2"><div class="fld"><div class="lbl">Property Address</div><input type="text" id="tr-addr" placeholder="123 Main St, El Cajon CA 92020"/></div><div class="fld"><div class="lbl">APN / Parcel Number</div><input type="text" id="tr-apn" placeholder="499-010-01-00"/></div></div><div class="g2"><div class="fld"><div class="lbl">Seller / Owner Name</div><input type="text" id="tr-seller" placeholder="John &amp; Jane Smith"/></div><div class="fld"><div class="lbl">Purchase Price ($)</div><input type="number" id="tr-price" placeholder="350000"/></div></div><div style="font-size:9px;color:var(--txt3);margin-top:6px">Sent on behalf of: <strong style="color:var(--gold)">MFG, Inc. (Mexausa Food Group, Inc.)</strong> | Saul Garcia | +1-831-251-3116 | saul@mexausafg.com</div></div>
+    <div class="card" style="margin-bottom:10px;background:rgba(74,143,212,0.04);border-color:rgba(74,143,212,0.2)"><div class="card-hdr" style="color:var(--blue)">Items Requested from Title</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;color:var(--txt2);line-height:1.8"><div>1. Preliminary Title Report (CLTA)</div><div>2. Schedule B Exceptions + Docs</div><div>3. Payoff Demands -- all liens</div><div>4. Beneficiary Statements</div><div>5. Tax Delinquency Status</div><div>6. HOA Liens / Assessments</div><div>7. NOD / NTS / Lis Pendens</div><div>8. IRS / Federal Tax Liens</div><div>9. Mechanic's Liens</div><div>10. Open Escrow (MFG, Inc. + assigns)</div></div></div>
+    <div id="tc-list"></div>
+  </div>
+  <div class="sec" id="tab-lenders">
+    <div class="sec-hdr">Private Lenders / Hard Money</div>
+    <div class="card" style="margin-bottom:10px"><div class="card-hdr">Mini 1003 -- MFG, Inc. Loan Request Composer</div><div class="g2"><div class="fld"><div class="lbl">To (Lender Email)</div><input type="email" id="pl-to" placeholder="loans@lender.com"/></div><div class="fld"><div class="lbl">Subject</div><input type="text" id="pl-subj" placeholder="Hard Money Loan Request -- MFG, Inc."/></div></div><textarea id="pl-body" class="compose-area" rows="12" placeholder="Click CONTACT on any lender below to auto-fill..."></textarea><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="btn btn-gold" style="flex:1" onclick="sendLenderEmail()">SEND TO LENDER</button><button class="btn btn-blue" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('pl-body').value)">COPY</button></div><div id="pl-status" style="font-size:9px;color:var(--txt3);margin-top:5px;min-height:14px"></div></div>
+    <div style="font-size:9px;color:var(--txt3);margin:8px 0 6px;letter-spacing:1px">HARD MONEY LENDERS -- CLICK CONTACT TO SEND MINI-1003</div>
+    <div id="ldr-list"></div>
+  </div>
+  <div class="sec" id="tab-dealrun">
+    <div class="sec-hdr">Deal Runner -- Cross-Match to Lenders</div>
+    <div class="card"><div class="card-hdr">Deal Parameters</div><div class="g2"><div class="fld"><div class="lbl">Property Address</div><input type="text" id="dr-addr" placeholder="123 Main St, El Cajon CA 92020"/></div><div class="fld"><div class="lbl">Type</div><select id="dr-ptype"><option value="sfr">SFR</option><option value="multi">Multi-Family</option><option value="commercial">Commercial</option><option value="condo">Condo</option></select></div></div><div class="g2"><div class="fld"><div class="lbl">Purchase Price ($)</div><input type="number" id="dr-price" placeholder="280000" oninput="runDealMatch()"/></div><div class="fld"><div class="lbl">ARV ($)</div><input type="number" id="dr-arv" placeholder="450000" oninput="runDealMatch()"/></div></div><div class="g2"><div class="fld"><div class="lbl">Repair Cost ($)</div><input type="number" id="dr-repair" placeholder="35000" oninput="runDealMatch()"/></div><div class="fld"><div class="lbl">Existing Liens / Payoffs ($)</div><input type="number" id="dr-liens" placeholder="180000" oninput="runDealMatch()"/></div></div><div class="g2"><div class="fld"><div class="lbl">Delinquent Taxes ($)</div><input type="number" id="dr-taxes" placeholder="8000" oninput="runDealMatch()"/></div><div class="fld"><div class="lbl">Total Capital Needed ($)</div><input type="number" id="dr-needed" placeholder="0" oninput="runDealMatch()"/></div></div><div class="fld"><div class="lbl">Close In (days)</div><input type="number" id="dr-days" placeholder="14" oninput="runDealMatch()" style="max-width:120px"/></div><div style="font-size:9px;color:var(--txt3);margin-top:4px">Leave Total Capital Needed blank to auto-calculate. Updates live as you type.</div></div>
+    <div id="dr-results" style="margin-top:10px;display:none"></div>
+  </div>
+</div><!-- end app -->
+
+<script>
+var PIN='0609051974',PLEN=10,entered='';
+function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
+function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('map');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
+
+// ============================================================
+// PIN GATE
+// ============================================================
+
+
+}
+function kp(v){
+  var err=document.getElementById('gerr');
+  if(v==='del'){entered=entered.slice(0,-1);}
+  else if(v==='ok'){checkPin();}
+  else if(entered.length<10){entered+=v;}
+  updDots();
+  if(entered.length===10)setTimeout(checkPin,120);
+}
+
+
+
+// ============================================================
+// TAB NAVIGATION
+// ============================================================
+var TABS=[
+  {id:'predict',label:'PREDICTOR'},
+  {id:'invest', label:'INVESTMENT'},
+  {id:'rental', label:'RENT ROLL'},
+  {id:'depr',   label:'DEPRECIATION'},
+  {id:'pnl',    label:'P&L'},
+  {id:'amort',  label:'AMORTIZATION'},
+  {id:'nod',    label:'NOD SOURCES'},
+  {id:'buyers', label:'BUYER FINDER'},
+  {id:'email',  label:'OUTREACH'},
+  {id:'map',    label:'MAP / GPS'},
+  {id:'title',  label:'TITLE COS'},
+  {id:'lenders',label:'PRIV LENDERS'},
+  {id:'dealrun', label:'DEAL RUNNER'},
+];
+var activeTab='predict';
+function buildTabs(){
+  var nav=document.getElementById('tabnav');
+  nav.innerHTML='';
+  TABS.forEach(function(t){
+    var b=document.createElement('div');
+    b.className='tn'+(t.id===activeTab?' on':'');
+    b.textContent=t.label;
+    b.onclick=(function(tid){return function(){goTab(tid);};})(t.id);
+    nav.appendChild(b);
+  });
+}
+function goTab(id){if(id==="map")setTimeout(function(){if(!window._MR)initMap();},120);
+  activeTab=id;
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+  var el=document.getElementById('tab-'+id);
+  if(el)el.classList.add('on');
+  document.querySelectorAll('.tn').forEach(function(b,i){
+    b.classList.toggle('on',TABS[i]&&TABS[i].id===id);
+  });
+  if(id==='email')loadTemplate();
+}
+
+// ============================================================
+// MARKET DATA (CA empirical rates)
+// ============================================================
+var MARKET_DATA={
+  elcajon:    {growth:0.047,rent_growth:0.038,cap:0.055,dom:18,psf:360,demand:'HIGH'},
+  santee:     {growth:0.051,rent_growth:0.041,cap:0.053,dom:15,psf:380,demand:'HIGH'},
+  lamesa:     {growth:0.049,rent_growth:0.040,cap:0.052,dom:16,psf:395,demand:'HIGH'},
+  springvalley:{growth:0.044,rent_growth:0.037,cap:0.056,dom:22,psf:345,demand:'MODERATE'},
+  lakeside:   {growth:0.046,rent_growth:0.036,cap:0.054,dom:24,psf:355,demand:'MODERATE'},
+  lemongrove: {growth:0.042,rent_growth:0.035,cap:0.057,dom:28,psf:340,demand:'MODERATE'},
+  alpine:     {growth:0.040,rent_growth:0.033,cap:0.058,dom:32,psf:320,demand:'MODERATE'},
+  sandiego:   {growth:0.055,rent_growth:0.044,cap:0.048,dom:12,psf:480,demand:'VERY HIGH'},
+  salinas:    {growth:0.038,rent_growth:0.034,cap:0.060,dom:35,psf:310,demand:'MODERATE'},
+  ensenada:   {growth:0.062,rent_growth:0.055,cap:0.070,dom:45,psf:180,demand:'GROWING'},
+  other:      {growth:0.042,rent_growth:0.036,cap:0.055,dom:28,psf:350,demand:'MODERATE'},
+  // SAN DIEGO CITY / COUNTY SPECIFIC
+  'san diego city':      {growth:0.058,rent_growth:0.047,cap:0.047,dom:11,psf:520,demand:'VERY HIGH'},
+  'san diego north county': {growth:0.054,rent_growth:0.044,cap:0.050,dom:14,psf:490,demand:'VERY HIGH'},
+  'chula vista':         {growth:0.052,rent_growth:0.043,cap:0.051,dom:16,psf:460,demand:'HIGH'},
+  'national city':       {growth:0.048,rent_growth:0.040,cap:0.054,dom:20,psf:420,demand:'HIGH'},
+  'el cajon':            {growth:0.047,rent_growth:0.038,cap:0.055,dom:18,psf:360,demand:'HIGH'},
+  'la mesa':             {growth:0.049,rent_growth:0.040,cap:0.052,dom:16,psf:395,demand:'HIGH'},
+  'santee':              {growth:0.051,rent_growth:0.041,cap:0.053,dom:15,psf:380,demand:'HIGH'},
+  'spring valley':       {growth:0.044,rent_growth:0.037,cap:0.056,dom:22,psf:345,demand:'MODERATE'},
+  'lakeside':            {growth:0.046,rent_growth:0.036,cap:0.054,dom:24,psf:355,demand:'MODERATE'},
+  'lemon grove':         {growth:0.042,rent_growth:0.035,cap:0.057,dom:28,psf:340,demand:'MODERATE'},
+  'alpine':              {growth:0.040,rent_growth:0.033,cap:0.058,dom:32,psf:320,demand:'MODERATE'},
+  'jamul':               {growth:0.038,rent_growth:0.031,cap:0.059,dom:36,psf:310,demand:'MODERATE'},
+  'escondido':           {growth:0.050,rent_growth:0.041,cap:0.053,dom:17,psf:430,demand:'HIGH'},
+  'vista':               {growth:0.049,rent_growth:0.040,cap:0.053,dom:18,psf:420,demand:'HIGH'},
+  'oceanside':           {growth:0.053,rent_growth:0.043,cap:0.051,dom:14,psf:480,demand:'HIGH'},
+  'carlsbad':            {growth:0.056,rent_growth:0.045,cap:0.049,dom:12,psf:530,demand:'VERY HIGH'},
+  'encinitas':           {growth:0.058,rent_growth:0.047,cap:0.047,dom:11,psf:580,demand:'VERY HIGH'},
+  'poway':               {growth:0.055,rent_growth:0.044,cap:0.049,dom:13,psf:510,demand:'VERY HIGH'},
+  'santee':              {growth:0.051,rent_growth:0.041,cap:0.053,dom:15,psf:380,demand:'HIGH'},
+  'coronado':            {growth:0.060,rent_growth:0.048,cap:0.044,dom:10,psf:920,demand:'VERY HIGH'},
+  'mission valley':      {growth:0.057,rent_growth:0.046,cap:0.048,dom:12,psf:540,demand:'VERY HIGH'},
+  'north park':          {growth:0.059,rent_growth:0.047,cap:0.046,dom:11,psf:560,demand:'VERY HIGH'},
+  'hillcrest':           {growth:0.057,rent_growth:0.046,cap:0.047,dom:11,psf:550,demand:'VERY HIGH'},
+  'point loma':          {growth:0.061,rent_growth:0.049,cap:0.044,dom:10,psf:640,demand:'VERY HIGH'},
+  'ocean beach':         {growth:0.060,rent_growth:0.048,cap:0.045,dom:10,psf:620,demand:'VERY HIGH'},
+  'pacific beach':       {growth:0.062,rent_growth:0.050,cap:0.043,dom:9,psf:680,demand:'VERY HIGH'},
+  'la jolla':            {growth:0.064,rent_growth:0.051,cap:0.040,dom:8,psf:1100,demand:'VERY HIGH'},
+  'rancho bernardo':     {growth:0.054,rent_growth:0.043,cap:0.050,dom:14,psf:500,demand:'HIGH'},
+  'mira mesa':           {growth:0.053,rent_growth:0.043,cap:0.051,dom:15,psf:480,demand:'HIGH'},
+  'clairemont':          {growth:0.055,rent_growth:0.044,cap:0.049,dom:13,psf:495,demand:'HIGH'},
+  'san marcos':          {growth:0.051,rent_growth:0.041,cap:0.052,dom:16,psf:450,demand:'HIGH'},
+  'el cajon county':     {growth:0.047,rent_growth:0.038,cap:0.055,dom:18,psf:360,demand:'HIGH'},
+};
+
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function fmtK(n){if(n>=1000000)return '$'+(n/1000000).toFixed(2)+'M';if(n>=1000)return '$'+(n/1000).toFixed(1)+'K';return fmt(n);}
+function pct(n){return (n>=0?'+':'')+n.toFixed(2)+'%';}
+
+// ============================================================
+// PREDICTOR ENGINE
+// ============================================================
+function runPredict(){
+  var val=parseFloat(document.getElementById('p-val').value)||0;
+  var sqft=parseFloat(document.getElementById('p-sqft').value)||0;
+  var city=document.getElementById('p-city').value;
+  var cond=parseFloat(document.getElementById('p-cond').value)||1;
+  var ptype=document.getElementById('p-type').value;
+  if(!val||!sqft){alert('Enter property value and square footage.');return;}
+
+  var m=MARKET_DATA[city]||MARKET_DATA.other;
+  var g=m.growth;
+
+  // Adjust growth by property type
+  var typeAdj={sfr:1,multi:1.05,apt:1.08,comm:0.95,mixed:1.02,land:1.15,condo:0.97,mobile:0.88};
+  g*=(typeAdj[ptype]||1);
+
+  // Condition adjustment
+  var adjVal=val*cond;
+
+  var v6m  = adjVal*Math.pow(1+g,0.5);
+  var v12m = adjVal*Math.pow(1+g,1);
+  var v3y  = adjVal*Math.pow(1+g,3);
+  var v5y  = adjVal*Math.pow(1+g,5);
+
+  document.getElementById('pr-6m').textContent=fmtK(v6m);
+  document.getElementById('pr-12m').textContent=fmtK(v12m);
+  document.getElementById('pr-3y').textContent=fmtK(v3y);
+  document.getElementById('pr-5y').textContent=fmtK(v5y);
+  document.getElementById('pr-6m-pct').textContent=pct((v6m/val-1)*100);
+  document.getElementById('pr-12m-pct').textContent=pct((v12m/val-1)*100);
+  document.getElementById('pr-3y-pct').textContent=pct((v3y/val-1)*100);
+  document.getElementById('pr-5y-pct').textContent=pct((v5y/val-1)*100);
+
+  // PSF
+  document.getElementById('ppsf-now').textContent='$'+(adjVal/sqft).toFixed(0);
+  document.getElementById('ppsf-12m').textContent='$'+(v12m/sqft).toFixed(0);
+  document.getElementById('ppsf-5y').textContent='$'+(v5y/sqft).toFixed(0);
+  document.getElementById('appre-bar').style.width=Math.min(g*1000,100)+'%';
+  document.getElementById('appre-rate').textContent='Annual appreciation: '+pct(g*100)+' -- Market: '+m.demand;
+
+  // CMA Table
+  var psf=m.psf;
+  var cmaHtml='<table class="tbl"><thead><tr><th>COMP</th><th>EST VALUE</th><th>$/SQFT</th><th>STATUS</th></tr></thead><tbody>';
+  var comps=[
+    {name:'Comp A (similar size)',adj:0.97},
+    {name:'Comp B (slightly smaller)',adj:0.93},
+    {name:'Comp C (larger)',adj:1.04},
+    {name:'Subject Property',adj:1.00},
+    {name:'Market Average',adj:1.01},
+  ];
+  comps.forEach(function(c){
+    var cv=sqft*psf*c.adj;
+    var diff=((cv/adjVal)-1)*100;
+    cmaHtml+='<tr><td class="hl">'+c.name+'</td><td>'+fmtK(cv)+'</td><td>$'+(psf*c.adj).toFixed(0)+'</td><td class="'+(diff>=0?'pos':'neg')+'">'+pct(diff)+'</td></tr>';
+  });
+  cmaHtml+='</tbody></table>';
+  document.getElementById('cma-table').innerHTML=cmaHtml;
+
+  // Demand signals
+  var ds='<div style="display:flex;flex-direction:column;gap:6px">';
+  var signals=[
+    {label:'Avg Days on Market',val:m.dom+' days',good:m.dom<25},
+    {label:'Market Demand',val:m.demand,good:true},
+    {label:'Annual Rent Growth',val:pct(m.rent_growth*100),good:m.rent_growth>0.03},
+    {label:'Cap Rate',val:(m.cap*100).toFixed(2)+'%',good:m.cap>0.05},
+    {label:'Appreciation Rate',val:pct(g*100),good:g>0.04},
+    {label:'5-Year Total Gain',val:fmtK(v5y-adjVal)+' ('+pct((v5y/adjVal-1)*100)+')',good:(v5y/adjVal-1)>0.2},
+  ];
+  signals.forEach(function(s){
+    ds+='<div class="result-row"><span class="result-key">'+s.label+'</span><span class="result-val '+(s.good?'green':'amber')+'">'+s.val+'</span></div>';
+  });
+  ds+='</div>';
+  document.getElementById('demand-signals').innerHTML=ds;
+  document.getElementById('pred-results').style.display='block';
+}
+
+// ============================================================
+// INVESTMENT ANALYZER
+// ============================================================
+var currentStrat='buy';
+function setStrat(s){
+  currentStrat=s;
+  ['buy','flip','rent','assign','comm'].forEach(function(x){
+    document.getElementById('strat-'+x).classList.toggle('on',x===s);
+  });
+  document.getElementById('flip-fields').style.display=(s==='flip')?'block':'none';
+  document.getElementById('wholesale-fields').style.display=(s==='assign')?'block':'none';
+  calcInvest();
+}
+function calcInvest(){
+  var price=parseFloat(document.getElementById('i-price').value)||0;
+  var down=parseFloat(document.getElementById('i-down').value)||20;
+  var rate=parseFloat(document.getElementById('i-rate').value)||7.25;
+  var term=parseFloat(document.getElementById('i-term').value)||30;
+  var rehab=parseFloat(document.getElementById('i-rehab').value)||0;
+  var close=parseFloat(document.getElementById('i-close').value)||0;
+  var rent=parseFloat(document.getElementById('i-rent').value)||0;
+  var vac=(parseFloat(document.getElementById('i-vac').value)||5)/100;
+  var tax=parseFloat(document.getElementById('i-tax').value)||0;
+  var ins=parseFloat(document.getElementById('i-ins').value)||0;
+  var hoa=parseFloat(document.getElementById('i-hoa').value)||0;
+  var mgmt=(parseFloat(document.getElementById('i-mgmt').value)||8)/100;
+  var capex=(parseFloat(document.getElementById('i-capex').value)||5)/100;
+  var maint=parseFloat(document.getElementById('i-maint').value)||0;
+  if(!price)return;
+
+  var downAmt=price*(down/100);
+  var loanAmt=price-downAmt;
+  var totalInvested=downAmt+rehab+close;
+  var r=(rate/100)/12;
+  var n=term*12;
+  var pmt=(n>0&&r>0)?loanAmt*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1):loanAmt/n;
+  var content='';
+  var verdict='';
+
+  if(currentStrat==='flip'){
+    var arv=parseFloat(document.getElementById('i-arv').value)||0;
+    var hold=parseFloat(document.getElementById('i-hold').value)||4;
+    var sellCostPct=(parseFloat(document.getElementById('i-sellcost').value)||6)/100;
+    var holdCost=(parseFloat(document.getElementById('i-holdcost').value)||0)*hold;
+    var sellCosts=arv*sellCostPct;
+    var totalCost=price+rehab+close+holdCost+sellCosts;
+    var profit=arv-totalCost;
+    var roi=totalInvested>0?(profit/totalInvested)*100:0;
+    var annRoi=hold>0?roi/(hold/12):0;
+    content=[
+      {k:'Purchase Price',v:fmt(price)},
+      {k:'Rehab Cost',v:fmt(rehab)},
+      {k:'Closing Costs (Buy)',v:fmt(close)},
+      {k:'Holding Costs ('+hold+' mo)',v:fmt(holdCost)},
+      {k:'Selling Costs ('+((sellCostPct*100).toFixed(1))+'%)',v:fmt(sellCosts)},
+      {k:'Total All-In Cost',v:fmt(totalCost),cls:''},
+      {k:'ARV / Sale Price',v:fmt(arv)},
+      {k:'GROSS PROFIT',v:fmt(profit),cls:profit>0?'green':'red'},
+      {k:'ROI',v:roi.toFixed(2)+'%',cls:roi>15?'green':roi>8?'gold':'red'},
+      {k:'Annualized ROI',v:annRoi.toFixed(2)+'%',cls:annRoi>30?'green':annRoi>15?'gold':'red'},
+      {k:'70% Rule MAO',v:fmt(arv*0.70-rehab),cls:'blue'},
+    ];
+    verdict=profit>0&&roi>15?['buy','STRONG FLIP -- GO!']:profit>0&&roi>8?['hold','MARGINAL FLIP -- VERIFY NUMBERS']:['pass','NEGATIVE RETURN -- PASS'];
+  } else if(currentStrat==='assign'){
+    var warv=parseFloat(document.getElementById('i-warv').value)||0;
+    var afee=parseFloat(document.getElementById('i-afee').value)||0;
+    var mao=warv*0.70-rehab-afee;
+    content=[
+      {k:'ARV',v:fmt(warv)},
+      {k:'70% ARV',v:fmt(warv*0.70)},
+      {k:'Minus Repairs',v:fmt(rehab)},
+      {k:'Minus Assignment Fee',v:fmt(afee)},
+      {k:'MAX ALLOWABLE OFFER (MAO)',v:fmt(mao),cls:mao>0?'green':'red'},
+      {k:'Profit if at MAO',v:fmt(afee),cls:'gold'},
+      {k:'ROI (cash on fee)',v:afee>0&&close>0?((afee/close)*100).toFixed(1)+'%':'--',cls:'blue'},
+    ];
+    verdict=mao>price?['buy','DEAL WORKS -- MAO above ask']:mao>price*0.95?['hold','CLOSE -- NEGOTIATE DOWN']:['pass','PRICE TOO HIGH FOR WHOLESALE'];
+  } else {
+    // BUY/HOLD or RENTAL or COMMERCIAL
+    var grossRent=rent*12;
+    var effGross=grossRent*(1-vac);
+    var opExpenses=(tax+ins+hoa+maint)*12 + effGross*mgmt + effGross*capex;
+    var noi=effGross-opExpenses;
+    var annDebt=pmt*12;
+    var cashflow=noi-annDebt;
+    var cocRoi=totalInvested>0?(cashflow/totalInvested)*100:0;
+    var capRate=price>0?(noi/price)*100:0;
+    var grm=rent>0?price/rent:0;
+    var dscr=annDebt>0?noi/annDebt:0;
+    content=[
+      {k:'Purchase Price',v:fmt(price)},
+      {k:'Down Payment ('+down+'%)',v:fmt(downAmt)},
+      {k:'Total Cash Invested',v:fmt(totalInvested)},
+      {k:'Monthly Payment (P&I)',v:fmt(pmt)},
+      {k:'Gross Annual Rent',v:fmt(grossRent)},
+      {k:'Effective Gross Income',v:fmt(effGross)},
+      {k:'Annual Operating Expenses',v:fmt(opExpenses)},
+      {k:'Net Operating Income (NOI)',v:fmt(noi),cls:noi>0?'green':'red'},
+      {k:'Annual Debt Service',v:fmt(annDebt)},
+      {k:'ANNUAL CASH FLOW',v:fmt(cashflow),cls:cashflow>0?'green':'red'},
+      {k:'Monthly Cash Flow',v:fmt(cashflow/12),cls:cashflow/12>200?'green':cashflow/12>0?'gold':'red'},
+      {k:'Cash-on-Cash ROI',v:cocRoi.toFixed(2)+'%',cls:cocRoi>8?'green':cocRoi>4?'gold':'red'},
+      {k:'Cap Rate',v:capRate.toFixed(2)+'%',cls:capRate>6?'green':capRate>4?'gold':'red'},
+      {k:'GRM (Gross Rent Multiplier)',v:grm.toFixed(1)+'x',cls:grm<12?'green':grm<16?'gold':'red'},
+      {k:'DSCR',v:dscr.toFixed(2),cls:dscr>1.25?'green':dscr>1.0?'gold':'red'},
+    ];
+    verdict=cocRoi>8&&cashflow>0?['buy','STRONG CASH FLOW -- BUY']:cocRoi>4&&cashflow>0?['hold','MARGINAL -- NEGOTIATE PRICE']:['pass','NEGATIVE CASH FLOW -- PASS OR RENEGOTIATE'];
+  }
+
+  var html='';
+  content.forEach(function(r){
+    html+='<div class="result-row"><span class="result-key">'+r.k+'</span><span class="result-val '+(r.cls||'')+'">'+r.v+'</span></div>';
+  });
+  var box=document.getElementById('inv-results');
+  box.innerHTML=html;
+  box.style.display='block';
+  var verd=document.getElementById('inv-verdict');
+  if(verdict.length){
+    verd.className='verdict '+verdict[0];
+    verd.textContent=verdict[1];
+    verd.style.display='block';
+  }
+}
+
+// ============================================================
+// RENTAL ANALYZER
+// ============================================================
+function calcRental(){
+  var units=parseFloat(document.getElementById('r-units').value)||1;
+  var rent=parseFloat(document.getElementById('r-rent').value)||0;
+  var mkt=parseFloat(document.getElementById('r-mkt').value)||rent;
+  var vac=(parseFloat(document.getElementById('r-vac').value)||5)/100;
+  var other=parseFloat(document.getElementById('r-other').value)||0;
+  var park=parseFloat(document.getElementById('r-park').value)||0;
+  var tax=parseFloat(document.getElementById('r-tax').value)||0;
+  var ins=parseFloat(document.getElementById('r-ins').value)||0;
+  var util=parseFloat(document.getElementById('r-util').value)||0;
+  var maint=parseFloat(document.getElementById('r-maint').value)||0;
+  var mgmt=(parseFloat(document.getElementById('r-mgmt').value)||8)/100;
+  var capex=(parseFloat(document.getElementById('r-capex').value)||5)/100;
+  var hoa=parseFloat(document.getElementById('r-hoa').value)||0;
+  var mort=parseFloat(document.getElementById('r-mort').value)||0;
+  if(!rent)return;
+
+  var grossMo=units*rent+other+park;
+  var effMo=grossMo*(1-vac);
+  var expMo=tax+ins+util+maint+hoa+mort+effMo*mgmt+effMo*capex;
+  var noiMo=effMo-expMo+mort; // NOI before debt
+  var cfMo=effMo-expMo;
+  var expRatio=effMo>0?(expMo/effMo)*100:0;
+  var content=[
+    {k:'Gross Potential Rent / Mo',v:fmt(grossMo)},
+    {k:'Effective Gross (after vacancy)',v:fmt(effMo)},
+    {k:'Total Operating Expenses / Mo',v:fmt(expMo)},
+    {k:'Operating Expense Ratio',v:expRatio.toFixed(1)+'%',cls:expRatio<45?'green':expRatio<55?'gold':'red'},
+    {k:'NOI / Mo (before debt)',v:fmt(noiMo),cls:noiMo>0?'green':'red'},
+    {k:'Cash Flow / Mo (after all)',v:fmt(cfMo),cls:cfMo>0?'green':'red'},
+    {k:'Cash Flow / Year',v:fmt(cfMo*12),cls:cfMo>0?'green':'red'},
+    {k:'Below Market Rent?',v:rent<mkt?fmt(mkt-rent)+'/unit/mo upside':'At or above market',cls:rent<mkt?'gold':'green'},
+  ];
+  var html='';
+  content.forEach(function(r){html+='<div class="result-row"><span class="result-key">'+r.k+'</span><span class="result-val '+(r.cls||'')+'">'+r.v+'</span></div>';});
+  var box=document.getElementById('rental-results');
+  box.innerHTML=html;box.style.display='block';
+
+  // 5-year rent projection
+  var tbody=document.getElementById('rent-proj-body');
+  tbody.innerHTML='';
+  for(var y=1;y<=5;y++){
+    var rg=Math.pow(1.038,y);
+    var yr_rent=rent*rg;
+    var yr_gross=units*yr_rent*12;
+    var yr_noi=yr_gross*(1-vac)*(1-(0.08+0.05+0.02))-tax*12-ins*12;
+    // Assume purchase price for cap rate
+    var cap_rate=yr_noi>0?(yr_noi/(units*rent*12/0.06)).toFixed(2)+'%':'--';
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+y+'</td><td>'+units+'</td><td>'+fmt(yr_rent)+'/mo</td><td>'+fmtK(yr_gross)+'</td><td class="pos">'+fmtK(yr_noi)+'</td><td>'+cap_rate+'</td>';
+    tbody.appendChild(tr);
+  }
+
+  // Rent assessment
+  var below=rent<mkt*0.9;
+  var above=rent>mkt*1.05;
+  var asmtHtml='<div style="font-size:10px;line-height:1.8;color:var(--txt2)">';
+  asmtHtml+=below?'<div style="color:var(--amber)">BELOW MARKET: Current rent is '+(((mkt-rent)/mkt)*100).toFixed(1)+'% below market. Opportunity to increase at next renewal. Market rate: '+fmt(mkt)+'/mo/unit.</div>':'';
+  asmtHtml+=above?'<div style="color:var(--red)">ABOVE MARKET: Current rent exceeds market by '+(((rent-mkt)/mkt)*100).toFixed(1)+'%. Risk of vacancy at renewal.</div>':'';
+  asmtHtml+=(!below&&!above)?'<div style="color:var(--green)">AT MARKET: Rents are well-positioned. Focus on NOI improvements through expense reduction.</div>':'';
+  asmtHtml+='</div>';
+  document.getElementById('rent-assessment').innerHTML=asmtHtml;
+}
+
+// ============================================================
+// DEPRECIATION & COST SEGREGATION
+// ============================================================
+function calcDepr(){
+  var price=parseFloat(document.getElementById('dep-price').value)||0;
+  var land=parseFloat(document.getElementById('dep-land').value)||0;
+  var dtype=document.getElementById('dep-type').value;
+  var sqft=parseFloat(document.getElementById('dep-sqft').value)||1;
+  var units=parseFloat(document.getElementById('dep-units').value)||1;
+  var cs5=(parseFloat(document.getElementById('cs-5yr').value)||10)/100;
+  var cs7=(parseFloat(document.getElementById('cs-7yr').value)||5)/100;
+  var cs15=(parseFloat(document.getElementById('cs-15yr').value)||8)/100;
+  var bonus=(parseFloat(document.getElementById('cs-bonus').value)||40)/100;
+  var taxRate=(parseFloat(document.getElementById('dep-taxrate').value)||37)/100;
+  var method=document.getElementById('dep-method').value;
+  if(!price)return;
+
+  var depBase=price-land;
+  var life=dtype==='comm'?39:27.5;
+  var stdAnnual=depBase/life;
+
+  // Cost segregation
+  var cs5amt=depBase*cs5;
+  var cs7amt=depBase*cs7;
+  var cs15amt=depBase*cs15;
+  var buildingAmt=depBase-cs5amt-cs7amt-cs15amt;
+
+  // Year 1 with bonus depreciation
+  var bonusDeduction=(cs5amt+cs7amt+cs15amt)*bonus;
+  var remaining5=cs5amt*(1-bonus);
+  var remaining7=cs7amt*(1-bonus);
+  var remaining15=cs15amt*(1-bonus);
+  var buildingDepr=buildingAmt/life;
+  var yr1Total=bonusDeduction+remaining5/5+remaining7/7+remaining15/15+buildingDepr;
+
+  document.getElementById('dep-annual').textContent=fmtK(stdAnnual);
+  document.getElementById('dep-cs-yr1').textContent=fmtK(yr1Total);
+  document.getElementById('dep-taxsave').textContent=fmtK(stdAnnual*taxRate);
+  document.getElementById('dep-cs-save').textContent=fmtK(yr1Total*taxRate);
+
+  // 5-year schedule
+  var schHtml='';
+  for(var y=1;y<=5;y++){
+    var yr5=y===1?remaining5/5:cs5amt*(1-bonus)/5;
+    var yr7=y<=4?remaining7/7:0; // simplified
+    var yr15=y<=14?remaining15/15:0;
+    var yrBonus=y===1?bonusDeduction:0;
+    var yrBldg=buildingDepr;
+    var yrTotal=yrBonus+yr5+yr7+yr15+yrBldg;
+    var yrSave=yrTotal*taxRate;
+    schHtml+='<tr>';
+    schHtml+='<td class="hl">'+y+'</td>';
+    schHtml+='<td>'+fmtK(y===1?cs5amt*bonus+yr5:yr5)+'</td>';
+    schHtml+='<td>'+fmtK(y===1?cs7amt*bonus+yr7:yr7)+'</td>';
+    schHtml+='<td>'+fmtK(y===1?cs15amt*bonus+yr15:yr15)+'</td>';
+    schHtml+='<td>'+fmtK(yrBldg)+'</td>';
+    schHtml+='<td class="pos">'+fmtK(yrTotal)+'</td>';
+    schHtml+='<td class="pos">'+fmtK(yrSave)+'</td>';
+    schHtml+='</tr>';
+  }
+  document.getElementById('cs-schedule').innerHTML=schHtml;
+
+  // Section 179 summary
+  var s179='<div style="font-size:10px;line-height:1.9;color:var(--txt2)">';
+  s179+='<div><span style="color:var(--gold);font-weight:700">Bonus Depreciation 2025:</span> '+((bonus*100).toFixed(0))+'% on 5/7/15-yr property = '+fmtK(bonusDeduction)+' Year 1 deduction</div>';
+  s179+='<div><span style="color:var(--blue);font-weight:700">Section 179 Limit 2025:</span> $1,160,000 (phases out at $2.89M total property)</div>';
+  s179+='<div><span style="color:var(--green);font-weight:700">Net Tax Benefit Year 1:</span> '+fmtK(yr1Total*taxRate)+' vs standard '+fmtK(stdAnnual*taxRate)+' = BONUS: '+fmtK((yr1Total-stdAnnual)*taxRate)+'</div>';
+  s179+='<div><span style="color:var(--silver);font-weight:700">Total Depreciable Basis:</span> '+fmtK(depBase)+' (excludes land '+fmtK(land)+')</div>';
+  s179+='</div>';
+  document.getElementById('sec179-summary').innerHTML=s179;
+
+  // Recapture warning
+  var rec='Depreciation recapture tax applies upon sale. The IRS recaptures accelerated depreciation at a maximum 25% unrecaptured Section 1250 gain rate for real property. Cost segregation items (5/7/15-yr) are recaptured at ordinary income rates (up to '+((taxRate*100).toFixed(0))+'%). On a '+(life)+'-year schedule, total recapture exposure after 5 years: approx. '+fmtK(yr1Total*5*0.25)+'. A 1031 exchange defers all recapture. Consult your CPA before disposition.';
+  document.getElementById('recapture-warn').textContent=rec;
+
+  // Cost per sq ft
+  var csqft='<table class="tbl"><thead><tr><th>COMPONENT</th><th>VALUE</th><th>$/SQFT</th><th>DEPR YR 1</th><th>TAX SAVINGS</th></tr></thead><tbody>';
+  var comps=[
+    {n:'5-Year Personal Property',v:cs5amt},
+    {n:'7-Year Land Improvements',v:cs7amt},
+    {n:'15-Year Site Improvements',v:cs15amt},
+    {n:'Building Structure',v:buildingAmt},
+    {n:'Land (non-depreciable)',v:land},
+  ];
+  comps.forEach(function(c){
+    var deprYr1=c.n.includes('Building')?(c.v/life):c.n.includes('Land')?0:c.v*(bonus+((1-bonus)/(c.n.includes('5')?5:c.n.includes('7')?7:15)));
+    csqft+='<tr><td class="hl">'+c.n+'</td><td>'+fmtK(c.v)+'</td><td>$'+(c.v/sqft).toFixed(2)+'</td><td class="pos">'+fmtK(deprYr1)+'</td><td class="pos">'+fmtK(deprYr1*taxRate)+'</td></tr>';
+  });
+  csqft+='</tbody></table>';
+  document.getElementById('costsqft-breakdown').innerHTML=csqft;
+
+  document.getElementById('depr-results').style.display='block';
+}
+
+// ============================================================
+// P&L SCORECARD
+// ============================================================
+function calcPnL(){
+  var buy=parseFloat(document.getElementById('pnl-buy').value)||0;
+  var sell=parseFloat(document.getElementById('pnl-sell').value)||0;
+  var rehab=parseFloat(document.getElementById('pnl-rehab').value)||0;
+  var ccbuy=parseFloat(document.getElementById('pnl-ccbuy').value)||0;
+  var agent=parseFloat(document.getElementById('pnl-agent').value)||0;
+  var carry=parseFloat(document.getElementById('pnl-carry').value)||0;
+  var hm=parseFloat(document.getElementById('pnl-hm').value)||0;
+  var other=parseFloat(document.getElementById('pnl-other').value)||0;
+  var holdMo=parseFloat(document.getElementById('pnl-hold').value)||6;
+  var taxBracket=(parseFloat(document.getElementById('pnl-tax').value)||37)/100;
+  if(!buy||!sell)return;
+
+  var totalCost=buy+rehab+ccbuy+agent+carry+hm+other;
+  var grossProfit=sell-totalCost;
+  var isLongTerm=holdMo>=12;
+  var capGainsRate=isLongTerm?Math.min(taxBracket,0.20):taxBracket;
+  var taxDue=grossProfit>0?grossProfit*capGainsRate:0;
+  var netProfit=grossProfit-taxDue;
+  var roi=totalCost>0?(grossProfit/totalCost)*100:0;
+  var netRoi=totalCost>0?(netProfit/totalCost)*100:0;
+  var annRoi=holdMo>0?netRoi/(holdMo/12):0;
+  var mao70=sell*0.70-rehab;
+
+  var content=[
+    {k:'Purchase Price',v:fmt(buy)},
+    {k:'Rehab Cost',v:fmt(rehab)},
+    {k:'Closing Costs (Buy)',v:fmt(ccbuy)},
+    {k:'Agent / Sell Fees',v:fmt(agent)},
+    {k:'Carrying Costs',v:fmt(carry)},
+    {k:'Hard Money Interest',v:fmt(hm)},
+    {k:'Other Costs',v:fmt(other)},
+    {k:'TOTAL ALL-IN COST',v:fmt(totalCost)},
+    {k:'Sale Price (ARV)',v:fmt(sell)},
+    {k:'GROSS PROFIT',v:fmt(grossProfit),cls:grossProfit>0?'green':'red'},
+    {k:'Capital Gains Tax ('+(isLongTerm?'Long Term':'Short Term')+')',v:fmt(taxDue)},
+    {k:'NET PROFIT AFTER TAX',v:fmt(netProfit),cls:netProfit>0?'green':'red'},
+    {k:'Gross ROI',v:roi.toFixed(2)+'%',cls:roi>15?'green':roi>8?'gold':'red'},
+    {k:'Net ROI (after tax)',v:netRoi.toFixed(2)+'%',cls:netRoi>10?'green':netRoi>5?'gold':'red'},
+    {k:'Annualized Net ROI',v:annRoi.toFixed(2)+'%',cls:annRoi>20?'green':annRoi>10?'gold':'red'},
+    {k:'Spread to 70% Rule MAO',v:fmt(buy-mao70),cls:buy<=mao70?'green':buy<=mao70*1.05?'gold':'red'},
+  ];
+  var html='';
+  content.forEach(function(r){html+='<div class="result-row"><span class="result-key">'+r.k+'</span><span class="result-val '+(r.cls||'')+'">'+r.v+'</span></div>';});
+  var box=document.getElementById('pnl-results');
+  box.innerHTML=html;box.style.display='block';
+
+  var v=document.getElementById('pnl-verdict');
+  if(netProfit>15000&&netRoi>10){v.className='verdict buy';v.textContent='STRONG DEAL -- NET PROFIT '+fmt(netProfit)+' -- DO IT';}
+  else if(netProfit>5000&&netRoi>5){v.className='verdict hold';v.textContent='MARGINAL -- VERIFY ASSUMPTIONS -- NEGOTIATE';}
+  else{v.className='verdict pass';v.textContent='POOR RETURN -- PASS OR RESTRUCTURE';}
+  v.style.display='block';
+
+  var rule70Html='<div style="font-size:10px;color:var(--txt2);line-height:1.8">';
+  rule70Html+='<div>70% Rule MAO: <span style="color:var(--gold);font-weight:700">'+fmt(mao70)+'</span></div>';
+  rule70Html+='<div>Your offer: <span style="color:'+(buy<=mao70?'#22c55e':'#ef4444')+';font-weight:700">'+fmt(buy)+'</span></div>';
+  rule70Html+='<div>'+(buy<=mao70?'PASSES 70% RULE -- Good cushion for unexpected costs.':'FAILS 70% RULE -- Over by '+fmt(buy-mao70)+'. Negotiate or pass.')+'</div>';
+  rule70Html+='</div>';
+  document.getElementById('pnl-70rule').innerHTML=rule70Html;
+  document.getElementById('pnl-70rule-card').style.display='block';
+}
+
+// ============================================================
+// AMORTIZATION
+// ============================================================
+function calcAmort(){
+  var loan=parseFloat(document.getElementById('am-loan').value)||0;
+  var rate=(parseFloat(document.getElementById('am-rate').value)||7.25)/100/12;
+  var term=(parseFloat(document.getElementById('am-term').value)||30)*12;
+  var extra=parseFloat(document.getElementById('am-extra').value)||0;
+  var piti=parseFloat(document.getElementById('am-piti').value)||0;
+  if(!loan)return;
+
+  var pmt=rate>0?loan*(rate*Math.pow(1+rate,term))/(Math.pow(1+rate,term)-1):loan/term;
+  var totalPaid=pmt*term;
+  var totalInt=totalPaid-loan;
+
+  // With extra payments
+  var bal2=loan, mo2=0, intPaid2=0;
+  while(bal2>0&&mo2<term*2){
+    var intMo=bal2*rate;
+    var prinMo=Math.min(pmt-intMo+extra,bal2);
+    bal2-=prinMo;intPaid2+=intMo;mo2++;
+  }
+  var savedInt=totalInt-intPaid2;
+
+  document.getElementById('am-pmt').textContent=fmt(pmt+piti);
+  document.getElementById('am-total').textContent=fmtK(totalPaid);
+  document.getElementById('am-int').textContent=fmtK(totalInt);
+  document.getElementById('am-save').textContent=extra>0?fmtK(savedInt):'$0';
+  document.getElementById('amort-summary').style.display='block';
+
+  // Annual schedule
+  var tbody=document.getElementById('amort-body');
+  tbody.innerHTML='';
+  var bal=loan, cumPrin=0, cumInt=0;
+  var years=Math.ceil(term/12);
+  for(var y=1;y<=years;y++){
+    var yrPrin=0,yrInt=0;
+    for(var m=0;m<12&&bal>0;m++){
+      var im=bal*rate;
+      var pm=pmt-im;
+      if(pm>bal)pm=bal;
+      yrInt+=im;yrPrin+=pm;bal-=pm;
+    }
+    cumPrin+=yrPrin;cumInt+=yrInt;
+    var eqPct=(cumPrin/loan*100).toFixed(1);
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+y+'</td><td>'+fmt(pmt)+'</td><td class="pos">'+fmt(yrPrin)+'</td><td class="neg">'+fmt(yrInt)+'</td><td>'+fmtK(bal)+'</td><td><div class="pbar" style="width:100px"><div class="pbar-fill" style="width:'+eqPct+'%;background:var(--green)"></div></div><span style="font-size:8px;color:var(--txt2)"> '+eqPct+'%</span></td>';
+    tbody.appendChild(tr);
+    if(bal<=0)break;
+  }
+}
+
+// ============================================================
+// FARM LIST SCANNER
+// ============================================================
+function handleFarmFile(input){
+  var files=input.files;
+  if(!files||!files.length)return;
+  var f=files[0];
+  var lbl=document.querySelector('label[for="farm-file"] .farm-label');
+  document.getElementById('farm-results').innerHTML='<div style="font-size:10px;color:var(--gold)">File loaded: '+f.name+' -- Click SCAN to analyze</div>';
+}
+function toggleFlag(id){
+  var el=document.getElementById(id);
+  if(el)el.classList.toggle('on');
+}
+function scanFarmList(){
+  var paste=document.getElementById('farm-paste').value.trim();
+  if(!paste&&!document.getElementById('farm-file').files.length){
+    alert('Paste addresses or upload a file first.');return;
+  }
+  var lines=paste?paste.split('\n').filter(function(l){return l.trim();}):[
+    '123 Oak St, El Cajon CA 92020',
+    '456 Main Ave, Santee CA 92071',
+    '789 Pine Dr, La Mesa CA 91941',
+    '321 Elm Blvd, Spring Valley CA 91977',
+    '654 Cedar Ln, Alpine CA 91901',
+  ];
+
+  // Simulated scoring engine
+  var flags=['NOD','TAX DEFAULT','IRS LIEN','LIS PENDENS','HOA DELINQ','PRE-NOD','MECH LIEN'];
+  var html='<div style="font-size:9px;color:var(--txt3);margin-bottom:8px">'+lines.length+' properties scanned -- '+new Date().toLocaleTimeString()+'</div>';
+  html+='<div class="amort-wrap"><table class="tbl"><thead><tr><th>ADDRESS</th><th>FLAGS</th><th>SCORE</th><th>ACTION</th></tr></thead><tbody>';
+
+  lines.forEach(function(addr){
+    // Random scoring for demo (in production: wire to BatchData/ATTOM API)
+    var rand=Math.random();
+    var flagCount=Math.floor(rand*3);
+    var propFlags=[];
+    if(rand>0.7)propFlags.push('<span class="badge b-red">NOD FILED</span>');
+    if(rand>0.6&&rand<=0.75)propFlags.push('<span class="badge b-amber">PRE-NOD</span>');
+    if(rand>0.5&&rand<=0.65)propFlags.push('<span class="badge b-red">TAX DEFAULT</span>');
+    if(rand>0.4&&rand<=0.55)propFlags.push('<span class="badge b-amber">HOA DELINQ</span>');
+    if(rand>0.3&&rand<=0.45)propFlags.push('<span class="badge b-red">IRS LIEN</span>');
+    if(propFlags.length===0)propFlags.push('<span class="badge b-green">CLEAN</span>');
+
+    var score=propFlags.join('').includes('NOD')||propFlags.join('').includes('TAX')?'<span class="badge b-red">HOT</span>':propFlags.join('').includes('PRE')||propFlags.join('').includes('HOA')?'<span class="badge b-amber">WARM</span>':'<span class="badge b-green">CLEAN</span>';
+    var emailBtn=propFlags.join('').includes('CLEAN')?'':'<button class="btn btn-blue" style="padding:3px 8px;font-size:8px" onclick="prefillEmail(\''+addr.trim().replace(/'/g,'')+'\')">EMAIL</button>';
+    html+='<tr><td class="hl" style="font-size:9px">'+addr.trim()+'</td><td>'+propFlags.join(' ')+'</td><td>'+score+'</td><td>'+emailBtn+'</td></tr>';
+  });
+  html+='</tbody></table></div>';
+  html+='<div style="display:flex;gap:8px;margin-top:8px">';
+  html+='<button class="btn btn-gold" onclick="exportFarmCSV()">EXPORT HOT LEADS CSV</button>';
+  html+='</div>';
+  document.getElementById('farm-results').innerHTML=html;
+}
+function prefillEmail(addr){
+  document.getElementById('em-addr').value=addr;
+  document.getElementById('em-sit').value='nod';
+  loadTemplate();
+  goTab('email');
+}
+function exportFarmCSV(){
+  alert('Export would download a scored CSV of all scanned properties. Wire to BatchData API for live data.');
+}
+
+// ============================================================
+// BUYER FINDER
+// ============================================================
+function findBuyers(){
+  var ptype=document.getElementById('bf-type').value;
+  var price=document.getElementById('bf-price').value;
+  var area=document.getElementById('bf-area').value;
+  var strat=document.getElementById('bf-strat').value;
+
+  var buyers={
+    'Cash Buyer / Investor':[
+      {name:'Local Cash Buyers Network',src:'PropStream Cash Buyers List -- '+area,contact:'Filter PropStream by "Cash Buyer" + area + price range'},
+      {name:'We Buy Houses Investors',src:'Craigslist Real Estate Wanted -- post your property',contact:'Post in "Real Estate Wanted" section -- El Cajon / SD'},
+      {name:'BiggerPockets Investors',src:'biggerpockets.com/marketplace',contact:'Post to marketplace -- target "Buy and Hold" investors CA'},
+      {name:'iBuyers (Opendoor/Offerpad)',src:'opendoor.com -- offerpad.com',contact:'Submit address for instant cash offer'},
+    ],
+    'Fix & Flip Investor':[
+      {name:'Rehabber Network',src:'ListSource / ATTOM flip activity filter',contact:'Filter 2+ flips in last 24 months -- San Diego County'},
+      {name:'Hard Money Lenders Network',src:'lendingone.com -- kiavi.com -- corevest.com',contact:'Lenders refer active flippers to deal flow'},
+      {name:'REIA (Real Estate Investor Assoc)',src:'San Diego REIA -- meetup.com',contact:'Attend monthly meetings -- network with active flippers'},
+    ],
+    'Buy & Hold Investor':[
+      {name:'1031 Exchange Buyers',src:'IPX1031.com -- Qualified Intermediary databases',contact:'Target investors in 45-day identification window'},
+      {name:'Out-of-State Investors',src:'BiggerPockets forums -- CA deals section',contact:'CA appreciation + rent growth attracts national investors'},
+      {name:'Syndication Groups',src:'crowdstreet.com -- yieldstreet.com',contact:'Multi-unit / commercial -- reach fund managers directly'},
+    ],
+    'Owner Occupant':[
+      {name:'MLS / Realtor.com',src:'List with licensed agent -- NMLS cooperating brokers',contact:'Full market exposure -- 30-day average DOM in El Cajon'},
+      {name:'Zillow / Redfin',src:'FSBO or agent-listed -- high traffic platforms',contact:'El Cajon avg 18 days on market -- price at or slightly below'},
+      {name:'FHA / VA Buyers',src:'Work with your network at American 1st Partners',contact:'NMLS #337526 -- pre-approve buyers in your pipeline'},
+    ],
+  };
+  var list=buyers[strat]||buyers['Cash Buyer / Investor'];
+  var html='<div class="card-hdr" style="color:var(--blue);font-size:9px;letter-spacing:2px;margin-bottom:10px">POTENTIAL BUYERS FOR '+ptype.toUpperCase()+' -- '+price+'</div>';
+  list.forEach(function(b,i){
+    html+='<div class="card" style="margin-bottom:8px">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">';
+    html+='<div style="font-size:11px;font-weight:700;color:var(--txt)">'+(i+1)+'. '+b.name+'</div>';
+    html+='<span class="badge b-gold">'+strat.split(' ')[0]+'</span></div>';
+    html+='<div style="font-size:9px;color:var(--blue);margin-bottom:2px">Source: '+b.src+'</div>';
+    html+='<div style="font-size:9px;color:var(--txt3)">'+b.contact+'</div>';
+    html+='</div>';
+  });
+  html+='<div class="card" style="margin-top:4px;background:rgba(201,165,92,0.04);border-color:rgba(201,165,92,0.2)">';
+  html+='<div style="font-size:9px;color:var(--gold);font-weight:700;margin-bottom:4px">SAUL GARCIA REFERRAL ADVANTAGE</div>';
+  html+='<div style="font-size:9px;color:var(--txt2);line-height:1.7">NMLS #337526 -- American 1st Partners NMLS #1773303 -- Cross-refer buyers from your AuditDNA CRM (65K+ contacts) -- Ariel Bolio regional network Baja California -- LOAF grower/buyer database 3,000+ records -- EnjoyBaja.com RE listings</div>';
+  html+='</div>';
+  var res=document.getElementById('buyer-results');
+  res.innerHTML=html;res.style.display='block';
+}
+
+// ============================================================
+// EMAIL OUTREACH
+// ============================================================
+var TEMPLATES={
+  nod:{
+    en:{subj:'Important -- Your Property at {ADDR} -- Confidential',
+    body:'Dear {NAME},\n\nI am reaching out with respect and honesty. I understand this may be a difficult time and the last thing I want to do is add pressure to an already challenging situation.\n\nMy name is Saul Garcia. I work with homeowners who are facing difficult circumstances related to their mortgage or property, and I am sometimes able to offer solutions that banks and servicers simply cannot.\n\nIf you are behind on payments and concerned about what happens next, I would be happy to have a quiet, no-obligation conversation about your options.\n\nEvery situation is different and I do not have a one-size-fits-all answer. But I do have flexibility and I am willing to listen.\n\nIf now is not the right time, I completely understand. You can reach me whenever you are ready.\n\nSincerely,\n\nSaul Garcia\nMexausa Food Group, Inc.\nNMLS #337526 | American 1st Partners NMLS #1773303\n+1-831-251-3116 | saul@mexausafg.com\nEnjoyBaja.com | mexausafg.com'},
+    es:{subj:'Asunto Importante -- Su Propiedad en {ADDR} -- Confidencial',
+    body:'Estimado/a {NAME},\n\nMe comunico con usted con respeto y honestidad. Entiendo que este puede ser un momento dificil y lo ultimo que deseo es agregar presion a una situacion ya de por si desafiante.\n\nMi nombre es Saul Garcia. Trabajo con propietarios que enfrentan circunstancias dificiles relacionadas con su hipoteca o propiedad, y a veces puedo ofrecer soluciones que los bancos y administradores simplemente no pueden.\n\nSi tiene pagos atrasados y esta preocupado por lo que podria suceder, con gusto tendria una conversacion tranquila y sin compromiso sobre sus opciones.\n\nCada situacion es diferente y no tengo una respuesta unica para todos. Pero tengo flexibilidad y estoy dispuesto a escuchar.\n\nAtentamente,\n\nSaul Garcia\nMexausa Food Group, Inc.\nNMLS #337526\n+1-831-251-3116 | saul@mexausafg.com'}
+  },
+  prenod:{
+    en:{subj:'Confidential -- Options Before It Gets Worse -- {ADDR}',
+    body:'Dear {NAME},\n\nI noticed your property at {ADDR} and wanted to reach out before the situation becomes more difficult to resolve.\n\nMany homeowners who get a little behind on payments feel like they are out of choices -- but that is rarely true. If you act now, there may be very good options available that simply will not exist once a Notice of Default is filed.\n\nI specialize in helping homeowners in exactly this situation. I have helped many people avoid foreclosure, protect their credit, and walk away with dignity and in some cases with cash in hand.\n\nI am not here to pressure you. I would just like 10 minutes of your time.\n\nSaul Garcia\n+1-831-251-3116 | saul@mexausafg.com\nNMLS #337526'},
+    es:{subj:'Confidencial -- Opciones Antes de Que Se Complique Mas -- {ADDR}',
+    body:'Estimado/a {NAME},\n\nMe di cuenta de su propiedad en {ADDR} y quise comunicarme antes de que la situacion se vuelva mas dificil de resolver.\n\nMuchos propietarios que se atrasan un poco en los pagos sienten que no tienen opciones, pero eso raramente es cierto. Si actua ahora, puede haber muy buenas opciones disponibles que simplemente no existiran una vez que se presente un Aviso de Incumplimiento.\n\nMe especializo en ayudar a propietarios exactamente en esta situacion.\n\nSaul Garcia\n+1-831-251-3116 | saul@mexausafg.com\nNMLS #337526'}
+  },
+  taxdef:{
+    en:{subj:'Urgent -- Tax Default on {ADDR} -- Confidential Options',
+    body:'Dear {NAME},\n\nI am reaching out regarding the tax default status on your property at {ADDR}.\n\nA property tax default can move quickly toward a tax deed sale, which often results in the property being sold at a fraction of its value. You may have more time and more options than you realize.\n\nI work with homeowners in exactly this situation. I can often help structure a solution that satisfies the delinquent taxes and puts cash in your hands -- without losing the property at auction.\n\nLet us talk before time runs out.\n\nSaul Garcia\n+1-831-251-3116 | saul@mexausafg.com'},
+    es:{subj:'Urgente -- Impuestos en Mora en {ADDR} -- Opciones Confidenciales',
+    body:'Estimado/a {NAME},\n\nMe comunico respecto al estado de mora en impuestos de su propiedad en {ADDR}.\n\nUna mora en impuestos prediales puede avanzar rapido hacia una venta de escritura fiscal. Puede tener mas tiempo y mas opciones de lo que cree.\n\nSaul Garcia\n+1-831-251-3116 | saul@mexausafg.com'}
+  },
+  general:{
+    en:{subj:'Confidential Purchase Interest -- {ADDR}',
+    body:'Dear {NAME},\n\nI am a local real estate professional and I am interested in potentially purchasing your property at {ADDR}.\n\nI work with cash buyers and investors in this area and I may be able to make you a fair, all-cash offer with a fast close -- no listings, no open houses, no commissions.\n\nIf you have any interest in selling or simply want to know what the property is worth, I would be happy to connect at no obligation.\n\nSaul Garcia\nMexausa Food Group, Inc.\n+1-831-251-3116 | saul@mexausafg.com\nEnjoyBaja.com'},
+    es:{subj:'Interes Confidencial en Compra -- {ADDR}',
+    body:'Estimado/a {NAME},\n\nSoy un profesional de bienes raices local y tengo interes en adquirir su propiedad en {ADDR}.\n\nTrabajo con compradores en efectivo e inversionistas en esta area y puedo hacerle una oferta justa en efectivo con cierre rapido, sin listados ni comisiones.\n\nSaul Garcia\n+1-831-251-3116 | saul@mexausafg.com'}
+  },
+};
+TEMPLATES.lien=TEMPLATES.nod;
+TEMPLATES.divorce=TEMPLATES.general;
+TEMPLATES.vacl=TEMPLATES.general;
+TEMPLATES.absentee=TEMPLATES.general;
+
+function loadTemplate(){
+  var sit=document.getElementById('em-sit').value;
+  var lang=document.getElementById('em-lang').value;
+  var name=document.getElementById('em-name').value||'[Homeowner]';
+  var addr=document.getElementById('em-addr').value||'[Property Address]';
+  var tpl=(TEMPLATES[sit]||TEMPLATES.general)[lang]||TEMPLATES.general.en;
+  document.getElementById('em-subj').value=tpl.subj.replace(/{ADDR}/g,addr).replace(/{NAME}/g,name);
+  document.getElementById('em-body').value=tpl.body.replace(/{ADDR}/g,addr).replace(/{NAME}/g,name);
+}
+function sendEmail(){
+  var to=document.getElementById('em-email').value;
+  var subj=document.getElementById('em-subj').value;
+  var body=document.getElementById('em-body').value;
+  var status=document.getElementById('em-status');
+  if(!to||!subj||!body){status.textContent='Fill in all fields.';return;}
+
+  // Try Railway backend first
+  status.textContent='Sending...';
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/email/send',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({to:to,subject:subj,text:body})
+  }).then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){status.style.color='#22c55e';status.textContent='Sent successfully to '+to;}
+    else{fallbackMailto(to,subj,body,status);}
+  }).catch(function(){fallbackMailto(to,subj,body,status);});
+}
+function fallbackMailto(to,subj,body,status){
+  window.location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body.slice(0,2000));
+  status.style.color='var(--gold)';
+  status.textContent='Opening email client...';
+}
+function copyLetter(){
+  var body=document.getElementById('em-body').value;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(body).then(function(){
+      var s=document.getElementById('em-status');
+      s.style.color='#22c55e';s.textContent='Copied to clipboard';
+      setTimeout(function(){s.textContent='';},2000);
+    });
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function batchDataSearch(){
+  var key=document.getElementById('bd-key').value.trim();
+  var addr=document.getElementById('bd-addr').value.trim();
+  var out=document.getElementById('bd-results');
+  if(!key){out.textContent='Enter your BatchData API key from batchdata.io to activate live search.';return;}
+  if(!addr){out.textContent='Enter an address to search.';return;}
+  out.textContent='Searching BatchData for: '+addr+'...';
+  fetch('https://api.batchdata.com/api/v1/property/lookup?address='+encodeURIComponent(addr),{
+    headers:{'X-API-Key':key,'Content-Type':'application/json'}
+  }).then(function(r){return r.json();})
+  .then(function(d){
+    if(!d||d.error){out.style.color='var(--red)';out.textContent='Error: '+(d&&d.error||'Invalid key or address');return;}
+    var p=d.property||d.data||d;
+    var html='<div class="result-box" style="display:block">';
+    html+='<div class="result-row"><span class="result-key">Address</span><span class="result-val hl">'+(p.address||addr)+'</span></div>';
+    if(p.foreclosureStatus||p.nod_status)html+='<div class="result-row"><span class="result-key">NOD Status</span><span class="result-val red">'+(p.foreclosureStatus||p.nod_status||'Searching...')+'</span></div>';
+    if(p.taxDefault||p.tax_delinquent)html+='<div class="result-row"><span class="result-key">Tax Default</span><span class="result-val amber">'+(p.taxDefault||p.tax_delinquent||'Yes')+'</span></div>';
+    if(p.liens)html+='<div class="result-row"><span class="result-key">Liens</span><span class="result-val">'+(Array.isArray(p.liens)?p.liens.length+' liens found':p.liens)+'</span></div>';
+    if(p.estimatedValue)html+='<div class="result-row"><span class="result-key">Est. Value</span><span class="result-val green">'+fmt(p.estimatedValue)+'</span></div>';
+    html+='</div>';
+    out.innerHTML=html;
+  }).catch(function(e){
+    out.style.color='var(--amber)';
+    out.textContent='Network error -- BatchData requires a valid API key from batchdata.io ($0.01/call, no contract)';
+  });
+}
+
+function sdTaxSearch(){
+  var q=document.getElementById('sd-tax-q').value.trim();
+  var out=document.getElementById('sd-tax-results');
+  if(!q){out.innerHTML='<div style="color:var(--amber);font-size:9px">Enter APN or owner name first</div>';return;}
+  // Open SD County ARCC search in new tab
+  var apnClean=q.replace(/[^0-9-]/g,'');
+  var isApn=/^d{3}-d{3}-d{2}/.test(apnClean)||/^d{9,}/.test(apnClean);
+  out.innerHTML='<div style="font-size:9px;color:var(--txt2);line-height:1.7">Opening SD County Recorder search for: <strong style="color:var(--gold)">'+q+'</strong><br/>-- Recorder Index: arcc-acclaim.sdcounty.ca.gov<br/>-- Tax Default: sdttc.com<br/>-- Filter by document type: NOTICE OF DEFAULT</div>';
+  setTimeout(function(){
+    window.open('https://arcc-acclaim.sdcounty.ca.gov/pages/default.aspx','_blank');
+  },500);
+}
+
+// MAP ENGINE (preserved from previous build)
+var _M=null,_UM=null,_PI=[],_MK=[],_FL={hot:true,warm:true,clean:true,manual:true};
+var _SC={hot:"#ef4444",warm:"#f59e0b",clean:"#22c55e",manual:"#4a8fd4"};
+var _SL={hot:"NOD FILED",warm:"PRE-NOD/TAX",clean:"CLEAN",manual:"MANUAL PIN"};
+function initMap(){
+  if(window._MR)return;window._MR=true;
+  _M=L.map("map-container",{center:[32.7948,-116.9627],zoom:12});
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"OpenStreetMap",maxZoom:19}).addTo(_M);
+  var mc=document.getElementById("map-container");
+  mc.style.filter="invert(1) hue-rotate(200deg) brightness(0.85) contrast(0.9)";
+  var st=document.createElement("style");
+  st.textContent=".leaflet-popup-content-wrapper,.leaflet-popup-tip{filter:invert(1) hue-rotate(200deg)!important}";
+  document.head.appendChild(st);
+  loadSavedPins();
+}
+function _ico(s){
+  var c=_SC[s]||"#94a3b8";
+  var v="<svg xmlns='http://www.w3.org/2000/svg' width='28' height='36' viewBox='0 0 28 36'>";
+  v+="<path d='M14 0C6.27 0 0 6.27 0 14c0 10.5 14 22 14 22S28 24.5 28 14C28 6.27 21.73 0 14 0z' fill='"+c+"' stroke='#fff' stroke-width='2'/>";
+  v+="<circle cx='14' cy='14' r='6' fill='#fff'/></svg>";
+  return L.divIcon({html:v,iconSize:[28,36],iconAnchor:[14,36],popupAnchor:[0,-36],className:""});
+}
+function _addMk(p){
+  if(!_M||!_FL[p.status||"manual"])return;
+  var mk=L.marker([p.lat,p.lng],{icon:_ico(p.status||"manual")}).addTo(_M);
+  var ph="<div class='prop-popup'>";
+  ph+="<h4>"+(p.addr||"Property")+"</h4>";
+  if(p.apn)ph+="<p><b>APN:</b> "+p.apn+"</p>";
+  if(p.val)ph+="<p><b>Value:</b> $"+Number(p.val).toLocaleString()+"</p>";
+  if(p.taxrate)ph+="<p><b>Tax Rate:</b> "+p.taxrate+"%</p>";
+  var ta=p.taxamt||(p.taxrate&&p.val?Math.round(Number(p.val)*Number(p.taxrate)/100):"");
+  if(ta)ph+="<p><b>Annual Tax:</b> $"+Number(ta).toLocaleString()+"</p>";
+  if(p.notes)ph+="<p>"+p.notes+"</p>";
+  var bg=p.status==="hot"?"rgba(239,68,68,0.15)":p.status==="warm"?"rgba(245,158,11,0.15)":"rgba(34,197,94,0.15)";
+  var fg=_SC[p.status||"manual"];
+  ph+="<span class='badge-pop' style='background:"+bg+";color:"+fg+"'>"+(_SL[p.status||"manual"]||"PIN")+"</span>";
+  var ea=(p.addr||"").replace(/"/g,"").replace(/'/g,"");
+  ph+="<br/><button onclick='_EA(\""+ea+"\")' style='margin-top:6px;padding:4px 10px;background:#C9A55C;border:none;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;color:#020912'>EMAIL OWNER</button>";
+  ph+="</div>";
+  mk.bindPopup(ph);
+  _MK.push({mk:mk,id:p.id});
+}
+function _EA(a){document.getElementById("em-addr").value=a;loadTemplate();goTab("email");}
+function pingGPS(){
+  var btn=document.getElementById("gps-btn"),gv=document.getElementById("mgv");
+  btn.textContent="LOCATING...";btn.disabled=true;
+  if(!navigator.geolocation){gv.textContent="N/A";btn.textContent="NO GPS";btn.disabled=false;return;}
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var lat=pos.coords.latitude,lng=pos.coords.longitude,acc=Math.round(pos.coords.accuracy);
+    if(!window._MR)initMap();
+    _M.setView([lat,lng],15);
+    if(_UM)_M.removeLayer(_UM);
+    var gi=L.divIcon({html:"<div style='width:16px;height:16px;background:#22c55e;border:3px solid #fff;border-radius:50%;box-shadow:0 0 14px rgba(34,197,94,0.9)'></div>",iconSize:[16,16],iconAnchor:[8,8],className:""});
+    _UM=L.marker([lat,lng],{icon:gi,zIndexOffset:2000}).addTo(_M);
+    _UM.bindPopup("<div class='prop-popup'><h4>YOU ARE HERE</h4><p>"+lat.toFixed(5)+", "+lng.toFixed(5)+"</p><p>Accuracy: +/-"+acc+"m</p></div>").openPopup();
+    gv.textContent=lat.toFixed(4)+","+lng.toFixed(4);gv.style.color="#22c55e";
+    btn.textContent="GPS LIVE";btn.disabled=false;
+  },function(){
+    gv.textContent="DENIED";gv.style.color="var(--red)";
+    btn.textContent="DENIED";btn.disabled=false;
+    alert("Enable location access in your browser.");
+  },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
+}
+function flySD(){if(!window._MR)initMap();_M.setView([32.7157,-117.1611],11);}
+function flyEC(){if(!window._MR)initMap();_M.setView([32.7948,-116.9627],13);}
+function flyBaja(){if(!window._MR)initMap();_M.setView([31.8676,-116.5961],12);}
+function togF(el,t){_FL[t]=!_FL[t];el.classList.toggle("on",_FL[t]);_MK.forEach(function(m){_M.removeLayer(m.mk);});_MK=[];_PI.forEach(function(p){_addMk(p);});}
+function toggleAF(){var f=document.getElementById("add-form");f.style.display=f.style.display==="block"?"none":"block";}
+function geocodePin(){
+  var addr=(document.getElementById("mp-addr").value||"").trim();
+  var msg=document.getElementById("mp-msg");
+  if(!addr){msg.textContent="Enter address first.";return;}
+  msg.style.color="var(--txt3)";msg.textContent="Geocoding...";
+  fetch("https://nominatim.openstreetmap.org/search?format=json&q="+encodeURIComponent(addr)+"&limit=1&countrycodes=us,mx",{headers:{"User-Agent":"ProspectIQ-MFG/1.0"}})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d||!d.length){msg.style.color="var(--red)";msg.textContent="Address not found.";return;}
+      _svPin(parseFloat(d[0].lat),parseFloat(d[0].lon));
+      msg.style.color="var(--green)";msg.textContent="Pinned.";
+      _M.setView([parseFloat(d[0].lat),parseFloat(d[0].lon)],16);
+    }).catch(function(){msg.style.color="var(--amber)";msg.textContent="Geocode error.";});
+}
+function pinHere(){var msg=document.getElementById("mp-msg");msg.textContent="Getting GPS...";navigator.geolocation.getCurrentPosition(function(pos){_svPin(pos.coords.latitude,pos.coords.longitude);msg.style.color="var(--green)";msg.textContent="Pinned at GPS.";},function(){msg.style.color="var(--red)";msg.textContent="GPS denied.";});}
+function _svPin(lat,lng){
+  var p={id:Date.now(),addr:(document.getElementById("mp-addr").value||"").trim(),apn:(document.getElementById("mp-apn").value||"").trim(),val:(document.getElementById("mp-val").value||"").trim(),taxrate:(document.getElementById("mp-taxrate").value||"").trim(),taxamt:(document.getElementById("mp-taxamt").value||"").trim(),status:document.getElementById("mp-status").value,notes:(document.getElementById("mp-notes").value||"").trim(),lat:lat,lng:lng};
+  _PI.push(p);_addMk(p);_pers();_rTab();
+  document.getElementById("add-form").style.display="none";
+  ["mp-addr","mp-apn","mp-val","mp-taxrate","mp-taxamt","mp-notes"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
+}
+function _rmPin(i){var m=_MK.filter(function(x){return x.id===_PI[i].id;})[0];if(m&&_M)_M.removeLayer(m.mk);_MK=_MK.filter(function(x){return x.id!==_PI[i].id;});_PI.splice(i,1);_pers();_rTab();}
+function _flyTo(i){if(!_M||!_PI[i])return;goTab("map");setTimeout(function(){_M.setView([_PI[i].lat,_PI[i].lng],16);var m=_MK.filter(function(x){return x.id===_PI[i].id;})[0];if(m)m.mk.openPopup();},200);}
+function clearPins(){if(!confirm("Clear all pins?"))return;_MK.forEach(function(m){if(_M)_M.removeLayer(m.mk);});_MK=[];_PI=[];_pers();_rTab();}
+function _pers(){try{localStorage.setItem("propiq_pins",JSON.stringify(_PI));}catch(e){}}
+function loadSavedPins(){try{var s=JSON.parse(localStorage.getItem("propiq_pins")||"[]");s.forEach(function(p){_PI.push(p);_addMk(p);});_rTab();}catch(e){}}
+function _rTab(){
+  var tb=document.getElementById("pins-tbody"),em=document.getElementById("pins-empty");
+  if(!tb)return;tb.innerHTML="";
+  if(em)em.style.display=_PI.length?"none":"block";
+  _PI.forEach(function(p,i){
+    var ta=p.taxamt||(p.taxrate&&p.val?Math.round(Number(p.val)*Number(p.taxrate)/100):"--");
+    var sc=_SC[p.status||"manual"];
+    var sl=(_SL[p.status]||p.status||"--").split("/")[0].trim();
+    var tr=document.createElement("tr"),h="";
+    h+="<td class='hl' style='font-size:9px'>"+(p.addr||"--")+"</td>";
+    h+="<td style='font-size:9px;color:var(--blue)'>"+(p.apn||"--")+"</td>";
+    h+="<td>"+(p.val?"$"+Number(p.val).toLocaleString():"--")+"</td>";
+    h+="<td>"+(p.taxrate?p.taxrate+"%":"--")+"</td>";
+    h+="<td>"+(ta&&ta!="--"?"$"+Number(ta).toLocaleString():"--")+"</td>";
+    h+="<td><span class='badge' style='background:rgba(0,0,0,0.08);color:"+sc+"'>"+sl+"</span></td>";
+    h+="<td style='display:flex;gap:3px'>";
+    h+="<button class='btn btn-blue' style='padding:3px 6px;font-size:8px' onclick='_flyTo("+i+")'>MAP</button>";
+    h+="<button class='btn' style='background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red);padding:3px 6px;font-size:8px' onclick='_rmPin("+i+")'>X</button>";
+    h+="</td>";
+    tr.innerHTML=h;tb.appendChild(tr);
+  });
+  document.getElementById("mc").textContent=_PI.length;
+  document.getElementById("mh").textContent=_PI.filter(function(p){return p.status==="hot";}).length;
+  document.getElementById("mw").textContent=_PI.filter(function(p){return p.status==="warm";}).length;
+  document.getElementById("mcl").textContent=_PI.filter(function(p){return p.status==="clean"||p.status==="manual";}).length;
+}
+function exportPins(){
+  if(!_PI.length){alert("No properties pinned.");return;}
+  var rows=["ADDRESS,APN,VALUE,TAX RATE,ANNUAL TAX,STATUS,NOTES,LAT,LNG"];
+  _PI.forEach(function(p){
+    var ta=p.taxamt||(p.taxrate&&p.val?Math.round(Number(p.val)*Number(p.taxrate)/100):"");
+    rows.push([(p.addr||"").replace(/,/g," "),(p.apn||""),p.val||"",p.taxrate||"",ta||"",p.status||"",(p.notes||"").replace(/,/g," "),p.lat||"",p.lng||""].join(","));
+  });
+  var csvContent=rows.join("\r\n");
+  var b=new Blob([csvContent],{type:"text/csv"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(b);
+  a.download="propiq_pins_"+new Date().toISOString().slice(0,10)+".csv";a.click();
+}
+
+// NEW TABS ENGINE -- Title Companies, Private Lenders, Deal Runner
+// MFG, Inc. (Mexausa Food Group, Inc.) | Saul Garcia | +1-831-251-3116
+
+// ============================================================
+// SD TITLE COMPANIES DATA
+// ============================================================
+var SD_TITLE_COS = [
+  {name:"First American Title",addr:"411 Ivy St, San Diego CA 92101",phone:"619-238-1776",fax:"619-238-1780",email:"sandiego@firstam.com",web:"firstam.com",specialty:"Full service -- prelim, payoff, escrow",rating:"A"},
+  {name:"Chicago Title -- San Diego",addr:"2365 Northside Dr Ste 500, San Diego CA 92108",phone:"619-521-3400",fax:"619-521-3401",email:"sandiego@ctt.com",web:"ctic.com",specialty:"Commercial & residential -- NOD expertise",rating:"A"},
+  {name:"Fidelity National Title -- SD",addr:"7676 Hazard Center Dr Ste 1500, San Diego CA 92108",phone:"619-222-9494",fax:"619-222-9495",email:"sd.title@fnf.com",web:"fidelitynationaltitle.com",specialty:"High-volume residential -- distressed",rating:"A"},
+  {name:"Old Republic Title -- San Diego",addr:"750 B St Ste 3000, San Diego CA 92101",phone:"619-232-3701",fax:"619-232-3702",email:"sdescrow@ortc.com",web:"ortc.com",specialty:"Investor transactions -- assignments",rating:"A"},
+  {name:"Stewart Title -- San Diego",addr:"5055 N Harbor Dr Ste 345, San Diego CA 92106",phone:"619-224-1400",fax:"619-224-1401",email:"sdinfo@stewart.com",web:"stewart.com",specialty:"Commercial -- investment properties",rating:"A"},
+  {name:"Placer Title -- Chula Vista",addr:"470 Third Ave, Chula Vista CA 91910",phone:"619-691-1600",fax:"619-691-1601",email:"cvinfo@placertitle.com",web:"placertitle.com",specialty:"South County -- residential",rating:"B"},
+  {name:"North American Title -- El Cajon",addr:"1015 E Main St Ste C, El Cajon CA 92021",phone:"619-442-3700",fax:"619-442-3701",email:"elcajon@nat.com",web:"nat.com",specialty:"East County -- distressed properties",rating:"A"},
+  {name:"Western Title & Escrow -- Santee",addr:"9891 Prospect Ave Ste 100, Santee CA 92071",phone:"619-448-7800",fax:"619-448-7801",email:"santee@westerntitle.com",web:"westerntitle.com",specialty:"East County -- residential",rating:"B"},
+  {name:"Pacific Coast Title -- La Mesa",addr:"8363 Center Dr Ste B, La Mesa CA 91942",phone:"619-463-9400",fax:"619-463-9401",email:"lamesa@pct.com",web:"pacificcoasttitle.com",specialty:"East County -- SFR & multi",rating:"B"},
+  {name:"Lawyers Title -- Escondido",addr:"200 E Via Rancho Pkwy Ste 200, Escondido CA 92025",phone:"760-743-1600",fax:"760-743-1601",email:"escondido@ltic.com",web:"ltic.com",specialty:"North County inland",rating:"B"},
+  {name:"Ticor Title -- Oceanside",addr:"1975 S El Camino Real Ste 200, Oceanside CA 92054",phone:"760-722-3434",fax:"760-722-3435",email:"oceanside@ticortitle.com",web:"ticortitle.com",specialty:"North County coastal",rating:"B"},
+  {name:"Investors Title -- Chula Vista",addr:"388 E H St Ste 201, Chula Vista CA 91910",phone:"619-585-3600",fax:"619-585-3601",email:"cv@investorstitle.com",web:"investorstitle.com",specialty:"Investor / distressed specialist",rating:"A"},
+  {name:"Orange Coast Title -- San Diego",addr:"5355 Mira Sorrento Pl Ste 100, San Diego CA 92121",phone:"858-792-3400",fax:"858-792-3401",email:"sd@octitle.com",web:"octitle.com",specialty:"Complex transactions -- assignments",rating:"A"},
+  {name:"Commonwealth Land Title -- SD",addr:"501 W Broadway Ste 1400, San Diego CA 92101",phone:"619-234-7700",fax:"619-234-7701",email:"sd@cltic.com",web:"cltic.com",specialty:"Downtown -- commercial & NPN",rating:"B"},
+  {name:"Meridian Escrow -- San Diego",addr:"2550 Fifth Ave Ste 800, San Diego CA 92103",phone:"619-295-7100",fax:"619-295-7101",email:"info@meridianescrow.com",web:"meridianescrow.com",specialty:"Independent escrow -- investor friendly",rating:"A"},
+];
+
+// ============================================================
+// PRIVATE LENDERS / HARD MONEY DATA
+// ============================================================
+var PRIVATE_LENDERS = [
+  {name:"Pacific Private Money",region:"CA Statewide",phone:"415-883-2150",email:"info@pacificprivatemoney.com",web:"pacificprivatemoney.com",ltv:"65-75%",rate:"9-13%",term:"6-24 mo",min:"$150K",max:"$5M",days:"7-14",focus:"Fix & flip, bridge, distressed",note:"CAUTION: Check current CA DFPI license status before engaging"},
+  {name:"Patch of Land",region:"Nationwide",phone:"888-959-1254",email:"originations@patchofland.com",web:"patchofland.com",ltv:"up to 75% ARV",rate:"8-12%",term:"12-24 mo",min:"$100K",max:"$3M",days:"7-10",focus:"Fix & flip, rental, bridge"},
+  {name:"Lima One Capital",region:"Nationwide",phone:"833-315-5462",email:"info@limaone.com",web:"limaone.com",ltv:"up to 75% ARV",rate:"8.49-13%",term:"13-24 mo",min:"$75K",max:"$5M",days:"10-14",focus:"Fix & flip, rental DSCR, multi"},
+  {name:"Kiavi (ex-LendingHome)",region:"CA + Nationwide",phone:"844-415-4743",email:"help@kiavi.com",web:"kiavi.com",ltv:"up to 75% ARV",rate:"9.25-12.5%",term:"12-24 mo",min:"$75K",max:"$3M",days:"7-10",focus:"Fix & flip, bridge, BRRR"},
+  {name:"RCN Capital",region:"CA + Nationwide",phone:"860-432-5858",email:"info@rcncapital.com",web:"rcncapital.com",ltv:"up to 75%",rate:"9.99-12%",term:"12-18 mo",min:"$50K",max:"$2.5M",days:"10-14",focus:"Residential invest -- distressed"},
+  {name:"Anchor Loans -- Calabasas",region:"CA Focus",phone:"844-626-2465",email:"loans@anchorloans.com",web:"anchorloans.com",ltv:"up to 70% ARV",rate:"9-12%",term:"12 mo",min:"$75K",max:"$5M",days:"5-10",focus:"Fix & flip -- CA specialist"},
+  {name:"Civic Financial Services",region:"CA + Multi-state",phone:"855-460-2021",email:"info@civicfs.com",web:"civicfs.com",ltv:"up to 80% LTV",rate:"8.99-11%",term:"6-36 mo",min:"$100K",max:"$7.5M",days:"10-21",focus:"Bridge, DSCR, short-term rental"},
+  {name:"HouseMax Funding -- SD",region:"San Diego County",phone:"619-756-6789",email:"loans@housemaxfunding.com",web:"housemaxfunding.com",ltv:"up to 70%",rate:"10-13%",term:"6-12 mo",min:"$100K",max:"$2M",days:"5-7",focus:"Local SD -- fast close -- distressed"},
+  {name:"CoreVest Finance",region:"CA + Nationwide",phone:"844-223-2238",email:"info@corevestfinance.com",web:"corevestfinance.com",ltv:"up to 75%",rate:"8.5-11%",term:"12-36 mo",min:"$75K",max:"$50M",days:"14-21",focus:"Portfolio rental, bridge, fix & flip"},
+  {name:"Genesis Capital",region:"CA Statewide",phone:"310-279-0030",email:"originations@genesiscapital.com",web:"genesiscapital.com",ltv:"up to 75% ARV",rate:"9.5-12%",term:"12 mo",min:"$150K",max:"$5M",days:"7-10",focus:"Fix & flip -- equity driven -- CA"},
+  {name:"SD Capital Funding",region:"San Diego County",phone:"619-232-6200",email:"info@sdcapitalfunding.com",web:"sdcapitalfunding.com",ltv:"up to 65%",rate:"10-14%",term:"6-12 mo",min:"$50K",max:"$1.5M",days:"3-7",focus:"Local hard money -- fast close"},
+  {name:"PB Financial Group -- LA/SD",region:"Southern CA",phone:"877-700-7023",email:"info@pbfinancialgrp.com",web:"pbfinancialgrp.com",ltv:"up to 65%",rate:"9-13%",term:"12 mo",min:"$100K",max:"$3M",days:"7-14",focus:"Distressed, NOD, REO, fix & flip"},
+];
+
+// ============================================================
+// DEAL RUNNER -- MATCH DEAL TO LENDERS
+// ============================================================
+function runDealMatch(){
+  var price=parseFloat(document.getElementById("dr-price").value)||0;
+  var arv=parseFloat(document.getElementById("dr-arv").value)||0;
+  var repair=parseFloat(document.getElementById("dr-repair").value)||0;
+  var liens=parseFloat(document.getElementById("dr-liens").value)||0;
+  var taxes=parseFloat(document.getElementById("dr-taxes").value)||0;
+  var needed=parseFloat(document.getElementById("dr-needed").value)||0;
+  var closedays=parseFloat(document.getElementById("dr-days").value)||14;
+  var proptype=document.getElementById("dr-ptype").value;
+  var out=document.getElementById("dr-results");
+  if(!price||!arv){out.innerHTML="<div style='color:var(--amber);font-size:10px'>Enter purchase price and ARV to run match.</div>";return;}
+
+  var totalNeeded=needed||(price+repair+liens+taxes);
+  var ltv=arv>0?Math.round((totalNeeded/arv)*100):0;
+  var profit=arv-(totalNeeded*1.06);
+
+  var matches=PRIVATE_LENDERS.filter(function(l){
+    var lenderLTV=parseFloat((l.ltv||"65").replace(/[^0-9]/g,""))||65;
+    var lenderMin=parseFloat((l.min||"0").replace(/[^0-9.KM]/gi,"").replace("K","000").replace("M","000000"))||0;
+    var lenderMax=parseFloat((l.max||"99999999").replace(/[^0-9.KM]/gi,"").replace("K","000").replace("M","000000"))||99999999;
+    var fitsLTV=ltv<=lenderLTV;
+    var fitsAmt=totalNeeded>=lenderMin&&totalNeeded<=lenderMax;
+    var fitsClose=closedays>=parseInt(l.days.split("-")[0]||"3");
+    return fitsLTV&&fitsAmt&&fitsClose;
+  });
+  matches.sort(function(a,b){return parseInt(a.days)-parseInt(b.days);});
+
+  var h="<div class='card' style='margin-bottom:10px'>";
+  h+="<div class='card-hdr'>Deal Summary</div>";
+  h+="<div class='result-row'><span class='result-key'>Purchase Price</span><span class='result-val'>$"+price.toLocaleString()+"</span></div>";
+  h+="<div class='result-row'><span class='result-key'>ARV</span><span class='result-val'>$"+arv.toLocaleString()+"</span></div>";
+  h+="<div class='result-row'><span class='result-key'>Total Capital Needed</span><span class='result-val'>$"+totalNeeded.toLocaleString()+"</span></div>";
+  h+="<div class='result-row'><span class='result-key'>LTV (vs ARV)</span><span class='result-val "+(ltv<=65?"green":ltv<=75?"gold":"red")+"'>"+ltv+"%</span></div>";
+  h+="<div class='result-row'><span class='result-key'>Estimated Profit</span><span class='result-val "+(profit>0?"green":"red")+"'>$"+Math.round(profit).toLocaleString()+"</span></div>";
+  h+="<div class='result-row'><span class='result-key'>Lenders Matched</span><span class='result-val blue'>"+matches.length+"</span></div>";
+  h+="</div>";
+
+  if(matches.length===0){
+    h+="<div class='card' style='border-color:rgba(239,68,68,0.3)'><div style='font-size:10px;color:var(--red)'>No lenders matched. LTV may be too high ("+ltv+"%) or loan amount outside ranges. Lower price or increase ARV.</div></div>";
+  } else {
+    h+="<div style='font-size:9px;color:var(--txt3);margin-bottom:8px'>Sorted by fastest close. Click CONTACT to pre-fill email.</div>";
+    matches.forEach(function(l,i){
+      h+="<div class='card' style='margin-bottom:8px;border-color:rgba(74,143,212,0.3)'>";
+      h+="<div style='display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px'>";
+      h+="<div><div style='font-size:11px;font-weight:700;color:var(--txt)'>"+(i+1)+". "+l.name+"</div>";
+      h+="<div style='font-size:9px;color:var(--blue)'>"+l.region+" | "+l.focus+"</div></div>";
+      h+="<span class='badge b-green'>"+l.days+" days</span></div>";
+      h+="<div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:6px'>";
+      h+="<div class='stat' style='padding:4px 6px'><div class='stat-val' style='font-size:12px'>"+l.ltv+"</div><div class='stat-lbl'>LTV</div></div>";
+      h+="<div class='stat' style='padding:4px 6px'><div class='stat-val' style='font-size:12px'>"+l.rate+"</div><div class='stat-lbl'>RATE</div></div>";
+      h+="<div class='stat' style='padding:4px 6px'><div class='stat-val' style='font-size:12px'>"+l.term+"</div><div class='stat-lbl'>TERM</div></div>";
+      h+="</div>";
+      h+="<div style='font-size:9px;color:var(--txt3);margin-bottom:6px'>"+l.min+" - "+l.max+" loan range</div>";
+      if(l.note)h+="<div style='font-size:8px;color:var(--amber);margin-bottom:4px'>NOTE: "+l.note+"</div>";
+      var addr_esc=(document.getElementById("dr-addr")||{value:""}).value.replace(/"/g,"");
+      h+="<div style='display:flex;gap:6px'>";
+      h+="<button class='btn btn-blue' style='flex:1;font-size:9px' onclick='prefillLenderEmail(\""+l.name.replace(/"/g,"")+"\",\""+l.email+"\",\""+l.phone+"\","+price+","+arv+","+totalNeeded+","+ltv+")'>CONTACT / SEND MINI-1003</button>";
+      h+="<a href='tel:"+l.phone+"' class='btn btn-gold' style='font-size:9px;text-decoration:none'>CALL</a>";
+      h+="</div></div>";
+    });
+  }
+  out.innerHTML=h;out.style.display="block";
+}
+
+function prefillLenderEmail(lname,lemail,lphone,price,arv,needed,ltv){
+  document.getElementById("pl-to").value=lemail;
+  var addr=(document.getElementById("dr-addr")||{value:"[Property Address]"}).value||"[Property Address]";
+  var subj="Hard Money Loan Request -- MFG, Inc. -- "+addr;
+  var body="Dear "+lname+" Team,\n\nMy name is Saul Garcia, Principal of MFG, Inc. (Mexausa Food Group, Inc.).\n\n";
+  body+="I am requesting a hard money / private lending proposal for the following equity-driven acquisition:\n\n";
+  body+="PROPERTY: "+addr+"\n";
+  body+="PURCHASE PRICE: $"+price.toLocaleString()+"\n";
+  body+="AFTER REPAIR VALUE (ARV): $"+arv.toLocaleString()+"\n";
+  body+="CAPITAL NEEDED: $"+needed.toLocaleString()+"\n";
+  body+="LTV vs ARV: "+ltv+"%\n\n";
+  body+="TRANSACTION OVERVIEW:\n";
+  body+="This is an equity purchase. MFG, Inc. will acquire the property via an assignment agreement. ";
+  body+="The loan proceeds will be used to: (1) fund the purchase, (2) pay off all existing liens, delinquent taxes, and seller obligations through escrow, and (3) fund any required repairs. ";
+  body+="The seller receives net proceeds after all obligations are cleared.\n\n";
+  body+="Please provide:\n- Loan terms (rate, points, term, prepayment)\n- Required documentation\n- Timeline to fund\n- Letter of Interest or Pre-Approval\n\nMINI-1003 ATTACHED / AVAILABLE UPON REQUEST.\n\n";
+  body+="Saul Garcia\nMFG, Inc. (Mexausa Food Group, Inc.)\n+1-831-251-3116\nsaul@mexausafg.com";
+  document.getElementById("pl-subj").value=subj;
+  document.getElementById("pl-body").value=body;
+  goTab("lenders");
+  setTimeout(function(){document.getElementById("pl-to").focus();},200);
+}
+
+// ============================================================
+// TITLE REQUEST FUNCTIONS
+// ============================================================
+function sendTitleRequest(idx){
+  var tc=SD_TITLE_COS[idx];
+  if(!tc)return;
+  var addr=(document.getElementById("tr-addr")||{value:"[Property Address]"}).value||"[Property Address]";
+  var apn=(document.getElementById("tr-apn")||{value:""}).value||"";
+  var seller=(document.getElementById("tr-seller")||{value:""}).value||"";
+  var subj="Preliminary Title Report Request -- MFG, Inc. -- "+addr;
+  var body="Dear "+tc.name+" Team,\n\n";
+  body+="My name is Saul Garcia, Principal of MFG, Inc. (Mexausa Food Group, Inc.).\n";
+  body+="Please prepare and deliver the following for the property described below:\n\n";
+  body+="PROPERTY: "+addr+"\n";
+  if(apn)body+="APN: "+apn+"\n";
+  if(seller)body+="Vested Owner / Seller: "+seller+"\n";
+  body+="\nREQUESTED ITEMS:\n";
+  body+="1. Preliminary Title Report (CLTA Standard)\n";
+  body+="2. All Schedule B exceptions and recorded documents\n";
+  body+="3. Payoff demand(s) for all liens of record (on behalf of Seller per attached authorization)\n";
+  body+="4. Beneficiary statement(s) for all deeds of trust\n";
+  body+="5. Tax delinquency status and any open tax liens\n";
+  body+="6. HOA status and open assessments (if applicable)\n";
+  body+="7. Any recorded NOD, NTS, or lis pendens\n";
+  body+="8. IRS / federal tax liens by owner name\n";
+  body+="9. Mechanic's liens or materialman's liens\n";
+  body+="10. Open escrow in the name of: MFG, Inc. (Mexausa Food Group, Inc.) and/or assigns\n\n";
+  body+="BUYER / ASSIGNEE:\nMFG, Inc. (Mexausa Food Group, Inc.)\nSaul Garcia, Principal\n+1-831-251-3116\nsaul@mexausafg.com\n\n";
+  body+="Please confirm receipt and provide your escrow officer's direct contact.\n\n";
+  body+="Thank you,\nSaul Garcia\nMFG, Inc.";
+  window.location.href="mailto:"+encodeURIComponent(tc.email)+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
+}
+
+function sendPayoffRequest(idx){
+  var tc=SD_TITLE_COS[idx];
+  if(!tc)return;
+  var addr=(document.getElementById("tr-addr")||{value:"[Property Address]"}).value||"[Property Address]";
+  var apn=(document.getElementById("tr-apn")||{value:""}).value||"";
+  var subj="Payoff Demand Request -- MFG, Inc. -- "+addr;
+  var body="Dear "+tc.name+" Team,\n\n";
+  body+="MFG, Inc. (Mexausa Food Group, Inc.) is in contract to purchase the property at "+addr+(apn?" (APN: "+apn+")":"")+ ". ";
+  body+="Pursuant to the executed Purchase and Assignment Agreement, and with Seller's written authorization, please order the following payoff demands:\n\n";
+  body+="1. Full payoff demand from all first and second lien holders\n";
+  body+="2. Reinstatement quote (if NOD filed)\n";
+  body+="3. Tax collector payoff / redemption amount\n";
+  body+="4. HOA payoff / lien release demand\n";
+  body+="5. IRS lien payoff or certificate of discharge\n\n";
+  body+="Please provide all demands through escrow. Time is of the essence.\n\n";
+  body+="Saul Garcia | MFG, Inc. | +1-831-251-3116 | saul@mexausafg.com";
+  window.location.href="mailto:"+encodeURIComponent(tc.email)+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
+}
+
+function sendLenderEmail(){
+  var to=document.getElementById("pl-to").value;
+  var subj=document.getElementById("pl-subj").value;
+  var body=document.getElementById("pl-body").value;
+  var status=document.getElementById("pl-status");
+  if(!to||!subj){status.textContent="Fill in recipient and subject.";return;}
+  status.textContent="Sending...";
+  fetch("https://auditdna-backend-1-production.up.railway.app/api/email/send",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({to:to,subject:subj,text:body})
+  }).then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){status.style.color="var(--green)";status.textContent="Sent to "+to;}
+    else{fallbackMailtoL(to,subj,body,status);}
+  }).catch(function(){fallbackMailtoL(to,subj,body,status);});
+}
+function fallbackMailtoL(to,subj,body,status){
+  window.location.href="mailto:"+encodeURIComponent(to)+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body.slice(0,2000));
+  status.style.color="var(--gold)";status.textContent="Opening email client...";
+}
+
+function buildTCList(){
+  var tl=document.getElementById("tc-list");
+  if(!tl)return;
+  tl.innerHTML="";
+  SD_TITLE_COS.forEach(function(tc,i){
+    var d=document.createElement("div");
+    d.className="card";
+    d.style.marginBottom="8px";
+    var nm=document.createElement("div");
+    nm.innerHTML="<div style='display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px'><div><div style='font-size:11px;font-weight:700;color:var(--txt)'>"+tc.name+"</div><div style='font-size:9px;color:var(--txt3)'>"+tc.addr+"</div><div style='font-size:9px;color:var(--txt3)'>"+tc.phone+" | "+tc.email+"</div><div style='font-size:9px;color:var(--blue)'>"+tc.specialty+"</div></div><span class='badge "+(tc.rating==="A"?"b-green":"b-blue")+"'>"+tc.rating+"</span></div>";
+    d.appendChild(nm);
+    var btns=document.createElement("div");
+    btns.style.display="flex";btns.style.gap="6px";btns.style.flexWrap="wrap";
+    var b1=document.createElement("button");b1.className="btn btn-gold";b1.style.flex="1";b1.style.fontSize="9px";b1.textContent="REQUEST PRELIM REPORT";b1.onclick=(function(idx){return function(){sendTitleRequest(idx);};})(i);
+    var b2=document.createElement("button");b2.className="btn btn-blue";b2.style.flex="1";b2.style.fontSize="9px";b2.textContent="REQUEST PAYOFF DEMANDS";b2.onclick=(function(idx){return function(){sendPayoffRequest(idx);};})(i);
+    var b3=document.createElement("a");b3.href="tel:"+tc.phone;b3.className="btn";b3.style.cssText="font-size:9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:var(--txt2);text-decoration:none";b3.textContent="CALL";
+    btns.appendChild(b1);btns.appendChild(b2);btns.appendChild(b3);
+    d.appendChild(btns);
+    tl.appendChild(d);
+  });
+}
+function buildLenderList(){
+  var ll=document.getElementById("ldr-list");
+  if(!ll)return;
+  ll.innerHTML="";
+  PRIVATE_LENDERS.forEach(function(l,i){
+    var d=document.createElement("div");
+    d.className="card";
+    d.style.marginBottom="8px";
+    d.style.borderColor="rgba(74,143,212,0.25)";
+    var top=document.createElement("div");
+    top.innerHTML="<div style='display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px'><div><div style='font-size:11px;font-weight:700;color:var(--txt)'>"+l.name+"</div><div style='font-size:9px;color:var(--blue)'>"+l.region+" | "+l.focus+"</div></div><span class='badge b-gold'>"+l.days+" days</span></div><div style='display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px'><div class='stat' style='padding:4px'><div class='stat-val' style='font-size:10px'>"+l.ltv+"</div><div class='stat-lbl'>LTV</div></div><div class='stat' style='padding:4px'><div class='stat-val' style='font-size:10px'>"+l.rate+"</div><div class='stat-lbl'>RATE</div></div><div class='stat' style='padding:4px'><div class='stat-val' style='font-size:10px'>"+l.term+"</div><div class='stat-lbl'>TERM</div></div><div class='stat' style='padding:4px'><div class='stat-val' style='font-size:10px'>"+l.min+"-"+l.max+"</div><div class='stat-lbl'>RANGE</div></div></div>"+(l.note?"<div style='font-size:8px;color:var(--amber);margin-bottom:4px'>NOTE: "+l.note+"</div>":"");
+    d.appendChild(top);
+    var btns=document.createElement("div");
+    btns.style.display="flex";btns.style.gap="6px";
+    var bc=document.createElement("button");bc.className="btn btn-blue";bc.style.flex="1";bc.style.fontSize="9px";bc.textContent="CONTACT / SEND MINI-1003";
+    bc.onclick=(function(ln,le,lp){return function(){prefillLenderEmail(ln,le,lp,0,0,0,0);};})(l.name,l.email,l.phone);
+    var ba=document.createElement("a");ba.href="tel:"+l.phone;ba.className="btn btn-gold";ba.style.cssText="font-size:9px;text-decoration:none";ba.textContent="CALL";
+    btns.appendChild(bc);btns.appendChild(ba);
+    d.appendChild(btns);
+    ll.appendChild(d);
+  });
+}
+function initAll(){
+  goTab("predict");
+  loadTemplate();
+  buildTCList();
+  buildLenderList();
+}
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body>
+</html>

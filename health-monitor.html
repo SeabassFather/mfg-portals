@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MFG Platform Health Monitor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',monospace;background:#020912;color:#e2e8f0;min-height:100vh;padding:20px;}
+h1{font-size:18px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:4px;}
+.sub{font-size:10px;color:#64748b;letter-spacing:1px;margin-bottom:20px;}
+.controls{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
+.btn{background:#C9A55C;border:none;color:#020912;padding:8px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;cursor:pointer;border-radius:4px;}
+.btn-stop{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#ef4444;}
+.btn-clear{background:rgba(100,116,139,0.15);border:1px solid rgba(100,116,139,0.3);color:#64748b;}
+#status-bar{font-size:11px;color:#64748b;}
+#last-check{font-size:10px;color:#64748b;}
+#overall{font-size:13px;font-weight:800;margin-left:10px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;margin-bottom:20px;}
+.ep-card{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:.3s;}
+.dot{width:12px;height:12px;border-radius:50%;background:#374151;flex-shrink:0;transition:.3s;}
+.dot.up{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.5);}
+.dot.down{background:#ef4444;box-shadow:0 0 8px rgba(239,68,68,0.5);}
+.dot.warn{background:#f97316;box-shadow:0 0 8px rgba(249,115,22,0.4);}
+.dot.checking{background:#C9A55C;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ep-info{flex:1;min-width:0;}
+.ep-name{font-size:11px;font-weight:700;color:#e2e8f0;}
+.ep-url{font-size:9px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ep-ms{font-size:9px;color:#94a3b8;font-weight:700;min-width:40px;text-align:right;}
+.ep-st{font-size:8px;font-weight:800;padding:2px 8px;border-radius:3px;min-width:52px;text-align:center;}
+.st-up{background:rgba(34,197,94,0.12);color:#22c55e;}
+.st-down{background:rgba(239,68,68,0.12);color:#ef4444;}
+.st-warn{background:rgba(249,115,22,0.12);color:#f97316;}
+.st-check{background:rgba(201,165,92,0.1);color:#C9A55C;}
+.history-panel{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;}
+.history-panel h2{font-size:10px;font-weight:700;color:#C9A55C;letter-spacing:1.5px;margin-bottom:10px;}
+#log{font-size:10px;font-family:monospace;color:#94a3b8;max-height:280px;overflow-y:auto;line-height:1.7;}
+.log-ok{color:#22c55e;}
+.log-err{color:#ef4444;}
+.log-ts{color:#374151;}
+.log-info{color:#4a8fd4;}
+.progress-bar{height:3px;background:#161b22;border-radius:2px;margin-bottom:16px;overflow:hidden;}
+#progress-fill{height:100%;background:linear-gradient(90deg,#C9A55C,#22c55e);width:0%;transition:width .3s;}
+.summary-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+.sum-card{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:10px 16px;text-align:center;min-width:90px;}
+.sum-val{font-size:22px;font-weight:900;}
+.sum-lbl{font-size:8px;color:#64748b;letter-spacing:1px;margin-top:2px;}
+</style>
+</head>
+<body>
+<h1>MFG PLATFORM HEALTH MONITOR</h1>
+<div class="sub">AuditDNA Intelligence by MFG, Inc. &nbsp;|&nbsp; mexausafg.com &nbsp;|&nbsp; financelend.me &nbsp;|&nbsp; enjoybaja.com</div>
+
+<div class="controls">
+  <button class="btn" onclick="runCheck()">RUN CHECK NOW</button>
+  <button class="btn" id="auto-btn" onclick="toggleAuto()">START AUTO (30s)</button>
+  <button class="btn btn-clear" onclick="clearLog()">CLEAR LOG</button>
+  <span id="status-bar">Ready</span>
+  <span id="overall"></span>
+</div>
+
+<div class="progress-bar"><div id="progress-fill"></div></div>
+
+<div class="summary-row">
+  <div class="sum-card"><div class="sum-val" id="sum-up" style="color:#22c55e">—</div><div class="sum-lbl">UP</div></div>
+  <div class="sum-card"><div class="sum-val" id="sum-down" style="color:#ef4444">—</div><div class="sum-lbl">DOWN</div></div>
+  <div class="sum-card"><div class="sum-val" id="sum-pct" style="color:#C9A55C">—</div><div class="sum-lbl">HEALTH %</div></div>
+  <div class="sum-card"><div class="sum-val" id="sum-ms" style="color:#4a8fd4">—</div><div class="sum-lbl">AVG MS</div></div>
+  <div class="sum-card"><div class="sum-val" id="sum-checks" style="color:#94a3b8">0</div><div class="sum-lbl">TOTAL CHECKS</div></div>
+  <div id="last-check" style="align-self:center;margin-left:auto;font-size:9px;color:#374151"></div>
+</div>
+
+<div class="grid" id="endpoint-grid"></div>
+
+<div class="history-panel">
+  <h2>HEALTH CHECK LOG — HISTORY</h2>
+  <div id="log"><span style="color:#374151">No checks run yet. Click RUN CHECK NOW to start.</span></div>
+</div>
+
+<script>
+var ENDPOINTS = [
+  // ── AuditDNA Backend ─────────────────────────────────────────────────────
+  {name:'AuditDNA Backend /health',          url:'https://auditdna-backend-1-production.up.railway.app/api/health',          group:'BACKEND'},
+  {name:'AuditDNA DB /contacts',             url:'https://auditdna-backend-1-production.up.railway.app/api/contacts?limit=1', group:'BACKEND'},
+  {name:'LOAF /listings',                    url:'https://auditdna-backend-1-production.up.railway.app/api/loaf/listings?limit=1', group:'BACKEND'},
+  {name:'Brain Events API',                  url:'https://auditdna-backend-1-production.up.railway.app/api/brain/events',    group:'BACKEND'},
+  {name:'Messenger API /history',            url:'https://auditdna-backend-1-production.up.railway.app/api/messenger/history?portal=health-monitor', group:'BACKEND'},
+  // ── EnjoyBaja Backend ────────────────────────────────────────────────────
+  {name:'EnjoyBaja Backend /health',         url:'https://auditdna-realestate-production.up.railway.app/api/health',         group:'ENJOYBAJA'},
+  {name:'EnjoyBaja /properties',             url:'https://auditdna-realestate-production.up.railway.app/api/properties?limit=1', group:'ENJOYBAJA'},
+  // ── FinanceLend Railway ───────────────────────────────────────────────────
+  {name:'FinanceLend Railway',               url:'https://smpcd0qi.up.railway.app/api/health',                              group:'FINANCELEND'},
+  // ── Frontends ────────────────────────────────────────────────────────────
+  {name:'mexausafg.com',                     url:'https://mexausafg.com',                                                   group:'FRONTEND'},
+  {name:'enjoybaja.com',                     url:'https://enjoybaja.com',                                                   group:'FRONTEND'},
+  {name:'financelend.me',                    url:'https://financelend.me',                                                  group:'FRONTEND'},
+  {name:'loaf.mexausafg.com',               url:'https://loaf.mexausafg.com',                                              group:'FRONTEND'},
+  // ── Mini-Office Portals ───────────────────────────────────────────────────
+  {name:'SW District Pro',                   url:'https://mexausafg.com/sw-district-pro.html',                              group:'PORTALS'},
+  {name:'Banning & Son Pro',                 url:'https://mexausafg.com/banning-son-pro.html',                             group:'PORTALS'},
+  {name:'Douglas Pipeline Pro',              url:'https://mexausafg.com/douglas-pipeline-pro.html',                        group:'PORTALS'},
+  {name:'WorkComp360 Demo',                  url:'https://mexausafg.com/workcomp360-demo.html',                            group:'PORTALS'},
+  {name:'Sprinter HQ',                       url:'https://mexausafg.com/sprinter-hq.html',                                 group:'PORTALS'},
+  {name:'LowVolt Pro',                       url:'https://mexausafg.com/lowvolt-pro.html',                                 group:'PORTALS'},
+];
+
+var autoTimer = null;
+var totalChecks = 0;
+var checkHistory = [];
+
+function buildGrid() {
+  var g = document.getElementById('endpoint-grid');
+  g.innerHTML = '';
+  ENDPOINTS.forEach(function(ep, i) {
+    var prev = '', prevGroup = i > 0 ? ENDPOINTS[i-1].group : '';
+    var card = document.createElement('div');
+    card.className = 'ep-card';
+    card.id = 'card-' + i;
+    card.innerHTML =
+      '<div class="dot" id="dot-' + i + '"></div>' +
+      '<div class="ep-info">' +
+        '<div class="ep-name">' + ep.name + '</div>' +
+        '<div class="ep-url">' + ep.url.replace('https://','') + '</div>' +
+        '<div style="font-size:8px;color:#374151;margin-top:2px">' + ep.group + '</div>' +
+      '</div>' +
+      '<div class="ep-ms" id="ms-' + i + '">—</div>' +
+      '<div class="ep-st st-check" id="st-' + i + '">READY</div>';
+    g.appendChild(card);
+  });
+}
+
+function setCard(i, state, ms, code) {
+  var dot = document.getElementById('dot-' + i);
+  var st  = document.getElementById('st-' + i);
+  var msEl = document.getElementById('ms-' + i);
+  var card = document.getElementById('card-' + i);
+  if (!dot) return;
+
+  dot.className = 'dot ' + state;
+  if (msEl) msEl.textContent = ms ? ms + 'ms' : '—';
+
+  var label = state === 'up' ? 'UP' : state === 'down' ? 'DOWN' : state === 'warn' ? code || 'WARN' : '...';
+  var cls   = state === 'up' ? 'st-up' : state === 'down' ? 'st-down' : state === 'warn' ? 'st-warn' : 'st-check';
+  if (st) { st.className = 'ep-st ' + cls; st.textContent = label; }
+  if (card) {
+    card.style.borderColor = state === 'up' ? 'rgba(34,197,94,0.2)' :
+                             state === 'down' ? 'rgba(239,68,68,0.25)' :
+                             state === 'warn' ? 'rgba(249,115,22,0.2)' : 'rgba(255,255,255,0.07)';
+  }
+}
+
+function addLog(msg, cls) {
+  var log = document.getElementById('log');
+  var ts  = new Date().toLocaleTimeString();
+  var div = document.createElement('div');
+  div.innerHTML = '<span class="log-ts">[' + ts + ']</span> <span class="' + (cls||'') + '">' + msg + '</span>';
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('log').innerHTML = '';
+}
+
+function updateSummary(results) {
+  var up   = results.filter(function(r){return r.state==='up';}).length;
+  var down = results.filter(function(r){return r.state==='down';}).length;
+  var pct  = Math.round(up / results.length * 100);
+  var avgMs= results.filter(function(r){return r.ms;}).reduce(function(s,r){return s+r.ms;},0) / (results.filter(function(r){return r.ms;}).length||1);
+  document.getElementById('sum-up').textContent = up;
+  document.getElementById('sum-down').textContent = down;
+  document.getElementById('sum-pct').textContent = pct + '%';
+  document.getElementById('sum-ms').textContent = Math.round(avgMs) + 'ms';
+  document.getElementById('sum-checks').textContent = ++totalChecks;
+  document.getElementById('last-check').textContent = 'Last: ' + new Date().toLocaleString();
+
+  var ov = document.getElementById('overall');
+  ov.textContent = pct === 100 ? '✓ ALL SYSTEMS GO' : pct >= 70 ? '⚠ DEGRADED' : '✗ CRITICAL';
+  ov.style.color = pct === 100 ? '#22c55e' : pct >= 70 ? '#f97316' : '#ef4444';
+
+  var entry = {ts: new Date().toISOString(), up: up, total: results.length, pct: pct, avgMs: Math.round(avgMs)};
+  checkHistory.unshift(entry);
+  if (checkHistory.length > 200) checkHistory = checkHistory.slice(0,200);
+  try { localStorage.setItem('mfg_health_history', JSON.stringify(checkHistory)); } catch(e) {}
+
+  addLog('CHECK COMPLETE — ' + up + '/' + results.length + ' UP (' + pct + '%) — avg ' + Math.round(avgMs) + 'ms',
+         pct === 100 ? 'log-ok' : 'log-err');
+}
+
+function runCheck() {
+  var fill = document.getElementById('progress-fill');
+  fill.style.width = '0%';
+  document.getElementById('status-bar').textContent = 'Checking ' + ENDPOINTS.length + ' endpoints...';
+
+  // Set all to checking
+  ENDPOINTS.forEach(function(ep, i) { setCard(i, 'checking', null, null); });
+
+  addLog('─── STARTING HEALTH CHECK (' + ENDPOINTS.length + ' endpoints) ───', 'log-info');
+
+  var results = [];
+  var completed = 0;
+
+  ENDPOINTS.forEach(function(ep, i) {
+    var t0 = Date.now();
+    fetch(ep.url, {method:'GET', signal: AbortSignal.timeout(9000)})
+      .then(function(r) {
+        var ms = Date.now() - t0;
+        var state = (r.ok || r.status===401 || r.status===403 || r.status===302 || r.status===301) ? 'up' : 'warn';
+        var code = r.status;
+        setCard(i, state, ms, code);
+        results.push({i:i, state:state, ms:ms, code:code});
+        addLog((state==='up'?'✓':'⚠') + ' ' + ep.name + ' — ' + code + ' — ' + ms + 'ms',
+               state==='up'?'log-ok':'log-err');
+        completed++;
+        fill.style.width = Math.round(completed/ENDPOINTS.length*100) + '%';
+        if (completed === ENDPOINTS.length) {
+          document.getElementById('status-bar').textContent = 'Done — ' + new Date().toLocaleTimeString();
+          updateSummary(results);
+        }
+      })
+      .catch(function(e) {
+        var ms = Date.now() - t0;
+        setCard(i, 'down', ms, 'DOWN');
+        results.push({i:i, state:'down', ms:ms, code:'TIMEOUT'});
+        addLog('✗ ' + ep.name + ' — DOWN/TIMEOUT — ' + ms + 'ms', 'log-err');
+        completed++;
+        fill.style.width = Math.round(completed/ENDPOINTS.length*100) + '%';
+        if (completed === ENDPOINTS.length) {
+          document.getElementById('status-bar').textContent = 'Done — ' + new Date().toLocaleTimeString();
+          updateSummary(results);
+        }
+      });
+  });
+}
+
+function toggleAuto() {
+  var btn = document.getElementById('auto-btn');
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    btn.textContent = 'START AUTO (30s)';
+    btn.style.background = '';
+    btn.style.color = '';
+    addLog('Auto-check stopped', 'log-info');
+  } else {
+    addLog('Auto-check started — every 30 seconds', 'log-info');
+    runCheck();
+    autoTimer = setInterval(runCheck, 30000);
+    btn.textContent = 'STOP AUTO';
+    btn.style.background = 'rgba(239,68,68,0.15)';
+    btn.style.color = '#ef4444';
+  }
+}
+
+// Load history from localStorage
+try {
+  var saved = localStorage.getItem('mfg_health_history');
+  if (saved) {
+    checkHistory = JSON.parse(saved);
+    if (checkHistory.length) {
+      addLog('Loaded ' + checkHistory.length + ' historical checks from storage', 'log-info');
+      var last = checkHistory[0];
+      addLog('Last check: ' + new Date(last.ts).toLocaleString() + ' — ' + last.up + '/' + last.total + ' UP (' + last.pct + '%)', 'log-info');
+    }
+  }
+} catch(e) {}
+
+buildGrid();
+</script>
+</body>
+</html>
