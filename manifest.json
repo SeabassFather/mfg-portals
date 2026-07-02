@@ -1,0 +1,44 @@
+{
+  "name": "LOAF — Mexausa Food Group",
+  "short_name": "LOAF",
+  "description": "Live produce trading — post inventory, find US buyers, get paid fast.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020912",
+  "theme_color": "#0F7B41",
+  "orientation": "portrait-primary",
+  "categories": [
+    "business",
+    "food",
+    "productivity"
+  ],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Post Inventory",
+      "url": "/?action=post"
+    },
+    {
+      "name": "Buyer Needs",
+      "url": "/?action=buyers"
+    },
+    {
+      "name": "My Listings",
+      "url": "/?action=listings"
+    }
+  ]
+}

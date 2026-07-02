@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>Verdeworks — SD Green Network</title>
+<style>
+:root{
+  --bg:#020c02;--bg2:#071007;--card:#0d1f0d;--card2:#142414;
+  --green:#22c55e;--lime:#84cc16;--gold:#C9A55C;--white:#f0faf0;
+  --dim:#6b8f6b;--muted:#3d5c3d;--bord:rgba(34,197,94,.18);--borddim:rgba(34,197,94,.08);
+  --red:#ef4444;--blue:#3b82f6;--orange:#f59e0b
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,'Segoe UI',sans-serif;min-height:100vh}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gc{background:var(--card);border:1px solid var(--bord);border-radius:20px;padding:40px 30px;width:340px;text-align:center}
+.glogo{width:64px;height:64px;background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:16px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.gtitle{font-size:18px;font-weight:900;color:var(--green);letter-spacing:1px;margin-bottom:3px}
+.gsub{font-size:11px;color:var(--dim);margin-bottom:22px}
+.dots{display:flex;gap:12px;justify-content:center;margin-bottom:22px}
+.dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--green);transition:.2s}
+.dot.on{background:var(--green)}
+.np{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:230px;margin:0 auto}
+.npb{background:var(--card2);border:1px solid var(--borddim);border-radius:10px;color:var(--white);font-size:20px;font-weight:600;padding:14px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:.15s}
+.npb:active{background:rgba(34,197,94,.15);color:var(--green)}
+.gerr{color:var(--red);font-size:12px;margin-top:10px;min-height:16px}
+
+/* APP */
+#app{display:none}
+
+/* TOPBAR */
+#tb{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(2,12,2,.97);border-bottom:1px solid var(--bord);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:200;backdrop-filter:blur(12px)}
+.tb-logo{width:34px;height:34px;background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.tb-name{font-size:13px;font-weight:800;color:var(--green)}
+.tb-sub{font-size:9px;color:var(--dim);margin-top:1px}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-btn{background:none;border:1px solid var(--borddim);color:var(--dim);border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer}
+.mob-fab{position:fixed;top:58px;left:8px;z-index:201;background:var(--green);border:none;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;color:#0a0a0a;display:none}
+
+/* SIDEBAR */
+#sb{position:fixed;top:54px;left:0;bottom:0;width:200px;background:var(--bg2);border-right:1px solid var(--borddim);z-index:199;overflow-y:auto;transform:translateX(-100%);transition:.25s}
+#sb.open{transform:translateX(0)}
+#sb-ov{display:none;position:fixed;inset:0;top:54px;background:rgba(0,0,0,.6);z-index:198}
+.sb-sec{padding:10px 14px 4px;font-size:9px;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:12px;font-weight:600;color:var(--dim);cursor:pointer;transition:.15s}
+.sb-item:hover,.sb-item.act{background:rgba(34,197,94,.08);color:var(--green)}
+.sb-item .ico{font-size:15px;width:20px;text-align:center}
+.sb-badge{background:var(--green);color:#0a0a0a;border-radius:10px;font-size:9px;font-weight:800;padding:1px 6px;margin-left:auto}
+
+/* MAIN */
+#mn{padding:72px 16px 100px;max-width:900px;margin:0 auto}
+@media(min-width:680px){#mn{margin-left:200px}#sb{transform:translateX(0)}#sb-ov{display:none!important}.mob-fab{display:none!important}}
+@media(max-width:679px){.mob-fab{display:block!important}}
+
+.sec{display:none}.sec.act{display:block}
+.sech{font-size:20px;font-weight:800;color:var(--green);margin-bottom:4px;padding-bottom:8px;border-bottom:1px solid var(--bord)}
+.sech-sub{font-size:12px;color:var(--dim);margin-bottom:18px;margin-top:4px}
+.card{background:var(--card);border:1px solid var(--borddim);border-radius:14px;padding:18px;margin-bottom:14px}
+.ct{font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:10px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.fld input,.fld select,.fld textarea{background:var(--card2);border:1px solid var(--borddim);border-radius:8px;color:var(--white);font-size:12.5px;padding:9px 11px;outline:none;width:100%;transition:.15s;font-family:inherit}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--green)}
+.fld select option{background:var(--card)}
+.btn{border:none;border-radius:9px;padding:11px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;width:100%}
+.btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:#0a0a0a}
+.btn-green:hover{opacity:.9}
+.btn-dark{background:var(--card2);color:var(--white);border:1px solid var(--borddim)}
+.btn-gold{background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0a0a0a}
+.btn-red{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+@media(min-width:600px){.stat-grid{grid-template-columns:repeat(6,1fr)}}
+.stat{background:var(--card);border:1px solid var(--borddim);border-radius:10px;padding:12px;text-align:center}
+.stat-v{font-size:18px;font-weight:800;color:var(--green);margin-bottom:2px}
+.stat-l{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.3px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--borddim);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.row-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.row-main{flex:1;min-width:0}
+.row-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sub{font-size:10px;color:var(--dim);margin-top:2px}
+.row-right{text-align:right;flex-shrink:0}
+.tag{display:inline-block;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700}
+.empty{text-align:center;padding:36px;color:var(--muted);font-size:13px}
+.money{font-size:15px;font-weight:800;color:var(--green)}
+.revenue-bar{background:var(--card2);border-radius:10px;padding:14px;margin-bottom:8px;border:1px solid var(--borddim)}
+.rb-label{font-size:11px;color:var(--dim);margin-bottom:6px;font-weight:600}
+.rb-track{background:rgba(34,197,94,.1);border-radius:4px;height:8px;overflow:hidden}
+.rb-fill{background:linear-gradient(90deg,#22c55e,#84cc16);height:100%;border-radius:4px;transition:.5s}
+
+/* JOB BOARD CARD */
+.job-card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:16px;margin-bottom:10px}
+.job-card-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px}
+.job-badge{display:inline-block;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:800;margin-bottom:8px}
+.badge-open{background:rgba(34,197,94,.15);color:var(--green)}
+.badge-assigned{background:rgba(245,158,11,.15);color:var(--orange)}
+.badge-done{background:rgba(59,130,246,.15);color:var(--blue)}
+.badge-paid{background:rgba(201,165,92,.15);color:var(--gold)}
+
+/* MEMBER CARD */
+.member-card{background:var(--card);border:1px solid var(--borddim);border-radius:12px;padding:16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px}
+.member-avatar{width:44px;height:44px;background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.member-name{font-size:14px;font-weight:700;color:var(--white)}
+.member-spec{font-size:10px;color:var(--green);font-weight:600;margin-top:2px}
+.member-area{font-size:10px;color:var(--dim);margin-top:2px}
+.member-status{display:inline-block;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:800;margin-top:4px}
+.ms-active{background:rgba(34,197,94,.15);color:var(--green)}
+.ms-trial{background:rgba(245,158,11,.15);color:var(--orange)}
+.ms-inactive{background:rgba(239,68,68,.15);color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="gc">
+    <div class="glogo">🌿</div>
+    <div class="gtitle">VERDEWORKS</div>
+    <div class="gsub">SD Green Network — Powered by MFGINC<br>Enter access PIN</div>
+    <div class="dots"><div class="dot" id="d0"></div><div class="dot" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div></div>
+    <div class="np">
+      <button class="npb" ontouchstart="np('1');event.preventDefault()" onclick="np('1')">1</button>
+      <button class="npb" ontouchstart="np('2');event.preventDefault()" onclick="np('2')">2</button>
+      <button class="npb" ontouchstart="np('3');event.preventDefault()" onclick="np('3')">3</button>
+      <button class="npb" ontouchstart="np('4');event.preventDefault()" onclick="np('4')">4</button>
+      <button class="npb" ontouchstart="np('5');event.preventDefault()" onclick="np('5')">5</button>
+      <button class="npb" ontouchstart="np('6');event.preventDefault()" onclick="np('6')">6</button>
+      <button class="npb" ontouchstart="np('7');event.preventDefault()" onclick="np('7')">7</button>
+      <button class="npb" ontouchstart="np('8');event.preventDefault()" onclick="np('8')">8</button>
+      <button class="npb" ontouchstart="np('9');event.preventDefault()" onclick="np('9')">9</button>
+      <button class="npb" style="font-size:12px" ontouchstart="np('C');event.preventDefault()" onclick="np('C')">CLR</button>
+      <button class="npb" ontouchstart="np('0');event.preventDefault()" onclick="np('0')">0</button>
+      <button class="npb" style="font-size:12px" ontouchstart="np('D');event.preventDefault()" onclick="np('D')">DEL</button>
+    </div>
+    <div class="gerr" id="gerr"></div>
+  </div>
+  <div style="margin-top:16px;font-size:10px;color:var(--muted);text-align:center">Verdeworks © 2026 — MFGINC</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="tb">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="tb-logo">🌿</div>
+      <div><div class="tb-name">VERDEWORKS</div><div class="tb-sub" id="role-lbl">SD Green Network</div></div>
+    </div>
+    <div class="tb-right">
+      <span style="font-size:10px;color:var(--dim)" id="tb-date"></span>
+      <button class="tb-btn" onclick="doLock()">LOCK</button>
+    </div>
+  </div>
+  <button class="mob-fab" id="mob-fab" ontouchstart="toggleSB();event.preventDefault()" onclick="toggleSB()">☰</button>
+  <div id="sb-ov" onclick="closeSB()"></div>
+  <div id="sb">
+    <div style="padding:14px 18px 10px;border-bottom:1px solid var(--borddim)">
+      <div style="font-size:14px;font-weight:800;color:var(--green)">🌿 VERDEWORKS</div>
+      <div style="font-size:9px;color:var(--dim);margin-top:2px">SD Green Network</div>
+    </div>
+    <div class="sb-sec">OPERATIONS</div>
+    <div class="sb-item act" onclick="showSec('dashboard')"><span class="ico">📊</span>Dashboard</div>
+    <div class="sb-item" onclick="showSec('jobboard')"><span class="ico">🔨</span>Job Board<span class="sb-badge" id="open-jobs-badge">0</span></div>
+    <div class="sb-item" onclick="showSec('dispatch')"><span class="ico">🚐</span>Crew Dispatch</div>
+    <div class="sb-item" onclick="showSec('leads')"><span class="ico">📥</span>Lead Inbox</div>
+    <div class="sb-sec">NETWORK</div>
+    <div class="sb-item" onclick="showSec('members')"><span class="ico">👥</span>Members<span class="sb-badge" id="member-badge">0</span></div>
+    <div class="sb-item" onclick="showSec('addmember')"><span class="ico">➕</span>Add Member</div>
+    <div class="sb-item" onclick="showSec('directory')"><span class="ico">📋</span>Directory</div>
+    <div class="sb-sec">REVENUE</div>
+    <div class="sb-item" onclick="showSec('revenue')"><span class="ico">💰</span>Revenue Tracker</div>
+    <div class="sb-item" onclick="showSec('membership')"><span class="ico">💳</span>Memberships</div>
+    <div class="sb-item" onclick="showSec('finance')"><span class="ico">🏦</span>Finance & Loans</div>
+    <div class="sb-sec">TOOLS</div>
+    <div class="sb-item" onclick="showSec('transport')"><span class="ico">🚐</span>Van Transport</div>
+    <div class="sb-item" onclick="showSec('supply')"><span class="ico">🌱</span>Supply Orders</div>
+    <div class="sb-item" onclick="showSec('comms')"><span class="ico">📣</span>Blast Members</div>
+    <div class="sb-sec">SETTINGS</div>
+    <div class="sb-item" onclick="showSec('settings')"><span class="ico">⚙️</span>Settings</div>
+  </div>
+
+  <div id="mn">
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="sec act">
+      <div class="sech">Dashboard</div>
+      <div class="sech-sub">Verdeworks — SD Green Network Command Center</div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-v" id="st-members">0</div><div class="stat-l">Members</div></div>
+        <div class="stat"><div class="stat-v" id="st-active">0</div><div class="stat-l">Active</div></div>
+        <div class="stat"><div class="stat-v" id="st-jobs">0</div><div class="stat-l">Open Jobs</div></div>
+        <div class="stat"><div class="stat-v" id="st-mrr">$0</div><div class="stat-l">MRR</div></div>
+        <div class="stat"><div class="stat-v" id="st-leads">0</div><div class="stat-l">Leads</div></div>
+        <div class="stat"><div class="stat-v" id="st-revenue">$0</div><div class="stat-l">Total Rev</div></div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Revenue Breakdown</div>
+        <div class="revenue-bar"><div class="rb-label">Memberships <span id="rb-mem-val" style="color:var(--green);float:right">$0/mo</span></div><div class="rb-track"><div class="rb-fill" id="rb-mem" style="width:0%"></div></div></div>
+        <div class="revenue-bar"><div class="rb-label">Job Referral Cuts <span id="rb-job-val" style="color:var(--green);float:right">$0/mo</span></div><div class="rb-track"><div class="rb-fill" id="rb-job" style="width:0%"></div></div></div>
+        <div class="revenue-bar"><div class="rb-label">Van Transport <span id="rb-van-val" style="color:var(--green);float:right">$0/mo</span></div><div class="rb-track"><div class="rb-fill" id="rb-van" style="width:0%"></div></div></div>
+        <div class="revenue-bar"><div class="rb-label">Finance Commissions <span id="rb-fin-val" style="color:var(--green);float:right">$0/mo</span></div><div class="rb-track"><div class="rb-fill" id="rb-fin" style="width:0%"></div></div></div>
+        <div class="revenue-bar"><div class="rb-label">Insurance Referrals <span id="rb-ins-val" style="color:var(--green);float:right">$0/mo</span></div><div class="rb-track"><div class="rb-fill" id="rb-ins" style="width:0%"></div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Quick Actions</div>
+        <div class="grid2" style="margin-bottom:0">
+          <button class="btn btn-green" onclick="showSec('jobboard')">+ POST JOB</button>
+          <button class="btn btn-dark" onclick="showSec('addmember')">+ ADD MEMBER</button>
+          <button class="btn btn-gold" onclick="showSec('leads')">VIEW LEADS</button>
+          <button class="btn btn-dark" onclick="showSec('comms')">BLAST NETWORK</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Recent Activity</div>
+        <div id="recent-activity"><div class="empty">No activity yet. Add members and post jobs to get started.</div></div>
+      </div>
+    </div>
+
+    <!-- JOB BOARD -->
+    <div id="sec-jobboard" class="sec">
+      <div class="sech">Job Board</div>
+      <div class="sech-sub">Post jobs, assign to members, track completion and referral cuts</div>
+      <div class="card">
+        <div class="ct">Post New Job</div>
+        <div class="grid2">
+          <div class="fld"><label>Client Name</label><input id="jb-client" placeholder="Homeowner or business name"/></div>
+          <div class="fld"><label>Phone</label><input id="jb-phone" type="tel"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Address / Area</label><input id="jb-addr" placeholder="San Diego — North County..."/></div>
+          <div class="fld"><label>Job Type</label>
+            <select id="jb-type">
+              <option>Lawn Maintenance</option><option>Tree Trimming</option><option>Tree Removal</option>
+              <option>Landscaping Design</option><option>Hardscape / Pavers</option><option>Irrigation</option>
+              <option>Cleanup / Haul-off</option><option>Artificial Turf</option><option>Fencing</option>
+              <option>Full Landscape Renovation</option><option>Other</option>
+            </select></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Job Value ($)</label><input id="jb-value" type="number" placeholder="800"/></div>
+          <div class="fld"><label>Your Cut (%)</label><input id="jb-cut" type="number" placeholder="15" value="15"/></div>
+          <div class="fld"><label>Assign To</label><select id="jb-assign"><option value="">Unassigned</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Notes</label><textarea id="jb-notes" rows="2" placeholder="Details, urgency, access instructions..."></textarea></div>
+        <button class="btn btn-green" onclick="addJob()">POST JOB TO BOARD</button>
+      </div>
+      <div class="card">
+        <div class="ct">Active Jobs</div>
+        <div id="job-list"><div class="empty">No jobs posted yet.</div></div>
+      </div>
+    </div>
+
+    <!-- CREW DISPATCH -->
+    <div id="sec-dispatch" class="sec">
+      <div class="sech">Crew Dispatch</div>
+      <div class="sech-sub">Schedule van transport for crews across San Diego</div>
+      <div class="card">
+        <div class="ct">Schedule Run</div>
+        <div class="grid2">
+          <div class="fld"><label>Run Date</label><input id="dr-date" type="date"/></div>
+          <div class="fld"><label>Pickup Time</label><input id="dr-time" type="time" value="06:00"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Pickup Location</label><input id="dr-from" placeholder="National City, Chula Vista..."/></div>
+          <div class="fld"><label>Drop-off / Job Site</label><input id="dr-to" placeholder="La Jolla, North County..."/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Passengers</label><input id="dr-pax" type="number" placeholder="4" max="12"/></div>
+          <div class="fld"><label>Rate/Person ($)</label><input id="dr-rate" type="number" placeholder="20" value="20"/></div>
+          <div class="fld"><label>Member</label><select id="dr-member"><option value="">Select member</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Notes</label><input id="dr-notes" placeholder="Tools, stops, special instructions..."/></div>
+        <button class="btn btn-green" onclick="addRun()">SCHEDULE RUN</button>
+      </div>
+      <div class="card">
+        <div class="ct">Scheduled Runs</div>
+        <div id="run-list"><div class="empty">No runs scheduled.</div></div>
+      </div>
+    </div>
+
+    <!-- LEAD INBOX -->
+    <div id="sec-leads" class="sec">
+      <div class="sech">Lead Inbox</div>
+      <div class="sech-sub">Incoming leads from CL campaigns, portals, and referrals</div>
+      <div class="card">
+        <div class="ct">Add Lead</div>
+        <div class="grid2">
+          <div class="fld"><label>Name</label><input id="li-name" placeholder="Client name"/></div>
+          <div class="fld"><label>Phone</label><input id="li-phone" type="tel"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Service Needed</label>
+            <select id="li-service">
+              <option>Lawn Maintenance</option><option>Tree Service</option><option>Landscaping</option>
+              <option>Hardscape</option><option>Cleanup</option><option>Irrigation</option><option>Other</option>
+            </select></div>
+          <div class="fld"><label>Source</label>
+            <select id="li-source">
+              <option>Craigslist SD</option><option>Craigslist IV</option><option>Portal Referral</option>
+              <option>WhatsApp</option><option>Direct Call</option><option>Email Campaign</option><option>Other</option>
+            </select></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Area</label><input id="li-area" placeholder="North County, South Bay..."/></div>
+          <div class="fld"><label>Est. Job Value ($)</label><input id="li-value" type="number" placeholder="600"/></div>
+        </div>
+        <button class="btn btn-green" onclick="addLead()" style="margin-top:6px">+ ADD LEAD</button>
+      </div>
+      <div class="card">
+        <div class="ct">Lead Queue</div>
+        <div id="lead-list"><div class="empty">No leads yet.</div></div>
+      </div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div id="sec-members" class="sec">
+      <div class="sech">Network Members</div>
+      <div class="sech-sub">All active and trial members in the Verdeworks network</div>
+      <div id="member-list-full"><div class="empty">No members yet. Add your first member.</div></div>
+    </div>
+
+    <!-- ADD MEMBER -->
+    <div id="sec-addmember" class="sec">
+      <div class="sech">Add Member</div>
+      <div class="sech-sub">Onboard a new landscaper to the Verdeworks network</div>
+      <div class="card">
+        <div class="ct">Member Info</div>
+        <div class="grid2">
+          <div class="fld"><label>Business Name</label><input id="am-biz" placeholder="Garcia's Landscaping"/></div>
+          <div class="fld"><label>Owner Name</label><input id="am-name" placeholder="Jose Garcia"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Phone</label><input id="am-phone" type="tel"/></div>
+          <div class="fld"><label>Email</label><input id="am-email" type="email"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Specialty</label>
+            <select id="am-spec">
+              <option>General Landscaping</option><option>Tree Service</option><option>Hardscape / Pavers</option>
+              <option>Irrigation</option><option>Artificial Turf</option><option>Lawn Maintenance</option>
+              <option>Fencing</option><option>Full Renovation</option><option>Multi-Trade</option>
+            </select></div>
+          <div class="fld"><label>Coverage Area</label>
+            <select id="am-area">
+              <option>All San Diego</option><option>North County</option><option>South Bay</option>
+              <option>East County</option><option>City of San Diego</option><option>North + City</option>
+              <option>South + East</option>
+            </select></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Monthly Fee ($)</label><input id="am-fee" type="number" placeholder="75" value="75"/></div>
+          <div class="fld"><label>Referral Cut (%)</label><input id="am-cut" type="number" placeholder="15" value="15"/></div>
+          <div class="fld"><label>Status</label>
+            <select id="am-status"><option>Trial</option><option>Active</option><option>Inactive</option></select></div>
+        </div>
+        <div class="grid2" style="margin-bottom:10px">
+          <div class="fld"><label>Crew Size</label><input id="am-crew" type="number" placeholder="3"/></div>
+          <div class="fld"><label>Languages</label>
+            <select id="am-lang"><option>Spanish only</option><option>English only</option><option>Bilingual EN/ES</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Notes</label><textarea id="am-notes" rows="2" placeholder="How you met them, equipment, references..."></textarea></div>
+        <button class="btn btn-green" onclick="addMember()">+ ONBOARD MEMBER</button>
+      </div>
+
+      <div class="card">
+        <div class="ct">Pitch Script — Call Victor First: (858) 333-9010</div>
+        <div style="background:var(--card2);border-radius:10px;padding:14px;font-size:12px;color:var(--dim);line-height:1.9;border-left:3px solid var(--green)">
+          <strong style="color:var(--white)">"Hey [Name], my name is Saul with Verdeworks — I'm building a private landscaping network here in San Diego. What I do is bring you jobs, handle your invoicing and scheduling from your phone, and we move crews to job sites with our van.</strong><br/><br/>
+          First month is on me — completely free. After that it's $75/month. When I send you a job, you keep 85% of what you make. I take 15% as the referral fee — only when you actually get paid. No job, no fee.<br/><br/>
+          I already have a list of homeowners and property managers looking for landscapers in your area. You interested in hearing more?"
+        </div>
+      </div>
+    </div>
+
+    <!-- DIRECTORY -->
+    <div id="sec-directory" class="sec">
+      <div class="sech">Member Directory</div>
+      <div class="sech-sub">Quick reference — specialty and coverage by member</div>
+      <div id="directory-list"><div class="empty">No members yet.</div></div>
+    </div>
+
+    <!-- REVENUE TRACKER -->
+    <div id="sec-revenue" class="sec">
+      <div class="sech">Revenue Tracker</div>
+      <div class="sech-sub">Log all income streams — memberships, job cuts, transport, finance commissions</div>
+      <div class="card">
+        <div class="ct">Log Revenue Entry</div>
+        <div class="grid2">
+          <div class="fld"><label>Source</label>
+            <select id="rv-source">
+              <option>Membership Fee</option><option>Job Referral Cut</option><option>Van Transport</option>
+              <option>Finance Commission</option><option>Insurance Referral</option><option>Supply Markup</option><option>Other</option>
+            </select></div>
+          <div class="fld"><label>Member / Client</label><input id="rv-who" placeholder="Name or company"/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Amount ($)</label><input id="rv-amount" type="number"/></div>
+          <div class="fld"><label>Date</label><input id="rv-date" type="date"/></div>
+          <div class="fld"><label>Status</label>
+            <select id="rv-status"><option>Received</option><option>Pending</option><option>Overdue</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Notes</label><input id="rv-notes"/></div>
+        <button class="btn btn-green" onclick="addRevenue()">LOG REVENUE</button>
+      </div>
+      <div class="card">
+        <div class="ct">Revenue Log</div>
+        <div id="revenue-log"><div class="empty">No revenue logged yet.</div></div>
+      </div>
+    </div>
+
+    <!-- MEMBERSHIP BILLING -->
+    <div id="sec-membership" class="sec">
+      <div class="sech">Membership Billing</div>
+      <div class="sech-sub">Track monthly fees per member</div>
+      <div class="card">
+        <div class="ct">Monthly Billing Status</div>
+        <div id="billing-list"><div class="empty">No members yet.</div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Pricing Tiers</div>
+        <div class="grid3">
+          <div class="stat"><div class="stat-v" style="color:var(--dim)">$49</div><div class="stat-l">Starter — Solo</div></div>
+          <div class="stat"><div class="stat-v">$75</div><div class="stat-l">Standard — 2-4 crew</div></div>
+          <div class="stat"><div class="stat-v" style="color:var(--gold)">$99</div><div class="stat-l">Pro — 5+ crew</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCE & LOANS -->
+    <div id="sec-finance" class="sec">
+      <div class="sech">Finance & Loans</div>
+      <div class="sech-sub">Refer members to equipment financing, personal loans, and business credit</div>
+      <div class="card">
+        <div class="ct">Member Finance Referrals</div>
+        <div style="display:grid;gap:10px">
+          <a href="https://financelend.me" target="_blank" style="background:var(--card2);border:1px solid var(--bord);border-radius:10px;padding:14px;text-decoration:none;display:block">
+            <div style="font-size:13px;font-weight:700;color:var(--white)">financelend.me — Equipment & Business Loans</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:3px">Truck, trailer, mower financing. SBA 7(a). Personal loans. NMLS #337526.</div>
+            <div style="font-size:12px;font-weight:800;color:var(--green);margin-top:6px">You earn: $70–$500 per funded deal</div>
+          </a>
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" style="background:var(--card2);border:1px solid var(--bord);border-radius:10px;padding:14px;text-decoration:none;display:block">
+            <div style="font-size:13px;font-weight:700;color:var(--white)">Round Sky — Personal Loan Up to $50K</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:3px">For members needing personal loan for equipment deposit or working capital.</div>
+            <div style="font-size:12px;font-weight:800;color:var(--green);margin-top:6px">You earn: $250/lead</div>
+          </a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" style="background:var(--card2);border:1px solid rgba(34,197,94,.25);border-radius:10px;padding:14px;text-decoration:none;display:block">
+            <div style="font-size:13px;font-weight:700;color:var(--white)">🇲🇽 DineroDinero — Préstamos en Español</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:3px">Para miembros que prefieren español. Préstamos personales hasta $50K.</div>
+            <div style="font-size:12px;font-weight:800;color:var(--green);margin-top:6px">Ganas: $250/lead</div>
+          </a>
+          <div style="background:var(--card2);border:1px solid var(--borddim);border-radius:10px;padding:14px">
+            <div style="font-size:13px;font-weight:700;color:var(--white)">National Debt Relief — Member Debt Help</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:3px">Members with $10K+ credit card debt. Refer for free quote.</div>
+            <div style="font-size:12px;font-weight:800;color:var(--green);margin-top:6px">You earn: $27.50/lead + $41/call</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Track Finance Referrals</div>
+        <div class="grid2">
+          <div class="fld"><label>Member Name</label><input id="fr-name" placeholder="Jose Garcia"/></div>
+          <div class="fld"><label>Product Referred</label>
+            <select id="fr-product">
+              <option>Equipment Loan</option><option>Personal Loan</option><option>SBA 7(a)</option>
+              <option>Debt Relief</option><option>Business Line of Credit</option><option>Other</option>
+            </select></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Loan Amount ($)</label><input id="fr-amount" type="number"/></div>
+          <div class="fld"><label>Status</label>
+            <select id="fr-status"><option>Referred</option><option>Applied</option><option>Funded</option><option>Declined</option></select></div>
+          <div class="fld"><label>Your Commission ($)</label><input id="fr-comm" type="number"/></div>
+        </div>
+        <button class="btn btn-green" onclick="addFinRef()" style="margin-top:6px">LOG REFERRAL</button>
+        <div id="fin-ref-list" style="margin-top:12px"><div class="empty" style="padding:16px">No referrals logged.</div></div>
+      </div>
+    </div>
+
+    <!-- VAN TRANSPORT -->
+    <div id="sec-transport" class="sec">
+      <div class="sech">Van Transport</div>
+      <div class="sech-sub">Ford E350 — 12 Passengers — SD Green Network crew shuttle</div>
+      <div class="card">
+        <div class="ct">Pricing Calculator</div>
+        <div class="grid3">
+          <div class="fld"><label>Passengers</label><input id="tp-pax" type="number" placeholder="4" oninput="calcTransport()"/></div>
+          <div class="fld"><label>Rate/Person ($)</label><input id="tp-rate" type="number" placeholder="20" value="20" oninput="calcTransport()"/></div>
+          <div class="fld"><label>Round Trip?</label>
+            <select id="tp-rt" onchange="calcTransport()"><option value="1">One Way</option><option value="2">Round Trip</option></select></div>
+        </div>
+        <div id="tp-result" style="display:none;background:rgba(34,197,94,.08);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center;margin-top:10px">
+          <div style="font-size:24px;font-weight:800;color:var(--green)" id="tp-total">$0</div>
+          <div style="font-size:11px;color:var(--dim);margin-top:3px">Total run revenue</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Route Rates — San Diego Corridor</div>
+        <div class="grid2">
+          <div style="background:var(--card2);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--white)">Local (within SD)</div><div style="font-size:14px;font-weight:800;color:var(--green)">$15/person</div><div style="font-size:9px;color:var(--dim)">Under 30 miles</div></div>
+          <div style="background:var(--card2);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--white)">Regional (SD County)</div><div style="font-size:14px;font-weight:800;color:var(--green)">$20/person</div><div style="font-size:9px;color:var(--dim)">30–80 miles</div></div>
+          <div style="background:var(--card2);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--white)">SD → Salinas</div><div style="font-size:14px;font-weight:800;color:var(--gold)">$125/person</div><div style="font-size:9px;color:var(--dim)">450 miles — 7 hrs</div></div>
+          <div style="background:var(--card2);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--white)">SD → Imperial Valley</div><div style="font-size:14px;font-weight:800;color:var(--green)">$35/person</div><div style="font-size:9px;color:var(--dim)">90 miles — border corridor</div></div>
+          <div style="background:var(--card2);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--white)">Private Group Charter</div><div style="font-size:14px;font-weight:800;color:var(--gold)">$150/hr</div><div style="font-size:9px;color:var(--dim)">Full van — any destination</div></div>
+          <div style="background:var(--card2);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--white)">Daily Crew Route</div><div style="font-size:14px;font-weight:800;color:var(--green)">$20/person</div><div style="font-size:9px;color:var(--dim)">6AM pickup — return PM</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUPPLY ORDERS -->
+    <div id="sec-supply" class="sec">
+      <div class="sech">Supply Orders</div>
+      <div class="sech-sub">Pool purchasing power — negotiate bulk rates for the network</div>
+      <div class="card">
+        <div class="ct">Submit Supply Request</div>
+        <div class="grid2">
+          <div class="fld"><label>Member</label><select id="so-member"><option value="">Select member</option></select></div>
+          <div class="fld"><label>Item / Supply</label>
+            <select id="so-item">
+              <option>Mulch (cubic yards)</option><option>Topsoil</option><option>Plants / Nursery Stock</option>
+              <option>Fuel (gallons)</option><option>Fertilizer</option><option>Irrigation Parts</option>
+              <option>Pavers / Stone</option><option>Artificial Turf (sq ft)</option><option>Other</option>
+            </select></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Quantity</label><input id="so-qty" type="number" placeholder="10"/></div>
+          <div class="fld"><label>Est. Unit Cost ($)</label><input id="so-cost" type="number" placeholder="45"/></div>
+          <div class="fld"><label>Needed By</label><input id="so-date" type="date"/></div>
+        </div>
+        <button class="btn btn-green" onclick="addSupplyOrder()" style="margin-top:6px">ADD TO POOL ORDER</button>
+      </div>
+      <div class="card">
+        <div class="ct">Pending Pool Orders</div>
+        <div id="supply-list"><div class="empty">No supply orders pooled yet.</div></div>
+      </div>
+    </div>
+
+    <!-- BLAST MEMBERS -->
+    <div id="sec-comms" class="sec">
+      <div class="sech">Blast Network</div>
+      <div class="sech-sub">Send announcements, job alerts, or messages to all members</div>
+      <div class="card">
+        <div class="ct">Compose Message</div>
+        <div class="grid2">
+          <div class="fld"><label>Message Type</label>
+            <select id="bl-type"><option>Job Alert</option><option>Network Update</option><option>Payment Reminder</option><option>Supply Order</option><option>Event / Meeting</option><option>General</option></select></div>
+          <div class="fld"><label>Send Via</label>
+            <select id="bl-via"><option>WhatsApp</option><option>SMS</option><option>Email</option><option>All Channels</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Message (EN)</label><textarea id="bl-en" rows="4" placeholder="Job alert: Landscaping needed in La Jolla — $1,200 job. Who's available this Saturday?"></textarea></div>
+        <div class="fld" style="margin-bottom:10px"><label>Message (ES)</label><textarea id="bl-es" rows="4" placeholder="Alerta de trabajo: Se necesita jardinería en La Jolla — trabajo de $1,200. ¿Quién está disponible este sábado?"></textarea></div>
+        <button class="btn btn-green" onclick="saveBlast()">SAVE BLAST DRAFT</button>
+      </div>
+      <div class="card">
+        <div class="ct">Member WhatsApp Numbers</div>
+        <div id="wa-list"><div class="empty">Add members with phone numbers to see WhatsApp blast list.</div></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="sec-settings" class="sec">
+      <div class="sech">Settings</div>
+      <div class="card">
+        <div class="ct">Network Configuration</div>
+        <div class="grid2">
+          <div class="fld"><label>Network Name</label><input id="cfg-name" placeholder="Verdeworks" value="Verdeworks"/></div>
+          <div class="fld"><label>Default Referral Cut (%)</label><input id="cfg-cut" type="number" value="15"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Default Membership Fee ($)</label><input id="cfg-fee" type="number" value="75"/></div>
+          <div class="fld"><label>Van Rate/Person ($)</label><input id="cfg-van" type="number" value="20"/></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Operator</label><input value="Saul Garcia — MFGINC — (831) 251-3116" readonly style="color:var(--dim)"/></div>
+        <button class="btn btn-green" onclick="saveSettings()">SAVE SETTINGS</button>
+      </div>
+      <div class="card">
+        <div class="ct">Pre-Load CL Leads as Members (Trial)</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.7">Tap below to pre-load the 17 landscaping leads from your San Diego CL campaign as trial members — ready to call and pitch.</div>
+        <button class="btn btn-gold" onclick="preloadCLLeads()">PRELOAD 17 SD LANDSCAPERS AS TRIALS</button>
+      </div>
+    </div>
+
+  </div><!-- /mn -->
+</div><!-- /app -->
+
+<script>
+'use strict';
+var _p='',_plock=false;
+var PINS={'0609':'MFGINC OWNER','5500':'ADMIN','4321':'DEMO'};
+
+function np(v){
+  if(_plock)return;_plock=true;setTimeout(function(){_plock=false;},80);
+  if(v==='C'){_p='';upd();document.getElementById('gerr').textContent='';return;}
+  if(v==='D'){_p=_p.slice(0,-1);upd();return;}
+  if(_p.length<4)_p+=v;
+  upd();
+  if(_p.length===4)setTimeout(ck,100);
+}
+function upd(){for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='dot'+(_p.length>i?' on':'');}}
+function ck(){
+  if(PINS[_p]){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('role-lbl').textContent=PINS[_p]+' — SD Green Network';
+    initApp();
+  } else {
+    document.getElementById('gerr').textContent='Invalid PIN';
+    _p='';upd();
+    setTimeout(function(){document.getElementById('gerr').textContent='';},1500);
+  }
+}
+function doLock(){document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';_p='';upd();}
+
+function toggleSB(){var sb=document.getElementById('sb');var ov=document.getElementById('sb-ov');var o=sb.classList.toggle('open');ov.style.display=o?'block':'none';}
+function closeSB(){document.getElementById('sb').classList.remove('open');document.getElementById('sb-ov').style.display='none';}
+function showSec(id){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('act');});
+  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('act');});
+  var sec=document.getElementById('sec-'+id);if(sec)sec.classList.add('act');
+  document.querySelectorAll('.sb-item').forEach(function(i){if(i.getAttribute('onclick')&&i.getAttribute('onclick').indexOf("'"+id+"'")!==-1)i.classList.add('act');});
+  closeSB();window.scrollTo(0,0);
+}
+
+var DB={members:[],jobs:[],runs:[],leads:[],revenue:[],supply:[],finrefs:[],blasts:[],settings:{name:'Verdeworks',cut:15,fee:75,van:20}};
+
+function save(){try{localStorage.setItem('vw_db',JSON.stringify(DB));}catch(e){}}
+function load(){try{var d=localStorage.getItem('vw_db');if(d)DB=JSON.parse(d);}catch(e){}}
+function today(){return new Date().toISOString().split('T')[0];}
+function num(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});}
+function money(n){return '$'+num(n);}
+
+function initApp(){
+  load();
+  document.getElementById('tb-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  document.getElementById('dr-date').value=today();
+  document.getElementById('rv-date').value=today();
+  populateMemberSelects();
+  renderAll();
+}
+
+function renderAll(){
+  renderDash();renderMembers();renderJobs();renderRuns();renderLeads();
+  renderRevenue();renderBilling();renderDirectory();renderWAList();renderFinRefs();renderSupply();
+}
+
+function populateMemberSelects(){
+  var opts='<option value="">Select member</option>';
+  DB.members.forEach(function(m){opts+='<option value="'+m.id+'">'+m.biz+'</option>';});
+  ['jb-assign','dr-member','so-member'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.innerHTML=opts;
+  });
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+function renderDash(){
+  var active=DB.members.filter(function(m){return m.status==='Active';}).length;
+  var openJobs=DB.jobs.filter(function(j){return j.status==='Open';}).length;
+  var mrr=DB.members.filter(function(m){return m.status==='Active';}).reduce(function(a,m){return a+Number(m.fee||0);},0);
+  var totalRev=DB.revenue.reduce(function(a,r){return a+Number(r.amount||0);},0);
+  document.getElementById('st-members').textContent=DB.members.length;
+  document.getElementById('st-active').textContent=active;
+  document.getElementById('st-jobs').textContent=openJobs;
+  document.getElementById('st-mrr').textContent=money(mrr);
+  document.getElementById('st-leads').textContent=DB.leads.length;
+  document.getElementById('st-revenue').textContent=money(totalRev);
+  document.getElementById('open-jobs-badge').textContent=openJobs;
+  document.getElementById('member-badge').textContent=DB.members.length;
+
+  // Revenue bars
+  var memRev=mrr;
+  var jobRev=DB.revenue.filter(function(r){return r.source==='Job Referral Cut';}).reduce(function(a,r){return a+Number(r.amount||0);},0);
+  var vanRev=DB.revenue.filter(function(r){return r.source==='Van Transport';}).reduce(function(a,r){return a+Number(r.amount||0);},0);
+  var finRev=DB.revenue.filter(function(r){return r.source==='Finance Commission';}).reduce(function(a,r){return a+Number(r.amount||0);},0);
+  var insRev=DB.revenue.filter(function(r){return r.source==='Insurance Referral';}).reduce(function(a,r){return a+Number(r.amount||0);},0);
+  var maxRev=Math.max(memRev,jobRev,vanRev,finRev,insRev,100);
+  function setBar(id,val,valId){
+    var el=document.getElementById(id);if(el)el.style.width=Math.round((val/maxRev)*100)+'%';
+    var vel=document.getElementById(valId);if(vel)vel.textContent=money(val)+'/mo';
+  }
+  setBar('rb-mem',memRev,'rb-mem-val');setBar('rb-job',jobRev,'rb-job-val');
+  setBar('rb-van',vanRev,'rb-van-val');setBar('rb-fin',finRev,'rb-fin-val');setBar('rb-ins',insRev,'rb-ins-val');
+
+  // Recent activity
+  var acts=[];
+  DB.jobs.slice(-3).forEach(function(j){acts.push({t:'🔨 Job: '+j.client+' — '+j.type,s:money(j.value),c:'var(--green)'});});
+  DB.members.slice(-2).forEach(function(m){acts.push({t:'👤 New Member: '+m.biz,s:m.status,c:'var(--blue)'});});
+  DB.revenue.slice(-3).forEach(function(r){acts.push({t:'💰 '+r.source+' — '+r.who,s:money(r.amount),c:'var(--gold)'});});
+  var h=acts.length?acts.map(function(a){
+    return '<div class="row"><div class="row-dot" style="background:'+a.c+'"></div><div class="row-main"><div class="row-title">'+a.t+'</div></div><div class="row-right"><div style="font-size:12px;font-weight:700;color:'+a.c+'">'+a.s+'</div></div></div>';
+  }).join(''):'<div class="empty">No activity yet.</div>';
+  document.getElementById('recent-activity').innerHTML=h;
+}
+
+// ── MEMBERS ────────────────────────────────────────────────────────────────
+function addMember(){
+  var biz=document.getElementById('am-biz').value.trim();
+  if(!biz){alert('Business name required.');return;}
+  var m={id:'M'+Date.now(),biz:biz,name:document.getElementById('am-name').value,
+    phone:document.getElementById('am-phone').value,email:document.getElementById('am-email').value,
+    spec:document.getElementById('am-spec').value,area:document.getElementById('am-area').value,
+    fee:document.getElementById('am-fee').value,cut:document.getElementById('am-cut').value,
+    status:document.getElementById('am-status').value,crew:document.getElementById('am-crew').value,
+    lang:document.getElementById('am-lang').value,notes:document.getElementById('am-notes').value,
+    joined:today()};
+  DB.members.push(m);
+  ['am-biz','am-name','am-phone','am-email','am-crew','am-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();populateMemberSelects();renderAll();
+  alert(biz+' added to Verdeworks!');showSec('members');
+}
+function renderMembers(){
+  var STATUS_C={'Active':'ms-active','Trial':'ms-trial','Inactive':'ms-inactive'};
+  var h=DB.members.map(function(m){
+    return '<div class="member-card"><div class="member-avatar">🌿</div><div style="flex:1"><div class="member-name">'+m.biz+'</div><div class="member-spec">'+m.spec+'</div><div class="member-area">📍 '+m.area+' | 👥 '+m.crew+' crew | '+m.lang+'</div><div class="member-area">📞 '+m.phone+(m.fee?' | 💳 $'+m.fee+'/mo':'')+'</div><span class="member-status '+(STATUS_C[m.status]||'ms-trial')+'">'+m.status+'</span></div><div style="text-align:right;flex-shrink:0"><div style="font-size:10px;color:var(--dim)">'+m.cut+'% cut</div><div style="font-size:10px;color:var(--dim);margin-top:3px">'+m.joined+'</div></div></div>';
+  }).join('');
+  document.getElementById('member-list-full').innerHTML=h||'<div class="empty">No members yet.</div>';
+}
+function renderDirectory(){
+  var h=DB.members.map(function(m){
+    return '<div class="row"><div class="row-dot" style="background:var(--green)"></div><div class="row-main"><div class="row-title">'+m.biz+'</div><div class="row-sub">'+m.spec+' | '+m.area+(m.phone?' | '+m.phone:'')+'</div></div><div class="row-right"><span class="tag" style="background:rgba(34,197,94,.1);color:var(--green)">'+m.status+'</span></div></div>';
+  }).join('');
+  document.getElementById('directory-list').innerHTML=h||'<div class="empty">No members yet.</div>';
+}
+function renderWAList(){
+  var h=DB.members.filter(function(m){return m.phone;}).map(function(m){
+    var wa='https://wa.me/1'+m.phone.replace(/\D/g,'');
+    return '<div class="row"><div class="row-dot" style="background:#25D366"></div><div class="row-main"><div class="row-title">'+m.biz+'</div><div class="row-sub">'+m.phone+'</div></div><div class="row-right"><a href="'+wa+'" target="_blank" style="background:#25D366;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer">OPEN</a></div></div>';
+  }).join('');
+  document.getElementById('wa-list').innerHTML=h||'<div class="empty">No members with phone numbers.</div>';
+}
+
+// ── JOBS ───────────────────────────────────────────────────────────────────
+function addJob(){
+  var client=document.getElementById('jb-client').value.trim();if(!client)return;
+  var value=Number(document.getElementById('jb-value').value||0);
+  var cut=Number(document.getElementById('jb-cut').value||15);
+  var assignId=document.getElementById('jb-assign').value;
+  var assignName=assignId?DB.members.find(function(m){return m.id===assignId;})||{biz:'Unassigned'}:{biz:'Unassigned'};
+  DB.jobs.push({id:'J'+Date.now(),client:client,phone:document.getElementById('jb-phone').value,
+    addr:document.getElementById('jb-addr').value,type:document.getElementById('jb-type').value,
+    value:value,cut:cut,yourCut:Math.round(value*(cut/100)),assignId:assignId,
+    assignName:assignName.biz||'Unassigned',notes:document.getElementById('jb-notes').value,
+    status:'Open',posted:today()});
+  ['jb-client','jb-phone','jb-addr','jb-value','jb-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();alert('Job posted to board!');
+}
+function updateJobStatus(id,status){
+  var j=DB.jobs.find(function(x){return x.id===id;});
+  if(j){j.status=status;
+    if(status==='Paid'){DB.revenue.push({id:'R'+Date.now(),source:'Job Referral Cut',who:j.client,amount:j.yourCut,date:today(),status:'Received',notes:j.type});}
+    save();renderAll();}
+}
+function renderJobs(){
+  var STATUS_C={'Open':'badge-open','Assigned':'badge-assigned','Done':'badge-done','Paid':'badge-paid'};
+  var h=DB.jobs.slice().reverse().map(function(j){
+    var actions='';
+    if(j.status==='Open')actions='<button onclick="updateJobStatus(\''+j.id+'\',\'Assigned\')" class="btn btn-dark" style="padding:6px 10px;font-size:10px;width:auto">ASSIGN</button>';
+    else if(j.status==='Assigned')actions='<button onclick="updateJobStatus(\''+j.id+'\',\'Done\')" class="btn btn-dark" style="padding:6px 10px;font-size:10px;width:auto">MARK DONE</button>';
+    else if(j.status==='Done')actions='<button onclick="updateJobStatus(\''+j.id+'\',\'Paid\')" class="btn btn-green" style="padding:6px 10px;font-size:10px;width:auto">MARK PAID</button>';
+    return '<div class="job-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px"><div><div class="job-card-title">'+j.client+' — '+j.type+'</div><span class="job-badge '+(STATUS_C[j.status]||'badge-open')+'">'+j.status+'</span></div>'+actions+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px"><div style="background:var(--card2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:14px;font-weight:800;color:var(--white)">'+money(j.value)+'</div><div style="font-size:9px;color:var(--dim)">Job Value</div></div><div style="background:var(--card2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:14px;font-weight:800;color:var(--green)">'+money(j.yourCut)+'</div><div style="font-size:9px;color:var(--dim)">Your Cut ('+j.cut+'%)</div></div><div style="background:var(--card2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:14px;font-weight:800;color:var(--dim)">'+j.assignName+'</div><div style="font-size:9px;color:var(--dim)">Assigned To</div></div></div>'+(j.addr?'<div style="font-size:11px;color:var(--dim);margin-top:8px">📍 '+j.addr+'</div>':'')+'</div>';
+  }).join('');
+  document.getElementById('job-list').innerHTML=h||'<div class="empty">No jobs posted.</div>';
+}
+
+// ── RUNS ───────────────────────────────────────────────────────────────────
+function addRun(){
+  var from=document.getElementById('dr-from').value.trim();if(!from)return;
+  var pax=Number(document.getElementById('dr-pax').value||1);
+  var rate=Number(document.getElementById('dr-rate').value||20);
+  var memberId=document.getElementById('dr-member').value;
+  var memberName=memberId?DB.members.find(function(m){return m.id===memberId;})||{biz:'Unknown'}:{biz:'Unknown'};
+  DB.runs.push({id:'RN'+Date.now(),date:document.getElementById('dr-date').value,time:document.getElementById('dr-time').value,
+    from:from,to:document.getElementById('dr-to').value,pax:pax,rate:rate,total:pax*rate,
+    memberId:memberId,memberName:memberName.biz||'Unknown',notes:document.getElementById('dr-notes').value,status:'Scheduled'});
+  ['dr-from','dr-to','dr-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();
+}
+function renderRuns(){
+  var h=DB.runs.slice().reverse().map(function(r){
+    return '<div class="row"><div class="row-dot" style="background:var(--lime)"></div><div class="row-main"><div class="row-title">'+r.from+' → '+r.to+'</div><div class="row-sub">'+r.date+' '+r.time+' | '+r.pax+' passengers | '+r.memberName+'</div></div><div class="row-right"><div class="money">'+money(r.total)+'</div><div style="font-size:9px;color:var(--dim)">'+r.status+'</div></div></div>';
+  }).join('');
+  document.getElementById('run-list').innerHTML=h||'<div class="empty">No runs scheduled.</div>';
+}
+
+// ── LEADS ──────────────────────────────────────────────────────────────────
+function addLead(){
+  var name=document.getElementById('li-name').value.trim();if(!name)return;
+  DB.leads.push({id:'L'+Date.now(),name:name,phone:document.getElementById('li-phone').value,
+    service:document.getElementById('li-service').value,source:document.getElementById('li-source').value,
+    area:document.getElementById('li-area').value,value:document.getElementById('li-value').value,
+    status:'New',added:today()});
+  ['li-name','li-phone','li-area','li-value'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();
+}
+function renderLeads(){
+  var h=DB.leads.slice().reverse().map(function(l){
+    return '<div class="row"><div class="row-dot" style="background:var(--orange)"></div><div class="row-main"><div class="row-title">'+l.name+' — '+l.service+'</div><div class="row-sub">'+l.area+' | Source: '+l.source+' | Est: '+money(l.value)+'</div></div><div class="row-right"><button onclick="convertLead(\''+l.id+'\')" class="btn btn-green" style="padding:5px 10px;font-size:10px;width:auto">→ JOB</button></div></div>';
+  }).join('');
+  document.getElementById('lead-list').innerHTML=h||'<div class="empty">No leads yet.</div>';
+}
+function convertLead(id){
+  var l=DB.leads.find(function(x){return x.id===id;});
+  if(!l)return;
+  document.getElementById('jb-client').value=l.name;
+  document.getElementById('jb-phone').value=l.phone;
+  document.getElementById('jb-addr').value=l.area;
+  document.getElementById('jb-value').value=l.value;
+  var idx=document.querySelector('#jb-type');
+  showSec('jobboard');
+  alert('Lead loaded into Job Board. Review and post.');
+}
+
+// ── REVENUE ────────────────────────────────────────────────────────────────
+function addRevenue(){
+  var who=document.getElementById('rv-who').value.trim();if(!who)return;
+  DB.revenue.push({id:'RV'+Date.now(),source:document.getElementById('rv-source').value,who:who,
+    amount:document.getElementById('rv-amount').value,date:document.getElementById('rv-date').value,
+    status:document.getElementById('rv-status').value,notes:document.getElementById('rv-notes').value});
+  ['rv-who','rv-amount','rv-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();
+}
+function renderRevenue(){
+  var total=DB.revenue.reduce(function(a,r){return a+Number(r.amount||0);},0);
+  var h=DB.revenue.slice().reverse().map(function(r){
+    var c=r.status==='Received'?'var(--green)':r.status==='Overdue'?'var(--red)':'var(--orange)';
+    return '<div class="row"><div class="row-dot" style="background:'+c+'"></div><div class="row-main"><div class="row-title">'+r.source+' — '+r.who+'</div><div class="row-sub">'+r.date+(r.notes?' | '+r.notes:'')+'</div></div><div class="row-right"><div style="font-size:14px;font-weight:800;color:'+c+'">'+money(r.amount)+'</div><div style="font-size:9px;color:var(--dim)">'+r.status+'</div></div></div>';
+  }).join('');
+  var header=DB.revenue.length?'<div style="background:rgba(34,197,94,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--dim)">Total Logged</span><span style="font-size:20px;font-weight:800;color:var(--green)">'+money(total)+'</span></div>':'';
+  document.getElementById('revenue-log').innerHTML=header+(h||'<div class="empty">No revenue logged.</div>');
+}
+function renderBilling(){
+  var h=DB.members.map(function(m){
+    var c=m.status==='Active'?'var(--green)':m.status==='Trial'?'var(--orange)':'var(--dim)';
+    return '<div class="row"><div class="row-dot" style="background:'+c+'"></div><div class="row-main"><div class="row-title">'+m.biz+'</div><div class="row-sub">'+m.owner||m.name+(m.phone?' | '+m.phone:'')+'</div></div><div class="row-right"><div style="font-size:14px;font-weight:800;color:'+c+'">$'+m.fee+'/mo</div><div style="font-size:9px;color:var(--dim)">'+m.status+'</div></div></div>';
+  }).join('');
+  document.getElementById('billing-list').innerHTML=h||'<div class="empty">No members yet.</div>';
+}
+
+// ── FINANCE REFS ───────────────────────────────────────────────────────────
+function addFinRef(){
+  var name=document.getElementById('fr-name').value.trim();if(!name)return;
+  DB.finrefs.push({id:'FR'+Date.now(),name:name,product:document.getElementById('fr-product').value,
+    amount:document.getElementById('fr-amount').value,status:document.getElementById('fr-status').value,
+    comm:document.getElementById('fr-comm').value,date:today()});
+  ['fr-name','fr-amount','fr-comm'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderFinRefs();
+}
+function renderFinRefs(){
+  var h=DB.finrefs.slice().reverse().map(function(r){
+    var c=r.status==='Funded'?'var(--green)':r.status==='Applied'?'var(--orange)':'var(--dim)';
+    return '<div class="row"><div class="row-dot" style="background:'+c+'"></div><div class="row-main"><div class="row-title">'+r.name+' — '+r.product+'</div><div class="row-sub">Loan: '+money(r.amount)+' | '+r.date+'</div></div><div class="row-right"><div style="font-size:13px;font-weight:800;color:'+c+'">'+money(r.comm)+'</div><div style="font-size:9px;color:var(--dim)">'+r.status+'</div></div></div>';
+  }).join('');
+  document.getElementById('fin-ref-list').innerHTML=h||'<div class="empty" style="padding:16px">No referrals logged.</div>';
+}
+
+// ── SUPPLY ─────────────────────────────────────────────────────────────────
+function addSupplyOrder(){
+  var item=document.getElementById('so-item').value;
+  var qty=document.getElementById('so-qty').value;if(!qty)return;
+  var memberId=document.getElementById('so-member').value;
+  var memberName=memberId?DB.members.find(function(m){return m.id===memberId;})||{biz:'Unknown'}:{biz:'Unknown'};
+  DB.supply.push({id:'SO'+Date.now(),member:memberName.biz||'Unknown',item:item,qty:qty,
+    cost:document.getElementById('so-cost').value,date:document.getElementById('so-date').value,status:'Pending'});
+  ['so-qty','so-cost'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderSupply();
+}
+function renderSupply(){
+  var h=DB.supply.map(function(s){
+    var total=Number(s.qty||0)*Number(s.cost||0);
+    return '<div class="row"><div class="row-dot" style="background:var(--lime)"></div><div class="row-main"><div class="row-title">'+s.item+' × '+s.qty+' — '+s.member+'</div><div class="row-sub">Needed by: '+s.date+'</div></div><div class="row-right"><div class="money">'+money(total)+'</div></div></div>';
+  }).join('');
+  document.getElementById('supply-list').innerHTML=h||'<div class="empty">No supply orders pooled yet.</div>';
+}
+
+// ── TRANSPORT CALC ─────────────────────────────────────────────────────────
+function calcTransport(){
+  var pax=Number(document.getElementById('tp-pax').value||0);
+  var rate=Number(document.getElementById('tp-rate').value||0);
+  var rt=Number(document.getElementById('tp-rt').value||1);
+  if(!pax)return;
+  var total=pax*rate*rt;
+  document.getElementById('tp-result').style.display='block';
+  document.getElementById('tp-total').textContent=money(total);
+}
+
+// ── BLAST ──────────────────────────────────────────────────────────────────
+function saveBlast(){
+  var en=document.getElementById('bl-en').value.trim();if(!en)return;
+  DB.blasts.push({id:'BL'+Date.now(),type:document.getElementById('bl-type').value,
+    via:document.getElementById('bl-via').value,en:en,es:document.getElementById('bl-es').value,date:today()});
+  save();alert('Blast saved! Open WhatsApp contacts above to send.');
+}
+
+// ── SETTINGS ───────────────────────────────────────────────────────────────
+function saveSettings(){
+  DB.settings={name:document.getElementById('cfg-name').value,
+    cut:document.getElementById('cfg-cut').value,fee:document.getElementById('cfg-fee').value,
+    van:document.getElementById('cfg-van').value};
+  save();alert('Settings saved.');
+}
+
+// ── PRELOAD CL LEADS ───────────────────────────────────────────────────────
+function preloadCLLeads(){
+  var leads=[
+    {biz:"Calderon's Landscaping & Tree",spec:"Landscaping/Tree",area:"All San Diego"},
+    {biz:"Sotelo's Tree Service",spec:"Tree Service",area:"SD/North/East/South"},
+    {biz:"Esteban's Landscaping",spec:"Landscaping",area:"North San Diego"},
+    {biz:"Jose's Landscaping & Tree",spec:"Landscaping/Tree",area:"San Diego"},
+    {biz:"Carrillo's Landscape & Garden",spec:"Landscaping",area:"North San Diego"},
+    {biz:"Mendoza Landscaping",spec:"Landscaping",area:"SD/North/East/South"},
+    {biz:"EF PRO Landscaping",spec:"Landscaping/Hardscape",area:"North SD County"},
+    {biz:"Victor's Landscaping & Garden",phone:"(858) 333-9010",spec:"Landscaping",area:"North SD"},
+    {biz:"SM PRO Landscaping",spec:"Landscaping",area:"North SD/City/East/South"},
+    {biz:"Bautista Landscaping",spec:"Landscaping",area:"SD/North/East/South"},
+    {biz:"Garcia's Landscaping",spec:"Landscaping",area:"SD East/North/South"},
+    {biz:"JH PRO Landscaping",spec:"Landscaping/Hardscape",area:"SD/North/East/South"},
+    {biz:"Machado's Landscape",spec:"Landscaping",area:"San Diego"},
+    {biz:"Villamar Landscape",spec:"Landscaping",area:"East/North SD"},
+    {biz:"Ramirez Landscaping",spec:"Landscaping",area:"North SD/City/East/South"},
+    {biz:"Pedro's Gardening",spec:"Gardening",area:"North SD/East/South"},
+    {biz:"Pablito's Gardening",spec:"Gardening",area:"SD/North/East/South"}
+  ];
+  var added=0;
+  leads.forEach(function(l){
+    if(!DB.members.find(function(m){return m.biz===l.biz;})){
+      DB.members.push({id:'M'+Date.now()+Math.random(),biz:l.biz,name:'',phone:l.phone||'',
+        email:'',spec:l.spec,area:l.area,fee:'75',cut:'15',status:'Trial',crew:'2',
+        lang:'Spanish only',notes:'CL SD Lead — needs pitch call',joined:today()});
+      added++;
+    }
+  });
+  save();populateMemberSelects();renderAll();
+  alert(added+' CL landscapers loaded as Trial members. Call Victor first: (858) 333-9010');
+}
+
+window.addEventListener('resize',function(){if(window.innerWidth<680)document.getElementById('sb').classList.remove('open');});
+</script>
+</body>
+</html>

@@ -59,6 +59,17 @@ textarea{min-height:120px;resize:vertical;}
 #flyer-sidebar-btns{display:flex;gap:6px;margin-top:8px;}
 @media(max-width:900px){#app{padding:90px 16px 40px !important;}#flyer-sidebar{display:none !important;}.fr{grid-template-columns:1fr;}}
 </style>
+<style id="plp-css">
+#portal-login-panel{display:none;position:fixed;bottom:20px;right:20px;width:400px;max-height:300px;background:#0d1117;border:1px solid #C9A55C;border-radius:8px;z-index:9999;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+#portal-login-panel .plp-hdr{background:#161b22;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d}
+#portal-login-panel .plp-title{color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:2px}
+#portal-login-panel .plp-close{color:#64748b;cursor:pointer;font-size:13px;background:none;border:none;padding:0}
+#portal-login-panel table{width:100%;border-collapse:collapse;font-size:10px}
+#portal-login-panel th{color:#64748b;padding:3px 6px;text-align:left;border-bottom:1px solid #21262d}
+#portal-login-panel td{color:#e2e8f0;padding:3px 6px;border-bottom:1px solid #21262d}
+#portal-login-panel .plp-body{overflow-y:auto;max-height:240px;padding:6px}
+#plp-trigger{display:none;position:fixed;bottom:20px;right:20px;background:#161b22;border:1px solid #C9A55C;color:#C9A55C;font-size:9px;padding:5px 10px;border-radius:4px;cursor:pointer;z-index:9998;letter-spacing:1px;font-weight:700}
+</style>
 </head>
 <body>
 
@@ -99,6 +110,8 @@ textarea{min-height:120px;resize:vertical;}
   <button class="tab-btn" onclick="showTab('demo',this)" id="tab-demo">Demo Link</button>
   <button class="tab-btn" onclick="showTab('upload',this)" id="tab-upload">Fotos / Docs</button>
   <button class="tab-btn" onclick="showTab('flyers',this)" id="tab-flyers">Mis Flyers</button>
+  <button class="tab-btn" onclick="showTab('crm',this)" id="tab-crm">CRM Hoteles</button>
+  <button class="tab-btn" onclick="showTab('blast',this)" id="tab-blast">Blast Masivo</button>
   <button class="tab-btn" onclick="showTab('comisiones',this);loadCommissions();" id="tab-comisiones">Comisiones</button>
 </div>
 
@@ -969,6 +982,796 @@ function loadCommissions() {
   })
   .catch(function(){});
 }
+
+var _lastPin='';
+function loadPlpData(){
+  var portal=window.location.pathname.split('/').pop();
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/logins?portal='+encodeURIComponent(portal))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var tb=document.getElementById('plp-tbody');
+      if(!tb)return;
+      if(!d.logins||!d.logins.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No logins yet.</td></tr>';return;}
+      tb.innerHTML=d.logins.slice(0,50).map(function(l){
+        var dt=new Date(l.logged_in_at);
+        var ts=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        return '<tr><td style="color:#e2e8f0;font-weight:700">'+l.username+'</td><td style="color:#C9A55C">'+l.role+'</td><td style="color:#64748b;font-size:9px">'+l.ip_address+'</td><td style="color:#64748b">'+ts+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+function showPlpPanel(){
+  var p=document.getElementById('portal-login-panel');
+  var t=document.getElementById('plp-trigger');
+  if(p){p.style.display='block';if(t)t.style.display='none';loadPlpData();}
+}
+function checkOwnerPin(pin){
+  _lastPin=pin;
+  if(pin==='0609'){var t=document.getElementById('plp-trigger');if(t)t.style.display='block';}
+}
+
+</script>
+<div id="portal-login-panel"><div class="plp-hdr"><span class="plp-title">LOGIN ACTIVITY</span><button class="plp-close" onclick="document.getElementById('portal-login-panel').style.display='none';document.getElementById('plp-trigger').style.display='block'">x</button></div><div class="plp-body"><table><thead><tr><th>USER</th><th>ROLE</th><th>IP</th><th>TIME</th></tr></thead><tbody id="plp-tbody"><tr><td colspan="4" style="text-align:center;color:#64748b">Loading...</td></tr></tbody></table></div></div><button id="plp-trigger" onclick="showPlpPanel()">LOGIN LOG</button>
+
+<!-- ── SARAHY CRM HOTELES ──────────────────────────────────────────── -->
+<div class="section" id="section-crm">
+<div class="rs"><img src="https://mexausafg.com/meyenberg-samples/sara-en-red.png" alt="Sara"><div><div class="rsn">CRM HOTELES — 150 CONTACTOS</div><div class="rss">Costa Oeste: California, Oregon, Washington, Baja California</div></div></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
+  <div class="card" style="text-align:center;padding:14px"><div style="font-size:22px;font-weight:800;color:#b8944d" id="crm-tot">150</div><div style="font-size:9px;color:#94a3b8;letter-spacing:1px;margin-top:2px">TOTAL</div></div>
+  <div class="card" style="text-align:center;padding:14px"><div style="font-size:22px;font-weight:800;color:#94a3b8" id="crm-cold">0</div><div style="font-size:9px;color:#94a3b8;letter-spacing:1px;margin-top:2px">FRIO</div></div>
+  <div class="card" style="text-align:center;padding:14px"><div style="font-size:22px;font-weight:800;color:#4a8fd4" id="crm-contacted">0</div><div style="font-size:9px;color:#94a3b8;letter-spacing:1px;margin-top:2px">CONTACTADO</div></div>
+  <div class="card" style="text-align:center;padding:14px"><div style="font-size:22px;font-weight:800;color:#22c55e" id="crm-closed">0</div><div style="font-size:9px;color:#94a3b8;letter-spacing:1px;margin-top:2px">CERRADO</div></div>
+</div>
+<div class="card">
+  <div class="ct" style="margin-bottom:12px">LISTA DE HOTELES</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <input type="text" id="crm-search" placeholder="Buscar hotel..." style="flex:1;min-width:140px;padding:7px 10px;border:1px solid #e2dfd8;border-radius:4px;font-size:12px;font-family:inherit" oninput="crmRender()">
+    <select id="crm-filter" style="padding:7px 10px;border:1px solid #e2dfd8;border-radius:4px;font-size:11px;font-family:inherit" onchange="crmRender()">
+      <option value="">Todos</option>
+      <option value="Frio">Frio</option>
+      <option value="Contactado">Contactado</option>
+      <option value="Interesado">Interesado</option>
+      <option value="Cotizacion">Cotizacion</option>
+      <option value="Cerrado">Cerrado</option>
+    </select>
+    <select id="crm-state" style="padding:7px 10px;border:1px solid #e2dfd8;border-radius:4px;font-size:11px;font-family:inherit" onchange="crmRender()">
+      <option value="">Todos los estados</option>
+      <option value="CA">California</option>
+      <option value="OR">Oregon</option>
+      <option value="WA">Washington</option>
+      <option value="MX">Baja / Mexico</option>
+    </select>
+  </div>
+  <div style="overflow-x:auto">
+  <table style="width:100%;border-collapse:collapse;font-size:11px" id="crm-table">
+    <thead><tr style="background:#f5f3ee">
+      <th style="padding:8px 10px;text-align:left;color:#1a1f2e;font-size:9px;font-weight:700;letter-spacing:1px;white-space:nowrap">HOTEL</th>
+      <th style="padding:8px 10px;text-align:left;color:#1a1f2e;font-size:9px;font-weight:700;letter-spacing:1px">CIUDAD</th>
+      <th style="padding:8px 10px;text-align:left;color:#1a1f2e;font-size:9px;font-weight:700;letter-spacing:1px">TIPO</th>
+      <th style="padding:8px 10px;text-align:left;color:#1a1f2e;font-size:9px;font-weight:700;letter-spacing:1px">EMAIL</th>
+      <th style="padding:8px 10px;text-align:left;color:#1a1f2e;font-size:9px;font-weight:700;letter-spacing:1px">ESTADO</th>
+      <th style="padding:8px 10px;text-align:left;color:#1a1f2e;font-size:9px;font-weight:700;letter-spacing:1px">NOTAS</th>
+      <th style="padding:8px 10px;text-align:left;color:#1a1f2e;font-size:9px;font-weight:700;letter-spacing:1px">ACCION</th>
+    </tr></thead>
+    <tbody id="crm-body"></tbody>
+  </table>
+  </div>
+</div>
+</div>
+
+<!-- ── BLAST MASIVO ──────────────────────────────────────────────────── -->
+<div class="section" id="section-blast">
+<div class="rs"><img src="https://mexausafg.com/meyenberg-samples/sara-en-red.png" alt="Sara"><div><div class="rsn">BLAST MASIVO DE EMAILS</div><div class="rss">Sarahy selecciona, el sistema envia en ingles profesional</div></div></div>
+<div class="card">
+  <div class="ct" style="margin-bottom:14px">CONFIGURAR BLAST</div>
+  <div style="margin-bottom:10px">
+    <label style="font-size:11px;color:#64748b;font-weight:700;display:block;margin-bottom:4px">SEGMENTO</label>
+    <select id="blast-seg" style="width:100%;padding:8px 10px;border:1px solid #e2dfd8;border-radius:4px;font-size:12px;font-family:inherit" onchange="blastPreview()">
+      <option value="all">Todos los hoteles (150)</option>
+      <option value="CA">Solo California</option>
+      <option value="OR">Solo Oregon</option>
+      <option value="WA">Solo Washington</option>
+      <option value="MX">Solo Baja / Mexico</option>
+      <option value="Luxury">Solo Luxury</option>
+      <option value="Resort">Solo Resort</option>
+      <option value="Boutique">Solo Boutique</option>
+      <option value="cold">Solo Frio (no contactados)</option>
+    </select>
+  </div>
+  <div style="margin-bottom:10px">
+    <label style="font-size:11px;color:#64748b;font-weight:700;display:block;margin-bottom:4px">TIPO DE EMAIL</label>
+    <select id="blast-type" style="width:100%;padding:8px 10px;border:1px solid #e2dfd8;border-radius:4px;font-size:12px;font-family:inherit" onchange="blastPreview()">
+      <option value="intro">Introduccion — Primera vez</option>
+      <option value="sample">Oferta kit de muestras gratis</option>
+      <option value="followup">Seguimiento — Post primer email</option>
+      <option value="resort">Especial Resort / All-Inclusive</option>
+      <option value="baja">Especial Baja California (EN)</option>
+    </select>
+  </div>
+  <div id="blast-count-line" style="font-size:12px;color:#64748b;margin-bottom:12px;padding:8px 12px;background:#f5f3ee;border-radius:4px"></div>
+  <div style="margin-bottom:8px">
+    <label style="font-size:11px;color:#64748b;font-weight:700;display:block;margin-bottom:4px">PREVIEW DEL EMAIL (en ingles — asi llega al hotel)</label>
+    <div id="blast-subject-preview" style="font-size:12px;font-weight:700;color:#1a1f2e;padding:8px 12px;background:#fff;border:1px solid #e2dfd8;border-radius:4px 4px 0 0"></div>
+    <textarea id="blast-preview" rows="14" readonly style="width:100%;padding:10px 12px;border:1px solid #e2dfd8;border-top:none;border-radius:0 0 4px 4px;font-size:11px;font-family:inherit;background:#fafaf8;color:#334155;resize:none;line-height:1.7"></textarea>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+    <button onclick="fireBlast()" style="padding:10px 22px;background:#b8944d;border:none;border-radius:4px;color:#fff;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer">DISPARAR BLAST</button>
+    <button onclick="blastPreview()" style="padding:10px 18px;background:transparent;border:1px solid #b8944d;border-radius:4px;color:#b8944d;font-size:11px;font-weight:700;cursor:pointer">ACTUALIZAR PREVIEW</button>
+  </div>
+  <div id="blast-msg" style="margin-top:10px;font-size:12px;color:#22c55e;min-height:16px"></div>
+</div>
+<div class="card">
+  <div class="ct" style="margin-bottom:12px">HISTORIAL DE BLASTS</div>
+  <table style="width:100%;border-collapse:collapse;font-size:11px" id="blast-hist-table">
+    <thead><tr style="background:#f5f3ee">
+      <th style="padding:8px 10px;text-align:left;font-size:9px;color:#1a1f2e;letter-spacing:1px">FECHA</th>
+      <th style="padding:8px 10px;text-align:left;font-size:9px;color:#1a1f2e;letter-spacing:1px">SEGMENTO</th>
+      <th style="padding:8px 10px;text-align:left;font-size:9px;color:#1a1f2e;letter-spacing:1px">ENVIADOS</th>
+      <th style="padding:8px 10px;text-align:left;font-size:9px;color:#1a1f2e;letter-spacing:1px">ESTADO</th>
+    </tr></thead>
+    <tbody id="blast-hist-body"><tr><td colspan="4" style="padding:20px;text-align:center;color:#94a3b8">Sin blasts enviados aun.</td></tr></tbody>
+  </table>
+</div>
+</div>
+
+<script>
+// ── HOTEL CRM DATA ────────────────────────────────────────────────────
+var HOTELS_150 = [
+  {n:"Viceroy Santa Monica",e:"reservations@viceroyhotelsandresorts.com",c:"Santa Monica CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Hotel Bel-Air",e:"info@hotelbelair.com",c:"Los Angeles CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Rosewood Miramar Beach",e:"miramar.reservations@rosewoodhotels.com",c:"Santa Barbara CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"San Ysidro Ranch",e:"reservations@sanysidroranch.com",c:"Santa Barbara CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Shutters on the Beach",e:"info@shuttersonthebeach.com",c:"Santa Monica CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Casa del Mar",e:"info@hotelcasadelmar.com",c:"Santa Monica CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Auberge du Soleil",e:"reservations@aubergeresorts.com",c:"Napa CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Post Ranch Inn",e:"reservations@postranchinn.com",c:"Big Sur CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Hotel Bel-Air Dorchester",e:"reservations@hotelbelair.com",c:"Bel Air CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Four Seasons Los Angeles",e:"la.reservations@fourseasons.com",c:"Los Angeles CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Four Seasons San Francisco",e:"sf.reservations@fourseasons.com",c:"San Francisco CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Ritz-Carlton Laguna Niguel",e:"rc.lgares@ritzcarlton.com",c:"Dana Point CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Ritz-Carlton Half Moon Bay",e:"rc.sfres@ritzcarlton.com",c:"Half Moon Bay CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Ritz-Carlton Los Angeles",e:"la.reservations@ritzcarlton.com",c:"Los Angeles CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Waldorf Astoria Beverly Hills",e:"beverlyhills@waldorfastoria.com",c:"Beverly Hills CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Peninsula Beverly Hills",e:"pbh@peninsula.com",c:"Beverly Hills CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Hotel Biltmore Santa Barbara",e:"reservations@sbhotelbiltmore.com",c:"Santa Barbara CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Montage Beverly Hills",e:"beverlyhills@montagehotels.com",c:"Beverly Hills CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Montage Laguna Beach",e:"lagunabeach@montagehotels.com",c:"Laguna Beach CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Pelican Hill Newport Beach",e:"reservations@pelicanhill.com",c:"Newport Coast CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Terranea Resort",e:"info@terranea.com",c:"Rancho Palos Verdes CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Ojai Valley Inn",e:"reservations@ojairesort.com",c:"Ojai CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Monarch Beach Resort",e:"info@monarchbeachresort.com",c:"Dana Point CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Hotel Del Coronado",e:"reservations@hoteldel.com",c:"Coronado CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Loews Coronado Bay",e:"reservations.coronado@loewshotels.com",c:"Coronado CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Fairmont Grand Del Mar",e:"granddelmar@fairmont.com",c:"San Diego CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Park Hyatt Aviara",e:"aviara.park@hyatt.com",c:"Carlsbad CA",t:"Resort",s:'Frio',notes:''},
+  {n:"La Costa Resort",e:"reservations@lacosta.com",c:"Carlsbad CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Rancho Valencia",e:"reservations@ranchovalencia.com",c:"Rancho Santa Fe CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Estancia La Jolla",e:"info@estancialajolla.com",c:"La Jolla CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Lodge at Torrey Pines",e:"reservations@lodgetorreypines.com",c:"La Jolla CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Carmel Valley Ranch",e:"carmelvalleyranch.com",c:"Carmel CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Bernardus Lodge",e:"reservations@bernarduslodge.com",c:"Carmel Valley CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Ventana Big Sur",e:"reservations@ventanabigsurescapes.com",c:"Big Sur CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Carmel Mission Inn",e:"info@carmelmissioninn.com",c:"Carmel CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Pebble Beach Resorts",e:"reservations@pebblebeach.com",c:"Pebble Beach CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Madonna Inn",e:"info@madonnainn.com",c:"San Luis Obispo CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Pendry San Diego",e:"info@pendryhotels.com",c:"San Diego CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hotel Californian",e:"info@thehotelcalifornian.com",c:"Santa Barbara CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Proper Hotel San Francisco",e:"hello@properhotel.com",c:"San Francisco CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Proper Hotel Santa Monica",e:"santamonica@properhotel.com",c:"Santa Monica CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Proper Hotel Downtown LA",e:"la@properhotel.com",c:"Los Angeles CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"The LINE Hotel LA",e:"la@thelinehotel.com",c:"Los Angeles CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"The LINE Hotel SF",e:"sf@thelinehotel.com",c:"San Francisco CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Ace Hotel Downtown LA",e:"la@acehotel.com",c:"Los Angeles CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Ace Hotel Palm Springs",e:"palmsprings@acehotel.com",c:"Palm Springs CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"NoMad Los Angeles",e:"info@thenomadhotel.com",c:"Los Angeles CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hotel June Malibu",e:"info@hoteljune.com",c:"Malibu CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hotel June West LA",e:"westla@hoteljune.com",c:"Los Angeles CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton La Peer",e:"lapeer@kimptonhotels.com",c:"West Hollywood CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton Everly",e:"everly@kimptonhotels.com",c:"Hollywood CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton Hotel Palomar",e:"palomarlax@kimptonhotels.com",c:"Los Angeles CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton Hotel Monaco SF",e:"monaco@kimptonhotels.com",c:"San Francisco CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton Buchanan",e:"buchanan@kimptonhotels.com",c:"San Francisco CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton Sawyer Sacramento",e:"sawyer@kimptonhotels.com",c:"Sacramento CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hotel Figueroa",e:"info@hotelfigueroa.com",c:"Los Angeles CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hotel Erwin Venice",e:"info@hotelerwin.com",c:"Venice CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hotel Zamora",e:"info@hotelzamora.com",c:"Los Angeles CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Viceroy L Ermitage Beverly Hills",e:"info@viceroyhotelsandresorts.com",c:"Beverly Hills CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"The Langham Huntington",e:"huntington@langhamhotels.com",c:"Pasadena CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Langham Los Angeles",e:"losangeles@langhamhotels.com",c:"Los Angeles CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"InterContinental Los Angeles",e:"lacal@ihg.com",c:"Los Angeles CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"InterContinental San Francisco",e:"reservations@iclasf.com",c:"San Francisco CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Westin St Francis",e:"stfrancis@westin.com",c:"San Francisco CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Palace Hotel SF",e:"reservations@sfpalace.com",c:"San Francisco CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Fairmont San Francisco",e:"sanfrancisco@fairmont.com",c:"San Francisco CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Fairmont San Jose",e:"sanjose@fairmont.com",c:"San Jose CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Rosewood Sand Hill",e:"sandhillinfo@rosewoodhotels.com",c:"Menlo Park CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Bardessono Hotel",e:"info@bardessono.com",c:"Yountville CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Poetry Inn",e:"reservations@poetryinn.com",c:"Napa CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hotel Yountville",e:"info@hotelyountville.com",c:"Yountville CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Solage Calistoga",e:"info@solagecalistoga.com",c:"Calistoga CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Indian Springs Calistoga",e:"info@indianspringscalistoga.com",c:"Calistoga CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Meadowood Napa Valley",e:"info@meadowood.com",c:"St Helena CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Hotel Las Madres",e:"info@hotellasmadres.com",c:"Sonoma CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Macarthur Place",e:"info@macarthurplace.com",c:"Sonoma CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"La Residence Napa",e:"info@laresidence.com",c:"Napa CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Andaz West Hollywood",e:"westhdywood@andaz.com",c:"West Hollywood CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Andaz San Diego",e:"sandiego@andaz.com",c:"San Diego CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hilton San Diego Bayfront",e:"reservations@sandiegobayfront.hilton.com",c:"San Diego CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Manchester Grand Hyatt SD",e:"sd.grand@hyatt.com",c:"San Diego CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hard Rock Hotel San Diego",e:"sdrocksales@hardrockhotelsd.com",c:"San Diego CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hotel Indigo San Diego Gaslamp",e:"reservations@hotelindigo-gaslamp.com",c:"San Diego CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Omni San Diego",e:"reservations.sd@omnihotels.com",c:"San Diego CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Porto Vista Hotel",e:"info@portovista.com",c:"San Diego CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"The US Grant",e:"usgrant@omnihotels.com",c:"San Diego CA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Hotel del Arte",e:"info@hoteldelarte.com",c:"San Diego CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Crystal Pier Hotel",e:"reservations@crystalpier.com",c:"Pacific Beach CA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Paradise Point Resort",e:"info@paradisepoint.com",c:"San Diego CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Hotel Circle San Diego",e:"info@hotelcircle.com",c:"San Diego CA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Rancho Bernardo Inn",e:"reservations@ranchobernardoinn.com",c:"San Diego CA",t:"Resort",s:'Frio',notes:''},
+  {n:"Sentinel Hotel Portland",e:"info@sentinelhotel.com",c:"Portland OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton Hotel Monaco Portland",e:"monaco.portland@kimptonhotels.com",c:"Portland OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton RiverPlace Portland",e:"riverplace@kimptonhotels.com",c:"Portland OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hotel Lucia Portland",e:"info@hotelluciaportland.com",c:"Portland OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Nines Hotel Portland",e:"info@thenines.com",c:"Portland OR",t:"Luxury",s:'Frio',notes:''},
+  {n:"Canopy by Hilton Portland",e:"info@canopyportland.com",c:"Portland OR",t:"Upscale",s:'Frio',notes:''},
+  {n:"Benson Hotel Portland",e:"reservations@bensonhotel.com",c:"Portland OR",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hotel deLuxe Portland",e:"info@hoteldeluxeportland.com",c:"Portland OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Crystal Hotel Portland",e:"info@crystalhotelportland.com",c:"Portland OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Heathman Hotel Portland",e:"info@heathmanhotel.com",c:"Portland OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Allison Inn Willamette",e:"reservations@theallison.com",c:"Newberg OR",t:"Resort",s:'Frio',notes:''},
+  {n:"Tu Tu Tun Lodge",e:"info@tututun.com",c:"Gold Beach OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Stephanie Inn Cannon Beach",e:"info@stephanieinn.com",c:"Cannon Beach OR",t:"Boutique",s:'Frio',notes:''},
+  {n:"Surfsand Resort",e:"info@surfsand.com",c:"Cannon Beach OR",t:"Resort",s:'Frio',notes:''},
+  {n:"Kimpton Alexis Seattle",e:"reservations@alexishotel.com",c:"Seattle WA",t:"Boutique",s:'Frio',notes:''},
+  {n:"The Edgewater Seattle",e:"edgewater@edgewaterhotel.com",c:"Seattle WA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Inn at the Market Seattle",e:"info@innatthemarket.com",c:"Seattle WA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hotel Murano Tacoma",e:"info@hotelmurano.com",c:"Tacoma WA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Willows Lodge Woodinville",e:"info@willowslodge.com",c:"Woodinville WA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Salish Lodge Snoqualmie",e:"info@salishlodge.com",c:"Snoqualmie WA",t:"Resort",s:'Frio',notes:''},
+  {n:"Cedarbrook Lodge SeaTac",e:"info@cedarbrooklodge.com",c:"SeaTac WA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton Hotel Monaco Seattle",e:"monaco.seattle@kimptonhotels.com",c:"Seattle WA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Kimpton Palliser Calgary",e:"palliser@kimptonhotels.com",c:"Bellevue WA",t:"Boutique",s:'Frio',notes:''},
+  {n:"The Charter Hotel Seattle",e:"info@charterhotelseattle.com",c:"Seattle WA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Fairmont Olympic Seattle",e:"olympic@fairmont.com",c:"Seattle WA",t:"Luxury",s:'Frio',notes:''},
+  {n:"Thompson Seattle",e:"seattle@thompsonhotels.com",c:"Seattle WA",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hyatt Regency Seattle",e:"seattle.regency@hyatt.com",c:"Seattle WA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Pan Pacific Seattle",e:"panpacific.seattle@panpacific.com",c:"Seattle WA",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hotel Coral and Marina",e:"sales@hotelcoral.com",c:"Ensenada MX",t:"Upscale",s:'Frio',notes:''},
+  {n:"Las Ventanas Al Paraiso",e:"reservations@rosewoodhotels.com",c:"Los Cabos MX",t:"Luxury",s:'Frio',notes:''},
+  {n:"Grand Velas Los Cabos",e:"reservations@grandvelas.com",c:"Los Cabos MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Hacienda Encantada",e:"reservations@haciendaencantada.com",c:"Los Cabos MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Pueblo Bonito Sunset Beach",e:"info@pueblobonito.com",c:"Los Cabos MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Hotel Mision Santa Isabel",e:"info@hotelmision.com",c:"Ensenada MX",t:"Boutique",s:'Frio',notes:''},
+  {n:"Esperanza Auberge Cabo",e:"esperanza@aubergeresorts.com",c:"Los Cabos MX",t:"Luxury",s:'Frio',notes:''},
+  {n:"One and Only Palmilla",e:"info@oneandonlypalmilla.com",c:"Los Cabos MX",t:"Luxury",s:'Frio',notes:''},
+  {n:"Capella Pedregal",e:"reservations@capellapedregal.com",c:"Cabo San Lucas MX",t:"Luxury",s:'Frio',notes:''},
+  {n:"Pueblo Bonito Pacifica",e:"info@pueblobonitopacifica.com",c:"Cabo San Lucas MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Pueblo Bonito Rose",e:"reservations@pueblobonitorose.com",c:"Cabo San Lucas MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Marquis Los Cabos",e:"reservations@marquisloscabos.com",c:"Los Cabos MX",t:"Luxury",s:'Frio',notes:''},
+  {n:"Garza Blanca Resort",e:"reservations@garzablanca.com",c:"Puerto Vallarta MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Hotel Boutique La Mision Loreto",e:"reservations@hotellamision.com",c:"Loreto MX",t:"Boutique",s:'Frio',notes:''},
+  {n:"Playa Grande Resort",e:"info@playagrande.com",c:"Cabo San Lucas MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Grand Fiesta Americana",e:"gfa.loscabos@fiestamericana.com",c:"Los Cabos MX",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hotel El Ganzo",e:"info@elganzo.com",c:"Los Cabos MX",t:"Boutique",s:'Frio',notes:''},
+  {n:"Hilton Los Cabos",e:"reservations@hiltonloscabos.com",c:"Los Cabos MX",t:"Upscale",s:'Frio',notes:''},
+  {n:"Riu Palace Los Cabos",e:"palacecabos@riu.com",c:"Los Cabos MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Breathless Cabo",e:"reservations@breathlesscabo.com",c:"Los Cabos MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Haven Riviera Cabos",e:"info@havenrivieracabos.com",c:"Los Cabos MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Hotel Baja Club",e:"info@hotelbajaclub.com",c:"La Paz MX",t:"Boutique",s:'Frio',notes:''},
+  {n:"CostaBaja Resort La Paz",e:"reservations@costabaja.com",c:"La Paz MX",t:"Resort",s:'Frio',notes:''},
+  {n:"Hotel Seven Crown Ensenada",e:"info@sevencrown.com",c:"Ensenada MX",t:"Upscale",s:'Frio',notes:''},
+  {n:"Hotel Punta Morro",e:"info@hotelpuntamorro.com",c:"Ensenada MX",t:"Boutique",s:'Frio',notes:''}
+];
+
+var crmData = (function(){
+  try{ return JSON.parse(localStorage.getItem('sara_crm150')||'null'); }catch(e){ return null; }
+})() || HOTELS_150.map(function(h){ return Object.assign({},h); });
+
+function saveCrm(){ try{ localStorage.setItem('sara_crm150',JSON.stringify(crmData)); }catch(e){} }
+
+function crmRender(){
+  var q=(document.getElementById('crm-search')||{}).value||'';
+  var f=(document.getElementById('crm-filter')||{}).value||'';
+  var st=(document.getElementById('crm-state')||{}).value||'';
+  var rows=crmData.filter(function(h){
+    var mq=q===''||(h.n+h.c+h.e).toLowerCase().indexOf(q.toLowerCase())>-1;
+    var mf=f===''||h.s===f;
+    var ms=st===''||h.c.indexOf(st)>-1;
+    return mq&&mf&&ms;
+  });
+  var tb=document.getElementById('crm-body');
+  if(!tb) return;
+  var SCOL={Frio:'#94a3b8',Contactado:'#4a8fd4',Interesado:'#f59e0b',Cotizacion:'#b8944d',Cerrado:'#22c55e'};
+  tb.innerHTML=rows.map(function(h,ri){
+    var idx=crmData.indexOf(h);
+    var baja=h.c.indexOf('MX')>-1;
+    return '<tr style="border-bottom:1px solid #f0ede7"><td style="padding:8px 10px;color:#1a1f2e;font-weight:600;font-size:11px">'+h.n+'</td><td style="padding:8px 10px;color:#64748b;font-size:11px">'+h.c+'</td><td style="padding:8px 10px"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;background:'+(h.t==='Luxury'?'#fef3c7':h.t==='Resort'?'#dbeafe':h.t==='Boutique'?'#f3e8ff':'#f1f5f9')+';color:'+(h.t==='Luxury'?'#92400e':h.t==='Resort'?'#1e40af':h.t==='Boutique'?'#7e22ce':'#475569')+'">'+h.t+'</span></td><td style="padding:8px 10px;font-size:10px;color:#64748b">'+h.e+'</td><td style="padding:8px 10px"><select onchange="crmStatus('+idx+',this.value)" style="font-size:10px;border:1px solid #e2dfd8;border-radius:4px;padding:3px 6px;font-family:inherit"><option'+(h.s==='Frio'?' selected':'')+'>Frio</option><option'+(h.s==='Contactado'?' selected':'')+'>Contactado</option><option'+(h.s==='Interesado'?' selected':'')+'>Interesado</option><option'+(h.s==='Cotizacion'?' selected':'')+'>Cotizacion</option><option'+(h.s==='Cerrado'?' selected':'')+'>Cerrado</option></select></td><td style="padding:8px 10px"><input type="text" value="'+h.notes+'" placeholder="Nota..." onchange="crmNote('+idx+',this.value)" style="font-size:10px;border:1px solid #e2dfd8;border-radius:4px;padding:3px 7px;width:110px;font-family:inherit"></td><td style="padding:8px 10px;white-space:nowrap"><button onclick="crmEmail('+idx+')" style="font-size:9px;padding:4px 8px;background:#b8944d;border:none;border-radius:3px;color:#fff;cursor:pointer;font-weight:700">EMAIL</button></td></tr>';
+  }).join('');
+  crmUpdateStats();
+}
+
+function crmStatus(idx,v){ crmData[idx].s=v; saveCrm(); crmUpdateStats(); }
+function crmNote(idx,v){ crmData[idx].n_note=v; crmData[idx].notes=v; saveCrm(); }
+
+function crmEmail(idx){
+  var h=crmData[idx];
+  document.getElementById('hotel-email').value=h.e;
+  document.getElementById('hotel-name').value=h.n;
+  document.getElementById('hotel-contact').value='General Manager';
+  if(typeof showTab==='function') showTab('email', document.getElementById('tab-email'));
+  crmData[idx].s='Contactado'; saveCrm(); crmRender();
+}
+
+function crmUpdateStats(){
+  var cold=0,cont=0,closed=0;
+  crmData.forEach(function(h){
+    if(h.s==='Frio') cold++;
+    else if(h.s==='Contactado'||h.s==='Interesado'||h.s==='Cotizacion') cont++;
+    else if(h.s==='Cerrado') closed++;
+  });
+  var t=document.getElementById('crm-tot'); if(t) t.textContent=crmData.length;
+  var c=document.getElementById('crm-cold'); if(c) c.textContent=cold;
+  var ct=document.getElementById('crm-contacted'); if(ct) ct.textContent=cont;
+  var cl=document.getElementById('crm-closed'); if(cl) cl.textContent=closed;
+}
+
+// ── BLAST ENGINE ──────────────────────────────────────────────────────
+var blastHistory=[];
+try{ blastHistory=JSON.parse(localStorage.getItem('sara_blasts')||'[]'); }catch(e){}
+
+function blastSegment(){
+  var seg=(document.getElementById('blast-seg')||{}).value||'all';
+  if(seg==='all') return crmData;
+  if(seg==='cold') return crmData.filter(function(h){return h.s==='Frio';});
+  if(['CA','OR','WA','MX'].indexOf(seg)>-1) return crmData.filter(function(h){return h.c.indexOf(seg)>-1;});
+  return crmData.filter(function(h){return h.t===seg;});
+}
+
+function blastSubject(type){
+  var s={
+    intro:'Custom-Branded Hotel Amenities — Introducing Meyenberg Amenidades',
+    sample:'Complimentary Sample Kit — Meyenberg Hotel Amenidades',
+    followup:'Following Up — Meyenberg Amenidades | Have you tried our samples?',
+    resort:'High-Volume Amenity Program for Resort Properties — Meyenberg',
+    baja:'Custom Hotel Amenities — Direct from Manufacturer | Meyenberg Amenidades'
+  };
+  return s[type]||s.intro;
+}
+
+function blastBody(type, hotelName, city){
+  var baja=city&&city.indexOf('MX')>-1;
+  if(type==='resort') return 'Dear '+hotelName+' Team,
+
+I am Saul Garcia, West Coast manufacturer representative for Meyenberg Amenidades.
+
+Resort and all-inclusive properties face a unique challenge: high volume, consistent brand standards, and cost pressure simultaneously. We solve that with direct factory access — no distributors, no markup.
+
+We manufacture the full guest bathroom suite custom-branded with your logo: shampoo, conditioner, bar soap, round soap, moisturizer, bubble bath, dental kit, shower cap, slippers, and bath sets.
+
+For a 300-room resort at 75% occupancy, our program typically saves $40,000-$80,000 annually versus standard supply channels — with a visibly premium guest experience.
+
+May I send a complimentary sample kit for your team to evaluate? No cost, no commitment.
+
+Saul Garcia
+Meyenberg Amenidades — West Coast Division
++1 (831) 251-3116 | sgarcia1911@gmail.com
+mexausafg.com/meyenberg-hotel-sales.html
+
+Reply REMOVE to unsubscribe.';
+  if(type==='sample') return 'Dear '+hotelName+' Team,
+
+My name is Saul Garcia and I represent Meyenberg Amenidades as your West Coast manufacturer representative for hotel amenities.
+
+I would like to send your property a complimentary sample kit — completely free, no obligation — so your team can evaluate the quality firsthand before making any decision.
+
+The kit includes: shampoo 30ml, bar soap 25g, round soap 25g, moisturizing cream 30ml, dental kit, shower cap, and a slipper pair. All samples are production quality. Custom branding is available on all SKUs.
+
+All I need is a shipping address and a contact name. Would you like me to send one to '+hotelName+'?
+
+Saul Garcia
+Meyenberg Amenidades
++1 (831) 251-3116 | sgarcia1911@gmail.com
+mexausafg.com/meyenberg-hotel-sales.html
+
+Reply REMOVE to unsubscribe.';
+  if(type==='followup') return 'Dear '+hotelName+' Team,
+
+I wanted to follow up on my previous message regarding Meyenberg Amenidades custom hotel amenities.
+
+I understand you receive many vendor inquiries — I will keep this brief.
+
+Our program gives properties like yours direct manufacturer access: custom-branded shampoo, soaps, moisturizers, dental kits, and slippers at factory prices, no distributor markup. Lead time 3-4 weeks from logo proof approval.
+
+If you have 10 minutes this week, I would love to show you what we have done for similar properties. Or, I can simply send a sample kit so the product speaks for itself.
+
+Saul Garcia
+Meyenberg Amenidades
++1 (831) 251-3116 | sgarcia1911@gmail.com
+
+Reply REMOVE to unsubscribe.';
+  // intro (default)
+  return 'Dear '+hotelName+' Team,
+
+My name is Saul Garcia, West Coast manufacturer representative for Meyenberg Amenidades.
+
+We manufacture premium, custom-branded hotel amenities — shampoos, soaps, moisturizers, dental kits, slippers, and more — for boutique and luxury properties across California, Oregon, Washington, and Baja California.
+
+Every product is custom-labeled with your brand identity, manufactured in Mexico under strict quality controls, and delivered in 3-4 weeks from proof approval. Minimum order 300 units per SKU. Free digital proof with every new account.
+
+Properties consolidating amenity sourcing through us report 18-35% per-room cost reduction while elevating perceived guest experience quality.
+
+May I send '+hotelName+' a complimentary sample kit — no cost, no commitment?
+
+Saul Garcia
+Meyenberg Amenidades — West Coast Division
++1 (831) 251-3116 | sgarcia1911@gmail.com
+mexausafg.com/meyenberg-hotel-sales.html
+
+Reply REMOVE to unsubscribe.';
+}
+
+function blastPreview(){
+  var seg=blastSegment();
+  var type=(document.getElementById('blast-type')||{}).value||'intro';
+  var cl=document.getElementById('blast-count-line');
+  if(cl) cl.textContent='Se enviara a '+seg.length+' hoteles en este segmento.';
+  var sp=document.getElementById('blast-subject-preview');
+  if(sp) sp.textContent='ASUNTO: '+blastSubject(type);
+  var sample=seg[0]||{n:'Sample Hotel',c:'Los Angeles CA'};
+  var bp=document.getElementById('blast-preview');
+  if(bp) bp.value=blastBody(type,sample.n,sample.c);
+}
+
+function fireBlast(){
+  var seg=blastSegment();
+  var type=(document.getElementById('blast-type')||{}).value||'intro';
+  var msg=document.getElementById('blast-msg');
+  if(!seg.length){ if(msg){msg.style.color='#ef4444';msg.textContent='Sin hoteles en este segmento.';} return; }
+  var payload={targets:seg.map(function(h){return {name:h.n,email:h.e,city:h.c,tier:h.t};}),type:type};
+  if(msg){ msg.style.color='#f59e0b'; msg.textContent='Enviando blast a '+seg.length+' hoteles...'; }
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/hotel-blast/sara',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).then(function(r){return r.json();}).then(function(d){
+    if(msg){ msg.style.color='#22c55e'; msg.textContent='Blast disparado: '+d.queued+' emails en cola. Resumen llegara a sgarcia1911@gmail.com'; }
+    blastHistory.unshift({date:new Date().toLocaleDateString('es-MX'),seg:(document.getElementById('blast-seg')||{}).value,count:seg.length,status:'Enviado'});
+    try{ localStorage.setItem('sara_blasts',JSON.stringify(blastHistory)); }catch(e){}
+    renderBlastHist();
+    // mark all as contacted
+    seg.forEach(function(h){ var idx=crmData.indexOf(h); if(idx>-1&&crmData[idx].s==='Frio') crmData[idx].s='Contactado'; });
+    saveCrm();
+  }).catch(function(e){
+    if(msg){ msg.style.color='#ef4444'; msg.textContent='Error: '+e.message; }
+  });
+}
+
+function renderBlastHist(){
+  var tb=document.getElementById('blast-hist-body');
+  if(!tb) return;
+  if(!blastHistory.length){ tb.innerHTML='<tr><td colspan="4" style="padding:20px;text-align:center;color:#94a3b8">Sin blasts enviados aun.</td></tr>'; return; }
+  tb.innerHTML=blastHistory.map(function(b){
+    return '<tr style="border-bottom:1px solid #f0ede7"><td style="padding:8px 10px;font-size:11px">'+b.date+'</td><td style="padding:8px 10px;font-size:11px">'+b.seg+'</td><td style="padding:8px 10px;font-size:11px;font-weight:700">'+b.count+'</td><td style="padding:8px 10px"><span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;background:#d1fae5;color:#065f46">'+b.status+'</span></td></tr>';
+  }).join('');
+}
+
+// init CRM on page load (after login)
+var _crmInit=false;
+var _origShowTab=window.showTab||null;
+function initCrmIfNeeded(){
+  if(_crmInit) return;
+  _crmInit=true;
+  crmRender();
+  blastPreview();
+  renderBlastHist();
+}
+// hook into section display
+document.addEventListener('click',function(e){
+  var btn=e.target.closest('button');
+  if(!btn) return;
+  if(btn.id==='tab-crm'||btn.id==='tab-blast') setTimeout(function(){crmRender();blastPreview();renderBlastHist();},50);
+});
+setTimeout(function(){
+  if(document.getElementById('section-crm')) initCrmIfNeeded();
+},1500);
+</script>
+
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
 </script>
 </body>
+
 </html>

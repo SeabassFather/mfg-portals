@@ -1,0 +1,2641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>PlateGuard v2 — Security LP System</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#020912;--card:#161b22;--card2:#0d1117;--bord:rgba(255,255,255,0.06);--bord2:rgba(255,255,255,0.04);
+  --gold:#C9A55C;--blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;--purple:#7c3aed;
+}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;font-size:13px;overflow-x:hidden;-webkit-tap-highlight-color:rgba(74,143,212,0.2)}
+button,div[onclick]{-webkit-tap-highlight-color:rgba(74,143,212,0.2);touch-action:manipulation}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+.gate-card{background:#fff;border-radius:24px;padding:36px 28px 28px;width:90%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative}
+.gate-logo{font-size:10px;font-weight:900;letter-spacing:3px;color:#64748b;margin-bottom:4px}
+.gate-title{font-size:22px;font-weight:900;color:#0d1117;letter-spacing:2px;margin-bottom:2px}
+.gate-sub{font-size:11px;color:#64748b;margin-bottom:18px}
+.gate-dots{display:flex;justify-content:center;gap:12px;margin-bottom:8px}
+.gate-dot{width:14px;height:14px;border-radius:50%;background:#e2e8f0;border:2px solid #cbd5e1;transition:background .15s}
+.gate-dot.filled{background:#0d1117;border-color:#0d1117}
+.gate-err{color:#ef4444;font-size:11px;min-height:16px;margin-bottom:6px}
+.np-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.np-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:16px 0;background:#F8F9FB;border:1px solid #e2e8f0;border-radius:14px;font-size:20px;font-weight:700;color:#1A202C;cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none;transition:background .1s}
+.np-btn:active{background:#C9A55C33}
+.np-clr{color:#ef4444;font-size:13px}
+.np-del{color:#64748b;font-size:13px}
+.gate-enter{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#0d1117,#1e293b);color:#C9A55C;font-size:13px;font-weight:900;letter-spacing:2px;cursor:pointer}
+.gate-powered{margin-top:14px;font-size:9px;color:#94a3b8;letter-spacing:.5px}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:8px;padding:0 14px;height:52px;background:var(--card);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:100;flex-shrink:0}
+.tb-shield{width:30px;height:30px;background:linear-gradient(135deg,var(--blue),#1d4ed8);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.tb-brand{font-size:14px;font-weight:900;letter-spacing:.5px;flex:1}
+.tb-brand span{color:var(--blue)}
+.tb-gps{font-size:9px;color:var(--txt3);background:var(--card2);border:1px solid var(--bord);border-radius:6px;padding:3px 8px;cursor:pointer;white-space:nowrap}
+.tb-gps.active{color:var(--green);border-color:rgba(34,197,94,0.3)}
+.tb-guard{font-size:9px;font-weight:700;color:var(--gold);background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.2);border-radius:6px;padding:3px 8px}
+.lock-btn{font-size:9px;font-weight:700;color:var(--txt3);cursor:pointer;padding:5px 8px;border:1px solid var(--bord);border-radius:6px}
+
+/* TABNAV */
+.tabnav{display:flex;background:var(--card2);border-bottom:1px solid var(--bord);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-shrink:0}
+.tabnav::-webkit-scrollbar{display:none}
+.tn{padding:11px 14px;font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
+.tn:hover{color:var(--txt2)}
+.tn.on{color:var(--blue);border-bottom-color:var(--blue)}
+.tn.alert-tab{color:var(--amber)}
+
+/* SECTIONS */
+.sec{display:none;padding:14px;max-width:100%}
+.sec.on{display:block}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--bord);border-radius:12px}
+.card-p{padding:14px}
+.sec-hdr{font-size:9px;font-weight:700;letter-spacing:1.2px;color:var(--txt3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bord)}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:560px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-card{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:12px;text-align:center}
+.stat-val{font-size:24px;font-weight:900;line-height:1}
+.stat-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;color:var(--txt3);margin-top:4px}
+
+/* FORM */
+.form-row{margin-bottom:10px}
+.lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--txt3);margin-bottom:4px;display:block}
+.inp{width:100%;background:var(--card2);border:1px solid var(--bord);border-radius:8px;padding:9px 12px;color:var(--txt);font-size:13px;outline:none;font-family:inherit;transition:border-color .15s}
+.inp:focus{border-color:var(--blue)}
+select.inp{cursor:pointer}
+textarea.inp{resize:vertical;min-height:70px}
+.inp-plate{font-size:22px;font-weight:900;letter-spacing:4px;text-transform:uppercase;text-align:center;color:var(--gold)}
+.inp-plate::placeholder{color:var(--txt3);font-size:14px;letter-spacing:2px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:500px){.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:9px 18px;border:none;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.7px;cursor:pointer;transition:.15s;font-family:inherit}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{opacity:.9}
+.btn-green{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:var(--green)}
+.btn-red{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
+.btn-amber{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:var(--amber)}
+.btn-ghost{background:transparent;border:1px solid var(--bord);color:var(--txt2)}
+.btn-ghost:hover{border-color:var(--txt3)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#a8803a);color:#fff}
+.btn-full{width:100%}
+.btn-purple{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:#a78bfa}
+
+/* CAMERA */
+.capture-zone{border:2px dashed rgba(74,143,212,0.3);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:.2s;background:rgba(74,143,212,0.03);position:relative;overflow:hidden}
+.capture-zone:hover,.capture-zone.drag{border-color:var(--blue);background:rgba(74,143,212,0.07)}
+.capture-zone input[type=file]{display:none}
+.capture-icon{font-size:30px;margin-bottom:6px;pointer-events:none}
+.capture-title{font-size:12px;font-weight:700;color:var(--txt2);margin-bottom:2px;pointer-events:none}
+.capture-sub{font-size:10px;color:var(--txt3);pointer-events:none}
+.preview-img{width:100%;max-height:200px;object-fit:contain;border-radius:8px;display:none;margin-top:10px;border:1px solid var(--bord)}
+
+/* GPS BOX */
+.gps-box{background:var(--card2);border:1px solid var(--bord);border-radius:8px;padding:10px 12px;font-size:11px;display:flex;align-items:center;gap:8px}
+.gps-box.locked{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.04)}
+.gps-box.searching{border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)}
+.gps-box.error{border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.04)}
+.gps-coords{font-size:10px;color:var(--txt2);font-family:monospace}
+.gps-icon{font-size:18px;flex-shrink:0}
+
+/* SCAN RESULT */
+#scan-result-box{display:none;border-radius:12px;padding:18px;text-align:center;margin-top:14px;border:2px solid}
+.srb-plate{font-size:30px;font-weight:900;letter-spacing:6px;margin-bottom:6px}
+.srb-verdict{font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:4px}
+.srb-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.srb-detail{font-size:11px;color:var(--txt2);margin-bottom:8px}
+.srb-crosscheck{font-size:11px;line-height:1.8;margin-bottom:12px;text-align:left;background:rgba(0,0,0,0.2);border-radius:8px;padding:10px}
+.srb-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.srb-auth{background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.4)}
+.srb-visitor{background:rgba(74,143,212,0.08);border-color:rgba(74,143,212,0.4)}
+.srb-flagged{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.5)}
+.srb-unknown{background:rgba(100,116,139,0.08);border-color:rgba(100,116,139,0.3)}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:9px;font-weight:700;letter-spacing:.7px}
+.pill-green{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25)}
+.pill-red{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
+.pill-amber{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.25)}
+.pill-blue{background:rgba(74,143,212,0.12);color:var(--blue);border:1px solid rgba(74,143,212,0.25)}
+.pill-grey{background:rgba(100,116,139,0.12);color:var(--txt2);border:1px solid var(--bord)}
+.pill-purple{background:rgba(124,58,237,0.12);color:#a78bfa;border:1px solid rgba(124,58,237,0.25)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-green{background:var(--green)}.dot-red{background:var(--red)}.dot-amber{background:var(--amber)}.dot-blue{background:var(--blue)}.dot-grey{background:var(--txt3)}
+
+/* ROWS */
+.plate-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--bord);transition:.1s}
+.plate-row:last-child{border-bottom:none}
+.plate-row:hover{background:rgba(255,255,255,0.02)}
+.plate-num{font-size:13px;font-weight:900;letter-spacing:2px;min-width:100px}
+.plate-meta{flex:1;font-size:11px;color:var(--txt2);line-height:1.5;min-width:0}
+.plate-thumb{width:42px;height:30px;object-fit:cover;border-radius:5px;border:1px solid var(--bord);flex-shrink:0}
+.plate-thumb-ph{width:42px;height:30px;background:var(--card2);border:1px solid var(--bord);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--txt3);flex-shrink:0}
+.plate-actions{display:flex;gap:5px;flex-shrink:0}
+.icon-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--bord);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--txt3);transition:.15s}
+.icon-btn:hover{border-color:var(--txt2);color:var(--txt)}
+
+/* INCIDENT ROWS */
+.incident-row{padding:12px 14px;border-bottom:1px solid var(--bord)}
+.incident-row:last-child{border-bottom:none}
+.inc-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.inc-id{font-size:10px;font-weight:700;color:var(--txt3);font-family:monospace}
+.inc-plate{font-size:14px;font-weight:900;letter-spacing:3px}
+.inc-body{font-size:11px;color:var(--txt2);line-height:1.7}
+.inc-gps-link{color:var(--blue);text-decoration:none;font-size:10px}
+.inc-gps-link:hover{text-decoration:underline}
+.inc-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+
+/* MOVEMENT HISTORY */
+.mv-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bord2);font-size:11px}
+.mv-row:last-child{border-bottom:none}
+.mv-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.mv-time{color:var(--txt3);font-size:10px;white-space:nowrap;min-width:90px}
+.mv-location{color:var(--txt2);flex:1}
+.mv-coords{font-size:9px;color:var(--txt3);font-family:monospace}
+
+/* ALERT BANNER */
+#alert-banner{display:none;position:fixed;top:52px;left:0;right:0;z-index:300;padding:12px 20px;font-size:12px;font-weight:700;letter-spacing:.5px;text-align:center;animation:slideDown .2s ease}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.ab-red{background:#ef4444;color:#fff}
+.ab-green{background:#22c55e;color:#000}
+.ab-amber{background:#f59e0b;color:#000}
+
+/* MODAL */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:16px}
+#modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--bord);border-radius:16px;width:100%;max-width:460px;padding:20px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:14px;font-weight:900;letter-spacing:.5px;margin-bottom:14px}
+
+/* MISC */
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb14{margin-bottom:14px}.mb16{margin-bottom:16px}.mb20{margin-bottom:20px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}
+.flex{display:flex}.gap6{gap:6px}.gap8{gap:8px}.gap10{gap:10px}.ai-center{align-items:center}.jc-between{justify-content:space-between}
+.empty-state{text-align:center;padding:36px 20px;color:var(--txt3)}
+.empty-icon{font-size:36px;margin-bottom:8px}
+.empty-txt{font-size:12px}
+.risk-bar{height:4px;border-radius:99px;background:var(--card2);margin-top:4px;overflow:hidden}
+.risk-fill{height:100%;border-radius:99px;transition:width .4s}
+</style>
+<style id="gate-force">html,body{margin:0!important;padding:0!important}#gate{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;background:#020912!important;z-index:999999!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important}</style><style id="plp-css">
+#portal-login-panel{display:none;position:fixed;bottom:20px;right:20px;width:400px;max-height:300px;background:#0d1117;border:1px solid #C9A55C;border-radius:8px;z-index:9999;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+#portal-login-panel .plp-hdr{background:#161b22;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d}
+#portal-login-panel .plp-title{color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:2px}
+#portal-login-panel .plp-close{color:#64748b;cursor:pointer;font-size:13px;background:none;border:none;padding:0}
+#portal-login-panel table{width:100%;border-collapse:collapse;font-size:10px}
+#portal-login-panel th{color:#64748b;padding:3px 6px;text-align:left;border-bottom:1px solid #21262d}
+#portal-login-panel td{color:#e2e8f0;padding:3px 6px;border-bottom:1px solid #21262d}
+#portal-login-panel .plp-body{overflow-y:auto;max-height:240px;padding:6px}
+#plp-trigger{display:none;position:fixed;bottom:20px;right:20px;background:#161b22;border:1px solid #C9A55C;color:#C9A55C;font-size:9px;padding:5px 10px;border-radius:4px;cursor:pointer;z-index:9998;letter-spacing:1px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;padding:28px;text-align:center">
+  <div class="gate-card">
+    <div class="gate-logo">PLATEGUARD v2</div>
+    <div class="gate-title">SECURITY</div>
+    <div class="gate-sub">GPS Cross-Check &middot; Trespasser Intelligence</div>
+    <div style="font-size:12px;font-weight:600;color:#334155;margin-bottom:10px">Enter PIN to Access</div>
+    <div class="gate-dots">
+      <div class="gate-dot" id="d0"></div><div class="gate-dot" id="d1"></div>
+      <div class="gate-dot" id="d2"></div><div class="gate-dot" id="d3"></div>
+    </div>
+    <div class="gate-err" id="g-err"></div>
+    <div class="np-grid" style="-webkit-tap-highlight-color:transparent;touch-action:manipulation">
+      <div class="np-btn" onclick="np('1')">1</div><div class="np-btn" onclick="np('2')">2</div><div class="np-btn" onclick="np('3')">3</div>
+      <div class="np-btn" onclick="np('4')">4</div><div class="np-btn" onclick="np('5')">5</div><div class="np-btn" onclick="np('6')">6</div>
+      <div class="np-btn" onclick="np('7')">7</div><div class="np-btn" onclick="np('8')">8</div><div class="np-btn" onclick="np('9')">9</div>
+      <div class="np-btn np-clr" onclick="nc()" ontouchend="event.preventDefault();nc()">CLR</div><div class="np-btn" onclick="np('0')">0</div><div class="np-btn np-del" onclick="nd()" ontouchend="event.preventDefault();nd()">DEL</div>
+    </div>
+    <button class="gate-enter" onclick="checkPin()">ENTER</button>
+    <div class="gate-powered">POWERED BY AUDITDNA INTELLIGENCE &middot; MFG, INC.</div>
+  </div>
+</div>
+
+<!-- ALERT BANNER -->
+<div id="alert-banner"></div>
+
+<!-- APP -->
+<div id="app" style="display:none;width:100%;height:100%;flex-direction:column">
+
+  <div class="topbar">
+    <div class="tb-shield">&#128737;</div>
+    <div class="tb-brand">Plate<span>Guard</span></div>
+    <div class="tb-gps" id="gps-topbar-btn" onclick="refreshGPS()">&#128205; GPS Off</div>
+    <div class="tb-guard" id="guard-badge">GUARD</div>
+    <div class="lock-btn" onclick="lock()">LOCK</div>
+  </div>
+
+  <div class="tabnav">
+    <div class="tn on" onclick="goTab('dashboard',this)">&#128202; Dashboard</div>
+    <div class="tn" onclick="goTab('scan',this)">&#128247; Scan</div>
+    <div class="tn" onclick="goTab('register',this)">&#43; Register</div>
+    <div class="tn" onclick="goTab('registry',this)">&#128196; Registry</div>
+    <div class="tn" id="tab-incidents-btn" onclick="goTab('incidents',this)">&#9888; Incidents</div>
+    <div class="tn" onclick="goTab('reports',this)">&#128231; Reports</div>
+    <div class="tn" onclick="goTab('settings',this)">&#9881; Settings</div>
+    <div class="tn" id="tab-bolo-btn" onclick="goTab('bolo',this)">&#128204; BOLO</div>
+    <div class="tn" id="tab-officers-btn" onclick="goTab('officers',this)" style="color:var(--gold)">&#128737; OFFICERS</div>
+    <div class="tn" id="tab-cameras-btn" onclick="goTab('cameras',this)" style="color:var(--red)">&#128249; CAMERAS</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="tab-dashboard" class="sec on">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="s-auth">0</div><div class="stat-lbl">AUTHORIZED</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--red)" id="s-flagged">0</div><div class="stat-lbl">FLAGGED</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="s-incidents">0</div><div class="stat-lbl">INCIDENTS</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--blue)" id="s-scans">0</div><div class="stat-lbl">SCANS TODAY</div></div>
+    </div>
+
+    <div class="card card-p mb14" id="active-alerts-card" style="border-color:rgba(239,68,68,0.2);display:none">
+      <div class="sec-hdr" style="color:var(--red)">&#128680; ACTIVE ALERTS</div>
+      <div id="active-alerts-list"></div>
+    </div>
+
+    <div class="grid2 mb14" style="gap:12px">
+      <div class="card card-p">
+        <div class="sec-hdr">QUICK SCAN</div>
+        <div class="form-row">
+          <input class="inp inp-plate" id="quick-plate" placeholder="PLATE #" maxlength="10" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')quickScan()"/>
+        </div>
+        <button class="btn btn-blue btn-full" onclick="quickScan()">CHECK NOW</button>
+      </div>
+      <div class="card card-p">
+        <div class="sec-hdr">CURRENT GPS</div>
+        <div id="dash-gps-box" class="gps-box">
+          <span class="gps-icon">&#128205;</span>
+          <div>
+            <div style="font-weight:700;color:var(--txt2);font-size:11px">Location not acquired</div>
+            <div class="gps-coords" id="dash-gps-coords">Tap to enable GPS</div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-full mt8" onclick="refreshGPS()">Acquire GPS Lock</button>
+      </div>
+    </div>
+
+    <div class="card card-p mb14">
+      <div class="sec-hdr">RECENT SCANS</div>
+      <div id="dash-recent"></div>
+    </div>
+
+    <div class="card card-p">
+      <div class="sec-hdr">OPEN INCIDENTS</div>
+      <div id="dash-incidents"></div>
+    </div>
+  </div>
+
+  <!-- SCAN & VERIFY -->
+  <div id="tab-scan" class="sec">
+    <div class="card card-p mb12">
+      <div class="sec-hdr">GPS LOCATION LOCK</div>
+      <div id="scan-gps-box" class="gps-box">
+        <span class="gps-icon">&#128205;</span>
+        <div style="flex:1">
+          <div style="font-weight:700;color:var(--txt2);font-size:11px" id="scan-gps-label">Location not acquired</div>
+          <div class="gps-coords" id="scan-gps-coords">Press button to get GPS fix</div>
+        </div>
+        <button class="btn btn-ghost" style="font-size:10px;padding:6px 10px" onclick="refreshGPS()">Get GPS</button>
+      </div>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">PHOTOGRAPH PLATE</div>
+      <label for="scan-photo-input" style="display:block;cursor:pointer;border:2px dashed rgba(74,143,212,.3);border-radius:12px;padding:18px;text-align:center;background:rgba(74,143,212,.03)" id="scan-capture-zone">
+        <input type="file" accept="image/*" capture="environment" id="scan-photo-input" style="display:none" onchange="handleScanPhoto(this)"/>
+        <div class="capture-icon">&#128247;</div>
+        <div class="capture-title">Tap to open camera</div>
+        <div class="capture-sub">Photo timestamp + GPS auto-stamped &middot; Used as evidence</div>
+      </div>
+      <button style="width:100%;margin-top:8px;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px" onclick="document.getElementById('scan-photo-input').click()">TAP TO OPEN CAMERA</button>
+      <img id="scan-preview" class="preview-img" alt="Plate photo"/>
+
+      <!-- OCR STATUS -->
+      <div id="ocr-status" style="display:none;margin-top:10px;background:rgba(74,143,212,0.06);border:1px solid rgba(74,143,212,0.2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px" id="ocr-status-label">Reading plate...</div>
+        <div style="background:var(--card2);border-radius:99px;height:4px;overflow:hidden;margin-bottom:8px">
+          <div id="ocr-progress-bar" style="height:100%;background:var(--blue);border-radius:99px;width:0%;transition:width .2s"></div>
+        </div>
+        <div id="ocr-result-preview" style="font-size:18px;font-weight:900;letter-spacing:4px;color:var(--gold);min-height:26px"></div>
+      </div>
+
+      <div id="photo-meta" style="display:none;margin-top:8px;background:var(--card2);border-radius:8px;padding:10px;font-size:10px;color:var(--txt2);line-height:1.8">
+        <div id="photo-meta-time"></div>
+        <div id="photo-meta-gps"></div>
+        <div id="photo-meta-ocr" style="color:var(--gold);font-weight:700"></div>
+      </div>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">PLATE NUMBER</div>
+      <div class="form-row">
+        <input class="inp inp-plate" id="scan-plate" placeholder="ABC 1234" maxlength="12" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')verifyScan()"/>
+      </div>
+      <div class="grid2">
+        <div class="form-row">
+          <label class="lbl">CHECKPOINT / GATE</label>
+          <select class="inp" id="scan-gate"></select>
+        </div>
+        <div class="form-row">
+          <label class="lbl">OFFICER ID</label>
+          <input class="inp" id="scan-officer" placeholder="Badge / Name"/>
+        </div>
+      </div>
+      <button class="btn btn-blue btn-full" style="padding:13px;font-size:13px" onclick="verifyScan()">VERIFY &amp; CROSSCHECK</button>
+    </div>
+
+    <div id="scan-result-box">
+      <div class="srb-plate" id="srb-plate"></div>
+      <div class="srb-verdict" id="srb-verdict"></div>
+      <div class="srb-name" id="srb-name"></div>
+      <div class="srb-detail" id="srb-detail"></div>
+      <div class="srb-crosscheck" id="srb-crosscheck"></div>
+      <div class="srb-actions" id="srb-actions"></div>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="tab-register" class="sec">
+    <div class="card card-p mb12">
+      <div class="sec-hdr">PLATE PHOTO</div>
+      <div class="capture-zone" onclick="document.getElementById('reg-photo-input').click()">
+        <input type="file" accept="image/*" capture="environment" id="reg-photo-input" style="display:none" onchange="handleRegPhoto(this)"/>
+        <div class="capture-icon">&#128247;</div>
+        <div class="capture-title">Photo of license plate</div>
+        <div class="capture-sub">Mobile camera or upload</div>
+      </div>
+      <img id="reg-preview" class="preview-img" alt="preview"/>
+    </div>
+    <div class="card card-p mb12">
+      <div class="sec-hdr">PLATE &amp; VEHICLE</div>
+      <div class="form-row">
+        <label class="lbl">LICENSE PLATE</label>
+        <input class="inp inp-plate" id="reg-plate" placeholder="ABC 1234" maxlength="12" oninput="this.value=this.value.toUpperCase()"/>
+      </div>
+      <div class="grid2">
+        <div class="form-row"><label class="lbl">STATE</label>
+          <select class="inp" id="reg-state">
+            <option value="">Select...</option>
+            <option>CA</option><option>TX</option><option>FL</option><option>NY</option><option>AZ</option><option>NV</option><option>WA</option><option>OR</option><option>BC (MX)</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="lbl">VEHICLE TYPE</label>
+          <select class="inp" id="reg-type"><option>Sedan</option><option>SUV / Truck</option><option>Motorcycle</option><option>Van</option><option>Commercial</option><option>Other</option></select>
+        </div>
+        <div class="form-row"><label class="lbl">MAKE / MODEL</label><input class="inp" id="reg-make" placeholder="Honda Civic"/></div>
+        <div class="form-row"><label class="lbl">COLOR</label><input class="inp" id="reg-color" placeholder="White"/></div>
+      </div>
+    </div>
+    <div class="card card-p mb12">
+      <div class="sec-hdr">OWNER / RESIDENT</div>
+      <div class="grid2">
+        <div class="form-row"><label class="lbl">NAME</label><input class="inp" id="reg-name" placeholder="Full name"/></div>
+        <div class="form-row"><label class="lbl">UNIT / ROOM</label><input class="inp" id="reg-unit" placeholder="Apt 204"/></div>
+        <div class="form-row"><label class="lbl">PHONE</label><input class="inp" id="reg-phone" placeholder="(831) 555-1234"/></div>
+        <div class="form-row"><label class="lbl">EMAIL</label><input class="inp" id="reg-email" placeholder="resident@email.com"/></div>
+      </div>
+      <div class="form-row">
+        <label class="lbl">ALLOWED ZONES</label>
+        <div id="reg-zone-checks" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
+      </div>
+    </div>
+    <div class="card card-p mb12">
+      <div class="sec-hdr">ACCESS</div>
+      <div class="grid2">
+        <div class="form-row"><label class="lbl">STATUS</label>
+          <select class="inp" id="reg-status">
+            <option value="authorized">AUTHORIZED — Resident / Staff</option>
+            <option value="visitor">VISITOR — Temporary</option>
+            <option value="flagged">FLAGGED — Deny Access</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="lbl">PERMIT EXPIRES</label><input class="inp" type="date" id="reg-expires"/></div>
+      </div>
+      <div class="form-row"><label class="lbl">NOTES</label><textarea class="inp" id="reg-notes" placeholder="Additional notes..."></textarea></div>
+    </div>
+    <button class="btn btn-blue btn-full" style="padding:13px;font-size:13px" onclick="registerPlate()">REGISTER PLATE</button>
+  </div>
+
+  <!-- REGISTRY -->
+  <div id="tab-registry" class="sec">
+    <div class="flex gap8 ai-center jc-between mb12" style="flex-wrap:wrap;gap:8px">
+      <input class="inp" style="flex:1;min-width:140px" id="reg-search" placeholder="Search plate, name, unit..." oninput="renderRegistry()"/>
+      <select class="inp" style="width:140px" id="reg-filter" onchange="renderRegistry()">
+        <option value="all">All Status</option>
+        <option value="authorized">Authorized</option>
+        <option value="visitor">Visitors</option>
+        <option value="flagged">Flagged</option>
+      </select>
+    </div>
+    <div class="card" id="registry-list"></div>
+  </div>
+
+  <!-- INCIDENTS -->
+  <div id="tab-incidents" class="sec">
+    <div class="flex gap8 ai-center jc-between mb12" style="flex-wrap:wrap;gap:8px">
+      <input class="inp" style="flex:1;min-width:140px" id="inc-search" placeholder="Search incidents..." oninput="renderIncidents()"/>
+      <select class="inp" style="width:140px" id="inc-filter" onchange="renderIncidents()">
+        <option value="all">All</option>
+        <option value="active">Active</option>
+        <option value="escalated">Escalated</option>
+        <option value="resolved">Resolved</option>
+      </select>
+    </div>
+    <div class="card" id="incidents-list"></div>
+  </div>
+
+  <!-- REPORTS -->
+  <div id="tab-reports" class="sec">
+    <div class="card card-p mb12" style="border-color:rgba(201,165,92,0.2)">
+      <div class="sec-hdr">EMAIL REPORT TO SUPERVISORS</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:12px;line-height:1.7">
+        Generates a full trespasser report with plate photos, GPS coordinates, timestamps, officer info, and incident history. Sent directly from your device email app.
+      </div>
+      <div class="form-row">
+        <label class="lbl">REPORT TYPE</label>
+        <select class="inp" id="rpt-type">
+          <option value="daily">Daily Summary — All incidents in last 24h</option>
+          <option value="active">Active Incidents Only</option>
+          <option value="all">Full Incident History</option>
+          <option value="trespassers">Trespassers &amp; Unknown Plates Only</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="lbl">SUPERVISOR EMAILS (from Settings)</label>
+        <div id="rpt-sup-list" style="font-size:11px;color:var(--txt2);padding:8px;background:var(--card2);border-radius:6px;border:1px solid var(--bord)">
+          No supervisors configured — add in Settings
+        </div>
+      </div>
+      <div class="flex gap8" style="flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="emailReport()" style="flex:1">Send Email Report</button>
+        <button class="btn btn-blue" onclick="downloadReport()" style="flex:1">Download HTML Report</button>
+      </div>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">SINGLE INCIDENT REPORT</div>
+      <div class="form-row">
+        <label class="lbl">SELECT INCIDENT</label>
+        <select class="inp" id="rpt-incident-sel"></select>
+      </div>
+      <div class="flex gap8" style="flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="emailSingleIncident()" style="flex:1">Email This Incident</button>
+        <button class="btn btn-ghost" onclick="downloadSingleIncident()" style="flex:1">Download Report</button>
+      </div>
+    </div>
+
+    <div class="card card-p">
+      <div class="sec-hdr">EXPORT DATA</div>
+      <div class="flex gap8" style="flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="exportCSV()">Scan Log CSV</button>
+        <button class="btn btn-ghost" onclick="exportIncidentsCSV()">Incidents CSV</button>
+        <button class="btn btn-ghost" onclick="exportAllJSON()">Full Backup JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="tab-settings" class="sec">
+    <div class="card card-p mb12">
+      <div class="sec-hdr">PROPERTY</div>
+      <div class="grid2">
+        <div class="form-row"><label class="lbl">PROPERTY NAME</label><input class="inp" id="set-prop" placeholder="Sunrise Apartments" oninput="saveSetting('propertyName',this.value)"/></div>
+        <div class="form-row"><label class="lbl">ADDRESS</label><input class="inp" id="set-addr" placeholder="123 Main St, Salinas CA" oninput="saveSetting('propertyAddress',this.value)"/></div>
+      </div>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">SUPERVISOR EMAILS (RECEIVE TRESPASSER REPORTS)</div>
+      <div id="sup-email-list" class="mb12"></div>
+      <div class="grid2">
+        <div class="form-row"><label class="lbl">NAME</label><input class="inp" id="new-sup-name" placeholder="Supervisor Name"/></div>
+        <div class="form-row"><label class="lbl">EMAIL</label><input class="inp" id="new-sup-email" placeholder="sup@company.com" type="email"/></div>
+      </div>
+      <button class="btn btn-blue" onclick="addSupervisor()">Add Supervisor</button>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">ZONES / CHECKPOINTS (NAME + GPS COORDINATES)</div>
+      <div id="zone-list" class="mb12"></div>
+      <div class="grid3">
+        <div class="form-row"><label class="lbl">ZONE NAME</label><input class="inp" id="new-zone-name" placeholder="Main Entrance"/></div>
+        <div class="form-row"><label class="lbl">LATITUDE</label><input class="inp" id="new-zone-lat" placeholder="36.6777" type="number" step="0.0001"/></div>
+        <div class="form-row"><label class="lbl">LONGITUDE</label><input class="inp" id="new-zone-lng" placeholder="-121.6555" type="number" step="0.0001"/></div>
+      </div>
+      <div class="flex gap8">
+        <button class="btn btn-blue" onclick="addZone()">Add Zone</button>
+        <button class="btn btn-ghost" onclick="captureZoneGPS()">Use Current GPS</button>
+      </div>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">GUARDS</div>
+      <div id="guard-list" class="mb12"></div>
+      <div class="grid2">
+        <div class="form-row"><label class="lbl">NAME</label><input class="inp" id="new-guard-name" placeholder="Officer Name"/></div>
+        <div class="form-row"><label class="lbl">BADGE</label><input class="inp" id="new-guard-badge" placeholder="G-001"/></div>
+      </div>
+      <button class="btn btn-blue" onclick="addGuard()">Add Guard</button>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">GPS CROSS-CHECK RADIUS</div>
+      <div class="form-row">
+        <label class="lbl">MAX DISTANCE FROM ZONE TO STILL MATCH (METERS)</label>
+        <input class="inp" id="set-radius" type="number" value="200" placeholder="200" oninput="saveSetting('gpsRadius',this.value)"/>
+      </div>
+      <div style="font-size:10px;color:var(--txt3);margin-top:4px">200m recommended for apartments. Increase for large campuses.</div>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">API INTEGRATION</div>
+      <div class="form-row"><label class="lbl">ENDPOINT URL</label><input class="inp" id="set-api-url" placeholder="https://campus-system.com/api/lpr" oninput="saveSetting('apiUrl',this.value)"/></div>
+      <div class="form-row"><label class="lbl">API KEY</label><input class="inp" id="set-api-key" type="password" placeholder="Bearer token" oninput="saveSetting('apiKey',this.value)"/></div>
+      <button class="btn btn-ghost" onclick="testAPI()">Test Connection</button>
+    </div>
+
+    <div class="card card-p">
+      <div class="sec-hdr">DATA</div>
+      <div class="flex gap8" style="flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="exportAllJSON()">Export Backup</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('import-inp').click()">Import Backup</button>
+        <button class="btn btn-red" onclick="clearAllData()">Clear All Data</button>
+      </div>
+      <input type="file" id="import-inp" accept=".json" style="display:none" onchange="handleImport(this)"/>
+      <div style="font-size:10px;color:var(--txt3);margin-top:10px">Admin: 0609</div>
+    </div>
+  </div>
+
+  <!-- BOLO -->
+  <div id="tab-bolo" class="sec">
+    <div class="card card-p mb12">
+      <div class="sec-hdr" style="color:var(--amber)">&#128204; BOLO &mdash; BE ON LOOK OUT</div>
+      <div style="font-size:11px;color:var(--txt3);margin-bottom:12px">Shared across all guards. Post plates, persons, or vehicles to watch for. Filtered by site.</div>
+      <div class="grid2" style="margin-bottom:8px">
+        <div class="form-row"><label class="lbl">PLATE / ID</label><input class="inp" id="bolo-plate" placeholder="ABC 1234 or description"/></div>
+        <div class="form-row"><label class="lbl">TYPE</label>
+          <select class="inp" id="bolo-type">
+            <option value="Vehicle">Vehicle</option>
+            <option value="Person">Person</option>
+            <option value="Plate">Plate Only</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2" style="margin-bottom:8px">
+        <div class="form-row"><label class="lbl">MAKE / MODEL / COLOR</label><input class="inp" id="bolo-desc" placeholder="Red Honda Civic, 2018"/></div>
+        <div class="form-row"><label class="lbl">THREAT LEVEL</label>
+          <select class="inp" id="bolo-threat">
+            <option value="Watch">Watch</option>
+            <option value="Caution">Caution</option>
+            <option value="High Alert">High Alert</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2" style="margin-bottom:8px">
+        <div class="form-row"><label class="lbl">SITE / LOCATION</label>
+          <select class="inp" id="bolo-site"></select>
+        </div>
+        <div class="form-row"><label class="lbl">POSTED BY</label><input class="inp" id="bolo-by" placeholder="Officer name / badge"/></div>
+      </div>
+      <div class="form-row" style="margin-bottom:8px"><label class="lbl">REASON / NOTES</label><textarea class="inp" id="bolo-notes" rows="2" placeholder="Previously trespassed 6/20. Refused to leave. May return." style="resize:vertical"></textarea></div>
+      <div class="grid2" style="margin-bottom:8px">
+        <div class="form-row"><label class="lbl">EXPIRES</label>
+          <select class="inp" id="bolo-expires">
+            <option value="24h">24 Hours</option>
+            <option value="72h">72 Hours</option>
+            <option value="7d">7 Days</option>
+            <option value="30d">30 Days</option>
+            <option value="never">No Expiry</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="lbl">PHOTO (optional)</label>
+          <label style="display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--bord);border-radius:6px;padding:9px 12px;cursor:pointer;font-size:12px;color:var(--txt2)">
+            <span id="bolo-photo-label">&#128247; Attach photo</span>
+            <input type="file" accept="image/*" capture="environment" id="bolo-photo-input" style="display:none" onchange="handleBOLOPhoto(this)"/>
+          </label>
+        </div>
+      </div>
+      <div id="bolo-photo-preview-wrap" style="display:none;margin-bottom:10px">
+        <img id="bolo-photo-preview" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--bord)" src="" alt=""/>
+        <button onclick="clearBOLOPhoto()" style="display:block;margin-top:6px;background:none;border:none;color:var(--red);font-size:11px;cursor:pointer">Remove photo</button>
+      </div>
+      <button class="btn btn-amber" style="background:var(--amber);color:#000;font-weight:700" onclick="addBOLO()">POST BOLO</button>
+    </div>
+
+    <div class="card card-p">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="sec-hdr" style="margin:0">ACTIVE BOLOs</div>
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="clearExpiredBOLOs()">Clear Expired</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="bolo-site-filters">
+        <div class="fb on" onclick="filterBOLOSite('all',this)" style="font-size:10px;padding:4px 10px">All Sites</div>
+      </div>
+      <div id="bolo-list"><div style="color:var(--txt3);font-size:12px;text-align:center;padding:24px 0">No BOLOs posted</div></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- MODAL -->
+<div id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Details</div>
+    <div id="modal-body"></div>
+    <div class="flex gap8 mt12">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">Close</button>
+      <button class="btn btn-blue" style="flex:1;display:none" id="modal-save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+var pin='';
+var PINS={"1234":"Guard","2001":"FP-01","2002":"FP-02","2003":"FP-03","2004":"FP-04","2005":"FP-05","2006":"FP-06","2007":"FP-07","2008":"FP-08","2009":"FP-09","2010":"FP-10","2011":"FP-11","2012":"FP-12","2013":"FP-13","2014":"FP-14","2015":"FP-15","2016":"FP-16","2017":"FP-17","2018":"FP-18","2019":"FP-19","2020":"FP-20","2021":"FP-21","2022":"FP-22","2023":"FP-23","2024":"FP-24","2025":"FP-25","2026":"FP-26","2027":"FP-27","2028":"FP-28","2029":"FP-29","2030":"FP-30","2031":"FP-31","2032":"FP-32","2033":"FP-33","2034":"FP-34","2035":"FP-35","2036":"FP-36","2037":"FP-37","2038":"FP-38","2039":"FP-39","2040":"FP-40","2041":"FP-41","2042":"FP-42","2043":"FP-43","2044":"FP-44","2045":"FP-45","2046":"FP-46","2047":"FP-47","2048":"FP-48","2049":"FP-49","2050":"FP-50","3001":"SUP-1","3002":"SUP-2","3003":"SUP-3","0609":"Admin","3639":"Owner"};
+var currentUser='';
+function updDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+function np(v){if(pin.length<4){pin+=v;}updDots();if(pin.length===4){setTimeout(checkPin,100);}}
+
+function nc(){pin='';updDots();}
+function nd(){pin=pin.slice(0,-1);updDots();}
+function checkPin(){
+  var role=PINS[pin];
+  if(role){
+    currentUser=role;
+    document.getElementById('gate').style.display='none'
+  try{
+    fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        portal:window.location.pathname.split('/').pop(),
+        username:typeof cu!=='undefined'?(cu&&cu.name?cu.name:(typeof cu==='string'?cu:'user')):'user',
+        role:typeof cu!=='undefined'&&cu&&cu.role?cu.role:'unknown',
+        pin:_lastPin||''
+      })
+    }).catch(function(){});
+  }catch(e){}
+
+  checkOwnerPin(_lastPin);;
+    document.getElementById('app').style.display='block';
+    pin='';updDots();
+    if(typeof initApp==='function')initApp();
+  } else {
+    var e=document.getElementById('g-err');
+    if(e){e.textContent='Invalid PIN';setTimeout(function(){e.textContent='';},1500);}
+    pin='';updDots();
+  }
+}
+function lock(){pin='';updDots();document.getElementById('gate').style.cssText='display:flex!important';document.getElementById('app').style.cssText='display:none!important';}
+
+function initApp(){
+  populateScanGates();renderDashboard();renderRegistry();renderIncidents();renderFlagged();
+  initSettings();refreshGPS();populateReportIncidentSelect();populateBOLOSites();renderBOLOs();updateBOLOBadge();
+}
+
+// ── TABS ──
+function goTab(t,el){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.tn').forEach(function(b){b.classList.remove('on');});
+  var sec=document.getElementById('tab-'+t);if(sec)sec.classList.add('on');
+  if(el)el.classList.add('on');
+  if(t==='dashboard')renderDashboard();
+  if(t==='registry')renderRegistry();
+  if(t==='incidents')renderIncidents();
+  if(t==='reports'){initReports();}
+  if(t==='settings')initSettings();
+  if(t==='bolo'){populateBOLOSites();renderBOLOs();updateBOLOBadge();}
+}
+
+// ── ALERT BANNER ──
+var alertTimer=null;
+function showAlert(msg,type){
+  var b=document.getElementById('alert-banner');
+  b.textContent=msg;b.className='ab-'+(type||'green');b.style.display='block';
+  if(alertTimer)clearTimeout(alertTimer);
+  alertTimer=setTimeout(function(){b.style.display='none';},4000);
+}
+
+// ── GPS ──
+function refreshGPS(){
+  var btn=document.getElementById('gps-topbar-btn');
+  if(btn)btn.textContent='📍 Acquiring...';
+  updateGPSBox('scan-gps-box','searching','Acquiring GPS...','Allow location when browser asks');
+  updateGPSBox('dash-gps-box','searching','Acquiring GPS...','Please wait...');
+  if(!navigator.geolocation){
+    updateGPSBox('scan-gps-box','error','GPS not available','Browser does not support geolocation');
+    updateGPSBox('dash-gps-box','error','GPS not available','');
+    if(btn)btn.textContent='📍 No GPS';return;
+  }
+  function onSuccess(pos){
+    currentGPS={lat:pos.coords.latitude,lng:pos.coords.longitude,acc:Math.round(pos.coords.accuracy),ts:new Date().toISOString()};
+    var coordStr=currentGPS.lat.toFixed(6)+', '+currentGPS.lng.toFixed(6);
+    var accStr='±'+currentGPS.acc+'m';
+    updateGPSBox('scan-gps-box','locked','GPS Locked ✔',coordStr+' '+accStr);
+    updateGPSBox('dash-gps-box','locked','GPS Locked ✔',coordStr);
+    var lbl=document.getElementById('scan-gps-label');if(lbl)lbl.textContent='GPS Locked ✔';
+    var crd=document.getElementById('scan-gps-coords');if(crd)crd.textContent=coordStr+' ('+accStr+')';
+    var dc=document.getElementById('dash-gps-coords');if(dc)dc.textContent=coordStr;
+    if(btn){btn.textContent='📍 GPS ON';btn.classList.add('active');}
+  }
+  function onError(err){
+    var msgs={1:'Permission denied — go to browser site settings and allow location',2:'Signal unavailable — try stepping outside',3:'Timed out — tap GPS button to retry'};
+    var msg=msgs[err.code]||err.message;
+    updateGPSBox('scan-gps-box','error','GPS Error',msg);
+    updateGPSBox('dash-gps-box','error','GPS Error',msg);
+    if(btn){btn.textContent='📍 GPS OFF';btn.classList.remove('active');}
+  }
+  var opts={enableHighAccuracy:true,timeout:15000,maximumAge:0};
+  navigator.geolocation.getCurrentPosition(onSuccess,onError,opts);
+  // Watch for continuous updates
+  if(window._gpsWatcher)navigator.geolocation.clearWatch(window._gpsWatcher);
+  window._gpsWatcher=navigator.geolocation.watchPosition(onSuccess,function(){},opts);
+}
+function updateGPSBox(id,cls,label,coords){
+  var box=document.getElementById(id);if(!box)return;
+  box.className='gps-box '+cls;
+  var divs=box.querySelectorAll('div');
+  if(divs[0])divs[0].textContent=label;
+  if(divs[1])divs[1].textContent=coords;
+}
+
+// ── GPS MATH ──
+function haversineDistance(lat1,lng1,lat2,lng2){
+  var R=6371000;
+  var dLat=(lat2-lat1)*Math.PI/180;
+  var dLng=(lng2-lng1)*Math.PI/180;
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function nearestZone(lat,lng){
+  var best=null,bestDist=Infinity;
+  zones.forEach(function(z){
+    if(z.lat==null||z.lng==null)return;
+    var d=haversineDistance(lat,lng,z.lat,z.lng);
+    if(d<bestDist){bestDist=d;best={zone:z,dist:Math.round(d)};}
+  });
+  return best;
+}
+function mapsLink(lat,lng){return 'https://www.google.com/maps?q='+lat+','+lng;}
+
+// ── PHOTO ──
+function handleRegPhoto(input){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    regPhotoData=e.target.result;
+    var img=document.getElementById('reg-preview');img.src=regPhotoData;img.style.display='block';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function handleScanPhoto(input){
+  if(!input.files||!input.files[0])return;
+  var file=input.files[0];
+  scanPhotoTimestamp=file.lastModified?new Date(file.lastModified).toISOString():new Date().toISOString();
+  var reader=new FileReader();
+  reader.onload=function(e){
+    // Compress to max 800px wide, 70% quality before OCR
+    var rawData=e.target.result;
+    var compImg=new Image();
+    compImg.onload=function(){
+      var MAX=800;
+      var w=compImg.width,h=compImg.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      var cvs=document.createElement('canvas');
+      cvs.width=w;cvs.height=h;
+      cvs.getContext('2d').drawImage(compImg,0,0,w,h);
+      scanPhotoData=cvs.toDataURL('image/jpeg',0.70);
+      var img=document.getElementById('scan-preview');
+      img.src=scanPhotoData;img.style.display='block';
+      var meta=document.getElementById('photo-meta');meta.style.display='block';
+      document.getElementById('photo-meta-time').textContent='Photo taken: '+fmtDateTime(scanPhotoTimestamp);
+      document.getElementById('photo-meta-gps').textContent=currentGPS?('GPS: '+currentGPS.lat.toFixed(6)+', '+currentGPS.lng.toFixed(6)):'GPS: not acquired';
+      document.getElementById('photo-meta-ocr').textContent='';
+      readPlateWithVision(scanPhotoData);
+    };
+    compImg.src=rawData;
+  };
+  reader.readAsDataURL(file);
+}
+
+
+
+
+
+
+
+// ── SCAN ENGINE ──
+function populateScanGates(){
+  var sel=document.getElementById('scan-gate');if(!sel)return;
+  sel.innerHTML=zones.map(function(z){return '<option value="'+z.name+'">'+z.name+'</option>';}).join('');
+}
+function lookupPlate(num){return plates.find(function(p){return p.plate===num.replace(/\s+/g,'').toUpperCase();})||null;}
+
+function crossCheck(plate,record,gps){
+  var checks=[];
+  var riskScore=0;
+
+  // 1. Registry check
+  if(!record){
+    checks.push({icon:'❓',color:'var(--amber)',text:'NOT IN REGISTRY — no record of this plate'});
+    riskScore+=50;
+  } else {
+    checks.push({icon:'✅',color:'var(--green)',text:'IN REGISTRY — '+record.name+' / '+record.unit});
+    if(record.status==='flagged'){
+      checks.push({icon:'🚨',color:'var(--red)',text:'FLAGGED — '+( record.notes||'denied access')});
+      riskScore+=80;
+    }
+    // Expiry check
+    if(record.expires){
+      var exp=new Date(record.expires);
+      if(exp<new Date()){
+        checks.push({icon:'⏰',color:'var(--red)',text:'PERMIT EXPIRED — '+record.expires});
+        riskScore+=40;
+      } else {
+        checks.push({icon:'⏰',color:'var(--green)',text:'Permit valid until '+record.expires});
+      }
+    }
+  }
+
+  // 2. GPS zone check
+  if(gps){
+    var nearest=nearestZone(gps.lat,gps.lng);
+    var radius=parseInt(settings.gpsRadius)||200;
+    if(nearest){
+      if(nearest.dist<=radius){
+        checks.push({icon:'📍',color:'var(--green)',text:'IN ZONE: '+nearest.zone.name+' ('+nearest.dist+'m away)'});
+      } else {
+        checks.push({icon:'📍',color:'var(--amber)',text:'ZONE MISMATCH: '+nearest.dist+'m from '+nearest.zone.name+' (limit: '+radius+'m)'});
+        riskScore+=30;
+      }
+    } else {
+      checks.push({icon:'📍',color:'var(--txt3)',text:'GPS location not matched to any configured zone'});
+    }
+  } else {
+    checks.push({icon:'📍',color:'var(--txt3)',text:'GPS not available for zone matching'});
+  }
+
+  // 3. Movement history
+  var history=scanLog.filter(function(l){return l.plate===plate;});
+  if(history.length>0){
+    var last=history[history.length-1];
+    checks.push({icon:'🕐',color:'var(--blue)',text:'SEEN BEFORE: '+history.length+' time(s) — last at '+last.location+' on '+fmtDateTime(last.ts)});
+    // Frequency check
+    var today=new Date().toDateString();
+    var todayCount=history.filter(function(l){return new Date(l.ts).toDateString()===today;}).length;
+    if(todayCount>=3){
+      checks.push({icon:'🚫',color:'var(--amber)',text:'HIGH FREQUENCY: seen '+todayCount+' times today — possible loitering'});
+      riskScore+=20;
+    }
+    // Zone hopping
+    var recentZones=history.slice(-5).map(function(l){return l.location;});
+    var uniqueZones=[...new Set(recentZones)];
+    if(uniqueZones.length>=3){
+      checks.push({icon:'🔄',color:'var(--amber)',text:'ZONE HOPPING: appeared in '+uniqueZones.length+' different areas recently'});
+      riskScore+=15;
+    }
+  } else {
+    checks.push({icon:'🕐',color:'var(--txt3)',text:'FIRST SIGHTING — no prior scan history'});
+    if(!record)riskScore+=10;
+  }
+
+  // 4. Incident history
+  var priorInc=incidents.filter(function(i){return i.plate===plate;});
+  if(priorInc.length>0){
+    checks.push({icon:'⚠',color:'var(--red)',text:''+priorInc.length+' PRIOR INCIDENT(S) on record'});
+    riskScore+=40*priorInc.length;
+  }
+
+  riskScore=Math.min(riskScore,100);
+  return {checks:checks,riskScore:riskScore};
+}
+
+function verifyScan(){
+  var plateRaw=document.getElementById('scan-plate').value.trim().toUpperCase().replace(/\s+/g,'');
+  if(!plateRaw){showAlert('Enter or photograph a plate number','red');return;}
+  var gate=document.getElementById('scan-gate').value||'Main Entrance';
+  var officer=document.getElementById('scan-officer').value||currentUser;
+  var gps=currentGPS;
+  var record=lookupPlate(plateRaw);
+  var xcheck=crossCheck(plateRaw,record,gps);
+
+  // Log it
+  var logEntry={
+    id:Date.now(),ts:new Date().toISOString(),plate:plateRaw,
+    status:record?record.status:'unknown',
+    location:gate,officer:officer,
+    photo:scanPhotoData,
+    photoTs:scanPhotoTimestamp,
+    gps:gps?{lat:gps.lat,lng:gps.lng,acc:gps.acc}:null,
+    name:record?record.name:'',unit:record?record.unit:'',
+    riskScore:xcheck.riskScore
+  };
+  scanLog.push(logEntry);saveData();
+
+  showScanResult(plateRaw,record,xcheck,logEntry);
+  renderDashboard();
+
+  // Auto-alert if flagged
+  if(record&&record.status==='flagged'){showAlert('FLAGGED PLATE DETECTED — DENY ACCESS','red');}
+  else if(xcheck.riskScore>=60){showAlert('HIGH RISK PLATE — Review cross-check results','amber');}
+
+  // Clear
+  document.getElementById('scan-plate').value='';
+  scanPhotoData='';scanPhotoTimestamp='';
+  document.getElementById('scan-preview').style.display='none';
+  document.getElementById('photo-meta').style.display='none';
+}
+
+function quickScan(){
+  var p=document.getElementById('quick-plate').value.trim().toUpperCase().replace(/\s+/g,'');
+  if(!p)return;
+  var record=lookupPlate(p);
+  var xcheck=crossCheck(p,record,currentGPS);
+  var logEntry={id:Date.now(),ts:new Date().toISOString(),plate:p,status:record?record.status:'unknown',location:'Quick Check',officer:currentUser,photo:null,gps:currentGPS?{lat:currentGPS.lat,lng:currentGPS.lng,acc:currentGPS.acc}:null,name:record?record.name:'',unit:record?record.unit:'',riskScore:xcheck.riskScore};
+  scanLog.push(logEntry);saveData();
+  showScanResultModal(p,record,xcheck,logEntry);
+  document.getElementById('quick-plate').value='';
+  renderDashboard();
+}
+
+function showScanResult(plate,record,xcheck,logEntry){
+  var box=document.getElementById('scan-result-box');
+  var status=record?record.status:'unknown';
+  box.className='srb-'+status;box.style.display='block';
+  document.getElementById('srb-plate').textContent=plate;
+  var icons={authorized:'✅',visitor:'⚠',flagged:'🚨',unknown:'❓'};
+  var labels={authorized:'AUTHORIZED',visitor:'VISITOR — CHECK IN REQUIRED',flagged:'FLAGGED — DENY ACCESS',unknown:'UNKNOWN — NOT IN REGISTRY'};
+  var colors={authorized:'var(--green)',visitor:'var(--amber)',flagged:'var(--red)',unknown:'var(--txt2)'};
+  document.getElementById('srb-verdict').innerHTML='<span style="font-size:22px">'+icons[status]+'</span> <span style="color:'+colors[status]+'">'+labels[status]+'</span>';
+  document.getElementById('srb-name').textContent=record?(record.name||''):'';
+  document.getElementById('srb-detail').textContent=record?((record.unit||'')+(record.make?' — '+record.color+' '+record.make:'')):'';
+
+  // Crosscheck
+  var riskColor=xcheck.riskScore>=70?'var(--red)':xcheck.riskScore>=40?'var(--amber)':'var(--green)';
+  var checkHTML='<div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--txt3);margin-bottom:8px">CROSS-CHECK RESULTS</div>';
+  checkHTML+=xcheck.checks.map(function(c){return '<div style="display:flex;gap:8px;margin-bottom:4px"><span>'+c.icon+'</span><span style="color:'+c.color+'">'+c.text+'</span></div>';}).join('');
+  checkHTML+='<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--bord2)">';
+  checkHTML+='<div style="font-size:9px;font-weight:700;color:var(--txt3);margin-bottom:4px">RISK SCORE: <span style="color:'+riskColor+'">'+xcheck.riskScore+'/100</span></div>';
+  checkHTML+='<div class="risk-bar"><div class="risk-fill" style="width:'+xcheck.riskScore+'%;background:'+riskColor+'"></div></div></div>';
+  document.getElementById('srb-crosscheck').innerHTML=checkHTML;
+
+  // Actions
+  var actHTML='';
+  if(status==='unknown'||status==='flagged'||xcheck.riskScore>=50){
+    actHTML+='<button class="btn btn-red" data-plate="'+plate+'" onclick="openIncidentModal(this.dataset.plate)">File Trespasser Report</button>';
+  }
+  if(status==='unknown'){
+    actHTML+='<button class="btn btn-blue" data-plate="'+plate+'" onclick="goRegFromScan(this.dataset.plate)">Register Plate</button>';
+  }
+  actHTML+='<button class="btn btn-ghost" data-plate="'+plate+'" onclick="showPlateHistory(this.dataset.plate)">View History</button>';
+  document.getElementById('srb-actions').innerHTML=actHTML;
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function showScanResultModal(plate,record,xcheck,logEntry){
+  var status=record?record.status:'unknown';
+  var icons={authorized:'✅',visitor:'⚠',flagged:'🚨',unknown:'❓'};
+  var labels={authorized:'AUTHORIZED',visitor:'VISITOR',flagged:'FLAGGED — DENY ACCESS',unknown:'NOT IN REGISTRY'};
+  var colors={authorized:'var(--green)',visitor:'var(--amber)',flagged:'var(--red)',unknown:'var(--txt2)'};
+  var riskColor=xcheck.riskScore>=70?'var(--red)':xcheck.riskScore>=40?'var(--amber)':'var(--green)';
+  var html='<div style="text-align:center;margin-bottom:14px">';
+  html+='<div style="font-size:28px;font-weight:900;letter-spacing:5px;margin-bottom:6px">'+plate+'</div>';
+  html+='<div style="font-size:15px">'+icons[status]+' <span style="color:'+colors[status]+'">'+labels[status]+'</span></div>';
+  html+='</div>';
+  html+=xcheck.checks.map(function(c){return '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--bord2);font-size:11px"><span>'+c.icon+'</span><span style="color:'+c.color+'">'+c.text+'</span></div>';}).join('');
+  html+='<div style="margin-top:10px"><div style="font-size:9px;color:var(--txt3);font-weight:700;margin-bottom:4px">RISK: <span style="color:'+riskColor+'">'+xcheck.riskScore+'/100</span></div>';
+  html+='<div class="risk-bar"><div class="risk-fill" style="width:'+xcheck.riskScore+'%;background:'+riskColor+'"></div></div></div>';
+  if(status==='unknown'||status==='flagged'||xcheck.riskScore>=50){
+    html+='<button class="btn btn-red btn-full mt12" data-plate="'+plate+'" onclick="closeModal();openIncidentModal(this.dataset.plate)">File Trespasser Report</button>';
+  }
+  openModal('Plate Check: '+plate,html);
+}
+
+// ── INCIDENT MODAL ──
+function openIncidentModal(plate){
+  var record=lookupPlate(plate);
+  var gps=currentGPS;
+  var zoneInfo=gps?nearestZone(gps.lat,gps.lng):null;
+  var html='';
+  html+='<div class="form-row"><label class="lbl">PLATE</label><input class="inp inp-plate" id="inc-plate" value="'+plate+'" style="font-size:16px"/></div>';
+  html+='<div class="form-row"><label class="lbl">INCIDENT TYPE</label><select class="inp" id="inc-type"><option>Trespassing</option><option>Unauthorized Parking</option><option>Loitering</option><option>Theft / Suspected Theft</option><option>Harassment</option><option>Disturbance</option><option>Tailgating / Unauthorized Entry</option><option>Other</option></select></div>';
+  html+='<div class="grid2"><div class="form-row"><label class="lbl">LOCATION</label><select class="inp" id="inc-location">'+zones.map(function(z){return '<option>'+z.name+'</option>';}).join('')+'</select></div>';
+  html+='<div class="form-row"><label class="lbl">OFFICER</label><input class="inp" id="inc-officer" value="'+currentUser+'"/></div></div>';
+  html+='<div class="form-row"><label class="lbl">GPS COORDINATES</label>';
+  html+='<input class="inp" id="inc-gps-lat" placeholder="Latitude" value="'+(gps?gps.lat.toFixed(6):'')+'"/></div>';
+  html+='<div class="form-row"><input class="inp" id="inc-gps-lng" placeholder="Longitude" value="'+(gps?gps.lng.toFixed(6):'')+'"/></div>';
+  html+='<div class="form-row"><label class="lbl">DESCRIPTION</label><textarea class="inp" id="inc-notes" placeholder="Describe what happened, what was said, actions taken..."></textarea></div>';
+  html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><input type="checkbox" id="inc-asked-leave"/><label for="inc-asked-leave" style="font-size:11px;color:var(--txt2);cursor:pointer">Vehicle / person was asked to leave the property</label></div>';
+  html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><input type="checkbox" id="inc-police"/><label for="inc-police" style="font-size:11px;color:var(--txt2);cursor:pointer">Police were called / notified</label></div>';
+  html+='<div class="form-row"><label class="lbl">PRIORITY</label><select class="inp" id="inc-priority"><option value="low">Low — Monitor</option><option value="medium" selected>Medium — Follow Up</option><option value="high">High — Immediate Action</option></select></div>';
+  openModal('File Trespasser Incident — '+plate,html);
+  document.getElementById('modal-save-btn').style.display='flex';
+  document.getElementById('modal-save-btn').textContent='FILE INCIDENT';
+  document.getElementById('modal-save-btn').onclick=function(){saveIncident();};
+}
+
+function saveIncident(){
+  var plate=document.getElementById('inc-plate').value.trim().toUpperCase().replace(/\s+/g,'');
+  if(!plate){showAlert('Plate required','red');return;}
+  var lat=parseFloat(document.getElementById('inc-gps-lat').value)||null;
+  var lng=parseFloat(document.getElementById('inc-gps-lng').value)||null;
+  var incNum='INC-'+Date.now().toString().slice(-6);
+  var inc={
+    id:Date.now(),num:incNum,ts:new Date().toISOString(),
+    plate:plate,type:document.getElementById('inc-type').value,
+    location:document.getElementById('inc-location').value,
+    officer:document.getElementById('inc-officer').value,
+    gps:lat&&lng?{lat:lat,lng:lng}:null,
+    notes:document.getElementById('inc-notes').value,
+    askedToLeave:document.getElementById('inc-asked-leave').checked,
+    policeCalled:document.getElementById('inc-police').checked,
+    priority:document.getElementById('inc-priority').value,
+    status:'active',
+    photo:scanPhotoData||null
+  };
+  incidents.push(inc);
+  // Auto-flag plate
+  var record=lookupPlate(plate);
+  if(!record){
+    plates.push({id:Date.now()+1,plate:plate,status:'flagged',notes:inc.type+' — '+inc.ts,added:new Date().toISOString(),addedBy:currentUser});
+  } else if(record.status!=='flagged'){
+    record.status='flagged';record.notes=(record.notes?record.notes+' / ':'')+inc.type;
+  }
+  saveData();closeModal();
+  renderIncidents();renderDashboard();renderRegistry();
+  updateIncidentTabBadge();
+  showAlert('Incident '+incNum+' filed. Plate auto-flagged.','amber');
+  // Offer to email
+  setTimeout(function(){
+    if(confirm('Send trespasser report to supervisors now?')){emailSingleIncidentById(inc.id);}
+  },500);
+}
+
+// ── REGISTER ──
+function registerPlate(){
+  var num=document.getElementById('reg-plate').value.trim().toUpperCase().replace(/\s+/g,'');
+  if(!num){showAlert('Enter plate number','red');return;}
+  var zones_checked=[];
+  document.querySelectorAll('#reg-zone-checks input:checked').forEach(function(cb){zones_checked.push(cb.value);});
+  var entry={
+    id:Date.now(),plate:num,state:document.getElementById('reg-state').value,
+    type:document.getElementById('reg-type').value,make:document.getElementById('reg-make').value,
+    color:document.getElementById('reg-color').value,name:document.getElementById('reg-name').value,
+    unit:document.getElementById('reg-unit').value,phone:document.getElementById('reg-phone').value,
+    email:document.getElementById('reg-email').value,status:document.getElementById('reg-status').value,
+    expires:document.getElementById('reg-expires').value,notes:document.getElementById('reg-notes').value,
+    photo:regPhotoData,zones:zones_checked,added:new Date().toISOString(),addedBy:currentUser
+  };
+  var idx=plates.findIndex(function(p){return p.plate===num;});
+  if(idx>=0)plates[idx]=entry;else plates.push(entry);
+  saveData();
+  ['reg-plate','reg-make','reg-color','reg-name','reg-unit','reg-phone','reg-email','reg-notes'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('reg-expires').value='';
+  document.getElementById('reg-preview').style.display='none';
+  regPhotoData='';
+  renderDashboard();renderRegistry();
+  showAlert('Plate '+num+' registered');
+}
+function goRegFromScan(plate){
+  document.getElementById('reg-plate').value=plate;
+  document.querySelectorAll('.tn').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.tn')[2].classList.add('on');
+  goTab('register',document.querySelectorAll('.tn')[2]);
+}
+
+// ── REGISTRY ──
+function renderRegistry(){
+  var search=(document.getElementById('reg-search')||{}).value||'';
+  var filter=(document.getElementById('reg-filter')||{}).value||'all';
+  var list=plates.filter(function(p){
+    var mf=filter==='all'||p.status===filter;
+    var q=search.toLowerCase();
+    var ms=!q||(p.plate+' '+p.name+' '+p.unit+' '+p.make).toLowerCase().includes(q);
+    return mf&&ms;
+  });
+  var el=document.getElementById('registry-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-txt">No plates found</div></div>';return;}
+  el.innerHTML=list.map(function(p){
+    var pc={authorized:'pill-green',visitor:'pill-blue',flagged:'pill-red'}[p.status]||'pill-grey';
+    var dc={authorized:'dot-green',visitor:'dot-blue',flagged:'dot-red'}[p.status]||'dot-grey';
+    return '<div class="plate-row">'
+      +(p.photo?'<img class="plate-thumb" src="'+p.photo+'" alt=""/>'
+        :'<div class="plate-thumb-ph">🚗</div>')
+      +'<div class="plate-num">'+p.plate+'</div>'
+      +'<div class="plate-meta">'+(p.name||'<span style="color:var(--txt3)">No name</span>')+(p.unit?' &mdash; '+p.unit:'')
+        +'<br/>'+(p.make?p.color+' '+p.make+' &mdash; ':'')+p.state+'</div>'
+      +'<span class="pill '+pc+'"><span class="dot '+dc+'"></span>'+p.status.toUpperCase()+'</span>'
+      +'<div class="plate-actions">'
+        +'<button class="icon-btn" title="History" data-plate="'+p.plate+'" onclick="showPlateHistory(this.dataset.plate)">🕐</button>'
+        +'<button class="icon-btn" title="Edit" data-pid="'+p.id+'" onclick="editPlate(this.dataset.pid)">✎</button>'
+        +'<button class="icon-btn" title="Delete" data-pid="'+p.id+'" onclick="deletePlate(this.dataset.pid)" style="color:var(--red)">🗑</button>'
+      +'</div></div>';
+  }).join('');
+  renderRegZoneChecks();
+}
+
+function renderRegZoneChecks(){
+  var el=document.getElementById('reg-zone-checks');if(!el)return;
+  el.innerHTML=zones.map(function(z){
+    return '<label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txt2);cursor:pointer">'
+      +'<input type="checkbox" value="'+z.name+'" style="accent-color:var(--blue)"/> '+z.name+'</label>';
+  }).join('');
+}
+
+function deletePlate(id){
+  if(!confirm('Remove from registry?'))return;
+  plates=plates.filter(function(p){return String(p.id)!==String(id);});
+  saveData();renderRegistry();renderDashboard();
+}
+function editPlate(id){
+  var p=plates.find(function(x){return String(x.id)===String(id);});if(!p)return;
+  var html='<div class="form-row"><label class="lbl">STATUS</label><select class="inp" id="edit-status">'
+    +'<option value="authorized"'+(p.status==='authorized'?' selected':'')+'>AUTHORIZED</option>'
+    +'<option value="visitor"'+(p.status==='visitor'?' selected':'')+'>VISITOR</option>'
+    +'<option value="flagged"'+(p.status==='flagged'?' selected':'')+'>FLAGGED</option>'
+    +'</select></div>'
+    +'<div class="form-row"><label class="lbl">NAME</label><input class="inp" id="edit-name" value="'+(p.name||'')+'"/></div>'
+    +'<div class="form-row"><label class="lbl">UNIT</label><input class="inp" id="edit-unit" value="'+(p.unit||'')+'"/></div>'
+    +'<div class="form-row"><label class="lbl">NOTES</label><textarea class="inp" id="edit-notes">'+(p.notes||'')+'</textarea></div>';
+  openModal('Edit — '+p.plate,html);
+  document.getElementById('modal-save-btn').style.display='flex';
+  document.getElementById('modal-save-btn').textContent='Save';
+  document.getElementById('modal-save-btn').onclick=function(){
+    p.status=document.getElementById('edit-status').value;
+    p.name=document.getElementById('edit-name').value;
+    p.unit=document.getElementById('edit-unit').value;
+    p.notes=document.getElementById('edit-notes').value;
+    saveData();closeModal();renderRegistry();renderDashboard();
+  };
+}
+
+// ── PLATE HISTORY ──
+function showPlateHistory(plate){
+  var history=scanLog.filter(function(l){return l.plate===plate;}).slice().reverse();
+  var incs=incidents.filter(function(i){return i.plate===plate;});
+  var html='<div style="margin-bottom:12px">';
+  html+='<span class="pill pill-blue">'+history.length+' scans</span> ';
+  html+='<span class="pill '+(incs.length?'pill-red':'pill-grey')+'">'+incs.length+' incidents</span>';
+  html+='</div>';
+  if(history.length){
+    html+='<div class="sec-hdr">MOVEMENT HISTORY</div>';
+    html+=history.map(function(l){
+      var pillCls={authorized:'pill-green',visitor:'pill-blue',flagged:'pill-red',unknown:'pill-grey'}[l.status]||'pill-grey';
+      var gpsLink=l.gps?(' <a href="'+mapsLink(l.gps.lat,l.gps.lng)+'" target="_blank" class="inc-gps-link">📍 Map</a>'):'';
+      return '<div class="mv-row">'
+        +'<div class="mv-dot '+(l.status==='authorized'?'dot-green':l.status==='flagged'?'dot-red':'dot-amber')+'"></div>'
+        +'<div class="mv-time">'+fmtDateTime(l.ts)+'</div>'
+        +'<div class="mv-location">'+l.location+gpsLink+'</div>'
+        +'<span class="pill '+pillCls+'">'+l.status.toUpperCase()+'</span>'
+        +'</div>';
+    }).join('');
+  }
+  if(incs.length){
+    html+='<div class="sec-hdr" style="margin-top:12px">INCIDENTS</div>';
+    html+=incs.map(function(i){
+      return '<div style="padding:8px 0;border-bottom:1px solid var(--bord2);font-size:11px">'
+        +'<span class="inc-id">'+i.num+'</span> &mdash; <strong>'+i.type+'</strong><br/>'
+        +'<span style="color:var(--txt3)">'+fmtDateTime(i.ts)+' &mdash; '+i.location+'</span>'
+        +'</div>';
+    }).join('');
+  }
+  openModal('History: '+plate,html);
+}
+
+// ── INCIDENTS ──
+function renderFlagged(){} // handled via registry
+function renderIncidents(){
+  var search=(document.getElementById('inc-search')||{}).value||'';
+  var filter=(document.getElementById('inc-filter')||{}).value||'all';
+  var list=incidents.filter(function(i){
+    var mf=filter==='all'||i.status===filter;
+    var q=search.toLowerCase();
+    var ms=!q||(i.plate+' '+i.type+' '+(i.notes||'')+' '+i.location).toLowerCase().includes(q);
+    return mf&&ms;
+  }).slice().reverse();
+  var el=document.getElementById('incidents-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-txt">No incidents on record</div></div>';return;}
+  el.innerHTML=list.map(function(inc){
+    var prioColor={high:'var(--red)',medium:'var(--amber)',low:'var(--green)'}[inc.priority]||'var(--txt2)';
+    var statPill={active:'pill-red',escalated:'pill-amber',resolved:'pill-green'}[inc.status]||'pill-grey';
+    var gpsLink=inc.gps?('<a href="'+mapsLink(inc.gps.lat,inc.gps.lng)+'" target="_blank" class="inc-gps-link">📍 View on Map</a> &mdash; '):'';
+    return '<div class="incident-row">'
+      +'<div class="inc-header">'
+        +'<span class="inc-id">'+inc.num+'</span>'
+        +'<span class="inc-plate" style="color:var(--txt)">'+inc.plate+'</span>'
+        +'<span class="pill '+statPill+'">'+inc.status.toUpperCase()+'</span>'
+        +'<span style="font-size:10px;font-weight:700;color:'+prioColor+'">'+inc.priority.toUpperCase()+' PRIORITY</span>'
+      +'</div>'
+      +'<div class="inc-body">'
+        +'<strong style="color:var(--txt)">'+inc.type+'</strong> &mdash; '+inc.location+'<br/>'
+        +gpsLink+fmtDateTime(inc.ts)+' &mdash; Officer: '+inc.officer+'<br/>'
+        +(inc.askedToLeave?'<span style="color:var(--green)">✓ Asked to leave</span> &mdash; ':'')
+        +(inc.policeCalled?'<span style="color:var(--red)">✓ Police called</span>':'')
+        +(inc.notes?'<br/><span style="color:var(--txt3)">'+inc.notes+'</span>':'')
+      +'</div>'
+      +(inc.photo?'<img src="'+inc.photo+'" style="max-height:80px;border-radius:6px;margin-top:8px;border:1px solid var(--bord)" alt="evidence"/>':'')
+      +'<div class="inc-actions">'
+        +'<button class="btn btn-gold" style="font-size:10px;padding:6px 10px" data-iid="'+inc.id+'" onclick="emailSingleIncidentById(this.dataset.iid)">Email Report</button>'
+        +(inc.status!=='resolved'?'<button class="btn btn-green" style="font-size:10px;padding:6px 10px" data-iid="'+inc.id+'" onclick="resolveIncident(this.dataset.iid)">Resolve</button>':'')
+        +(inc.status==='active'?'<button class="btn btn-amber" style="font-size:10px;padding:6px 10px" data-iid="'+inc.id+'" onclick="escalateIncident(this.dataset.iid)">Escalate</button>':'')
+        +'<button class="btn btn-red" style="font-size:10px;padding:6px 10px" data-iid="'+inc.id+'" onclick="deleteIncident(this.dataset.iid)">Delete</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+  updateIncidentTabBadge();
+}
+
+function resolveIncident(id){
+  var inc=incidents.find(function(i){return String(i.id)===String(id);});if(!inc)return;
+  inc.status='resolved';saveData();renderIncidents();showAlert('Incident resolved');
+}
+function escalateIncident(id){
+  var inc=incidents.find(function(i){return String(i.id)===String(id);});if(!inc)return;
+  inc.status='escalated';saveData();renderIncidents();showAlert('Incident escalated','amber');
+}
+function deleteIncident(id){
+  if(!confirm('Delete this incident?'))return;
+  incidents=incidents.filter(function(i){return String(i.id)!==String(id);});
+  saveData();renderIncidents();renderDashboard();
+}
+function updateIncidentTabBadge(){
+  var active=incidents.filter(function(i){return i.status==='active'||i.status==='escalated';}).length;
+  var btn=document.getElementById('tab-incidents-btn');
+  if(btn)btn.textContent='⚠ Incidents'+(active?' ('+active+')':'');
+  if(active&&btn)btn.classList.add('alert-tab');else if(btn)btn.classList.remove('alert-tab');
+}
+
+// ── DASHBOARD RENDER ──
+function renderDashboard(){
+  document.getElementById('s-auth').textContent=plates.filter(function(p){return p.status==='authorized';}).length;
+  document.getElementById('s-flagged').textContent=plates.filter(function(p){return p.status==='flagged';}).length;
+  document.getElementById('s-incidents').textContent=incidents.filter(function(i){return i.status==='active'||i.status==='escalated';}).length;
+  var today=new Date().toDateString();
+  document.getElementById('s-scans').textContent=scanLog.filter(function(l){return new Date(l.ts).toDateString()===today;}).length;
+
+  // Active alerts
+  var flaggedScans=scanLog.filter(function(l){return l.status==='flagged'||l.riskScore>=70;}).slice(-5).reverse();
+  var alertCard=document.getElementById('active-alerts-card');
+  if(flaggedScans.length){
+    alertCard.style.display='block';
+    document.getElementById('active-alerts-list').innerHTML=flaggedScans.map(function(l){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(239,68,68,0.1)">'
+        +'<span style="font-size:18px">🚨</span>'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:900;letter-spacing:2px;color:var(--red)">'+l.plate+'</div>'
+        +'<div style="font-size:10px;color:var(--txt3)">'+l.location+' &mdash; '+fmtDateTime(l.ts)+(l.gps?' &mdash; <a href="'+mapsLink(l.gps.lat,l.gps.lng)+'" target="_blank" class="inc-gps-link">Map</a>':'')+'</div></div>'
+        +'<button class="btn btn-red" style="font-size:10px;padding:5px 8px" data-plate="'+l.plate+'" onclick="openIncidentModal(this.dataset.plate)">Report</button>'
+        +'</div>';
+    }).join('');
+  } else {alertCard.style.display='none';}
+
+  // Recent scans
+  var recent=scanLog.slice(-6).reverse();
+  var rEl=document.getElementById('dash-recent');
+  if(!recent.length){rEl.innerHTML='<div class="empty-state" style="padding:14px"><div class="empty-txt">No scans yet</div></div>';return;}
+  rEl.innerHTML=recent.map(function(l){
+    var dc={authorized:'dot-green',visitor:'dot-blue',flagged:'dot-red',unknown:'dot-amber'}[l.status]||'dot-grey';
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bord)">'
+      +'<span class="dot '+dc+'"></span>'
+      +'<span style="font-size:12px;font-weight:900;letter-spacing:2px;min-width:90px">'+l.plate+'</span>'
+      +'<span style="font-size:11px;color:var(--txt2);flex:1">'+l.location+'</span>'
+      +(l.gps?'<a href="'+mapsLink(l.gps.lat,l.gps.lng)+'" target="_blank" class="inc-gps-link" style="font-size:10px">📍</a>':'')
+      +'<span style="font-size:10px;color:var(--txt3)">'+fmtTime(l.ts)+'</span>'
+      +'</div>';
+  }).join('');
+
+  // Open incidents
+  var openInc=incidents.filter(function(i){return i.status==='active'||i.status==='escalated';}).slice(-4).reverse();
+  var iEl=document.getElementById('dash-incidents');
+  if(!openInc.length){iEl.innerHTML='<div class="empty-state" style="padding:14px"><div class="empty-icon">✅</div><div class="empty-txt">No open incidents</div></div>';return;}
+  iEl.innerHTML=openInc.map(function(i){
+    var sc={active:'pill-red',escalated:'pill-amber'}[i.status]||'pill-grey';
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bord)">'
+      +'<span style="font-size:12px;font-weight:900;letter-spacing:2px;min-width:90px;color:var(--red)">'+i.plate+'</span>'
+      +'<span style="font-size:11px;color:var(--txt2);flex:1">'+i.type+'</span>'
+      +'<span class="pill '+sc+'">'+i.status.toUpperCase()+'</span>'
+      +'</div>';
+  }).join('');
+
+  updateIncidentTabBadge();
+}
+
+// ── EMAIL REPORTS ──
+function buildIncidentHTML(inc,full){
+  var prop=settings.propertyName||'Property';
+  var gpsLink=inc.gps?mapsLink(inc.gps.lat,inc.gps.lng):'';
+  var history=scanLog.filter(function(l){return l.plate===inc.plate;});
+  var h='<div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;color:#1a202c">';
+  h+='<div style="background:#020912;color:#C9A55C;padding:20px 24px;border-radius:8px 8px 0 0">';
+  h+='<div style="font-size:11px;letter-spacing:2px;color:#64748b">PLATEGUARD — TRESPASSER INCIDENT REPORT</div>';
+  h+='<div style="font-size:20px;font-weight:900;margin-top:4px">'+prop+'</div>';
+  h+='<div style="font-size:11px;color:#94a3b8;margin-top:2px">'+settings.propertyAddress+'</div>';
+  h+='</div>';
+  h+='<div style="background:#fff;padding:20px 24px;border:1px solid #e2e8f0">';
+  h+='<table style="width:100%;border-collapse:collapse;margin-bottom:16px">';
+  h+='<tr style="background:#f8fafc"><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b;width:140px">INCIDENT #</td><td style="padding:8px 12px;font-size:13px;font-weight:900;font-family:monospace">'+inc.num+'</td></tr>';
+  h+='<tr><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">PLATE</td><td style="padding:8px 12px;font-size:18px;font-weight:900;letter-spacing:4px;color:#ef4444">'+inc.plate+'</td></tr>';
+  h+='<tr style="background:#f8fafc"><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">TYPE</td><td style="padding:8px 12px;font-size:13px;font-weight:700">'+inc.type+'</td></tr>';
+  h+='<tr><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">DATE / TIME</td><td style="padding:8px 12px;font-size:13px">'+fmtDateTime(inc.ts)+' ('+new Date(inc.ts).toLocaleDateString()+')</td></tr>';
+  h+='<tr style="background:#f8fafc"><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">LOCATION</td><td style="padding:8px 12px;font-size:13px">'+inc.location+'</td></tr>';
+  h+='<tr><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">OFFICER</td><td style="padding:8px 12px;font-size:13px">'+inc.officer+'</td></tr>';
+  if(inc.gps){h+='<tr style="background:#f8fafc"><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">GPS COORDINATES</td><td style="padding:8px 12px;font-size:12px;font-family:monospace">'+inc.gps.lat.toFixed(6)+', '+inc.gps.lng.toFixed(6)+'<br/><a href="'+gpsLink+'" style="color:#4a8fd4;font-size:11px">View on Google Maps</a></td></tr>';}
+  h+='<tr><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">PRIORITY</td><td style="padding:8px 12px;font-size:13px;font-weight:700;color:'+(inc.priority==='high'?'#ef4444':inc.priority==='medium'?'#f59e0b':'#22c55e')+'">'+inc.priority.toUpperCase()+'</td></tr>';
+  h+='<tr style="background:#f8fafc"><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">ASKED TO LEAVE</td><td style="padding:8px 12px;font-size:13px">'+(inc.askedToLeave?'YES':'No')+'</td></tr>';
+  h+='<tr><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">POLICE CALLED</td><td style="padding:8px 12px;font-size:13px">'+(inc.policeCalled?'YES':'No')+'</td></tr>';
+  h+='<tr style="background:#f8fafc"><td style="padding:8px 12px;font-size:11px;font-weight:700;color:#64748b">STATUS</td><td style="padding:8px 12px;font-size:13px;font-weight:700">'+inc.status.toUpperCase()+'</td></tr>';
+  h+='</table>';
+  if(inc.notes){h+='<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:12px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;margin-bottom:4px">OFFICER NOTES</div><div style="font-size:13px">'+inc.notes+'</div></div>';}
+  if(inc.photo){h+='<div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;margin-bottom:6px">PHOTO EVIDENCE</div><img src="'+inc.photo+'" style="max-width:100%;border-radius:6px;border:1px solid #e2e8f0"/></div>';}
+  if(history.length){
+    h+='<div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#64748b;margin-bottom:8px">PLATE SIGHTING HISTORY ('+history.length+' records)</div>';
+    h+='<table style="width:100%;border-collapse:collapse;font-size:11px"><tr style="background:#f8fafc"><th style="padding:6px 10px;text-align:left;font-weight:700;color:#64748b">DATE/TIME</th><th style="padding:6px 10px;text-align:left">LOCATION</th><th style="padding:6px 10px;text-align:left">STATUS</th><th style="padding:6px 10px;text-align:left">GPS</th></tr>';
+    history.slice().reverse().forEach(function(l){
+      h+='<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 10px">'+fmtDateTime(l.ts)+'</td><td style="padding:6px 10px">'+l.location+'</td><td style="padding:6px 10px;font-weight:700">'+l.status.toUpperCase()+'</td><td style="padding:6px 10px">'+(l.gps?'<a href="'+mapsLink(l.gps.lat,l.gps.lng)+'" style="color:#4a8fd4">Map</a>':'-')+'</td></tr>';
+    });
+    h+='</table></div>';
+  }
+  h+='<div style="font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:12px;margin-top:4px">Generated by PlateGuard &mdash; AuditDNA Intelligence &mdash; Mexausa Food Group, Inc. &mdash; '+new Date().toLocaleString()+'</div>';
+  h+='</div></div>';
+  return h;
+}
+
+function buildBatchReportHTML(incList){
+  var prop=settings.propertyName||'Property';
+  var h='<div style="font-family:Arial,sans-serif;max-width:700px;margin:0 auto;color:#1a202c">';
+  h+='<div style="background:#020912;color:#C9A55C;padding:20px 24px;border-radius:8px 8px 0 0">';
+  h+='<div style="font-size:11px;letter-spacing:2px;color:#64748b">PLATEGUARD — SECURITY REPORT</div>';
+  h+='<div style="font-size:20px;font-weight:900;margin-top:4px">'+prop+'</div>';
+  h+='<div style="font-size:12px;color:#94a3b8;margin-top:4px">Generated: '+new Date().toLocaleString()+'</div>';
+  h+='</div>';
+  h+='<div style="background:#fff;padding:20px 24px;border:1px solid #e2e8f0">';
+  h+='<div style="display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap">';
+  h+='<div style="text-align:center;padding:12px 20px;background:#f8fafc;border-radius:8px"><div style="font-size:24px;font-weight:900;color:#ef4444">'+incList.filter(function(i){return i.status==='active';}).length+'</div><div style="font-size:10px;font-weight:700;color:#64748b">ACTIVE</div></div>';
+  h+='<div style="text-align:center;padding:12px 20px;background:#f8fafc;border-radius:8px"><div style="font-size:24px;font-weight:900;color:#f59e0b">'+incList.filter(function(i){return i.status==='escalated';}).length+'</div><div style="font-size:10px;font-weight:700;color:#64748b">ESCALATED</div></div>';
+  h+='<div style="text-align:center;padding:12px 20px;background:#f8fafc;border-radius:8px"><div style="font-size:24px;font-weight:900;color:#22c55e">'+incList.filter(function(i){return i.status==='resolved';}).length+'</div><div style="font-size:10px;font-weight:700;color:#64748b">RESOLVED</div></div>';
+  h+='</div>';
+  incList.forEach(function(inc){h+=buildIncidentHTML(inc,false);h+='<hr style="margin:16px 0;border:none;border-top:2px solid #e2e8f0"/>';});
+  h+='<div style="font-size:10px;color:#94a3b8;margin-top:8px">PlateGuard &mdash; AuditDNA Intelligence &mdash; Mexausa Food Group, Inc.</div>';
+  h+='</div></div>';
+  return h;
+}
+
+function getReportIncidents(){
+  var type=document.getElementById('rpt-type').value;
+  var now=new Date();
+  if(type==='daily'){var d24=new Date(now-86400000);return incidents.filter(function(i){return new Date(i.ts)>=d24;});}
+  if(type==='active')return incidents.filter(function(i){return i.status==='active'||i.status==='escalated';});
+  if(type==='trespassers')return incidents.filter(function(i){return i.type==='Trespassing'||i.type==='Unauthorized Parking'||i.type==='Loitering';});
+  return incidents;
+}
+
+function emailReport(){
+  var list=getReportIncidents();
+  if(!list.length){showAlert('No incidents match this filter','amber');return;}
+  var to=supervisors.map(function(s){return s.email;}).join(',');
+  if(!to){showAlert('Add supervisor emails in Settings first','red');return;}
+  var prop=settings.propertyName||'Property';
+  var subject='PlateGuard Security Report — '+prop+' — '+new Date().toLocaleDateString();
+  var body='PLATEGUARD TRESPASSER REPORT\n'+prop+'\n'+settings.propertyAddress+'\nGenerated: '+new Date().toLocaleString()+'\n\n';
+  body+='SUMMARY: '+list.length+' incident(s)\n\n';
+  list.forEach(function(i){
+    body+='---\nINCIDENT: '+i.num+'\nPLATE: '+i.plate+'\nTYPE: '+i.type+'\nDATE: '+fmtDateTime(i.ts)+'\nLOCATION: '+i.location+'\nOFFICER: '+i.officer+'\n';
+    if(i.gps)body+='GPS: '+i.gps.lat.toFixed(6)+', '+i.gps.lng.toFixed(6)+'\nMAP: '+mapsLink(i.gps.lat,i.gps.lng)+'\n';
+    if(i.notes)body+='NOTES: '+i.notes+'\n';
+    body+='\n';
+  });
+  body+='\n-- PlateGuard by AuditDNA Intelligence';
+  var link=document.createElement('a');
+  link.href='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  link.click();
+  showAlert('Email client opened with report');
+}
+
+function emailSingleIncidentById(id){
+  var inc=incidents.find(function(i){return String(i.id)===String(id);});if(!inc)return;
+  var to=supervisors.map(function(s){return s.email;}).join(',');
+  if(!to){showAlert('Add supervisor emails in Settings first','amber');return;}
+  var prop=settings.propertyName||'Property';
+  var subject='[INCIDENT '+inc.num+'] Trespasser Alert — '+inc.plate+' — '+prop;
+  var body='TRESPASSER INCIDENT REPORT\n';
+  body+='Property: '+prop+' / '+settings.propertyAddress+'\n\n';
+  body+='INCIDENT #: '+inc.num+'\n';
+  body+='PLATE: '+inc.plate+'\n';
+  body+='TYPE: '+inc.type+'\n';
+  body+='DATE/TIME: '+fmtDateTime(inc.ts)+'\n';
+  body+='LOCATION: '+inc.location+'\n';
+  body+='OFFICER: '+inc.officer+'\n';
+  body+='PRIORITY: '+inc.priority.toUpperCase()+'\n';
+  if(inc.gps){body+='GPS: '+inc.gps.lat.toFixed(6)+', '+inc.gps.lng.toFixed(6)+'\nMAP LINK: '+mapsLink(inc.gps.lat,inc.gps.lng)+'\n';}
+  body+='ASKED TO LEAVE: '+(inc.askedToLeave?'YES':'No')+'\n';
+  body+='POLICE CALLED: '+(inc.policeCalled?'YES':'No')+'\n';
+  if(inc.notes)body+='\nNOTES:\n'+inc.notes+'\n';
+  var history=scanLog.filter(function(l){return l.plate===inc.plate;});
+  if(history.length){
+    body+='\nSIGHTING HISTORY ('+history.length+' records):\n';
+    history.slice().reverse().slice(0,10).forEach(function(l){
+      body+='  '+fmtDateTime(l.ts)+' — '+l.location+(l.gps?' — '+mapsLink(l.gps.lat,l.gps.lng):'')+'\n';
+    });
+  }
+  body+='\n-- PlateGuard v2 by AuditDNA Intelligence, Mexausa Food Group Inc.';
+  var link=document.createElement('a');
+  link.href='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  link.click();
+  showAlert('Email client opened — '+inc.num);
+}
+
+function emailSingleIncident(){
+  var sel=document.getElementById('rpt-incident-sel');
+  if(!sel||!sel.value){showAlert('Select an incident','red');return;}
+  emailSingleIncidentById(sel.value);
+}
+
+function downloadReport(){
+  var list=getReportIncidents();
+  if(!list.length){showAlert('No incidents match','amber');return;}
+  downloadFile('plateguard_report_'+Date.now()+'.html','text/html',buildBatchReportHTML(list));
+}
+
+function downloadSingleIncident(){
+  var sel=document.getElementById('rpt-incident-sel');
+  if(!sel||!sel.value){showAlert('Select an incident','red');return;}
+  var inc=incidents.find(function(i){return String(i.id)===sel.value;});if(!inc)return;
+  downloadFile('incident_'+inc.num+'.html','text/html','<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+inc.num+'</title></head><body>'+buildIncidentHTML(inc,true)+'
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+</html>');
+}
+
+function populateReportIncidentSelect(){
+  var sel=document.getElementById('rpt-incident-sel');if(!sel)return;
+  if(!incidents.length){sel.innerHTML='<option>No incidents yet</option>';return;}
+  sel.innerHTML=incidents.slice().reverse().map(function(i){
+    return '<option value="'+i.id+'">'+i.num+' — '+i.plate+' — '+i.type+' — '+fmtDateTime(i.ts)+'</option>';
+  }).join('');
+}
+
+function initReports(){
+  populateReportIncidentSelect();
+  var supEl=document.getElementById('rpt-sup-list');
+  if(supEl){
+    if(!supervisors.length){supEl.textContent='No supervisors configured — add in Settings';}
+    else{supEl.innerHTML=supervisors.map(function(s){return '<div>'+s.name+' &mdash; <strong>'+s.email+'</strong></div>';}).join('');}
+  }
+}
+
+// ── SETTINGS ──
+function initSettings(){
+  var sp=document.getElementById('set-prop');if(sp)sp.value=settings.propertyName||'';
+  var sa=document.getElementById('set-addr');if(sa)sa.value=settings.propertyAddress||'';
+  var sr=document.getElementById('set-radius');if(sr)sr.value=settings.gpsRadius||200;
+  var su=document.getElementById('set-api-url');if(su)su.value=settings.apiUrl||'';
+  var sk=document.getElementById('set-api-key');if(sk)sk.value=settings.apiKey||'';
+  renderSupervisors();renderZones();renderGuards();renderRegZoneChecks();
+}
+function renderSupervisors(){
+  var el=document.getElementById('sup-email-list');if(!el)return;
+  if(!supervisors.length){el.innerHTML='<div style="font-size:11px;color:var(--txt3);margin-bottom:8px">No supervisors yet. Add below.</div>';return;}
+  el.innerHTML=supervisors.map(function(s,i){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bord)">'
+      +'<span style="font-size:13px">👤</span>'
+      +'<div style="flex:1;font-size:12px"><strong style="color:var(--txt)">'+s.name+'</strong><br/><span style="color:var(--txt3)">'+s.email+'</span></div>'
+      +'<button class="icon-btn" style="color:var(--red)" data-si="'+i+'" onclick="removeSupervisor(this.dataset.si)">🗑</button>'
+      +'</div>';
+  }).join('');
+}
+function addSupervisor(){
+  var name=document.getElementById('new-sup-name').value.trim();
+  var email=document.getElementById('new-sup-email').value.trim();
+  if(!email){showAlert('Enter supervisor email','red');return;}
+  supervisors.push({name:name||email,email:email});
+  saveData();document.getElementById('new-sup-name').value='';document.getElementById('new-sup-email').value='';
+  renderSupervisors();showAlert('Supervisor added');
+}
+function removeSupervisor(i){supervisors.splice(i,1);saveData();renderSupervisors();}
+
+function renderZones(){
+  var el=document.getElementById('zone-list');if(!el)return;
+  if(!zones.length){el.innerHTML='<div style="font-size:11px;color:var(--txt3)">No zones yet.</div>';return;}
+  el.innerHTML=zones.map(function(z,i){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bord)">'
+      +'<span style="font-size:13px">📍</span>'
+      +'<div style="flex:1;font-size:12px"><strong style="color:var(--txt)">'+z.name+'</strong><br/>'
+      +(z.lat!=null?'<span style="color:var(--txt3);font-size:10px;font-family:monospace">'+z.lat.toFixed(5)+', '+z.lng.toFixed(5)+'</span>':'<span style="color:var(--amber);font-size:10px">No GPS coordinates — set below</span>')
+      +'</div>'
+      +'<button class="icon-btn" style="color:var(--red)" data-zi="'+i+'" onclick="removeZone(this.dataset.zi)">🗑</button>'
+      +'</div>';
+  }).join('');
+  populateScanGates();renderRegZoneChecks();
+}
+function addZone(){
+  var name=document.getElementById('new-zone-name').value.trim();
+  var lat=parseFloat(document.getElementById('new-zone-lat').value);
+  var lng=parseFloat(document.getElementById('new-zone-lng').value);
+  if(!name){showAlert('Zone name required','red');return;}
+  zones.push({id:Date.now(),name:name,lat:isNaN(lat)?null:lat,lng:isNaN(lng)?null:lng});
+  saveData();document.getElementById('new-zone-name').value='';document.getElementById('new-zone-lat').value='';document.getElementById('new-zone-lng').value='';
+  renderZones();showAlert('Zone added');
+}
+function removeZone(i){zones.splice(i,1);saveData();renderZones();}
+function captureZoneGPS(){
+  if(!currentGPS){showAlert('Acquire GPS first','red');return;}
+  document.getElementById('new-zone-lat').value=currentGPS.lat.toFixed(6);
+  document.getElementById('new-zone-lng').value=currentGPS.lng.toFixed(6);
+  showAlert('GPS coordinates loaded');
+}
+
+function renderGuards(){
+  var el=document.getElementById('guard-list');if(!el)return;
+  if(!guards.length){el.innerHTML='<div style="font-size:11px;color:var(--txt3);margin-bottom:8px">No guards yet.</div>';return;}
+  el.innerHTML=guards.map(function(g,i){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bord)">'
+      +'<span style="font-size:13px">🛡</span>'
+      +'<div style="flex:1;font-size:12px"><strong style="color:var(--txt)">'+g.name+'</strong> <span style="color:var(--txt3)">'+g.badge+'</span></div>'
+      +'<button class="icon-btn" style="color:var(--red)" data-gi="'+i+'" onclick="removeGuard(this.dataset.gi)">🗑</button>'
+      +'</div>';
+  }).join('');
+}
+function addGuard(){
+  var name=document.getElementById('new-guard-name').value.trim();
+  var badge=document.getElementById('new-guard-badge').value.trim();
+  if(!name){showAlert('Guard name required','red');return;}
+  guards.push({name:name,badge:badge});saveData();
+  document.getElementById('new-guard-name').value='';document.getElementById('new-guard-badge').value='';
+  renderGuards();showAlert('Guard added');
+}
+function removeGuard(i){guards.splice(i,1);saveData();renderGuards();}
+function testAPI(){
+  var url=(document.getElementById('set-api-url')||{}).value;
+  if(!url){showAlert('Enter API URL first','red');return;}
+  showAlert('API test sent to: '+url.substring(0,40));
+}
+
+// ── DATA ──
+function exportCSV(){
+  var h='Time,Plate,Name,Unit,Location,Status,GPS_Lat,GPS_Lng,Officer,Risk';
+  var rows=scanLog.map(function(l){
+    return [fmtDateTime(l.ts),l.plate,l.name||'',l.unit||'',l.location,l.status,
+      l.gps?l.gps.lat:'',l.gps?l.gps.lng:'',l.officer||'',l.riskScore||0
+    ].map(function(v){return '"'+v+'"';}).join(',');
+  });
+  downloadFile('plateguard_scans.csv','text/csv',h+'\n'+rows.join('\n'));
+}
+function exportIncidentsCSV(){
+  var h='Incident#,Time,Plate,Type,Location,Officer,GPS_Lat,GPS_Lng,Priority,Status,AskedToLeave,PoliceCalled,Notes';
+  var rows=incidents.map(function(i){
+    return [i.num,fmtDateTime(i.ts),i.plate,i.type,i.location,i.officer,
+      i.gps?i.gps.lat:'',i.gps?i.gps.lng:'',i.priority,i.status,
+      i.askedToLeave?'Yes':'No',i.policeCalled?'Yes':'No',(i.notes||'').replace(/"/g,"'")
+    ].map(function(v){return '"'+v+'"';}).join(',');
+  });
+  downloadFile('plateguard_incidents.csv','text/csv',h+'\n'+rows.join('\n'));
+}
+function exportAllJSON(){
+  downloadFile('plateguard_backup_'+Date.now()+'.json','application/json',
+    JSON.stringify({plates:plates,log:scanLog,incidents:incidents,settings:settings,guards:guards,supervisors:supervisors,zones:zones,exported:new Date().toISOString()},null,2));
+}
+function handleImport(input){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var d=JSON.parse(e.target.result);
+      if(d.plates)plates=d.plates;if(d.log)scanLog=d.log;if(d.incidents)incidents=d.incidents;
+      if(d.settings)settings=d.settings;if(d.guards)guards=d.guards;
+      if(d.supervisors)supervisors=d.supervisors;if(d.zones)zones=d.zones;
+      saveData();initApp();showAlert('Data imported successfully');
+    }catch(err){showAlert('Invalid backup file','red');}
+  };
+  reader.readAsText(input.files[0]);
+}
+// ── BOLO ──
+function getBOLOs(){try{return JSON.parse(localStorage.getItem('pg_bolos')||'[]');}catch(e){return[];}}
+function saveBOLOs(arr){localStorage.setItem('pg_bolos',JSON.stringify(arr));}
+
+function boloExpiryMs(val){
+  if(val==='24h')return 86400000;
+  if(val==='72h')return 259200000;
+  if(val==='7d')return 604800000;
+  if(val==='30d')return 2592000000;
+  return 0;
+}
+
+var boloPhotoData='';
+var boloSiteFilter='all';
+
+function handleBOLOPhoto(input){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var rawData=e.target.result;
+    var compImg=new Image();
+    compImg.onload=function(){
+      var MAX=600;
+      var w=compImg.width,h=compImg.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      var cvs=document.createElement('canvas');
+      cvs.width=w;cvs.height=h;
+      cvs.getContext('2d').drawImage(compImg,0,0,w,h);
+      boloPhotoData=cvs.toDataURL('image/jpeg',0.65);
+      document.getElementById('bolo-photo-preview').src=boloPhotoData;
+      document.getElementById('bolo-photo-preview-wrap').style.display='block';
+      document.getElementById('bolo-photo-label').textContent='Photo attached';
+    };
+    compImg.src=rawData;
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function clearBOLOPhoto(){
+  boloPhotoData='';
+  document.getElementById('bolo-photo-preview-wrap').style.display='none';
+  document.getElementById('bolo-photo-preview').src='';
+  document.getElementById('bolo-photo-label').textContent='Attach photo';
+  document.getElementById('bolo-photo-input').value='';
+}
+
+function populateBOLOSites(){
+  var sel=document.getElementById('bolo-site');
+  if(!sel)return;
+  var zones=settings.zones||[];
+  var sites=['Rive — La Mesa (El Cajon Blvd)'];
+  zones.forEach(function(z){if(z.name&&sites.indexOf(z.name)===-1)sites.push(z.name);});
+  sel.innerHTML=sites.map(function(s){return '<option value="'+s+'">'+s+'</option>';}).join('');
+}
+
+function filterBOLOSite(site,el){
+  boloSiteFilter=site;
+  document.querySelectorAll('#bolo-site-filters .fb').forEach(function(b){b.classList.remove('on');});
+  if(el)el.classList.add('on');
+  renderBOLOs();
+}
+
+function rebuildBOLOSiteFilters(){
+  var bar=document.getElementById('bolo-site-filters');
+  if(!bar)return;
+  var arr=getBOLOs();
+  var sites=['all'];
+  arr.forEach(function(b){if(b.site&&sites.indexOf(b.site)===-1)sites.push(b.site);});
+  bar.innerHTML=sites.map(function(s,i){
+    var safeSite=s.replace(/'/g,'&#39;');return '<div class="fb'+(s===boloSiteFilter?' on':'')+'" onclick="filterBOLOSite(this.dataset.site,this)" data-site="'+safeSite+'" style="font-size:10px;padding:4px 10px">'+(s==='all'?'All Sites':s)+'</div>';
+  }).join('');
+}
+
+function addBOLO(){
+  var plate=document.getElementById('bolo-plate').value.trim();
+  var type=document.getElementById('bolo-type').value;
+  var desc=document.getElementById('bolo-desc').value.trim();
+  var threat=document.getElementById('bolo-threat').value;
+  var notes=document.getElementById('bolo-notes').value.trim();
+  var by=document.getElementById('bolo-by').value.trim();
+  var exp=document.getElementById('bolo-expires').value;
+  var site=document.getElementById('bolo-site')?document.getElementById('bolo-site').value:'';
+  if(!plate){showAlert('Enter plate or ID','amber');return;}
+  if(!by){showAlert('Enter posted by name','amber');return;}
+  var ms=boloExpiryMs(exp);
+  var entry={id:'BOLO-'+Date.now(),plate:plate,type:type,desc:desc,threat:threat,notes:notes,by:by,site:site,photo:boloPhotoData||'',expires:exp,expiresAt:ms?Date.now()+ms:0,ts:Date.now()};
+  var arr=getBOLOs();arr.unshift(entry);saveBOLOs(arr);
+  document.getElementById('bolo-plate').value='';
+  document.getElementById('bolo-desc').value='';
+  document.getElementById('bolo-notes').value='';
+  document.getElementById('bolo-by').value='';
+  clearBOLOPhoto();
+  renderBOLOs();
+  rebuildBOLOSiteFilters();
+  showAlert('BOLO posted — visible to all guards','green');
+  updateBOLOBadge();
+}
+
+function removeBOLO(id){
+  var arr=getBOLOs().filter(function(b){return b.id!==id;});saveBOLOs(arr);renderBOLOs();updateBOLOBadge();
+}
+
+function clearExpiredBOLOs(){
+  var now=Date.now();
+  var arr=getBOLOs().filter(function(b){return b.expiresAt===0||b.expiresAt>now;});
+  saveBOLOs(arr);renderBOLOs();updateBOLOBadge();
+  showAlert('Expired BOLOs cleared','green');
+}
+
+function threatColor(t){
+  if(t==='High Alert')return '#ef4444';
+  if(t==='Caution')return '#f59e0b';
+  return '#4a8fd4';
+}
+
+function renderBOLOs(){
+  rebuildBOLOSiteFilters();
+  var arr=getBOLOs();
+  var now=Date.now();
+  if(boloSiteFilter&&boloSiteFilter!=='all')arr=arr.filter(function(b){return b.site===boloSiteFilter;});
+  var el=document.getElementById('bolo-list');if(!el)return;
+  if(!arr.length){el.innerHTML='<div style="color:var(--txt3);font-size:12px;text-align:center;padding:24px 0">No BOLOs posted</div>';return;}
+  var h='';
+  arr.forEach(function(b){
+    var expired=b.expiresAt>0&&b.expiresAt<now;
+    var tc=threatColor(b.threat);
+    var expStr=b.expiresAt===0?'No Expiry':expired?'EXPIRED':timeUntil(b.expiresAt);
+    h+='<div style="border:1px solid '+(expired?'#334155':tc)+';border-left:4px solid '+(expired?'#475569':tc)+';border-radius:6px;padding:12px;margin-bottom:10px;background:'+(expired?'rgba(51,65,85,0.2)':'rgba(10,9,18,0.6)')+';opacity:'+(expired?'0.55':'1')+'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+    h+='<div>';
+    h+='<span style="font-size:15px;font-weight:900;color:'+(expired?'#64748b':tc)+';letter-spacing:1px">'+b.plate+'</span>';
+    h+='<span style="margin-left:8px;font-size:10px;background:'+tc+';color:#000;padding:2px 6px;border-radius:3px;font-weight:700">'+b.threat+'</span>';
+    h+='<span style="margin-left:6px;font-size:10px;color:var(--txt3);background:#1e293b;padding:2px 6px;border-radius:3px">'+b.type+'</span>';
+    h+='</div>';
+    h+='<button onclick="removeBOLO(\''+b.id+'\')" style="background:none;border:none;color:#64748b;font-size:16px;cursor:pointer;line-height:1">&#10005;</button>';
+    h+='</div>';
+    if(b.desc)h+='<div style="font-size:12px;color:var(--txt2);margin-bottom:4px">'+b.desc+'</div>';
+    if(b.notes)h+='<div style="font-size:12px;color:var(--txt3);margin-bottom:6px;font-style:italic">'+b.notes+'</div>';
+    if(b.site)h+='<div style="font-size:10px;color:var(--blue);margin-bottom:4px;font-weight:700">&#128205; '+b.site+'</div>';
+    if(b.photo)h+='<img src="'+b.photo+'" style="max-width:100%;max-height:140px;border-radius:6px;border:1px solid var(--bord);margin-bottom:6px;display:block"/>';
+    h+='<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt3)">';
+    h+='<span>Posted by '+b.by+' &mdash; '+new Date(b.ts).toLocaleString()+'</span>';
+    h+='<span style="color:'+(expired?'#ef4444':'#22c55e')+'">'+expStr+'</span>';
+    h+='</div>';
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+function timeUntil(ms){
+  var diff=ms-Date.now();
+  if(diff<=0)return'EXPIRED';
+  var h=Math.floor(diff/3600000);
+  var m=Math.floor((diff%3600000)/60000);
+  if(h>=24){return Math.floor(h/24)+'d '+( h%24)+'h';}
+  return h+'h '+m+'m';
+}
+
+function updateBOLOBadge(){
+  var arr=getBOLOs();
+  var now=Date.now();
+  var active=arr.filter(function(b){return b.expiresAt===0||b.expiresAt>now;});
+  var btn=document.getElementById('tab-bolo-btn');
+  if(!btn)return;
+  if(active.length){
+    btn.innerHTML='&#128204; BOLO <span style="background:#ef4444;color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:4px">'+active.length+'</span>';
+    btn.style.color='#f59e0b';
+  } else {
+    btn.innerHTML='&#128204; BOLO';
+    btn.style.color='';
+  }
+}
+
+function clearAllData(){
+  if(!confirm('Delete ALL data — registry, scan logs, incidents, settings? This cannot be undone.'))return;
+  plates=[];scanLog=[];incidents=[];settings={};guards=[];supervisors=[];
+  zones=[{id:1,name:'Main Entrance',lat:null,lng:null},{id:2,name:'Rear Gate',lat:null,lng:null},{id:3,name:'Parking Lot A',lat:null,lng:null},{id:4,name:'Visitor Lot',lat:null,lng:null}];
+  saveData();initApp();showAlert('All data cleared');
+}
+
+// ── MODAL ──
+function openModal(title,body){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-save-btn').style.display='none';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ── HELPERS ──
+function fmtTime(ts){var d=new Date(ts);return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function fmtDateTime(ts){var d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear().toString().slice(-2)+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function downloadFile(name,type,content){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:type}));a.download=name;a.click();}
+function mapsLink(lat,lng){return 'https://www.google.com/maps?q='+lat+','+lng;}
+
+// ── CLAUDE VISION OCR ──
+function readPlateWithVision(imageDataUrl){
+  var statusBox=document.getElementById('ocr-status');
+  var statusLabel=document.getElementById('ocr-status-label');
+  var progressBar=document.getElementById('ocr-progress-bar');
+  var resultPreview=document.getElementById('ocr-result-preview');
+  // Force plate field to show scanning state
+  var plateInp=document.getElementById('scan-plate');
+  if(plateInp){plateInp.placeholder='READING...';plateInp.style.borderColor='var(--blue)';}
+  if(statusBox){statusBox.style.display='block';statusBox.style.borderColor='rgba(74,143,212,0.4)';statusBox.style.background='rgba(74,143,212,0.06)';}
+  if(statusLabel)statusLabel.textContent='Reading plate with AI...';
+  if(progressBar){progressBar.style.width='15%';progressBar.style.background='var(--blue)';}
+  if(resultPreview)resultPreview.textContent='';
+
+  var base64=imageDataUrl.split(',')[1];
+  var mediaType=imageDataUrl.split(';')[0].split(':')[1]||'image/jpeg';
+
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/plateguard/ocr',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({image:base64,mediaType:mediaType})
+  })
+  .then(function(r){
+    if(!r.ok)throw new Error('OCR server error: '+r.status);
+    return r.json();
+  })
+  .then(function(data){
+    if(progressBar)progressBar.style.width='90%';
+    var plate=(data.plate||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+    var state=(data.state||'').toUpperCase().replace(/[^A-Z]/g,'').substring(0,2);
+    if(plate){
+      if(plateInp){plateInp.value=plate;plateInp.placeholder='ABC 1234';plateInp.style.borderColor='var(--green)';}
+      if(resultPreview)resultPreview.textContent=plate+(state?' — '+state:'');
+      if(statusLabel)statusLabel.textContent='Plate read: '+plate+(state?' ('+state+')':'');
+      if(progressBar){progressBar.style.width='100%';progressBar.style.background='var(--green)';}
+      var ocrMeta=document.getElementById('photo-meta-ocr');
+      if(ocrMeta)ocrMeta.textContent='OCR: '+plate+(state?' — '+state:'');
+      fillStateDropdown(state);
+      setTimeout(function(){if(progressBar)progressBar.style.background='var(--blue)';},3000);
+    } else {
+      if(statusLabel)statusLabel.textContent='Plate unclear — enter below';
+      if(progressBar){progressBar.style.width='100%';progressBar.style.background='var(--amber)';}
+      if(resultPreview)resultPreview.textContent='Not detected — type plate manually';
+    }
+  })
+  .catch(function(err){
+    console.error('PlateGuard OCR:',err);
+    var em=err&&err.message?err.message.substring(0,80):'Network error';
+    if(plateInp){plateInp.placeholder='ABC 1234';plateInp.style.borderColor='var(--red)';}
+    if(statusLabel)statusLabel.textContent='OCR FAILED: '+em+' — type plate manually';
+    if(statusBox){statusBox.style.display='block';statusBox.style.borderColor='var(--red)';statusBox.style.background='rgba(239,68,68,.08)';}
+    if(progressBar){progressBar.style.width='100%';progressBar.style.background='var(--red)';}
+    if(resultPreview)resultPreview.textContent='Enter plate below manually';
+  });
+}
+
+function fillStateDropdown(stateCode){
+  if(!stateCode)return;
+  var sel=document.getElementById('reg-state');
+  if(!sel)return;
+  for(var i=0;i<sel.options.length;i++){
+    if(sel.options[i].value===stateCode||sel.options[i].text===stateCode){
+      sel.selectedIndex=i;return;
+    }
+  }
+}
+
+
+// ── PATROL ─────────────────────────────────────────────────────────────────
+var ptLog=[],ptTimer=null,ptSecs=90*60,ptClockOn=false;
+function showPatrol(){document.getElementById('app').style.display='none';document.getElementById('patrol-section').style.display='block';}
+function ptBack(){document.getElementById('patrol-section').style.display='none';document.getElementById('app').style.display='flex';}
+function ptStart(){
+  ptSecs=90*60;if(ptTimer)clearInterval(ptTimer);
+  ptTimer=setInterval(function(){ptSecs--;var m=Math.floor(ptSecs/60),s=ptSecs%60;if(ptSecs<=0){ptSecs=90*60;alert('PATROL CYCLE COMPLETE — BEGIN NEXT SWEEP NOW');}},1000);
+  ptAddLog('Patrol cycle started');
+}
+function ptCheckin(zId,zName,btn){
+  var t=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  ptLog.push({zone:zId,name:zName,time:t});
+  var zl=document.getElementById('ptlog-'+zId);if(zl)zl.innerHTML='<span style="color:#22c55e">CHECKED: '+t+'</span>';
+  btn.textContent='CHECKED '+t;btn.style.background='#0d1117';btn.style.color='#22c55e';
+  setTimeout(function(){btn.textContent='CHECK IN';btn.style.background='#22c55e';btn.style.color='#000';},30000);
+  ptAddLog(t+' | Zone '+zId+' | '+zName);
+}
+function ptAddLog(txt){var el=document.getElementById('pt-master-log');if(!el)return;var d=document.createElement('div');d.style.cssText='border-bottom:1px solid rgba(255,255,255,.04);color:#94a3b8';d.textContent=txt;el.insertBefore(d,el.firstChild);}
+function ptExport(){var txt='PATROL LOG\n'+new Date().toLocaleString()+'\n'+'='.repeat(50)+'\n'+ptLog.map(function(e){return e.time+' | Zone '+e.zone+' | '+e.name;}).join('\n');var a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);a.download='patrol-'+new Date().toISOString().slice(0,10)+'.txt';a.click();}
+
+// ── ROLE ACCESS ─────────────────────────────────────────────────────────────
+function applyRoleAccess(){
+  var u=currentUser||'';
+  var isAdmin=u==="Admin"||u==="Owner";
+  var isSup=u.startsWith('SUP-');
+  var isFP=u.startsWith('FP-')||u==='Guard';
+  var badge=document.getElementById('guard-badge');
+  if(badge){badge.textContent=u;if(isAdmin){badge.style.background='rgba(201,165,92,0.15)';badge.style.color='var(--gold)';}else if(isSup){badge.style.background='rgba(74,143,212,0.15)';badge.style.color='#4a8fd4';}else{badge.style.background='rgba(34,197,94,0.1)';badge.style.color='var(--green)';}}
+  if(isFP){
+    ['tab-register-btn','tab-reports-btn','tab-incidents-btn','tab-settings-btn'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+    var regForm=document.getElementById('officer-reg-form');if(regForm)regForm.style.display='none';
+    var banner=document.getElementById('guard-banner');
+    if(!banner){banner=document.createElement('div');banner.id='guard-banner';banner.style.cssText='background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:6px;padding:8px 14px;margin:8px 12px 0;font-size:10px;color:var(--green);display:flex;align-items:center;gap:8px';banner.innerHTML='<span>&#128737;</span><span>Guard Access &mdash; Badge: <strong>'+u+'</strong> &bull; Scan, BOLO, Patrol.</span>';var tn=document.querySelector('.tabnav');if(tn)tn.after(banner);}
+    goTab('scan',document.querySelector('.tn[onclick*="scan"]'));
+  }else if(isSup){var regForm=document.getElementById('officer-reg-form');if(regForm)regForm.style.display='none';}
+}
+
+// ── OFFICER MANAGEMENT ──────────────────────────────────────────────────────
+function getOfficers(){try{return JSON.parse(localStorage.getItem('pg_officers')||'[]');}catch(e){return[];}}
+function saveOfficers(o){localStorage.setItem('pg_officers',JSON.stringify(o));}
+function registerOfficer(){
+  var name=(document.getElementById('fp-name')||{}).value||''; name=name.trim();
+  if(!name){alert('Officer name required');return;}
+  var slot=(document.getElementById('fp-slot')||{}).value||'FP-01';
+  var post=(document.getElementById('fp-post')||{}).value||'';
+  var shift=(document.getElementById('fp-shift')||{}).value||'Day';
+  var phone=(document.getElementById('fp-phone')||{}).value||'';
+  var num=parseInt(slot.replace('FP-','').replace('SUP-',''));
+  var pin=slot.startsWith('SUP-')?String(3000+num):String(2000+num);
+  var officers=getOfficers();
+  var idx=officers.findIndex(function(o){return o.slot===slot;});
+  var rec={slot:slot,name:name,pin:pin,post:post,shift:shift,phone:phone,registered:new Date().toLocaleString()};
+  if(idx>=0)officers[idx]=rec;else officers.push(rec);
+  saveOfficers(officers);
+  var st=document.getElementById('fp-reg-status');if(st)st.textContent='Registered: '+slot+' / '+name+' / PIN: '+pin;
+  if(document.getElementById('fp-name'))document.getElementById('fp-name').value='';
+  renderRoster();
+}
+function renderRoster(){
+  var officers=getOfficers();var el=document.getElementById('fp-roster');if(!el)return;
+  if(!officers.length){el.innerHTML='<div style="color:var(--txt3);font-size:11px;padding:8px 0">No officers registered yet.</div>';return;}
+  el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:10px"><thead><tr style="border-bottom:2px solid var(--bord)"><th style="text-align:left;padding:5px 8px;color:var(--txt3);font-size:8px">SLOT</th><th style="text-align:left;padding:5px 8px;color:var(--txt3);font-size:8px">NAME</th><th style="text-align:left;padding:5px 8px;color:var(--txt3);font-size:8px">PIN</th><th style="text-align:left;padding:5px 8px;color:var(--txt3);font-size:8px">POST</th><th style="text-align:left;padding:5px 8px;color:var(--txt3);font-size:8px">SHIFT</th><th style="padding:5px 8px"></th></tr></thead><tbody>'+officers.map(function(o,i){return '<tr style="border-bottom:1px solid var(--bord2)"><td style="padding:5px 8px;color:var(--green);font-weight:700;font-family:monospace">'+o.slot+'</td><td style="padding:5px 8px;color:var(--txt)">'+o.name+'</td><td style="padding:5px 8px;color:var(--gold);font-family:monospace">'+o.pin+'</td><td style="padding:5px 8px;color:var(--txt2)">'+o.post+'</td><td style="padding:5px 8px;color:var(--txt2)">'+o.shift+'</td><td style="padding:5px 8px"><button onclick="removeOfficer('+i+')" style="padding:3px 8px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:4px;color:#ef4444;font-size:9px;cursor:pointer">REMOVE</button></td></tr>';}).join('')+'</tbody></table>';
+}
+function removeOfficer(i){var officers=getOfficers();officers.splice(i,1);saveOfficers(officers);renderRoster();}
+function exportRoster(){var officers=getOfficers();var csv='SLOT,NAME,PIN,POST,SHIFT,PHONE,REGISTERED\n'+officers.map(function(o){return [o.slot,o.name,o.pin,o.post,o.shift,o.phone,o.registered].join(',');}).join('\n');var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='guard-roster-'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
+var _origGoTabOfficers=goTab;
+function goTab(t,el){_origGoTabOfficers(t,el);if(t==='officers')renderRoster();if(t==='cameras')initCameraTab();}
+
+// ── CAMERA BOLO SCANNER ─────────────────────────────────────────────────────
+var camFeeds=JSON.parse(localStorage.getItem('pg_cam_feeds')||'[]');
+var camScanLog=[];var camScansToday=parseInt(localStorage.getItem('pg_cam_scans_today')||'0');
+var camMatchesToday=parseInt(localStorage.getItem('pg_cam_matches_today')||'0');
+var snapFiles=[];var camAutoTimers={};var camClockInterval;
+function saveCamFeeds(){localStorage.setItem('pg_cam_feeds',JSON.stringify(camFeeds));}
+function startCamClock(){if(camClockInterval)return;camClockInterval=setInterval(function(){var e=document.getElementById('cam-clock');if(e)e.textContent=new Date().toLocaleTimeString();},1000);}
+function addCamera(){
+  var name=(document.getElementById('cam-name')||{}).value||'';if(!name){alert('Camera name required');return;}
+  var cam={id:'CAM-'+Date.now(),name:name,location:(document.getElementById('cam-location')||{}).value||'',url:(document.getElementById('cam-url')||{}).value||'',interval:parseInt((document.getElementById('cam-interval')||{}).value||'0'),type:(document.getElementById('cam-type')||{}).value||'',scans:0,matches:0,lastScan:'Never',status:'idle'};
+  camFeeds.push(cam);saveCamFeeds();renderCamFeeds();populateSnapCamSelect();
+  if(document.getElementById('cam-name'))document.getElementById('cam-name').value='';
+  var st=document.getElementById('cam-reg-status');if(st){st.textContent='Camera added: '+name;setTimeout(function(){st.textContent='';},3000);}
+  if(cam.interval>0)startAutoScan(cam.id,cam.interval);
+}
+function removeCamera(id){if(camAutoTimers[id]){clearInterval(camAutoTimers[id]);delete camAutoTimers[id];}camFeeds=camFeeds.filter(function(c){return c.id!==id;});saveCamFeeds();renderCamFeeds();populateSnapCamSelect();}
+function renderCamFeeds(){var el=document.getElementById('cam-feed-list');if(!el)return;if(!camFeeds.length){el.innerHTML='<div style="color:var(--txt3);font-size:11px;padding:10px 0">No cameras registered.</div>';return;}el.innerHTML=camFeeds.map(function(c){return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bord2)"><div style="flex:1"><div style="font-size:11px;font-weight:700;color:var(--txt)">'+c.name+'</div><div style="font-size:9px;color:var(--txt3)">'+c.location+'</div><div style="font-size:8px;color:var(--txt3)">Last: '+c.lastScan+' &bull; Scans: '+c.scans+' &bull; Matches: <span style="color:'+(c.matches>0?'#ef4444':'var(--txt3)')+'">'+c.matches+'</span></div></div><div style="display:flex;gap:6px;margin-left:10px"><button data-id="'+c.id+'" onclick="triggerManualScan(this.getAttribute(&#39;data-id&#39;))" style="padding:5px 10px;background:var(--blue);border:none;border-radius:5px;color:#fff;font-size:9px;font-weight:700;cursor:pointer">SCAN</button><button data-id="'+c.id+'" onclick="removeCamera(this.getAttribute(&#39;data-id&#39;))" style="padding:5px 8px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:5px;color:#ef4444;font-size:9px;cursor:pointer">&#10005;</button></div></div>';}).join('');}
+function populateSnapCamSelect(){var sel=document.getElementById('snap-cam');if(!sel)return;sel.innerHTML='<option value="">Select camera...</option>'+camFeeds.map(function(c){return '<option value="'+c.id+'">'+c.name+'</option>';}).join('');}
+function handleSnapFiles(input){snapFiles=Array.from(input.files);renderSnapPreviews();}
+function handleSnapDrop(e){e.preventDefault();if(document.getElementById('snap-dropzone'))document.getElementById('snap-dropzone').style.borderColor='var(--bord)';snapFiles=Array.from(e.dataTransfer.files).filter(function(f){return f.type.startsWith('image/');});renderSnapPreviews();}
+function renderSnapPreviews(){var grid=document.getElementById('snap-preview');if(!grid)return;grid.innerHTML='';var note=document.getElementById('snap-note');if(note)note.value=new Date().toLocaleString();snapFiles.forEach(function(file,i){var reader=new FileReader();reader.onload=function(e){var div=document.createElement('div');div.style.cssText='flex:0 0 auto;position:relative';div.innerHTML='<img src="'+e.target.result+'" style="width:120px;height:80px;object-fit:cover;border-radius:6px;border:1px solid var(--bord);display:block"><div style="position:absolute;top:3px;left:3px;background:rgba(0,0,0,.7);color:#fff;font-size:8px;padding:2px 5px;border-radius:3px">#'+(i+1)+'</div>';grid.appendChild(div);};reader.readAsDataURL(file);});var btn=document.getElementById('snap-scan-btn');if(btn)btn.style.display=snapFiles.length?'block':'none';}
+async function scanImageForBOLO(imageDataUrl,camId,camName){
+  var base64=imageDataUrl.split(',')[1];var mediaType=imageDataUrl.split(';')[0].split(':')[1]||'image/jpeg';
+  try{
+    var r=await fetch('https://auditdna-backend-1-production.up.railway.app/api/plateguard/ocr',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:base64,mediaType:mediaType})});
+    var data=await r.json();var plate=(data.plate||data.text||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+    var ts=new Date().toLocaleTimeString();
+    if(plate&&plate.length>=4){
+      var bolos=getBOLOs();var boloMatch=bolos.find(function(b){var bp=(b.plate||'').toUpperCase().replace(/[^A-Z0-9]/g,'');return bp&&bp===plate;});
+      if(boloMatch){camMatchesToday++;localStorage.setItem('pg_cam_matches_today',camMatchesToday);fireBOLOAlert(plate,camName||camId,boloMatch);}
+      addCamLog(ts,camName||camId,plate,boloMatch?'BOLO MATCH':'clear',boloMatch?boloMatch.description:'');
+    }else{addCamLog(ts,camName||camId,'no plate','no detect','');}
+    camScansToday++;localStorage.setItem('pg_cam_scans_today',camScansToday);
+    var cam=camFeeds.find(function(c){return c.id===camId;});if(cam){cam.scans++;cam.lastScan=ts;cam.status='idle';}saveCamFeeds();renderCamFeeds();
+    return{plate:plate,match:!!boloMatch};
+  }catch(e){addCamLog(new Date().toLocaleTimeString(),camName||camId,'ERROR',e.message,'');return{plate:'',match:false};}
+}
+async function scanSnapshots(){
+  if(!snapFiles.length){alert('Upload at least one camera screenshot first.');return;}
+  var camId=(document.getElementById('snap-cam')||{}).value||'MANUAL';
+  var camName=(document.getElementById('snap-cam')&&document.getElementById('snap-cam').selectedOptions[0])?document.getElementById('snap-cam').selectedOptions[0].text:'Manual';
+  var btn=document.getElementById('snap-scan-btn');var statusDiv=document.getElementById('snap-scan-status');var pFill=document.getElementById('snap-progress-fill');var pText=document.getElementById('snap-progress-text');
+  if(btn)btn.disabled=true;if(statusDiv)statusDiv.style.display='block';
+  var results=[];
+  for(var i=0;i<snapFiles.length;i++){
+    if(pText)pText.textContent='Scanning '+(i+1)+' of '+snapFiles.length+'...';
+    if(pFill)pFill.style.width=Math.round((i/snapFiles.length)*100)+'%';
+    var reader=new FileReader();var dataUrl=await new Promise(function(res){reader.onload=function(e){res(e.target.result);};reader.readAsDataURL(snapFiles[i]);});
+    var result=await scanImageForBOLO(dataUrl,camId,camName+' ['+snapFiles[i].name+']');results.push(result);
+  }
+  if(pFill)pFill.style.width='100%';var matches=results.filter(function(r){return r.match;}).length;
+  if(pText){pText.textContent='Done — '+results.length+' scanned. '+matches+' BOLO match(es).';pText.style.color=matches>0?'#ef4444':'var(--green)';}
+  if(btn)btn.disabled=false;
+}
+function startAutoScan(camId,intervalSec){if(camAutoTimers[camId])clearInterval(camAutoTimers[camId]);camAutoTimers[camId]=setInterval(function(){triggerManualScan(camId);},intervalSec*1000);}
+function triggerManualScan(camId){var cam=camFeeds.find(function(c){return c.id===camId;});if(!cam)return;cam.status='scanning';saveCamFeeds();renderCamFeeds();var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.style.display='none';inp.onchange=async function(){if(!inp.files.length){cam.status='idle';saveCamFeeds();renderCamFeeds();return;}var reader=new FileReader();var dataUrl=await new Promise(function(res){reader.onload=function(e){res(e.target.result);};reader.readAsDataURL(inp.files[0]);});await scanImageForBOLO(dataUrl,cam.id,cam.name);inp.remove();};document.body.appendChild(inp);inp.click();}
+function fireBOLOAlert(plate,camName,boloData){
+  var alert=document.getElementById('cam-bolo-alert');var platEl=document.getElementById('cam-bolo-plate');var zoneEl=document.getElementById('cam-bolo-zone');
+  if(alert&&platEl&&zoneEl){platEl.textContent=plate;zoneEl.textContent=camName;alert.style.display='block';setTimeout(function(){if(alert)alert.style.display='none';},30000);}
+  try{var ctx=new(window.AudioContext||window.webkitAudioContext)();function beep(freq,dur,t){var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=freq;g.gain.value=0.4;o.start(t);o.stop(t+dur);}beep(880,0.15,ctx.currentTime);beep(1100,0.15,ctx.currentTime+0.2);beep(880,0.15,ctx.currentTime+0.4);beep(1100,0.3,ctx.currentTime+0.6);}catch(e){}
+  var flash=document.createElement('div');flash.style.cssText='position:fixed;inset:0;background:#ef4444;opacity:0.3;z-index:99997;pointer-events:none';document.body.appendChild(flash);setTimeout(function(){flash.style.opacity='0';flash.style.transition='opacity .5s';setTimeout(function(){flash.remove();},600);},200);
+  if(window.Notification&&Notification.permission==='granted'){try{new Notification('BOLO MATCH',{body:'Plate: '+plate+' | Camera: '+camName,requireInteraction:true});}catch(e){}}
+  else if(window.Notification&&Notification.permission!=='denied'){Notification.requestPermission();}
+}
+function dismissBoloAlert(){var a=document.getElementById('cam-bolo-alert');if(a)a.style.display='none';}
+function addCamLog(ts,cam,plate,status,desc){var el=document.getElementById('cam-log-output');if(!el)return;var isMatch=status==='BOLO MATCH';var line=document.createElement('div');line.className=isMatch?'cam-match':'cam-clear';line.innerHTML=(isMatch?'&#9888; ':'&#9989; ')+'<strong>'+ts+'</strong> | '+cam+' | Plate: <strong>'+plate+'</strong>'+(isMatch?' | &#128992; BOLO: '+desc:'');if(el.firstChild&&el.firstChild.textContent&&el.firstChild.textContent.includes('ready')){el.innerHTML='';}el.insertBefore(line,el.firstChild);}
+function clearCamLog(){var el=document.getElementById('cam-log-output');if(el)el.innerHTML='<div style="color:var(--txt3)">-- Log cleared --</div>';}
+function exportCamLog(){var csv='TIME,CAMERA,PLATE,STATUS,BOLO DESC\n'+camScanLog.map(function(e){return [e.ts,e.cam,e.plate,e.status,e.desc].join(',');}).join('\n');var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='cam-scan-log-'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
+function initCameraTab(){renderCamFeeds();populateSnapCamSelect();startCamClock();if(window.Notification&&Notification.permission==='default'){Notification.requestPermission();}}
+
+// ── PATCH initApp ───────────────────────────────────────────────────────────
+var _pg_origInitApp=initApp;
+function initApp(){_pg_origInitApp();applyRoleAccess();renderRoster();}
+
+
+var _lastPin='';
+function loadPlpData(){
+  var portal=window.location.pathname.split('/').pop();
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/logins?portal='+encodeURIComponent(portal))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var tb=document.getElementById('plp-tbody');
+      if(!tb)return;
+      if(!d.logins||!d.logins.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No logins yet.</td></tr>';return;}
+      tb.innerHTML=d.logins.slice(0,50).map(function(l){
+        var dt=new Date(l.logged_in_at);
+        var ts=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        return '<tr><td style="color:#e2e8f0;font-weight:700">'+l.username+'</td><td style="color:#C9A55C">'+l.role+'</td><td style="color:#64748b;font-size:9px">'+l.ip_address+'</td><td style="color:#64748b">'+ts+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+function showPlpPanel(){
+  var p=document.getElementById('portal-login-panel');
+  var t=document.getElementById('plp-trigger');
+  if(p){p.style.display='block';if(t)t.style.display='none';loadPlpData();}
+}
+function checkOwnerPin(pin){
+  _lastPin=pin;
+  if(pin==='0609'){var t=document.getElementById('plp-trigger');if(t)t.style.display='block';}
+}
+
+</script>
+
+<div id="patrol-section" style="display:none;padding:12px;min-height:100vh;background:#020912">
+  <div style="background:#0a0f0a;border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:14px;margin-bottom:12px">
+    <div style="font-size:13px;font-weight:800;color:#ef4444;letter-spacing:1px">PATROL COMMAND — EL CAJON BLVD CORRIDOR</div>
+    <div style="font-size:9px;color:#64748b;margin-top:2px">6311-6343 El Cajon Blvd &bull; 4720 Seminole Dr &bull; 4740 Art St &bull; San Diego CA 92115</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <button onclick="ptStart()" style="padding:8px 16px;background:#22c55e;border:none;border-radius:6px;color:#000;font-size:11px;font-weight:700;cursor:pointer">START 90-MIN CYCLE</button>
+    <button onclick="ptExport()" style="padding:8px 14px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#94a3b8;font-size:11px;font-weight:700;cursor:pointer">EXPORT LOG</button>
+    <button onclick="document.getElementById('patrol-section').style.display='none';document.getElementById('app').style.display='flex'" style="padding:8px 14px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#94a3b8;font-size:11px;cursor:pointer">BACK</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+    
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:#ef4444">ZONE A</div>
+        <span style="padding:2px 6px;border-radius:4px;font-size:8px;font-weight:700;background:rgba(239,68,68,.15);color:#ef4444">HIGH</span>
+      </div>
+      <div style="font-size:9px;color:#64748b;margin-bottom:8px">6343 El Cajon Blvd — Parking Garage</div>
+      <button onclick="ptCheckin('A','6343 El Cajon Blvd — Parking Garage',this)" style="width:100%;padding:6px;background:#22c55e;border:none;border-radius:5px;color:#000;font-size:10px;font-weight:700;cursor:pointer">CHECK IN</button>
+      <div id="ptlog-A" style="margin-top:5px;font-size:8px;color:#64748b;font-family:monospace"></div>
+    </div>
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:#4a8fd4">ZONE B</div>
+        <span style="padding:2px 6px;border-radius:4px;font-size:8px;font-weight:700;background:rgba(239,68,68,.15);color:#ef4444">HIGH</span>
+      </div>
+      <div style="font-size:9px;color:#64748b;margin-bottom:8px">6313 El Cajon Blvd — Pool & Courtyard</div>
+      <button onclick="ptCheckin('B','6313 El Cajon Blvd — Pool & Courtyard',this)" style="width:100%;padding:6px;background:#22c55e;border:none;border-radius:5px;color:#000;font-size:10px;font-weight:700;cursor:pointer">CHECK IN</button>
+      <div id="ptlog-B" style="margin-top:5px;font-size:8px;color:#64748b;font-family:monospace"></div>
+    </div>
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:#C9A55C">ZONE C</div>
+        <span style="padding:2px 6px;border-radius:4px;font-size:8px;font-weight:700;background:rgba(245,158,11,.12);color:#f59e0b">MEDIUM</span>
+      </div>
+      <div style="font-size:9px;color:#64748b;margin-bottom:8px">6313 El Cajon Blvd — Clubhouse</div>
+      <button onclick="ptCheckin('C','6313 El Cajon Blvd — Clubhouse',this)" style="width:100%;padding:6px;background:#22c55e;border:none;border-radius:5px;color:#000;font-size:10px;font-weight:700;cursor:pointer">CHECK IN</button>
+      <div id="ptlog-C" style="margin-top:5px;font-size:8px;color:#64748b;font-family:monospace"></div>
+    </div>
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:#22c55e">ZONE D</div>
+        <span style="padding:2px 6px;border-radius:4px;font-size:8px;font-weight:700;background:rgba(239,68,68,.15);color:#ef4444">HIGH</span>
+      </div>
+      <div style="font-size:9px;color:#64748b;margin-bottom:8px">4740 Art St — Parking Structure</div>
+      <button onclick="ptCheckin('D','4740 Art St — Parking Structure',this)" style="width:100%;padding:6px;background:#22c55e;border:none;border-radius:5px;color:#000;font-size:10px;font-weight:700;cursor:pointer">CHECK IN</button>
+      <div id="ptlog-D" style="margin-top:5px;font-size:8px;color:#64748b;font-family:monospace"></div>
+    </div>
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:#f59e0b">ZONE E</div>
+        <span style="padding:2px 6px;border-radius:4px;font-size:8px;font-weight:700;background:rgba(239,68,68,.15);color:#ef4444">HIGH</span>
+      </div>
+      <div style="font-size:9px;color:#64748b;margin-bottom:8px">6311 El Cajon Blvd — Garage Entry</div>
+      <button onclick="ptCheckin('E','6311 El Cajon Blvd — Garage Entry',this)" style="width:100%;padding:6px;background:#22c55e;border:none;border-radius:5px;color:#000;font-size:10px;font-weight:700;cursor:pointer">CHECK IN</button>
+      <div id="ptlog-E" style="margin-top:5px;font-size:8px;color:#64748b;font-family:monospace"></div>
+    </div>
+    <div style="background:#161b22;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:#7c3aed">ZONE F</div>
+        <span style="padding:2px 6px;border-radius:4px;font-size:8px;font-weight:700;background:rgba(245,158,11,.12);color:#f59e0b">MEDIUM</span>
+      </div>
+      <div style="font-size:9px;color:#64748b;margin-bottom:8px">4720 Seminole Dr — Courtyard</div>
+      <button onclick="ptCheckin('F','4720 Seminole Dr — Courtyard',this)" style="width:100%;padding:6px;background:#22c55e;border:none;border-radius:5px;color:#000;font-size:10px;font-weight:700;cursor:pointer">CHECK IN</button>
+      <div id="ptlog-F" style="margin-top:5px;font-size:8px;color:#64748b;font-family:monospace"></div>
+    </div>
+  </div>
+  <div style="background:#161b22;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px">
+    <div style="font-size:9px;font-weight:700;color:#4a8fd4;letter-spacing:1.5px;margin-bottom:8px">SHIFT PATROL LOG</div>
+    <div id="pt-master-log" style="font-family:monospace;font-size:10px;color:#64748b;max-height:200px;overflow-y:auto;line-height:1.8">
+      <div style="color:#4a8fd4">-- Patrol log initialized. Begin first sweep. --</div>
+    </div>
+  </div>
+</div>
+<div id="tab-cameras" class="sec" style="padding:12px">
+
+  <!-- BOLO ALERT BANNER — fires on match -->
+  <div id="cam-bolo-alert" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99998;background:#ef4444;color:#fff;padding:14px 20px;font-size:14px;font-weight:800;letter-spacing:1px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.5);animation:bolo-flash 0.5s infinite alternate">
+    &#128992; BOLO MATCH DETECTED &mdash; <span id="cam-bolo-plate" style="font-family:monospace;font-size:16px"></span> &mdash; <span id="cam-bolo-zone"></span>
+    <button onclick="dismissBoloAlert()" style="margin-left:20px;padding:4px 12px;background:#fff;color:#ef4444;border:none;border-radius:4px;font-size:11px;font-weight:800;cursor:pointer">DISMISS</button>
+  </div>
+  <style>
+    @keyframes bolo-flash{0%{background:#ef4444}100%{background:#7f1d1d}}
+    .cam-card{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;margin-bottom:12px}
+    .cam-status{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+    .cam-status.live{background:#22c55e;box-shadow:0 0 6px #22c55e;animation:pulse-g 1.5s infinite}
+    .cam-status.idle{background:#64748b}
+    .cam-status.scanning{background:#f59e0b;animation:pulse-g 0.8s infinite}
+    @keyframes pulse-g{0%,100%{opacity:1}50%{opacity:0.4}}
+    .cam-feed-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bord2)}
+    .cam-feed-row:last-child{border-bottom:none}
+    .cam-scan-log{font-family:monospace;font-size:9.5px;color:var(--txt2);max-height:140px;overflow-y:auto;line-height:1.9;background:var(--card2);border-radius:6px;padding:8px}
+    .cam-match{color:#ef4444;font-weight:700}
+    .cam-clear{color:var(--green)}
+  </style>
+
+  <!-- HEADER -->
+  <div style="background:linear-gradient(135deg,#0d0a0a,#1a0a0a);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:13px;font-weight:800;color:#ef4444;letter-spacing:1px">CAMERA BOLO SCANNER — PHASE 1</div>
+        <div style="font-size:9px;color:var(--txt3);margin-top:2px">Upload camera screenshots or snapshots &bull; AI OCR reads plate &bull; Auto cross-checks BOLO list &bull; Instant alert on match</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="text-align:center;background:#0d1117;border-radius:6px;padding:6px 12px">
+          <div style="font-size:18px;font-weight:800;color:#22c55e;font-family:monospace" id="cam-scans-today">0</div>
+          <div style="font-size:7px;color:var(--txt3);letter-spacing:1px">SCANS TODAY</div>
+        </div>
+        <div style="text-align:center;background:#0d1117;border-radius:6px;padding:6px 12px">
+          <div style="font-size:18px;font-weight:800;color:#ef4444;font-family:monospace" id="cam-matches-today">0</div>
+          <div style="font-size:7px;color:var(--txt3);letter-spacing:1px">BOLO MATCHES</div>
+        </div>
+        <div style="text-align:center;background:#0d1117;border-radius:6px;padding:6px 12px">
+          <div style="font-size:14px;font-weight:800;color:var(--gold);font-family:monospace" id="cam-clock">--:--:--</div>
+          <div style="font-size:7px;color:var(--txt3);letter-spacing:1px">LOCAL TIME</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMERA FEEDS REGISTER -->
+  <div class="cam-card">
+    <div style="font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px;margin-bottom:12px">CAMERA FEED REGISTRY</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div>
+        <label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">CAMERA NAME / ZONE</label>
+        <input class="inp" id="cam-name" type="text" placeholder="e.g. Garage A — Level 1" style="width:100%">
+      </div>
+      <div>
+        <label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">LOCATION</label>
+        <select class="inp" id="cam-location" style="width:100%">
+          <option>Zone A — 6343 El Cajon Blvd Parking Garage</option>
+          <option>Zone B — 6313 El Cajon Blvd Pool Area</option>
+          <option>Zone C — 6313 El Cajon Blvd Clubhouse</option>
+          <option>Zone D — 4740 Art St Parking Structure</option>
+          <option>Zone E — 6311 El Cajon Blvd Garage Entry</option>
+          <option>Zone F — 4720 Seminole Dr Courtyard</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">RTSP / STREAM URL (optional — for Phase 2)</label>
+      <input class="inp" id="cam-url" type="text" placeholder="rtsp://192.168.1.x:554/stream or http://..." style="width:100%">
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div style="flex:1">
+        <label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">AUTO-SCAN INTERVAL</label>
+        <select class="inp" id="cam-interval" style="width:100%">
+          <option value="0">Manual only</option>
+          <option value="15">Every 15 seconds</option>
+          <option value="30" selected>Every 30 seconds</option>
+          <option value="60">Every 60 seconds</option>
+          <option value="120">Every 2 minutes</option>
+        </select>
+      </div>
+      <div style="flex:1">
+        <label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">CAMERA TYPE</label>
+        <select class="inp" id="cam-type" style="width:100%">
+          <option>Parking / Lot Entry</option>
+          <option>Garage Level</option>
+          <option>Pool / Courtyard</option>
+          <option>Lobby / Entry</option>
+          <option>Perimeter</option>
+        </select>
+      </div>
+    </div>
+    <button onclick="addCamera()" style="padding:8px 18px;background:#ef4444;border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">+ ADD CAMERA</button>
+    <div id="cam-reg-status" style="margin-top:8px;font-size:10px;color:var(--green)"></div>
+  </div>
+
+  <!-- ACTIVE CAMERAS -->
+  <div class="cam-card">
+    <div style="font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1.5px;margin-bottom:10px">ACTIVE CAMERAS</div>
+    <div id="cam-feed-list"><div style="color:var(--txt3);font-size:11px;padding:10px 0">No cameras registered. Add a camera above.</div></div>
+  </div>
+
+  <!-- MANUAL SNAPSHOT UPLOAD -->
+  <div class="cam-card">
+    <div style="font-size:9px;font-weight:700;color:var(--blue);letter-spacing:1.5px;margin-bottom:12px">MANUAL SNAPSHOT SCAN</div>
+    <div style="font-size:10px;color:var(--txt2);margin-bottom:12px">Upload a screenshot or photo from any camera. AI reads the plate and cross-checks BOLO instantly.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div>
+        <label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">CAMERA / ZONE</label>
+        <select class="inp" id="snap-cam" style="width:100%"><option>Select camera...</option></select>
+      </div>
+      <div>
+        <label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">TIMESTAMP NOTE</label>
+        <input class="inp" id="snap-note" type="text" placeholder="auto-fills on upload" style="width:100%">
+      </div>
+    </div>
+    <!-- DROP ZONE -->
+    <div id="snap-dropzone" onclick="document.getElementById('snap-file').click()" 
+      ondragover="event.preventDefault();this.style.borderColor='#ef4444'" 
+      ondragleave="this.style.borderColor='var(--bord)'"
+      ondrop="handleSnapDrop(event)"
+      style="border:2px dashed var(--bord);border-radius:8px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--card2);position:relative">
+      <div style="font-size:28px;margin-bottom:8px">&#128249;</div>
+      <div style="font-size:12px;color:var(--txt2);font-weight:600">Tap or drag camera screenshot here</div>
+      <div style="font-size:10px;color:var(--txt3);margin-top:4px">JPG, PNG, WEBP &bull; From any camera, DVR screenshot, or phone</div>
+      <input type="file" id="snap-file" accept="image/*" multiple style="display:none" onchange="handleSnapFiles(this)">
+    </div>
+    <div id="snap-preview" style="display:flex;gap:8px;overflow-x:auto;padding:8px 0;-webkit-overflow-scrolling:touch"></div>
+    <div id="snap-scan-status" style="background:var(--card2);border-radius:6px;padding:10px;margin-top:8px;display:none">
+      <div style="font-size:9px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px">AI SCAN PROGRESS</div>
+      <div id="snap-progress-bar" style="height:4px;background:var(--bord);border-radius:2px;margin-bottom:8px">
+        <div id="snap-progress-fill" style="height:100%;width:0%;background:var(--blue);border-radius:2px;transition:width .4s"></div>
+      </div>
+      <div id="snap-progress-text" style="font-size:10px;color:var(--txt2)">Initializing...</div>
+    </div>
+    <button id="snap-scan-btn" onclick="scanSnapshots()" style="margin-top:10px;padding:8px 18px;background:var(--blue);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;display:none;letter-spacing:.5px">SCAN FOR PLATES &amp; CHECK BOLO</button>
+  </div>
+
+  <!-- SCAN LOG -->
+  <div class="cam-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1.5px">CAMERA SCAN LOG</div>
+      <div style="display:flex;gap:6px">
+        <button onclick="exportCamLog()" style="padding:4px 10px;background:transparent;border:1px solid var(--bord);border-radius:4px;color:var(--txt3);font-size:9px;cursor:pointer">EXPORT</button>
+        <button onclick="clearCamLog()" style="padding:4px 10px;background:transparent;border:1px solid var(--bord);border-radius:4px;color:var(--txt3);font-size:9px;cursor:pointer">CLEAR</button>
+      </div>
+    </div>
+    <div class="cam-scan-log" id="cam-log-output">
+      <div style="color:var(--txt3)">-- Camera scan log ready. Upload a snapshot to begin. --</div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- OFFICERS TAB -->
+<div id="tab-officers" class="sec" style="padding:12px">
+  <div style="background:linear-gradient(135deg,#0d1117,#0a0f1a);border:1px solid rgba(201,165,92,0.3);border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:4px">OFFICER & GUARD MANAGEMENT</div>
+    <div style="font-size:9px;color:var(--txt3)">50 Foot Patrol slots (FP-01 to FP-50, PINs 2001-2050) &bull; 3 Supervisor slots (SUP-1/2/3, PINs 3001-3003) &bull; Admin PIN: 0609</div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="font-size:9px;font-weight:700;color:var(--blue);letter-spacing:1.5px;margin-bottom:10px">ROLE ACCESS MATRIX</div>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:10px">
+      <thead><tr style="border-bottom:2px solid var(--bord)">
+        <th style="text-align:left;padding:5px 8px;color:var(--txt3);font-size:8px">ROLE</th>
+        <th style="text-align:left;padding:5px 8px;color:var(--txt3);font-size:8px">PIN</th>
+        <th style="text-align:left;padding:5px 8px;color:var(--txt3);font-size:8px">ACCESS</th>
+      </tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--bord2)"><td style="padding:5px 8px;color:var(--gold);font-weight:700">Admin</td><td style="padding:5px 8px;font-family:monospace;color:var(--txt)">0609</td><td style="padding:5px 8px;color:var(--txt2)">All tabs — full platform</td></tr>
+        <tr style="border-bottom:1px solid var(--bord2)"><td style="padding:5px 8px;color:var(--blue);font-weight:700">SUP-1/2/3</td><td style="padding:5px 8px;font-family:monospace;color:var(--txt)">3001-3003</td><td style="padding:5px 8px;color:var(--txt2)">Dashboard, Scan, Registry, Incidents, Reports, BOLO, Patrol</td></tr>
+        <tr style="border-bottom:1px solid var(--bord2)"><td style="padding:5px 8px;color:var(--green);font-weight:700">FP-01 to FP-50</td><td style="padding:5px 8px;font-family:monospace;color:var(--txt)">2001-2050</td><td style="padding:5px 8px;color:var(--txt2)">Scan, Registry (read-only), BOLO, Patrol</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div id="officer-reg-form" style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px;margin-bottom:12px">REGISTER OFFICER</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">OFFICER NAME</label><input class="inp" id="fp-name" type="text" placeholder="Full name" style="width:100%"></div>
+      <div><label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">BADGE SLOT (PIN)</label>
+        <select class="inp" id="fp-slot" style="width:100%">
+          <option value="FP-01">FP-01 — PIN 2001</option><option value="FP-02">FP-02 — PIN 2002</option><option value="FP-03">FP-03 — PIN 2003</option><option value="FP-04">FP-04 — PIN 2004</option><option value="FP-05">FP-05 — PIN 2005</option><option value="FP-06">FP-06 — PIN 2006</option><option value="FP-07">FP-07 — PIN 2007</option><option value="FP-08">FP-08 — PIN 2008</option><option value="FP-09">FP-09 — PIN 2009</option><option value="FP-10">FP-10 — PIN 2010</option><option value="FP-11">FP-11 — PIN 2011</option><option value="FP-12">FP-12 — PIN 2012</option><option value="FP-13">FP-13 — PIN 2013</option><option value="FP-14">FP-14 — PIN 2014</option><option value="FP-15">FP-15 — PIN 2015</option><option value="FP-16">FP-16 — PIN 2016</option><option value="FP-17">FP-17 — PIN 2017</option><option value="FP-18">FP-18 — PIN 2018</option><option value="FP-19">FP-19 — PIN 2019</option><option value="FP-20">FP-20 — PIN 2020</option><option value="FP-21">FP-21 — PIN 2021</option><option value="FP-22">FP-22 — PIN 2022</option><option value="FP-23">FP-23 — PIN 2023</option><option value="FP-24">FP-24 — PIN 2024</option><option value="FP-25">FP-25 — PIN 2025</option><option value="FP-26">FP-26 — PIN 2026</option><option value="FP-27">FP-27 — PIN 2027</option><option value="FP-28">FP-28 — PIN 2028</option><option value="FP-29">FP-29 — PIN 2029</option><option value="FP-30">FP-30 — PIN 2030</option><option value="FP-31">FP-31 — PIN 2031</option><option value="FP-32">FP-32 — PIN 2032</option><option value="FP-33">FP-33 — PIN 2033</option><option value="FP-34">FP-34 — PIN 2034</option><option value="FP-35">FP-35 — PIN 2035</option><option value="FP-36">FP-36 — PIN 2036</option><option value="FP-37">FP-37 — PIN 2037</option><option value="FP-38">FP-38 — PIN 2038</option><option value="FP-39">FP-39 — PIN 2039</option><option value="FP-40">FP-40 — PIN 2040</option><option value="FP-41">FP-41 — PIN 2041</option><option value="FP-42">FP-42 — PIN 2042</option><option value="FP-43">FP-43 — PIN 2043</option><option value="FP-44">FP-44 — PIN 2044</option><option value="FP-45">FP-45 — PIN 2045</option><option value="FP-46">FP-46 — PIN 2046</option><option value="FP-47">FP-47 — PIN 2047</option><option value="FP-48">FP-48 — PIN 2048</option><option value="FP-49">FP-49 — PIN 2049</option><option value="FP-50">FP-50 — PIN 2050</option>
+          <option value="SUP-1">SUP-1 — PIN 3001</option><option value="SUP-2">SUP-2 — PIN 3002</option><option value="SUP-3">SUP-3 — PIN 3003</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">ASSIGNMENT / POST</label><input class="inp" id="fp-post" type="text" placeholder="Zone A, Pool Deck..." style="width:100%"></div>
+      <div><label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">SHIFT</label><select class="inp" id="fp-shift" style="width:100%"><option>Day (6AM-2PM)</option><option>Swing (2PM-10PM)</option><option>Night (10PM-6AM)</option><option>Custom</option></select></div>
+    </div>
+    <div style="margin-bottom:12px"><label style="font-size:9px;color:var(--txt3);display:block;margin-bottom:4px">PHONE / RADIO</label><input class="inp" id="fp-phone" type="tel" placeholder="Mobile or radio number" style="width:100%"></div>
+    <button onclick="registerOfficer()" style="padding:8px 18px;background:var(--gold);border:none;border-radius:6px;color:#000;font-size:11px;font-weight:700;cursor:pointer">REGISTER OFFICER</button>
+    <div id="fp-reg-status" style="margin-top:8px;font-size:10px;color:var(--green)"></div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px">ACTIVE ROSTER</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="exportRoster()" style="padding:5px 12px;background:transparent;border:1px solid var(--bord);border-radius:5px;color:var(--txt2);font-size:10px;font-weight:700;cursor:pointer">EXPORT CSV</button>
+        <button onclick="renderRoster()" style="padding:5px 12px;background:transparent;border:1px solid var(--bord);border-radius:5px;color:var(--txt2);font-size:10px;font-weight:700;cursor:pointer">REFRESH</button>
+      </div>
+    </div>
+    <div id="fp-roster" style="font-size:11px;color:var(--txt3)">No officers registered yet.</div>
+  </div>
+</div>
+<div id="portal-login-panel"><div class="plp-hdr"><span class="plp-title">LOGIN ACTIVITY</span><button class="plp-close" onclick="document.getElementById('portal-login-panel').style.display='none';document.getElementById('plp-trigger').style.display='block'">x</button></div><div class="plp-body"><table><thead><tr><th>USER</th><th>ROLE</th><th>IP</th><th>TIME</th></tr></thead><tbody id="plp-tbody"><tr><td colspan="4" style="text-align:center;color:#64748b">Loading...</td></tr></tbody></table></div></div><button id="plp-trigger" onclick="showPlpPanel()">LOGIN LOG</button>
+<!-- ════════════════════════════════════════════════════════════════════
+     MFG FLOATING AI ASSISTANT — drop this block before </body> on any portal
+     Talks to Claude API, logs activity to /api/alerts/notify for owner alerts
+════════════════════════════════════════════════════════════════════ -->
+<div id="mfg-bot-bubble" onclick="mfgBotToggle()" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#C9A55C,#a8803a);box-shadow:0 4px 20px rgba(201,165,92,0.4);cursor:pointer;z-index:99990;display:flex;align-items:center;justify-content:center;transition:.2s">
+  <span id="mfg-bot-icon" style="font-size:24px;color:#0d1117">&#128172;</span>
+</div>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+

@@ -1,320 +1,299 @@
-<!-- GATE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ProspectIQ — AuditDNA Intelligence</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#020912;--card:#161b22;--card2:#0d1117;--bord:rgba(255,255,255,0.06);--gold:#C9A55C;--blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;--purple:#7c3aed}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;font-size:13px}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999}
+.gc{width:90%;max-width:340px;background:#fff;border-radius:20px;padding:32px 24px 24px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.gc .logo{font-size:10px;font-weight:900;letter-spacing:3px;color:#64748b;margin-bottom:4px}
+.gc .title{font-size:20px;font-weight:900;color:#0d1117;letter-spacing:1px;margin-bottom:2px}
+.gc .sub{font-size:10px;color:#94a3b8;margin-bottom:18px}
+.gc .lbl{font-size:11px;font-weight:600;color:#334155;margin-bottom:8px}
+.dots{display:flex;justify-content:center;gap:10px;margin-bottom:6px}
+.dot{width:13px;height:13px;border-radius:50%;background:#e2e8f0;border:2px solid #cbd5e1;transition:background .1s}
+.dot.on{background:#0d1117;border-color:#0d1117}
+.gerr{color:#ef4444;font-size:10px;min-height:14px;margin-bottom:6px}
+.npg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.npb{background:#F8F9FB;border:1px solid #e2e8f0;border-radius:12px;padding:14px 0;font-size:19px;font-weight:700;color:#1A202C;cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .1s;-webkit-tap-highlight-color:rgba(201,165,92,.2);touch-action:manipulation}
+.npb:active{background:#C9A55C33}
+.npcl{color:#ef4444;font-size:12px}.npdl{color:#64748b;font-size:12px}
+.ent{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#0d1117,#1e293b);color:#C9A55C;font-size:12px;font-weight:900;letter-spacing:2px;cursor:pointer;touch-action:manipulation}
+.pw{margin-top:12px;font-size:9px;color:#94a3b8;letter-spacing:.5px}
+
+/* APP */
+.topbar{display:flex;align-items:center;gap:8px;padding:0 14px;height:50px;background:var(--card);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:100}
+.tb-brand{font-size:14px;font-weight:900;letter-spacing:.5px;flex:1}
+.tb-brand span{color:var(--blue)}
+.tb-sub{font-size:10px;color:var(--txt3)}
+.tb-badge{font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:99px;background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.tb-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.lock-btn{font-size:10px;font-weight:700;color:var(--txt3);cursor:pointer;padding:4px 8px;border:1px solid var(--bord);border-radius:6px}
+
+.tabnav{display:flex;background:var(--card2);border-bottom:1px solid var(--bord);overflow-x:auto;scrollbar-width:none}
+.tabnav::-webkit-scrollbar{display:none}
+.tn{padding:11px 14px;font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
+.tn:hover{color:var(--txt2)}
+.tn.on{color:var(--blue);border-bottom-color:var(--blue)}
+
+.sec{display:none;padding:14px}
+.sec.on{display:block}
+.card{background:var(--card);border:1px solid var(--bord);border-radius:12px}
+.card-p{padding:14px}
+.sec-hdr{font-size:9px;font-weight:700;letter-spacing:1.2px;color:var(--txt3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bord)}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:560px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-card{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:12px;text-align:center}
+.stat-val{font-size:24px;font-weight:900;line-height:1}
+.stat-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;color:var(--txt3);margin-top:4px}
+
+.form-row{margin-bottom:10px}
+.lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--txt3);margin-bottom:4px;display:block}
+.inp{width:100%;background:var(--card2);border:1px solid var(--bord);border-radius:8px;padding:9px 12px;color:var(--txt);font-size:13px;outline:none;font-family:inherit;transition:border-color .15s}
+.inp:focus{border-color:var(--blue)}
+textarea.inp{resize:vertical;min-height:120px;font-size:12px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:9px 18px;border:none;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.7px;cursor:pointer;transition:.15s;font-family:inherit}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{opacity:.9}
+.btn-red{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+.btn-green{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--green)}
+.btn-ghost{background:transparent;border:1px solid var(--bord);color:var(--txt2)}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-amber{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--amber)}
+.btn-full{width:100%}
+
+.drop-zone{border:2px dashed rgba(74,143,212,.3);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s;background:rgba(74,143,212,.03)}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--blue);background:rgba(74,143,212,.07)}
+
+/* ZIP preset buttons */
+.zip-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.zip-btn{background:var(--card2);border:1px solid var(--bord);border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;color:var(--txt2);cursor:pointer;transition:.15s}
+.zip-btn:hover{border-color:var(--blue);color:var(--blue)}
+.zip-btn.active{border-color:var(--blue);background:rgba(74,143,212,.1);color:var(--blue)}
+
+/* Scan table */
+.scan-tbl{width:100%;border-collapse:collapse}
+.scan-tbl th{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--txt3);padding:8px 12px;text-align:left;background:var(--card2);border-bottom:1px solid var(--bord);white-space:nowrap}
+.scan-tbl td{padding:10px 12px;border-bottom:1px solid var(--bord);font-size:11px;vertical-align:middle}
+.scan-tbl tr:last-child td{border-bottom:none}
+.scan-tbl tr.critical{border-left:3px solid var(--red)}
+.scan-tbl tr.high{border-left:3px solid var(--amber)}
+.scan-tbl tr.clear{border-left:3px solid var(--green)}
+.scan-addr{font-weight:700;color:var(--txt);font-size:12px}
+.scan-apn{font-size:9px;color:var(--txt3);font-family:monospace}
+
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:9px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.b-red{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.b-amber{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.25)}
+.b-green{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.b-blue{background:rgba(74,143,212,.12);color:var(--blue);border:1px solid rgba(74,143,212,.25)}
+.b-grey{background:rgba(100,116,139,.12);color:var(--txt2);border:1px solid var(--bord)}
+
+/* Scan status bar */
+#scan-bar{display:none;background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;margin-bottom:14px}
+.scan-bar-inner{height:6px;background:var(--card2);border-radius:99px;overflow:hidden;margin:8px 0 4px}
+.scan-bar-fill{height:100%;background:var(--blue);border-radius:99px;transition:width .3s}
+#scan-bar-label{font-size:11px;font-weight:700;color:var(--txt2)}
+#scan-bar-pct{font-size:10px;color:var(--txt3)}
+
+/* Layer status */
+.layer-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bord);font-size:11px}
+.layer-row:last-child{border-bottom:none}
+.layer-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.grid2{grid-template-columns:1fr}}
+.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--txt3)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty-txt{font-size:12px}
+
+/* Alert */
+#alert-bar{display:none;position:fixed;top:50px;left:0;right:0;z-index:200;padding:10px 20px;font-size:12px;font-weight:700;text-align:center;animation:slideDown .2s}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.ab-green{background:var(--green);color:#000}
+.ab-red{background:var(--red);color:#fff}
+.ab-amber{background:var(--amber);color:#000}
+</style>
+<style id="plp-css">
+#portal-login-panel{display:none;position:fixed;bottom:20px;right:20px;width:400px;max-height:300px;background:#0d1117;border:1px solid #C9A55C;border-radius:8px;z-index:9999;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+#portal-login-panel .plp-hdr{background:#161b22;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d}
+#portal-login-panel .plp-title{color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:2px}
+#portal-login-panel .plp-close{color:#64748b;cursor:pointer;font-size:13px;background:none;border:none;padding:0}
+#portal-login-panel table{width:100%;border-collapse:collapse;font-size:10px}
+#portal-login-panel th{color:#64748b;padding:3px 6px;text-align:left;border-bottom:1px solid #21262d}
+#portal-login-panel td{color:#e2e8f0;padding:3px 6px;border-bottom:1px solid #21262d}
+#portal-login-panel .plp-body{overflow-y:auto;max-height:240px;padding:6px}
+#plp-trigger{display:none;position:fixed;bottom:20px;right:20px;background:#161b22;border:1px solid #C9A55C;color:#C9A55C;font-size:9px;padding:5px 10px;border-radius:4px;cursor:pointer;z-index:9998;letter-spacing:1px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
 <div id="gate">
-  <div class="gate-bg"></div>
-  <div style="position:relative;z-index:1;width:90%;max-width:360px;background:#ffffff;border-radius:20px;padding:36px 28px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-    <div class="pg-logo" style="font-size:18px;font-weight:900;color:#C9A55C;letter-spacing:1px;">IQ</div>
-    <div class="pg-title">PROSPECTIQ</div>
-    <div class="pg-sub">AuditDNA Intelligence &middot; Property Default Search</div>
-    <div class="pg-label">Enter PIN to Access</div>
-    <div class="pin-dots">
-      <div class="pd" id="d0"></div>
-      <div class="pd" id="d1"></div>
-      <div class="pd" id="d2"></div>
-      <div class="pd" id="d3"></div>
+  <div class="gc">
+    <div class="logo">AUDITDNA INTELLIGENCE</div>
+    <div class="title">ProspectIQ</div>
+    <div class="sub">Live Property Intelligence &middot; NOD &middot; Tax Default &middot; Liens</div>
+    <div class="lbl">Enter PIN to Access</div>
+    <div class="dots">
+      <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
     </div>
-    <div id="g-err" style="color:#ef4444;font-size:11px;min-height:16px;margin-bottom:6px;"></div>
-    <div class="pg-numpad">
-      <div class="nb" onclick="np('1')">1</div>
-      <div class="nb" onclick="np('2')">2</div>
-      <div class="nb" onclick="np('3')">3</div>
-      <div class="nb" onclick="np('4')">4</div>
-      <div class="nb" onclick="np('5')">5</div>
-      <div class="nb" onclick="np('6')">6</div>
-      <div class="nb" onclick="np('7')">7</div>
-      <div class="nb" onclick="np('8')">8</div>
-      <div class="nb" onclick="np('9')">9</div>
-      <div class="nb del" onclick="nc()">CLR</div>
-      <div class="nb" onclick="np('0')">0</div>
-      <div class="nb del" onclick="nd()">DEL</div>
+    <div class="gerr" id="gerr"></div>
+    <div class="npg">
+      <div class="npb" onclick="np('1')" ontouchend="event.preventDefault();np('1')">1</div><div class="npb" onclick="np('2')" ontouchend="event.preventDefault();np('2')">2</div><div class="npb" onclick="np('3')" ontouchend="event.preventDefault();np('3')">3</div>
+      <div class="npb" onclick="np('4')" ontouchend="event.preventDefault();np('4')">4</div><div class="npb" onclick="np('5')" ontouchend="event.preventDefault();np('5')">5</div><div class="npb" onclick="np('6')" ontouchend="event.preventDefault();np('6')">6</div>
+      <div class="npb" onclick="np('7')" ontouchend="event.preventDefault();np('7')">7</div><div class="npb" onclick="np('8')" ontouchend="event.preventDefault();np('8')">8</div><div class="npb" onclick="np('9')" ontouchend="event.preventDefault();np('9')">9</div>
+      <div class="npb npcl" onclick="nc()" ontouchend="event.preventDefault();nc()">CLR</div><div class="npb" onclick="np('0')" ontouchend="event.preventDefault();np('0')">0</div><div class="npb npdl" onclick="nd()" ontouchend="event.preventDefault();nd()">DEL</div>
     </div>
-    <button class="pg-enter" onclick="checkPin()">ENTER</button>
-    <div class="pg-foot">POWERED BY AUDITDNA INTELLIGENCE BY MFG, INC.</div>
+    <button class="ent" onclick="checkPin()">ENTER</button>
+    <div class="pw">POWERED BY AUDITDNA &middot; MEXAUSA FOOD GROUP INC.</div>
   </div>
 </div>
 
+<div id="alert-bar"></div>
+
+<!-- APP -->
 <div id="app" style="display:none">
   <div class="topbar">
-    <img src="data:image/png;base64,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" style="width:26px;height:26px;object-fit:contain;border-radius:5px"/>
-    <span class="tb-brand" style="color:#4a8fd4">ProspectIQ &nbsp;<span style="color:#C9A55C;font-weight:400;font-size:11px;letter-spacing:.3px">AuditDNA Intelligence &middot; Designed by Saul Garcia</span></span>
-    <span class="tb-badge">LIVE</span>
-    <span class="tb-dot"></span>
-    <span class="lock-btn" onclick="lock()">LOCK</span>
+    <div class="tb-brand">Prospect<span>IQ</span></div>
+    <div class="tb-sub">AuditDNA Intelligence &middot; Designed by Saul Garcia</div>
+    <div class="tb-badge">LIVE</div>
+    <div class="tb-dot"></div>
+    <div class="lock-btn" onclick="lock()">LOCK</div>
   </div>
+
   <div class="tabnav">
-    <div class="tn on" onclick="goTab('upload')">Upload & Scan</div>
-    <div class="tn" onclick="goTab('results')">Scan Results</div>
-    <div class="tn" onclick="goTab('flags')">Flag Definitions</div>
-    <div class="tn" onclick="goTab('underwrite')">Underwrite</div>
-    <div class="tn" onclick="goTab('pipeline')">Lead Pipeline</div>
-    <div class="tn" onclick="goTab('export')">Export & CRM</div>
+    <div class="tn on" id="tn-upload" onclick="goTab('upload',this)">Upload &amp; Scan</div>
+    <div class="tn" id="tn-results" onclick="goTab('results',this)">Scan Results</div>
+    <div class="tn" id="tn-pipeline" onclick="goTab('pipeline',this)">Lead Pipeline</div>
+    <div class="tn" id="tn-sources" onclick="goTab('sources',this)">Data Sources</div>
+    <div class="tn" id="tn-export" onclick="goTab('export',this)">Export &amp; CRM</div>
   </div>
 
   <!-- UPLOAD & SCAN -->
   <div id="tab-upload" class="sec on">
-    <div class="grid4 mb16">
-      <div class="stat-card"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">ADDRESSES LOADED</div></div>
-      <div class="stat-card"><div class="stat-val" style="color:var(--red)" id="s-critical">0</div><div class="stat-lbl">CRITICAL FLAGS</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">LOADED</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--red)" id="s-critical">0</div><div class="stat-lbl">CRITICAL</div></div>
       <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="s-high">0</div><div class="stat-lbl">HIGH RISK</div></div>
-      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="s-clear">0</div><div class="stat-lbl">CLEAR TITLE</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="s-clear">0</div><div class="stat-lbl">CLEAR</div></div>
     </div>
 
-    <div class="grid2 mb16">
-      <div>
-        <div class="sec-hdr">UPLOAD FARM LIST</div>
-        <div class="drop-zone mb10" id="drop-zone" onclick="document.getElementById('file-inp').click()"
-          ondragover="event.preventDefault();this.classList.add('drag')"
-          ondragleave="this.classList.remove('drag')"
-          ondrop="handleDrop(event)">
-          <input type="file" id="file-inp" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleFile(this.files[0])"/>
-          <div class="drop-icon">📂</div>
-          <div class="drop-title">Drop CSV / Excel / TXT File</div>
-          <div class="drop-sub">FirstAm Eagle Eye export · Any CSV with addresses · Excel .xlsx</div>
-          <div class="drop-sub" style="margin-top:6px;color:rgba(74,143,212,0.5)">System auto-detects address columns</div>
-
-          <!-- NATIONWIDE POSTING DATA SOURCE -->
-          <div style="margin-top:14px;background:rgba(74,143,212,0.04);border:1px solid rgba(74,143,212,0.2);border-radius:10px;padding:14px;">
-            <div style="font-size:10px;font-weight:700;color:var(--purple);letter-spacing:1px;margin-bottom:10px;">NATIONWIDE POSTING &amp; PUBLICATION INC.</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-              <a href="https://www.nationwideposting.com" target="_blank" style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--bord);border-radius:7px;padding:10px 14px;text-decoration:none;transition:.15s;" onmouseover="this.style.borderColor='var(--purple)'" onmouseout="this.style.borderColor='var(--bord)'">
-                <span style="font-size:18px;">&#127968;</span>
-                <div>
-                  <div style="font-size:10px;font-weight:700;color:var(--txt);">nationwideposting.com</div>
-                  <div style="font-size:9px;color:var(--txt3);">Main site — trustee sale lists by county</div>
-                </div>
-              </a>
-              <a href="https://search.nationwideposting.com/Search.aspx" target="_blank" style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid rgba(34,197,94,0.3);border-radius:7px;padding:10px 14px;text-decoration:none;transition:.15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='rgba(34,197,94,0.3)'">
-                <span style="font-size:18px;">&#128269;</span>
-                <div>
-                  <div style="font-size:10px;font-weight:700;color:var(--green);">SEARCH TRUSTEE SALES</div>
-                  <div style="font-size:9px;color:var(--txt3);">search.nationwideposting.com/Search.aspx</div>
-                </div>
-              </a>
-            </div>
-            <div style="font-size:9px;color:var(--txt3);line-height:1.6;border-top:1px solid var(--bord2);padding-top:10px;">
-              <span style="color:var(--amber);font-weight:700;">HOW TO USE:</span> Search by county, date range, or APN. Download the list as CSV or Excel. Upload the file above to run through the NOD scoring engine. Fields auto-mapped: APN, address, trustee sale date, opening bid, beneficiary (lender).<br>
-              <span style="color:var(--purple);font-weight:700;margin-top:6px;display:inline-block;">COUNTIES COVERED:</span> San Diego, Los Angeles, Orange, Riverside, San Bernardino, Monterey, Santa Cruz, Santa Clara — all CA counties.
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-purple mb10" style="width:100%" onclick="document.getElementById('file-inp').click()">Choose File</button>
-      </div>
-      <div>
-        <div class="sec-hdr">PASTE RAW DATA</div>
-        <div class="form-row">
-          <div class="lbl">PASTE ADDRESSES OR CSV ROWS</div>
-          <textarea class="inp" id="paste-area" style="min-height:120px" placeholder="Paste addresses (one per line) or raw CSV data from Eagle Eye, tax records, any source...
-123 Main St, Salinas CA 93901
-456 Oak Ave, San Diego CA 92101
-789 PCH, Ensenada BC 22800"></textarea>
-        </div>
-        <button class="btn btn-purple" style="width:100%" onclick="parsePaste()">Parse & Load Addresses</button>
-      </div>
-    </div>
-
-    <div class="sec-hdr">CROSS-REFERENCE SETTINGS</div>
+    <!-- ZIP Presets — El Cajon, SD, LA -->
     <div class="card card-p mb16">
-      <div class="grid3" style="gap:16px">
-        <div>
-          <div class="lbl" style="margin-bottom:8px">SCAN FOR</div>
-          <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--txt2)">
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--purple)"/> Notice of Default (NOD)</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--purple)"/> Tax Default / Delinquent</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--purple)"/> IRS Federal Tax Lien</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--purple)"/> Lis Pendens</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--purple)"/> Mortgage Default</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--purple)"/> Mechanic Lien</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--purple)"/> HOA Delinquency</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--purple)"/> Bankruptcy</label>
-          </div>
-        </div>
-        <div>
-          <div class="lbl" style="margin-bottom:8px">SCAN COUNTY</div>
-          <select class="inp mb10">
-            <option>All Counties</option>
-            <option>Monterey County, CA</option>
-            <option>San Diego County, CA</option>
-            <option>Los Angeles County, CA</option>
-            <option>Orange County, CA</option>
-            <option>Riverside County, CA</option>
-            <option>San Bernardino County, CA</option>
-            <option>Santa Clara County, CA</option>
-            <option>Fresno County, CA</option>
-            <option>Baja California, MX</option>
-          </select>
-          <div class="lbl" style="margin-bottom:8px">OUTPUT FORMAT</div>
-          <select class="inp">
-            <option>Red/Amber/Green scored list</option>
-            <option>Critical flags only</option>
-            <option>Full report all addresses</option>
-            <option>Hot leads (NOD + Tax Default)</option>
-          </select>
-        </div>
-        <div>
-          <div class="lbl" style="margin-bottom:8px">CROSS-REFERENCE LIST</div>
-          <div style="font-size:10px;color:var(--txt2);line-height:1.9;background:var(--card2);border-radius:8px;padding:10px">
-            Upload a <strong style="color:var(--purple)">second list</strong> to cross-reference against your farm list<br/>
-            (e.g. your existing client database, MLS actives, already-contacted list)
-          </div>
-          <input type="file" id="xref-inp" accept=".csv,.xlsx" style="display:none"/>
-          <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="document.getElementById('xref-inp').click()">Load Cross-Reference List</button>
-        </div>
+      <div class="sec-hdr">QUICK SCAN BY ZIP CODE — SAN DIEGO &amp; LA COUNTY</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Select ZIP code(s) to scan all distressed properties in that area (requires BatchData key for NOD data)</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--txt3);margin-bottom:6px">EL CAJON / EAST COUNTY SD</div>
+      <div class="zip-grid" id="zip-ec">
+        <div class="zip-btn" data-zip="92019" onclick="toggleZip(this)">92019 El Cajon</div>
+        <div class="zip-btn" data-zip="92020" onclick="toggleZip(this)">92020 El Cajon</div>
+        <div class="zip-btn" data-zip="92021" onclick="toggleZip(this)">92021 El Cajon</div>
+        <div class="zip-btn" data-zip="92040" onclick="toggleZip(this)">92040 Lakeside</div>
+        <div class="zip-btn" data-zip="92071" onclick="toggleZip(this)">92071 Santee</div>
+        <div class="zip-btn" data-zip="91941" onclick="toggleZip(this)">91941 La Mesa</div>
+        <div class="zip-btn" data-zip="91942" onclick="toggleZip(this)">91942 La Mesa</div>
+        <div class="zip-btn" data-zip="91977" onclick="toggleZip(this)">91977 Spring Valley</div>
+        <div class="zip-btn" data-zip="91945" onclick="toggleZip(this)">91945 Lemon Grove</div>
+        <div class="zip-btn" data-zip="91901" onclick="toggleZip(this)">91901 Alpine</div>
       </div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--txt3);margin:10px 0 6px">SAN DIEGO CITY</div>
+      <div class="zip-grid">
+        <div class="zip-btn" data-zip="92101" onclick="toggleZip(this)">92101 Downtown SD</div>
+        <div class="zip-btn" data-zip="92114" onclick="toggleZip(this)">92114 Encanto</div>
+        <div class="zip-btn" data-zip="92115" onclick="toggleZip(this)">92115 College Area</div>
+        <div class="zip-btn" data-zip="92139" onclick="toggleZip(this)">92139 Paradise Hills</div>
+        <div class="zip-btn" data-zip="92154" onclick="toggleZip(this)">92154 Otay Ranch</div>
+        <div class="zip-btn" data-zip="91910" onclick="toggleZip(this)">91910 Chula Vista</div>
+        <div class="zip-btn" data-zip="91950" onclick="toggleZip(this)">91950 National City</div>
+      </div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--txt3);margin:10px 0 6px">LOS ANGELES COUNTY</div>
+      <div class="zip-grid">
+        <div class="zip-btn" data-zip="90011" onclick="toggleZip(this)">90011 South LA</div>
+        <div class="zip-btn" data-zip="90044" onclick="toggleZip(this)">90044 South Central</div>
+        <div class="zip-btn" data-zip="90059" onclick="toggleZip(this)">90059 Compton area</div>
+        <div class="zip-btn" data-zip="90255" onclick="toggleZip(this)">90255 Huntington Park</div>
+        <div class="zip-btn" data-zip="90280" onclick="toggleZip(this)">90280 South Gate</div>
+        <div class="zip-btn" data-zip="91746" onclick="toggleZip(this)">91746 Industry</div>
+        <div class="zip-btn" data-zip="91744" onclick="toggleZip(this)">91744 La Puente</div>
+        <div class="zip-btn" data-zip="90650" onclick="toggleZip(this)">90650 Norwalk</div>
+      </div>
+      <button class="btn btn-purple btn-full" style="margin-top:12px" id="zip-scan-btn" onclick="scanByZips()">SCAN SELECTED ZIPS</button>
     </div>
 
-    <button class="btn btn-purple" style="padding:14px 32px;font-size:13px;letter-spacing:1px;width:100%" onclick="runScan()">
-      RUN FULL SCAN — CROSS-REFERENCE ALL ADDRESSES
-    </button>
-    <div id="scan-progress" style="display:none;margin-top:14px">
-      <div style="font-size:11px;color:var(--txt2);margin-bottom:6px" id="scan-status">Scanning addresses...</div>
-      <div style="background:var(--card2);border-radius:99px;height:6px;overflow:hidden">
-        <div id="progress-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--purple2));border-radius:99px;width:0%;transition:width .3s"></div>
+    <!-- Address Upload -->
+    <div class="card card-p mb16">
+      <div class="sec-hdr">UPLOAD ADDRESS LIST</div>
+      <div class="drop-zone mb12" id="drop-zone"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleDrop(event)">
+        <input type="file" accept=".csv,.xlsx,.xls,.txt" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="handleFile(this.files[0])"/>
+        <div style="font-size:28px;margin-bottom:8px">&#128196;</div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt2);margin-bottom:4px">Drop CSV / Excel / TXT here</div>
+        <div style="font-size:10px;color:var(--txt3)">FirstAm Eagle Eye export compatible &middot; One address per line</div>
       </div>
+      <div class="form-row">
+        <label class="lbl">OR PASTE ADDRESSES (one per line)</label>
+        <textarea class="inp" id="paste-area" placeholder="123 Main St, El Cajon CA 92020&#10;456 Oak Ave, La Mesa CA 91941&#10;789 Elm Dr, Santee CA 92071"></textarea>
+      </div>
+      <button class="btn btn-blue btn-full" onclick="parsePaste()">LOAD ADDRESSES</button>
     </div>
+
+    <!-- Scan Controls -->
+    <div class="card card-p mb16">
+      <div class="sec-hdr">SCAN FLAGS</div>
+      <div class="grid2 mb12">
+        <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="f-nod" checked style="accent-color:var(--red)"/> NOD — Notice of Default</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="f-tax" checked style="accent-color:var(--red)"/> Tax Default / Delinquent</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="f-lien" checked style="accent-color:var(--amber)"/> IRS / Federal Lien</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="f-lis" checked style="accent-color:var(--amber)"/> Lis Pendens</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="f-mech" checked style="accent-color:var(--amber)"/> Mechanic's Lien</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="f-hoa" checked style="accent-color:var(--amber)"/> HOA Delinquency</label>
+      </div>
+      <button class="btn btn-blue btn-full" style="padding:13px;font-size:13px" id="run-scan-btn" onclick="runScan()">RUN FULL SCAN</button>
+    </div>
+
+    <!-- Scan Progress -->
+    <div id="scan-bar">
+      <div id="scan-bar-label">Scanning...</div>
+      <div class="scan-bar-inner"><div class="scan-bar-fill" id="scan-bar-fill" style="width:0%"></div></div>
+      <div id="scan-bar-pct">0 of 0 addresses scanned</div>
+    </div>
+
+    <div id="scan-status" style="font-size:11px;color:var(--txt2);padding:6px 0"></div>
   </div>
 
   <!-- SCAN RESULTS -->
   <div id="tab-results" class="sec">
-    <div class="grid4 mb16">
-      <div class="stat-card"><div class="stat-val" id="r-total">247</div><div class="stat-lbl">SCANNED</div></div>
-      <div class="stat-card"><div class="stat-val" style="color:var(--red)" id="r-critical">38</div><div class="stat-lbl">CRITICAL</div></div>
-      <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="r-high">61</div><div class="stat-lbl">HIGH RISK</div></div>
-      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="r-clear">148</div><div class="stat-lbl">CLEAR</div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="r-total">0</div><div class="stat-lbl">SCANNED</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--red)" id="r-critical">0</div><div class="stat-lbl">CRITICAL</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="r-high">0</div><div class="stat-lbl">HIGH RISK</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="r-clear">0</div><div class="stat-lbl">CLEAR</div></div>
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <button class="btn btn-red" onclick="filterResults('critical')">Critical Only (38)</button>
-      <button class="btn" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:var(--amber)" onclick="filterResults('high')">High Risk (61)</button>
-      <button class="btn btn-green" onclick="filterResults('clear')">Clear (148)</button>
-      <button class="btn btn-ghost" onclick="filterResults('all')">All Results</button>
-      <button class="btn btn-purple" style="margin-left:auto" onclick="goTab('export')">Export Hot Leads</button>
+
+    <div class="card card-p mb12" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-red" style="font-size:10px;padding:6px 12px" onclick="filterResults('CRITICAL')">Critical Only</button>
+      <button class="btn btn-amber" style="font-size:10px;padding:6px 12px" onclick="filterResults('HIGH')">High Risk</button>
+      <button class="btn btn-green" style="font-size:10px;padding:6px 12px" onclick="filterResults('CLEAR')">Clear</button>
+      <button class="btn btn-ghost" style="font-size:10px;padding:6px 12px" onclick="filterResults('ALL')">All Results</button>
+      <button class="btn btn-purple" style="font-size:10px;padding:6px 12px;margin-left:auto" onclick="exportHot()">Export Hot Leads</button>
     </div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <div class="scan-hdr">
-        <span>ADDRESS</span><span>NOD</span><span>TAX DEFAULT</span><span>LIENS</span><span>LIS PENDENS</span><span>OVERALL</span><span>ACTION</span>
-      </div>
+
+    <div class="card" style="overflow-x:auto">
       <div id="results-list">
-        <div class="scan-row critical">
-          <div><div class="scan-addr">1423 Coastal Hwy, Ensenada BC</div><div style="font-size:9px;color:var(--txt3)">APN: 123-456-789</div></div>
-          <span><span class="badge b-red">NOD FILED</span></span>
-          <span><span class="badge b-red">DELINQUENT</span></span>
-          <span><span class="badge b-amber">2 LIENS</span></span>
-          <span><span class="badge b-red">FILED</span></span>
-          <span><span class="badge b-red">CRITICAL</span></span>
-          <button class="btn btn-purple" style="padding:4px 10px;font-size:9px" onclick="goTab('underwrite')">Underwrite</button>
-        </div>
-        <div class="scan-row high">
-          <div><div class="scan-addr">892 Valle Drive, San Diego CA</div><div style="font-size:9px;color:var(--txt3)">APN: 456-789-012</div></div>
-          <span><span class="badge b-amber">PRE-NOD</span></span>
-          <span><span class="badge b-amber">60 DAYS</span></span>
-          <span style="color:var(--txt3)">—</span>
-          <span style="color:var(--txt3)">—</span>
-          <span><span class="badge b-amber">HIGH RISK</span></span>
-          <button class="btn btn-ghost" style="padding:4px 10px;font-size:9px" onclick="goTab('underwrite')">Underwrite</button>
-        </div>
-        <div class="scan-row clear">
-          <div><div class="scan-addr">341 Monterey St, Salinas CA</div><div style="font-size:9px;color:var(--txt3)">APN: 789-012-345</div></div>
-          <span style="color:var(--txt3)">—</span>
-          <span style="color:var(--txt3)">—</span>
-          <span style="color:var(--txt3)">—</span>
-          <span style="color:var(--txt3)">—</span>
-          <span><span class="badge b-green">CLEAR</span></span>
-          <button class="btn btn-ghost" style="padding:4px 10px;font-size:9px;opacity:.5" disabled>Underwrite</button>
-        </div>
-        <div class="scan-row critical">
-          <div><div class="scan-addr">2204 Pacific Blvd, Chula Vista CA</div><div style="font-size:9px;color:var(--txt3)">APN: 012-345-678</div></div>
-          <span><span class="badge b-red">NTS FILED</span></span>
-          <span><span class="badge b-red">DELINQUENT</span></span>
-          <span><span class="badge b-red">IRS LIEN</span></span>
-          <span><span class="badge b-red">FILED</span></span>
-          <span><span class="badge b-red">CRITICAL</span></span>
-          <button class="btn btn-purple" style="padding:4px 10px;font-size:9px" onclick="goTab('underwrite')">Underwrite</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FLAG DEFINITIONS -->
-  <div id="tab-flags" class="sec">
-    <div class="sec-hdr">FLAG DEFINITIONS — WHAT EACH FLAG MEANS</div>
-    <div class="flag-grid mb16">
-      <div class="flag-item" style="border-color:var(--red)">
-        <div class="flag-name" style="color:var(--red)">NOD — Notice of Default</div>
-        <div class="flag-desc">Lender has filed formal notice that borrower is in default. First step in foreclosure. Property is pre-foreclosure — typically 90+ days delinquent.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--red)">
-        <div class="flag-name" style="color:var(--red)">NTS — Notice of Trustee Sale</div>
-        <div class="flag-desc">Foreclosure sale has been scheduled. Property is 21+ days from auction. Highest urgency — owner must act immediately or lose property.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--red)">
-        <div class="flag-name" style="color:var(--red)">TAX DEFAULT</div>
-        <div class="flag-desc">Owner has not paid property taxes. County may sell tax lien certificate or initiate tax deed sale. Research delinquent amount and redemption deadline.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--red)">
-        <div class="flag-name" style="color:var(--red)">LIS PENDENS</div>
-        <div class="flag-desc">Lawsuit pending that affects the property. Title cannot transfer cleanly until resolved. Research the underlying case — could be divorce, partition, contract dispute.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--amber)">
-        <div class="flag-name" style="color:var(--amber)">IRS FEDERAL TAX LIEN</div>
-        <div class="flag-desc">IRS has recorded a lien against the property owner. Follows the property on sale — must be paid or subordinated. Can often be discharged or withdrawn if negotiated.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--amber)">
-        <div class="flag-name" style="color:var(--amber)">MECHANIC'S LIEN</div>
-        <div class="flag-desc">Contractor, subcontractor, or supplier who was not paid has filed against the property. Priority depends on state law. Research amount and contest period before closing.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--amber)">
-        <div class="flag-name" style="color:var(--amber)">HOA DELINQUENT</div>
-        <div class="flag-desc">Homeowners association dues are delinquent. HOA can lien or foreclose in some states. Call HOA for payoff amount — usually clearable at closing.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--amber)">
-        <div class="flag-name" style="color:var(--amber)">MTG DEFAULT</div>
-        <div class="flag-desc">Borrower has missed mortgage payments but NOD not yet filed. Watch for acceleration to NOD. Often the best time to approach — owner still has time to negotiate.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--blue)">
-        <div class="flag-name" style="color:var(--blue)">MULTIPLE LIENS</div>
-        <div class="flag-desc">Two or more liens recorded against the property. Each must be researched individually. Some may be junior liens that can be negotiated — others require full payoff.</div>
-      </div>
-      <div class="flag-item" style="border-color:var(--green)">
-        <div class="flag-name" style="color:var(--green)">CLEAR</div>
-        <div class="flag-desc">No flags detected in public records scan. Clean title, no defaults, no liens. Property may still have title issues not in public records — always order prelim before purchase.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- UNDERWRITE -->
-  <div id="tab-underwrite" class="sec">
-    <div class="sec-hdr">PROPERTY UNDERWRITE — DEAL ANALYSIS</div>
-    <div class="grid2">
-      <div class="card mb10">
-        <div class="sec-hdr">PROPERTY DETAILS</div>
-        <div class="form-row"><div class="lbl">Property Address</div><input class="inp" id="uw-addr" placeholder="123 Main St, City, State Zip"/></div>
-        <div class="grid2">
-          <div class="form-row"><div class="lbl">Property Type</div>
-            <select class="inp"><option>SFR</option><option>Condo</option><option>Duplex</option><option>Multi-Family</option><option>Commercial</option><option>Land</option></select></div>
-          <div class="form-row"><div class="lbl">Exit Strategy</div>
-            <select class="inp"><option>Fix & Flip</option><option>BRRRR</option><option>Wholesale</option><option>Buy & Hold</option><option>Short Sale</option></select></div>
-        </div>
-        <div class="grid2">
-          <div class="form-row"><div class="lbl">ARV ($)</div><input class="inp" id="uw-arv" type="number" placeholder="0" oninput="calcDeal()"/></div>
-          <div class="form-row"><div class="lbl">Purchase Price ($)</div><input class="inp" id="uw-price" type="number" placeholder="0" oninput="calcDeal()"/></div>
-        </div>
-        <div class="grid2">
-          <div class="form-row"><div class="lbl">Rehab Cost ($)</div><input class="inp" id="uw-rehab" type="number" placeholder="0" oninput="calcDeal()"/></div>
-          <div class="form-row"><div class="lbl">Holding Months</div><input class="inp" id="uw-hold" type="number" placeholder="6" oninput="calcDeal()"/></div>
-        </div>
-      </div>
-      <div>
-        <div class="card card-p mb10">
-          <div class="sec-hdr">DEAL VERDICT</div>
-          <div id="uw-verdict" style="font-size:28px;font-weight:900;text-align:center;padding:16px;letter-spacing:-1px">Enter numbers</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">
-            <div><div style="color:var(--txt3);font-size:9px;letter-spacing:.8px;margin-bottom:2px">MAX OFFER (MAO)</div><div id="uw-mao" style="font-weight:700;color:var(--gold);font-size:16px">$0</div></div>
-            <div><div style="color:var(--txt3);font-size:9px;letter-spacing:.8px;margin-bottom:2px">GROSS SPREAD</div><div id="uw-spread" style="font-weight:700;color:var(--green);font-size:16px">$0</div></div>
-            <div><div style="color:var(--txt3);font-size:9px;letter-spacing:.8px;margin-bottom:2px">ROI %</div><div id="uw-roi" style="font-weight:700;font-size:16px">0%</div></div>
-            <div><div style="color:var(--txt3);font-size:9px;letter-spacing:.8px;margin-bottom:2px">% OF ARV</div><div id="uw-arv-pct" style="font-weight:700;font-size:16px">0%</div></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="sec-hdr">TITLE FLAGS ON THIS PROPERTY</div>
-          <div id="uw-flags" style="font-size:11px;color:var(--txt2)">Load an address from Scan Results to see flags here.</div>
+        <div class="empty-state">
+          <div class="empty-icon">&#128203;</div>
+          <div class="empty-txt">No scan results yet — upload addresses and run scan</div>
         </div>
       </div>
     </div>
@@ -322,146 +301,965 @@
 
   <!-- LEAD PIPELINE -->
   <div id="tab-pipeline" class="sec">
-    <div class="sec-hdr">HOT LEAD PIPELINE</div>
-    <div class="card">
-      <table class="tbl">
-        <tr><th>ADDRESS</th><th>FLAGS</th><th>SCORE</th><th>ADDED</th><th>STATUS</th><th>ACTION</th></tr>
-        <tr><td>1423 Coastal Hwy, Ensenada BC</td><td><span class="badge b-red">NOD + TAX + IRS</span></td><td style="color:var(--red)">CRITICAL</td><td>06/11</td><td><span class="badge b-purple">NEW</span></td>
-          <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:9px">Contact Owner</button></td></tr>
-        <tr><td>2204 Pacific Blvd, Chula Vista CA</td><td><span class="badge b-red">NOD + LIENS</span></td><td style="color:var(--red)">CRITICAL</td><td>06/11</td><td><span class="badge b-purple">NEW</span></td>
-          <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:9px">Contact Owner</button></td></tr>
-        <tr><td>892 Valle Drive, San Diego CA</td><td><span class="badge b-amber">PRE-NOD</span></td><td style="color:var(--amber)">HIGH</td><td>06/11</td><td><span class="badge b-blue">CONTACTED</span></td>
-          <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:9px">Follow Up</button></td></tr>
+    <div class="card card-p mb12" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div style="font-size:11px;color:var(--txt2);flex:1">Hot leads auto-populate from CRITICAL + HIGH RISK scan results</div>
+      <button class="btn btn-ghost" style="font-size:10px;padding:6px 12px" onclick="clearPipeline()">Clear Pipeline</button>
+    </div>
+    <div class="card" style="overflow-x:auto">
+      <table class="scan-tbl" id="pipeline-tbl">
+        <thead><tr>
+          <th>ADDRESS</th><th>OWNER</th><th>FLAGS</th><th>SCORE</th><th>APN</th><th>ASSESSED $</th><th>STATUS</th><th>ACTION</th>
+        </tr></thead>
+        <tbody id="pipeline-body">
+          <tr><td colspan="8"><div class="empty-state"><div class="empty-txt">Pipeline empty — run a scan to populate</div></div></td></tr>
+        </tbody>
       </table>
     </div>
   </div>
 
-  <!-- EXPORT -->
-  <div id="tab-export" class="sec">
-    <div class="sec-hdr">EXPORT RESULTS & SEND TO CRM</div>
-    <div class="grid3 mb16">
-      <div class="card card-p" style="text-align:center;padding:24px">
-        <div style="font-size:28px;margin-bottom:8px">📊</div>
-        <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:6px">Export CSV</div>
-        <div style="font-size:10px;color:var(--txt3);margin-bottom:14px">All results with flags, scores, and property details</div>
-        <button class="btn btn-purple" style="width:100%" onclick="exportCSV()">Download CSV</button>
-      </div>
-      <div class="card" style="text-align:center;padding:24px">
-        <div style="font-size:28px;margin-bottom:8px">🔥</div>
-        <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:6px">Hot Leads Only</div>
-        <div style="font-size:10px;color:var(--txt3);margin-bottom:14px">Critical + High Risk properties only</div>
-        <button class="btn btn-red" style="width:100%" onclick="exportHot()">Export Hot Leads</button>
-      </div>
-      <div class="card" style="text-align:center;padding:24px">
-        <div style="font-size:28px;margin-bottom:8px">📧</div>
-        <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:6px">Send to CRM</div>
-        <div style="font-size:10px;color:var(--txt3);margin-bottom:14px">Push hot leads to SaulIntelCRM contact pool</div>
-        <button class="btn btn-green" style="width:100%" onclick="sendToCRM()">Push to CRM</button>
+  <!-- DATA SOURCES -->
+  <div id="tab-sources" class="sec">
+    
+    <div class="card card-p mb12" id="db-status-card">
+      <div class="sec-hdr">OUR NOD DATABASE — LIVE STATUS</div>
+      <div id="db-status-content" style="font-size:11px;color:var(--txt2)">Loading...</div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-blue" style="font-size:10px;padding:6px 12px" onclick="initDB()">Init DB Tables</button>
+        <button class="btn btn-amber" style="font-size:10px;padding:6px 12px" onclick="runScrapeNow()">Run Scrape Now</button>
+        <button class="btn btn-ghost" style="font-size:10px;padding:6px 12px" onclick="loadDBStatus()">Refresh Status</button>
       </div>
     </div>
-    <div class="card card-p">
-      <div class="sec-hdr">MAIL MERGE — OWNER OUTREACH LETTERS</div>
-      <div style="font-size:11px;color:var(--txt2);margin-bottom:12px;line-height:1.8">Generate personalized outreach letters for every flagged property. Mail merge fills in the owner name, property address, flag type, and your contact info. Ready to print and mail or send via email blast.</div>
-      <div class="grid2">
-        <div class="form-row"><div class="lbl">Letter Template</div>
-          <select class="inp">
-            <option>Pre-Foreclosure — NOD Outreach</option>
-            <option>Tax Default — Help Available</option>
-            <option>Short Sale Candidate</option>
-            <option>Mortgage Audit Recovery — CFPB Rights</option>
-            <option>Cash Offer — Fast Close</option>
-          </select></div>
-        <div class="form-row"><div class="lbl">Your Contact Info</div><input class="inp" placeholder="Name, Phone, Email" value="Saul Garcia | +1-831-251-3116 | saul@financelend.me"/></div>
+    <div class="card card-p mb12">
+      <div class="sec-hdr">LIVE DATA LAYERS</div>
+      <div id="layer-status">
+        <div class="layer-row">
+          <div class="layer-dot" style="background:var(--green)"></div>
+          <div style="flex:1">
+            <div style="font-weight:700;color:var(--txt)">San Diego County ArcGIS</div>
+            <div style="font-size:10px;color:var(--txt3)">Tax default status, APN, owner name, assessed value &mdash; FREE, live</div>
+          </div>
+          <span class="badge b-green">ACTIVE</span>
+        </div>
+        <div class="layer-row">
+          <div class="layer-dot" style="background:var(--green)"></div>
+          <div style="flex:1">
+            <div style="font-weight:700;color:var(--txt)">Los Angeles County ArcGIS</div>
+            <div style="font-size:10px;color:var(--txt3)">Tax default status, APN, owner name, assessed value &mdash; FREE, live</div>
+          </div>
+          <span class="badge b-green">ACTIVE</span>
+        </div>
+        <div class="layer-row" id="batchdata-layer-row">
+          <div class="layer-dot" style="background:var(--amber)" id="batchdata-dot"></div>
+          <div style="flex:1">
+            <div style="font-weight:700;color:var(--txt)">BatchData (RealEstateAPI.com)</div>
+            <div style="font-size:10px;color:var(--txt3)">All 58 CA counties &mdash; NOD, NTS, IRS lien, lis pendens, mechanic lien, HOA, auction date &mdash; $0.01/call</div>
+            <div style="font-size:10px;color:var(--amber);margin-top:2px" id="batchdata-status-txt">Key required &mdash; set BATCHDATA_API_KEY in Railway env vars &mdash; <a href="https://www.realestateapi.com" target="_blank" style="color:var(--blue)">Sign up free</a></div>
+          </div>
+          <span class="badge b-amber" id="batchdata-badge">PENDING KEY</span>
+        </div>
       </div>
-      <button class="btn btn-purple">Generate Mail Merge Pack</button>
+    </div>
+
+    <div class="card card-p mb12">
+      <div class="sec-hdr">FREE COUNTY RECORDER LINKS — MANUAL NOD SEARCH</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:12px;line-height:1.8">While BatchData key is pending, use these to manually look up NODs:</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="https://arcc-acclaim.sdcounty.ca.gov/search" target="_blank" style="color:var(--blue);font-size:12px;font-weight:700">San Diego County Recorder &rarr; arcc-acclaim.sdcounty.ca.gov</a>
+        <a href="https://www.lavote.gov/apps/officialrecord/search.cfm" target="_blank" style="color:var(--blue);font-size:12px;font-weight:700">LA County Recorder &rarr; lavote.gov</a>
+        <a href="https://www.sdttc.com/" target="_blank" style="color:var(--blue);font-size:12px;font-weight:700">SD County Tax Collector (defaulted bills) &rarr; sdttc.com</a>
+        <a href="https://ttc.lacounty.gov/" target="_blank" style="color:var(--blue);font-size:12px;font-weight:700">LA County Tax Collector &rarr; ttc.lacounty.gov</a>
+        <a href="https://capublicnotice.com" target="_blank" style="color:var(--blue);font-size:12px;font-weight:700">CA Public Notice (statewide NOD/NTS) &rarr; capublicnotice.com</a>
+        <a href="https://publicrecords.netronline.com/state/CA" target="_blank" style="color:var(--blue);font-size:12px;font-weight:700">NETROnline &mdash; All 58 CA county recorders linked &rarr; netronline.com</a>
+        <a href="https://eagleeye.firstam.com" target="_blank" style="color:var(--blue);font-size:12px;font-weight:700">FirstAm Eagle Eye (farm lists) &rarr; eagleeye.firstam.com</a>
+      </div>
+    </div>
+
+    <div class="card card-p">
+      <div class="sec-hdr">ACTIVATE FULL NOD COVERAGE — ALL 58 CA COUNTIES</div>
+      <div style="font-size:11px;color:var(--txt2);line-height:1.8;margin-bottom:12px">
+        1. Sign up free at <a href="https://www.realestateapi.com" target="_blank" style="color:var(--blue)">app.realestateapi.com</a><br/>
+        2. Get your API key from the dashboard<br/>
+        3. Go to Railway &rarr; auditdna-backend-1 &rarr; Variables &rarr; Add <strong style="color:var(--gold)">BATCHDATA_API_KEY</strong><br/>
+        4. Railway redeploys automatically &mdash; ProspectIQ goes fully live for all CA counties
+      </div>
+      <div style="background:var(--card2);border-radius:8px;padding:10px;font-family:monospace;font-size:11px;color:var(--gold)">BATCHDATA_API_KEY = your_key_here</div>
     </div>
   </div>
 
-</div>
+  <!-- EXPORT & CRM -->
+  <div id="tab-export" class="sec">
+    <div class="grid2 mb16">
+      <div class="card card-p" style="text-align:center;padding:20px">
+        <div style="font-size:28px;margin-bottom:8px">&#128202;</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">Export All Results</div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:12px">Full CSV with all flags, scores, APN, owner</div>
+        <button class="btn btn-blue btn-full" onclick="exportCSV()">Download CSV</button>
+      </div>
+      <div class="card card-p" style="text-align:center;padding:20px">
+        <div style="font-size:28px;margin-bottom:8px">&#128293;</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">Hot Leads Only</div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:12px">CRITICAL + HIGH RISK only</div>
+        <button class="btn btn-red btn-full" onclick="exportHot()">Export Hot Leads</button>
+      </div>
+      <div class="card card-p" style="text-align:center;padding:20px">
+        <div style="font-size:28px;margin-bottom:8px">&#128231;</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">Push to CRM</div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:12px">Send hot leads to SaulIntelCRM</div>
+        <button class="btn btn-green btn-full" onclick="sendToCRM()">Push to CRM</button>
+      </div>
+      <div class="card card-p" style="text-align:center;padding:20px">
+        <div style="font-size:28px;margin-bottom:8px">&#128140;</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">Mail Merge Pack</div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:12px">Pre-foreclosure outreach letters</div>
+        <button class="btn btn-purple btn-full" onclick="mailMerge()">Generate Letters</button>
+      </div>
+    </div>
+    <div class="card card-p">
+      <div class="sec-hdr">LETTER TEMPLATES</div>
+      <div class="form-row">
+        <label class="lbl">TEMPLATE</label>
+        <select class="inp" id="letter-template">
+          <option>Pre-Foreclosure — NOD Outreach</option>
+          <option>Tax Default — Help Available</option>
+          <option>Short Sale Candidate</option>
+          <option>Mortgage Audit Recovery — CFPB Rights</option>
+          <option>Cash Offer — Fast Close</option>
+          <option>SBA Loan Assistance — Business Property</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="lbl">YOUR CONTACT INFO</label>
+        <input class="inp" id="letter-contact" value="Saul Garcia, NMLS #337526 | American 1st Partners | 831-251-3116 | sgarcia1911@gmail.com"/>
+      </div>
+    </div>
+  </div>
 
-<script>var pin='';
-var PINS={'4321':'demo','0609051974':'owner'};
-function np(v){if(pin.length<4){pin+=v;upd();if(PINS[pin])setTimeout(checkPin,80);}}
-function nd(){if(pin.length>0){pin=pin.slice(0,-1);upd();}}
-function nc(){pin='';upd();}
-function upd(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
+</div><!-- /app -->
+
+<script>
+var pin='';
+var PINS={'0609':'owner','4321':'demo'};
+var API='https://auditdna-backend-1-production.up.railway.app';
+var scanResults=[];
+var loadedAddresses=[];
+var selectedZips=[];
+var pipelineLeads=[];
+var currentFilter='ALL';
+
+// -- PIN --
+function np(v){if(pin.length<4){pin+=v;updDots();if(PINS[pin])setTimeout(checkPin,80);}}
+function nd(){if(pin.length>0){pin=pin.slice(0,-1);updDots();}}
+function nc(){pin='';updDots();}
+function updDots(){for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.classList.toggle('on',i<pin.length);}}
 function checkPin(){
   if(PINS[pin]){
     document.getElementById('gate').style.cssText='display:none!important';
-    var a=document.getElementById('app');
-    a.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;';
-    goTab('upload');
+    document.getElementById('app').style.cssText='display:block!important';
+    loadLayerStatus();
+    loadDBStatus();
   } else {
-    var e=document.getElementById('g-err');
+    var e=document.getElementById('gerr');
     if(e){e.textContent='Incorrect PIN';setTimeout(function(){e.textContent='';},2000);}
-    pin='';upd();
+    pin='';updDots();
   }
 }
-function lock(){document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';pin='';upd();}
-
-
-function goTab(t){
-  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on')});
-  document.querySelectorAll('.tn').forEach(function(b){b.classList.remove('on')});
-  var el=document.getElementById('tab-'+t);if(el)el.classList.add('on');
-  event.currentTarget.classList.add('on');
+function lock(){pin='';updDots();
+  document.getElementById('gate').style.cssText='display:flex!important';
+  document.getElementById('app').style.cssText='display:none!important';
 }
 
-// SCAN ENGINE
-var loadedAddresses=[];
-function handleFile(file){
-  if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    var text=e.target.result;
-    parseAddresses(text);
-  };
-  if(file.name.match(/\.xlsx?$/i)){
-    document.getElementById('scan-status').textContent='Excel file detected. For best results, export as CSV first.';
-    // Basic fallback — try reading as text
-    reader.readAsText(file);
-  } else {
-    reader.readAsText(file);
-  }
+// -- TABS --
+function goTab(t,el){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.tn').forEach(function(b){b.classList.remove('on');});
+  var sec=document.getElementById('tab-'+t);if(sec)sec.classList.add('on');
+  if(el)el.classList.add('on');
+  else {var tn=document.getElementById('tn-'+t);if(tn)tn.classList.add('on');}
 }
+
+// -- ALERT --
+var alertTimer=null;
+function showAlert(msg,type){
+  var b=document.getElementById('alert-bar');
+  b.textContent=msg;b.className='ab-'+(type||'green');b.style.display='block';
+  if(alertTimer)clearTimeout(alertTimer);
+  alertTimer=setTimeout(function(){b.style.display='none';},4000);
+}
+
+// -- LAYER STATUS --
+
+function loadDBStatus(){
+  fetch(API+'/api/prospectiq/db-status')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var el=document.getElementById('db-status-content');
+      if(!el)return;
+      if(d.ok){
+        el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+          +'<div><div style="font-size:20px;font-weight:900;color:var(--green)">'+d.nod_records+'</div><div style="font-size:9px;color:var(--txt3)">NOD RECORDS</div></div>'
+          +'<div><div style="font-size:20px;font-weight:900;color:var(--red)">'+d.tax_records+'</div><div style="font-size:9px;color:var(--txt3)">TAX DEFAULT RECORDS</div></div>'
+          +'</div>'
+          +'<div style="font-size:10px;color:var(--txt3);margin-top:8px">Last NOD update: '+(d.nod_last_update?new Date(d.nod_last_update).toLocaleString():'Never')+'</div>'
+          +'<div style="font-size:10px;color:var(--txt3)">Last tax update: '+(d.tax_last_update?new Date(d.tax_last_update).toLocaleString():'Never')+'</div>'
+          +'<div style="font-size:10px;color:var(--green);margin-top:4px">Counties: '+d.counties.join(', ')+'</div>';
+      } else {
+        el.innerHTML='<span style="color:var(--amber)">'+( d.message||d.error||'Tables not initialized')+'</span>';
+      }
+    }).catch(function(){
+      var el=document.getElementById('db-status-content');
+      if(el)el.textContent='Backend offline';
+    });
+}
+function initDB(){
+  fetch(API+'/api/prospectiq/init-db',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})
+    .then(function(r){return r.json();})
+    .then(function(d){showAlert(d.message||'DB initialized');setTimeout(loadDBStatus,2000);})
+    .catch(function(){showAlert('Failed to init DB','red');});
+}
+function runScrapeNow(){
+  showAlert('Scrape started \u2014 SD + LA County ArcGIS + Recorder. Check status in 60 seconds.','amber');
+  fetch(API+'/api/prospectiq/run-scrape',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})
+    .then(function(r){return r.json();})
+    .then(function(d){setTimeout(loadDBStatus,60000);})
+    .catch(function(){});
+}
+
+function loadLayerStatus(){
+  fetch(API+'/api/prospectiq/status')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.layers && d.layers.batchdata){
+        var active=d.layers.batchdata.active;
+        var dot=document.getElementById('batchdata-dot');
+        var badge=document.getElementById('batchdata-badge');
+        var txt=document.getElementById('batchdata-status-txt');
+        if(dot) dot.style.background=active?'var(--green)':'var(--amber)';
+        if(badge){badge.textContent=active?'ACTIVE':'PENDING KEY';badge.className='badge '+(active?'b-green':'b-amber');}
+        if(txt&&active) txt.textContent='Active \u2014 All 58 CA counties covered';
+      }
+    }).catch(function(){});
+}
+
+// -- ZIP SELECTION --
+function toggleZip(el){
+  var zip=el.dataset.zip;
+  var idx=selectedZips.indexOf(zip);
+  if(idx>-1){selectedZips.splice(idx,1);el.classList.remove('active');}
+  else{selectedZips.push(zip);el.classList.add('active');}
+}
+
+function scanByZips(){
+  if(selectedZips.length===0){showAlert('Select at least one ZIP code','red');return;}
+  var btn=document.getElementById('zip-scan-btn');
+  btn.textContent='Scanning...';btn.disabled=true;
+
+  var promises=selectedZips.map(function(zip){
+    return fetch(API+'/api/prospectiq/scan-zip',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({zip:zip})
+    }).then(function(r){return r.json();}).catch(function(e){return {ok:false,zip:zip,error:e.message};});
+  });
+
+  Promise.all(promises).then(function(results){
+    btn.textContent='SCAN SELECTED ZIPS';btn.disabled=false;
+    var allProps=[];
+    results.forEach(function(r){
+      if(r.ok && r.properties) allProps=allProps.concat(r.properties);
+      else if(r.error && r.error.includes('BatchData')) showAlert('BatchData key required for ZIP scan. See Data Sources tab.','amber');
+    });
+    if(allProps.length>0){
+      // Convert to scan result format
+      allProps.forEach(function(p){
+        p.county=detectCounty(p.address||'');
+        if(!p.score) p.score=scoreProperty(p);
+        scanResults.push(p);
+      });
+      updateStats();renderResults();
+      goTab('results',document.getElementById('tn-results'));
+      showAlert('ZIP scan complete \u2014 '+allProps.length+' properties found');
+    } else {
+      showAlert('No distressed properties found in selected ZIPs (BatchData key may be needed)','amber');
+    }
+  });
+}
+
+// -- ADDRESS UPLOAD --
 function handleDrop(e){
   e.preventDefault();
   document.getElementById('drop-zone').classList.remove('drag');
   var file=e.dataTransfer.files[0];
   if(file)handleFile(file);
 }
+function handleFile(file){
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){parseAddresses(e.target.result);};
+  reader.readAsText(file);
+}
 function parsePaste(){
   var text=document.getElementById('paste-area').value;
-  if(!text.trim())return;
+  if(!text.trim()){showAlert('No addresses entered','red');return;}
   parseAddresses(text);
 }
 function parseAddresses(text){
   var lines=text.split('\n');
   var found=[];
   for(var i=0;i<lines.length;i++){
-    var t=lines[i].replace('\r','').trim();
-    if(!t)continue;
-    found.push(t);
+    var t=lines[i].replace(/\r/g,'').trim();
+    if(t&&t.length>5&&/\d/.test(t))found.push(t);
   }
   loadedAddresses=found;
   document.getElementById('s-total').textContent=found.length;
-  alert(found.length+' addresses loaded. Click RUN FULL SCAN to cross-reference.');
+  document.getElementById('scan-status').textContent=found.length+' addresses loaded. Click RUN FULL SCAN.';
+  showAlert(found.length+' addresses loaded');
 }
-function parsePaste(){
-  var text=document.getElementById('paste-area').value;
-  if(!text.trim())return;
-  parseAddresses(text);
-}
-function parseAddresses(text){
-  var lines = text.split('\n');
-  var found = [];
-  for(var i=0; i<lines.length; i++){
-    var t = lines[i].split('\r').join('').trim();
-    if(t) found.push(t);
+
+// -- FULL SCAN --
+function runScan(){
+  if(loadedAddresses.length===0){showAlert('Load addresses first','red');return;}
+  var btn=document.getElementById('run-scan-btn');
+  btn.textContent='Scanning...';btn.disabled=true;
+  scanResults=[];
+
+  var bar=document.getElementById('scan-bar');bar.style.display='block';
+  var fill=document.getElementById('scan-bar-fill');
+  var lbl=document.getElementById('scan-bar-label');
+  var pct=document.getElementById('scan-bar-pct');
+
+  // Send in batches of 20
+  var batchSize=20;
+  var batches=[];
+  for(var i=0;i<loadedAddresses.length;i+=batchSize){
+    batches.push(loadedAddresses.slice(i,i+batchSize));
   }
-  loadedAddresses = found;
-  document.getElementById('s-total').textContent = found.length;
-  alert(found.length + ' addresses loaded. Click RUN FULL SCAN.');
+
+  var completed=0;
+  var totalAddresses=loadedAddresses.length;
+
+  function processNextBatch(batchIdx){
+    if(batchIdx>=batches.length){
+      btn.textContent='RUN FULL SCAN';btn.disabled=false;
+      fill.style.width='100%';
+      lbl.textContent='Scan complete \u2014 '+scanResults.length+' addresses processed';
+      pct.textContent='';
+      updateStats();renderResults();populatePipeline();
+      goTab('results',document.getElementById('tn-results'));
+      showAlert('Scan complete \u2014 '+scanResults.filter(function(r){return r.score==='CRITICAL';}).length+' critical, '+scanResults.filter(function(r){return r.score==='HIGH';}).length+' high risk');
+      return;
+    }
+    var batch=batches[batchIdx];
+    lbl.textContent='Scanning batch '+(batchIdx+1)+' of '+batches.length+'...';
+    fetch(API+'/api/prospectiq/scan-v2',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({addresses:batch})
+    }).then(function(r){return r.json();})
+    .then(function(data){
+      if(data.results) scanResults=scanResults.concat(data.results);
+      completed+=batch.length;
+      var pctVal=Math.round(completed/totalAddresses*100);
+      fill.style.width=pctVal+'%';
+      pct.textContent=completed+' of '+totalAddresses+' addresses scanned';
+      processNextBatch(batchIdx+1);
+    }).catch(function(err){
+      completed+=batch.length;
+      processNextBatch(batchIdx+1);
+    });
+  }
+  processNextBatch(0);
+}
+
+// -- SCORING --
+function scoreProperty(p){
+  if(p.nod||p.nts)return 'CRITICAL';
+  if(p.taxDefault||p.irsLien||p.lisPendens)return 'HIGH';
+  if(p.mechanicLien||p.hoaDelinquent)return 'HIGH';
+  return 'CLEAR';
+}
+function detectCounty(addr){
+  var a=addr.toUpperCase();
+  if(a.includes('EL CAJON')||a.includes('LA MESA')||a.includes('SANTEE')||a.includes('SAN DIEGO')||a.includes('CHULA VISTA')||a.includes('SPRING VALLEY')||a.includes('LEMON GROVE')||a.includes('LAKESIDE')||a.includes('OCEANSIDE')||a.includes('ESCONDIDO'))return 'SAN_DIEGO';
+  if(a.includes('LOS ANGELES')||a.includes('BURBANK')||a.includes('GLENDALE')||a.includes('PASADENA')||a.includes('LONG BEACH')||a.includes('COMPTON')||a.includes('INGLEWOOD')||a.includes('TORRANCE'))return 'LOS_ANGELES';
+  return 'UNKNOWN';
+}
+
+// -- STATS --
+function updateStats(){
+  var cr=scanResults.filter(function(r){return r.score==='CRITICAL';}).length;
+  var hi=scanResults.filter(function(r){return r.score==='HIGH';}).length;
+  var cl=scanResults.filter(function(r){return r.score==='CLEAR';}).length;
+  ['s-total','r-total'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=scanResults.length;});
+  ['s-critical','r-critical'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=cr;});
+  ['s-high','r-high'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=hi;});
+  ['s-clear','r-clear'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=cl;});
+}
+
+// -- RENDER RESULTS --
+function renderResults(){
+  var list=document.getElementById('results-list');
+  var data=currentFilter==='ALL'?scanResults:scanResults.filter(function(r){return r.score===currentFilter;});
+  if(!data.length){
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128203;</div><div class="empty-txt">No results'+(currentFilter!=='ALL'?' for: '+currentFilter:'')+'</div></div>';
+    return;
+  }
+  var html='<table class="scan-tbl"><thead><tr>'
+    +'<th>ADDRESS</th><th>NOD/NTS</th><th>TAX DEFAULT</th><th>LIENS</th><th>LIS PENDENS</th><th>OWNER</th><th>ASSESSED</th><th>OVERALL</th><th>ACTION</th>'
+    +'</tr></thead><tbody>';
+  data.forEach(function(r){
+    var rowCls=r.score==='CRITICAL'?'critical':r.score==='HIGH'?'high':'clear';
+    var scoreBadge=r.score==='CRITICAL'?'<span class="badge b-red">CRITICAL</span>':r.score==='HIGH'?'<span class="badge b-amber">HIGH</span>':'<span class="badge b-green">CLEAR</span>';
+    var nodBadge=r.nod?'<span class="badge b-red">NOD FILED</span>':r.nts?'<span class="badge b-red">NTS FILED</span>':'<span style="color:var(--txt3)">-</span>';
+    var taxBadge=r.taxDefault?'<span class="badge b-red">DELINQUENT</span>':'<span style="color:var(--txt3)">-</span>';
+    var lienParts=[];
+    if(r.irsLien)lienParts.push('<span class="badge b-red">IRS LIEN</span>');
+    if(r.mechanicLien)lienParts.push('<span class="badge b-amber">MECHANIC</span>');
+    if(r.hoaDelinquent)lienParts.push('<span class="badge b-amber">HOA</span>');
+    var lienBadge=lienParts.length?lienParts.join(' '):'<span style="color:var(--txt3)">-</span>';
+    var lisBadge=r.lisPendens?'<span class="badge b-amber">FILED</span>':'<span style="color:var(--txt3)">-</span>';
+    var assessedVal=r.assessedValue?Math.round(r.assessedValue/1000)+'K':'-';
+    var rj=JSON.stringify(JSON.stringify(r));
+    html+='<tr class="'+rowCls+'">'
+      +'<td><div class="scan-addr">'+r.address+'</div>'+(r.apn?'<div class="scan-apn">APN: '+r.apn+'</div>':'')+(r.fromDB?'<div style="font-size:8px;color:var(--green)">DB</div>':'')+'</td>'
+      +'<td>'+nodBadge+'</td>'
+      +'<td>'+taxBadge+'</td>'
+      +'<td>'+lienBadge+'</td>'
+      +'<td>'+lisBadge+'</td>'
+      +'<td style="font-size:10px;color:var(--txt2)">'+(r.ownerName||'-')+'</td>'
+      +'<td style="font-size:11px;color:var(--txt2)">'+assessedVal+'</td>'
+      +'<td>'+scoreBadge+'</td>'
+      +'<td><button class="btn btn-purple" style="font-size:9px;padding:4px 8px" onclick="addToPipeline('+rj+')">+ Lead</button></td>'
+      +'</tr>';
+  });
+  html+='</tbody></table>';
+  list.innerHTML=html;
+}
+function filterResults(f){currentFilter=f;renderResults();}
+
+// -- PIPELINE --
+function populatePipeline(){
+  var hot=scanResults.filter(function(r){return r.score==='CRITICAL'||r.score==='HIGH';});
+  hot.forEach(function(r){
+    if(!pipelineLeads.find(function(p){return p.address===r.address;})){
+      pipelineLeads.push(Object.assign({},r,{status:'NEW',addedAt:new Date().toLocaleDateString()}));
+    }
+  });
+  renderPipeline();
+}
+function addToPipeline(jsonStr){
+  var r=JSON.parse(jsonStr);
+  if(!pipelineLeads.find(function(p){return p.address===r.address;})){
+    pipelineLeads.push(Object.assign({},r,{status:'NEW',addedAt:new Date().toLocaleDateString()}));
+    renderPipeline();showAlert('Added to pipeline: '+r.address);
+  } else {showAlert('Already in pipeline','amber');}
+}
+function renderPipeline(){
+  var tbody=document.getElementById('pipeline-body');
+  if(!pipelineLeads.length){
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="empty-txt">Pipeline empty -- run a scan to populate</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML=pipelineLeads.map(function(p,i){
+    var flags='';
+    if(p.nod)flags+='<span class="badge b-red">NOD</span> ';
+    if(p.nts)flags+='<span class="badge b-red">NTS</span> ';
+    if(p.taxDefault)flags+='<span class="badge b-amber">TAX</span> ';
+    if(p.irsLien)flags+='<span class="badge b-amber">IRS</span> ';
+    if(!flags)flags='<span class="badge b-grey">'+p.score+'</span>';
+    var scoreBadge=p.score==='CRITICAL'?'<span class="badge b-red">CRITICAL</span>':'<span class="badge b-amber">HIGH</span>';
+    var statuses=['NEW','CONTACTED','FOLLOW UP','CLOSED','DEAD'];
+    var statusSel='<select style="background:var(--card2);border:1px solid var(--bord);color:var(--txt);font-size:10px;padding:3px 6px;border-radius:5px" onchange="updateLeadStatus('+i+',this.value)">'
+      +statuses.map(function(s){return '<option'+(s===p.status?' selected':'')+'>'+s+'</option>';}).join('')
+      +'</select>';
+    var assessedVal=p.assessedValue?Math.round(p.assessedValue/1000)+'K':'-';
+    return '<tr>'
+      +'<td><div class="scan-addr" style="font-size:11px">'+p.address+'</div></td>'
+      +'<td style="font-size:10px;color:var(--txt2)">'+(p.ownerName||'-')+'</td>'
+      +'<td>'+flags+'</td>'
+      +'<td>'+scoreBadge+'</td>'
+      +'<td style="font-size:10px;font-family:monospace;color:var(--txt3)">'+(p.apn||'-')+'</td>'
+      +'<td style="font-size:10px;color:var(--txt2)">'+assessedVal+'</td>'
+      +'<td>'+statusSel+'</td>'
+      +'<td><button class="btn btn-ghost" style="font-size:9px;padding:3px 8px" onclick="removeLead('+i+')">Remove</button></td>'
+      +'</tr>';
+  }).join('');
+}
+function updateLeadStatus(i,status){pipelineLeads[i].status=status;renderPipeline();}
+function removeLead(i){pipelineLeads.splice(i,1);renderPipeline();}
+function clearPipeline(){pipelineLeads=[];renderPipeline();}
+
+// -- EXPORT --
+function exportCSV(){
+  if(!scanResults.length){showAlert('No scan results to export','red');return;}
+  var hdr='Address,County,APN,Owner,AssessedValue,NOD,NTS,TaxDefault,IrsLien,LisPendens,MechanicLien,HOA,Score,Source\n';
+  var rows=scanResults.map(function(r){
+    return [r.address,r.county||'',r.apn||'',r.ownerName||'',r.assessedValue||'',
+      r.nod?'YES':'',r.nts?'YES':'',r.taxDefault?'YES':'',r.irsLien?'YES':'',
+      r.lisPendens?'YES':'',r.mechanicLien?'YES':'',r.hoaDelinquent?'YES':'',
+      r.score,(r.source||[]).join('+')].map(function(v){return '"'+v+'"';}).join(',');
+  }).join('\n');
+  dlFile('prospectiq_scan_'+Date.now()+'.csv','text/csv',hdr+rows);
+}
+function exportHot(){
+  var hot=scanResults.filter(function(r){return r.score==='CRITICAL'||r.score==='HIGH';});
+  if(!hot.length){showAlert('No hot leads found','amber');return;}
+  var hdr='Address,Score,NOD,TaxDefault,IrsLien,Owner,APN,AuctionDate,Trustee\n';
+  var rows=hot.map(function(r){
+    return [r.address,r.score,r.nod?'YES':'',r.taxDefault?'YES':'',r.irsLien?'YES':'',
+      r.ownerName||'',r.apn||'',r.auctionDate||'',r.trustee||''].map(function(v){return '"'+v+'"';}).join(',');
+  }).join('\n');
+  dlFile('prospectiq_hot_leads_'+Date.now()+'.csv','text/csv',hdr+rows);
+  showAlert('Exported '+hot.length+' hot leads');
+}
+function sendToCRM(){showAlert('CRM push \u2014 connect SaulIntelCRM endpoint to activate','amber');}
+function mailMerge(){showAlert('Mail merge \u2014 coming in next sprint','amber');}
+function dlFile(name,type,content){
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type:type}));
+  a.download=name;a.click();
+}
+</script>
+
+<script>
+// PROSPECTIQ LIVE ENGINE — ArcGIS + Railway NOD Scraper
+(function(){
+var RAILWAY = 'https://auditdna-backend-1-production.up.railway.app';
+
+// Wire scan button to Railway
+var scanBtn = document.getElementById('scan-btn') || document.querySelector('[onclick*="scan"]') || document.querySelector('.search-btn') || document.querySelector('button');
+var resultsEl = document.getElementById('results') || document.getElementById('property-results') || document.getElementById('scan-results');
+
+// Create results div if missing
+if(!resultsEl) {
+  resultsEl = document.createElement('div');
+  resultsEl.id = 'piq-results';
+  resultsEl.style.cssText = 'margin:16px;padding:16px;background:#161b22;border:1px solid rgba(201,165,92,0.2);border-radius:12px;font-family:monospace;font-size:11px;color:#e2e8f0;max-height:600px;overflow-y:auto;display:none';
+  document.body.appendChild(resultsEl);
+}
+
+// Live ArcGIS SD County Tax Default scan
+async function scanSDCounty(query) {
+  var statusEl = document.getElementById('scan-status') || document.createElement('div');
+  statusEl.style.color='#C9A55C';
+  statusEl.textContent = 'Scanning SD County ArcGIS...';
+  resultsEl.style.display='block';
+  resultsEl.innerHTML='<div style="color:#C9A55C;font-weight:700">SCANNING SD COUNTY — TAX DEFAULT PROPERTIES...</div>';
+
+  try {
+    // ArcGIS SD County Assessor — public free endpoint
+    var arcUrl = 'https://services.arcgis.com/4TXrdeWh0RyCqPgB/arcgis/rest/services/SD_County_Parcels/FeatureServer/0/query?where=1%3D1&outFields=APN,SITUS_ADDRESS,OWNER_NAME,LAND_VALUE,NET_VALUE&returnGeometry=false&resultRecordCount=50&f=json';
+    
+    var r = await fetch(arcUrl, { signal: AbortSignal.timeout(12000) });
+    var d = await r.json();
+    
+    if(d.features && d.features.length) {
+      var rows = d.features.map(function(f,i) {
+        var a = f.attributes;
+        return '<tr style="border-bottom:1px solid rgba(255,255,255,0.05)">' +
+          '<td style="padding:6px 10px;color:#C9A55C">'+(a.APN||'-')+'</td>' +
+          '<td style="padding:6px 10px;color:#e2e8f0">'+(a.SITUS_ADDRESS||'-')+'</td>' +
+          '<td style="padding:6px 10px;color:#94a3b8">'+(a.OWNER_NAME||'-')+'</td>' +
+          '<td style="padding:6px 10px;color:#22c55e">$'+(parseInt(a.NET_VALUE||0).toLocaleString())+'</td>' +
+          '</tr>';
+      }).join('');
+      
+      resultsEl.innerHTML = '<div style="color:#22c55e;font-weight:700;margin-bottom:10px">SD COUNTY — '+d.features.length+' PROPERTIES FOUND</div>' +
+        '<table style="width:100%;border-collapse:collapse">' +
+        '<tr style="background:#0d1117"><th style="padding:6px 10px;color:#C9A55C;text-align:left">APN</th><th style="padding:6px 10px;color:#C9A55C;text-align:left">Address</th><th style="padding:6px 10px;color:#C9A55C;text-align:left">Owner</th><th style="padding:6px 10px;color:#C9A55C;text-align:left">Net Value</th></tr>' +
+        rows + '</table>';
+    } else {
+      // Fallback — Railway NOD endpoint
+      var rNod = await fetch(RAILWAY+'/api/prospectiq/scan', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({county:'san_diego',type:'tax_default',limit:50}),
+        signal: AbortSignal.timeout(12000)
+      });
+      var nd = await rNod.json();
+      if(nd.properties && nd.properties.length) {
+        resultsEl.innerHTML = '<div style="color:#22c55e;font-weight:700;margin-bottom:10px">'+nd.properties.length+' NOD PROPERTIES — SD COUNTY</div>' +
+          nd.properties.map(function(p){ return '<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#C9A55C">'+p.apn+'</span> — '+p.address+' — <span style="color:#22c55e">$'+parseInt(p.value||0).toLocaleString()+'</span></div>'; }).join('');
+      } else {
+        resultsEl.innerHTML = '<div style="color:#94a3b8;padding:16px">ArcGIS returned no results for this query. Try SD County Assessor directly:<br><a href="https://arcc-acclaim.sdcounty.ca.gov/search" target="_blank" style="color:#4a8fd4">arcc-acclaim.sdcounty.ca.gov</a><br><a href="https://www.sdttc.com/" target="_blank" style="color:#4a8fd4">sdttc.com — Tax Default List</a></div>';
+      }
+    }
+  } catch(e) {
+    resultsEl.innerHTML = '<div style="color:#ef4444;padding:10px">ArcGIS scan error: '+e.message+'<br><br>Direct county links:<br><a href="https://arcc-acclaim.sdcounty.ca.gov/search" target="_blank" style="color:#4a8fd4">SD County Property Search</a><br><a href="https://www.sdttc.com/" target="_blank" style="color:#4a8fd4">SD Tax Default List</a><br><a href="https://ttc.lacounty.gov/" target="_blank" style="color:#4a8fd4">LA County Tax Collector</a></div>';
+  }
+}
+
+// LA County scan
+async function scanLACounty() {
+  resultsEl.style.display='block';
+  resultsEl.innerHTML='<div style="color:#C9A55C;font-weight:700">SCANNING LA COUNTY...</div>';
+  try {
+    var r = await fetch(RAILWAY+'/api/prospectiq/scan',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({county:'los_angeles',type:'tax_default',limit:50}),
+      signal: AbortSignal.timeout(12000)
+    });
+    var d = await r.json();
+    resultsEl.innerHTML = d.properties && d.properties.length ?
+      '<div style="color:#22c55e;font-weight:700;margin-bottom:10px">'+d.properties.length+' LA COUNTY PROPERTIES</div>' +
+      d.properties.map(function(p){return '<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#C9A55C">'+p.apn+'</span> — '+p.address+'</div>';}).join('') :
+      '<div style="color:#94a3b8;padding:16px">No results. <a href="https://ttc.lacounty.gov/" target="_blank" style="color:#4a8fd4">LA County Tax Collector Direct</a></div>';
+  } catch(e) {
+    resultsEl.innerHTML='<div style="color:#ef4444">LA County scan error: '+e.message+'<br><a href="https://ttc.lacounty.gov/" target="_blank" style="color:#4a8fd4">LA County Tax Collector</a></div>';
+  }
+}
+
+// Expose globally
+window.scanSDCounty = scanSDCounty;
+window.scanLACounty = scanLACounty;
+window.piqScan = scanSDCounty;
+
+// Hook existing search buttons
+document.addEventListener('DOMContentLoaded', function(){
+  var btns = document.querySelectorAll('button, .btn, .search-btn, [onclick*="search"], [onclick*="scan"]');
+  btns.forEach(function(b){
+    if(b.textContent.toLowerCase().includes('scan')||b.textContent.toLowerCase().includes('search')||b.textContent.toLowerCase().includes('sd county')||b.textContent.toLowerCase().includes('san diego')) {
+      b.addEventListener('click', function(){ scanSDCounty(); });
+    }
+    if(b.textContent.toLowerCase().includes('la county')||b.textContent.toLowerCase().includes('los angeles')) {
+      b.addEventListener('click', function(){ scanLACounty(); });
+    }
+  });
+  
+  // Status indicator
+  var statusDiv = document.createElement('div');
+  statusDiv.style.cssText='position:fixed;bottom:20px;left:20px;z-index:8000;background:#0d1117;border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:6px 14px;font-size:9px;font-weight:800;color:#22c55e;letter-spacing:1px;font-family:Arial,sans-serif';
+  statusDiv.textContent='PROSPECTIQ LIVE — ARCGIS + NOD ENGINE';
+  document.body.appendChild(statusDiv);
+});
+})();
+
+var _lastPin='';
+function loadPlpData(){
+  var portal=window.location.pathname.split('/').pop();
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/logins?portal='+encodeURIComponent(portal))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var tb=document.getElementById('plp-tbody');
+      if(!tb)return;
+      if(!d.logins||!d.logins.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No logins yet.</td></tr>';return;}
+      tb.innerHTML=d.logins.slice(0,50).map(function(l){
+        var dt=new Date(l.logged_in_at);
+        var ts=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        return '<tr><td style="color:#e2e8f0;font-weight:700">'+l.username+'</td><td style="color:#C9A55C">'+l.role+'</td><td style="color:#64748b;font-size:9px">'+l.ip_address+'</td><td style="color:#64748b">'+ts+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+function showPlpPanel(){
+  var p=document.getElementById('portal-login-panel');
+  var t=document.getElementById('plp-trigger');
+  if(p){p.style.display='block';if(t)t.style.display='none';loadPlpData();}
+}
+function checkOwnerPin(pin){
+  _lastPin=pin;
+  if(pin==='0609'){var t=document.getElementById('plp-trigger');if(t)t.style.display='block';}
 }
 
 </script>
+<!-- END PROSPECTIQ LIVE ENGINE -->
+<div id="portal-login-panel"><div class="plp-hdr"><span class="plp-title">LOGIN ACTIVITY</span><button class="plp-close" onclick="document.getElementById('portal-login-panel').style.display='none';document.getElementById('plp-trigger').style.display='block'">x</button></div><div class="plp-body"><table><thead><tr><th>USER</th><th>ROLE</th><th>IP</th><th>TIME</th></tr></thead><tbody id="plp-tbody"><tr><td colspan="4" style="text-align:center;color:#64748b">Loading...</td></tr></tbody></table></div></div><button id="plp-trigger" onclick="showPlpPanel()">LOGIN LOG</button>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+
+</html>

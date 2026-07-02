@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AuditDNA Housing Intelligence — Complete System</title>
+<style>
+:root{
+  --bg:#020912;--card:#161b22;--gold:#C9A55C;--blue:#4a8fd4;
+  --green:#22c55e;--red:#ef4444;--txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;
+  --navy:#0d1117;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;line-height:1.6}
+
+/* HEADER */
+.hi-header{background:linear-gradient(135deg,#020912 0%,#0d1a2e 100%);padding:44px 24px 28px;text-align:center;border-bottom:1px solid rgba(201,165,92,0.15)}
+.hi-brand{font-size:11px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.hi-brand-sub{font-size:9.5px;font-weight:700;letter-spacing:2px;color:var(--dim);margin-bottom:14px}
+.hi-title{font-size:clamp(22px,3.6vw,34px);font-weight:900;color:#e2e8f0;line-height:1.2;margin-bottom:10px}
+.hi-title span{color:var(--gold)}
+.hi-sub{font-size:12.5px;color:#94a3b8;max-width:680px;margin:0 auto;line-height:1.7}
+.hi-designer{font-size:9px;color:var(--muted);margin-top:12px;letter-spacing:.5px}
+
+/* NAV */
+.hi-nav{position:sticky;top:0;z-index:100;background:rgba(2,9,18,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,165,92,0.15);display:flex;overflow-x:auto;scrollbar-width:none}
+.hi-nav::-webkit-scrollbar{display:none}
+.hi-nav-item{padding:14px 20px;font-size:10.5px;font-weight:700;letter-spacing:1px;color:rgba(148,163,184,0.6);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s;text-transform:uppercase}
+.hi-nav-item:hover{color:rgba(201,165,92,0.8)}
+.hi-nav-item.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* MAIN */
+.hi-main{max-width:1020px;margin:0 auto;padding:32px 20px 80px}
+.hi-mode{display:none}
+.hi-mode.on{display:block}
+
+/* INTRO CARD */
+.intro-card{background:var(--card);border:1px solid rgba(201,165,92,0.2);border-radius:12px;padding:22px;margin-bottom:22px}
+.intro-card-title{font-size:13px;font-weight:800;color:var(--gold);margin-bottom:9px}
+.intro-card p{font-size:12px;color:var(--dim);line-height:1.8;margin-bottom:9px}
+.intro-card p:last-child{margin-bottom:0}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:22px;margin-bottom:16px}
+.card-title{font-size:13.5px;font-weight:800;color:var(--txt);margin-bottom:6px}
+.card-sub{font-size:11px;color:var(--dim);margin-bottom:16px;line-height:1.6}
+
+/* FORM */
+label{font-size:10.5px;color:var(--dim);font-weight:700;display:block;margin-bottom:5px;margin-top:13px;text-transform:uppercase;letter-spacing:.5px}
+label:first-child{margin-top:0}
+input,select,textarea{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:var(--txt);padding:10px 13px;font-size:12.5px;font-family:inherit;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+.field-hint{font-size:9.5px;color:var(--muted);margin-top:4px;line-height:1.5}
+.section-label{font-size:9.5px;font-weight:800;letter-spacing:1.5px;color:var(--blue);text-transform:uppercase;margin:22px 0 4px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.section-label:first-of-type{margin-top:0;padding-top:0;border-top:none}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin-top:13px}
+.checkbox-row input{width:auto}
+.checkbox-row label{margin:0;text-transform:none;font-size:11.5px;color:var(--txt);font-weight:600;letter-spacing:0}
+
+/* BUTTONS */
+.btn{padding:12px 26px;border-radius:8px;border:none;font-size:12px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:.15s}
+.btn-gold{background:var(--gold);color:#0d1117}
+.btn-gold:hover{opacity:.88}
+.btn-outline{background:transparent;border:1px solid rgba(201,165,92,0.4);color:var(--gold)}
+.btn-outline:hover{background:rgba(201,165,92,0.1)}
+.btn-blue{background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.3);color:var(--blue)}
+.btn-full{width:100%}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+
+/* RESULTS */
+.result-box{display:none;margin-top:18px}
+.result-box.show{display:block}
+
+.result-hero{background:linear-gradient(135deg,rgba(201,165,92,0.1),rgba(74,143,212,0.05));border:1px solid rgba(201,165,92,0.25);border-radius:12px;padding:22px;text-align:center;margin-bottom:14px}
+.result-hero-label{font-size:9.5px;font-weight:700;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:7px}
+.result-hero-val{font-size:32px;font-weight:900;color:var(--gold)}
+.result-hero-note{font-size:11px;color:var(--dim);margin-top:7px}
+
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-bottom:16px}
+.metric-box{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:13px;text-align:center}
+.metric-box.flag{border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.06)}
+.metric-box.good{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.06)}
+.metric-label{font-size:8.5px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+.metric-val{font-size:16px;font-weight:800;color:var(--txt)}
+.metric-box.flag .metric-val{color:#f87171}
+.metric-box.good .metric-val{color:var(--green)}
+
+.breakdown-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:6px}
+.breakdown-table td{padding:8px 4px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.breakdown-table td:first-child{color:var(--dim)}
+.breakdown-table td:last-child{text-align:right;font-weight:700;color:var(--txt)}
+.breakdown-table tr.subtotal td{border-top:1px solid rgba(255,255,255,0.1);padding-top:11px}
+.breakdown-table tr.total td{border-top:2px solid rgba(201,165,92,0.3);border-bottom:none;padding-top:11px}
+.breakdown-table tr.total td:last-child{color:var(--gold);font-size:13px}
+
+.cap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-bottom:14px}
+.cap-box{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:13px;text-align:center}
+.cap-box.binding{border-color:var(--gold);background:rgba(201,165,92,0.08)}
+.cap-label{font-size:8.5px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+.cap-val{font-size:15px;font-weight:800;color:var(--txt)}
+.cap-box.binding .cap-val{color:var(--gold)}
+
+.warning-box{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:13px 15px;font-size:11.5px;color:#f87171;margin-bottom:14px;display:none}
+.warning-box.show{display:block}
+.info-box{background:rgba(74,143,212,0.08);border:1px solid rgba(74,143,212,0.25);border-radius:8px;padding:13px 15px;font-size:11.5px;color:var(--blue);margin-bottom:14px;display:none}
+.info-box.show{display:block}
+
+.sacrifice-meter{margin:14px 0}
+.sacrifice-meter-label{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-bottom:6px}
+.sacrifice-meter-track{height:9px;background:#0d1117;border-radius:5px;overflow:hidden;border:1px solid rgba(255,255,255,0.08)}
+.sacrifice-meter-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:5px;transition:width .4s ease}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:9.5px;font-weight:700;letter-spacing:.3px}
+.badge-green{background:rgba(34,197,94,0.12);color:var(--green)}
+.badge-amber{background:rgba(245,158,11,0.12);color:#f59e0b}
+.badge-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.badge-blue{background:rgba(74,143,212,0.12);color:var(--blue)}
+.badge-gray{background:rgba(255,255,255,0.06);color:var(--dim)}
+
+.mech-toggle{display:flex;gap:7px;margin-bottom:16px;background:#0d1117;border-radius:8px;padding:4px;border:1px solid rgba(255,255,255,0.07)}
+.mech-btn{flex:1;padding:10px;background:transparent;border:none;border-radius:6px;color:var(--dim);font-size:10.5px;font-weight:700;cursor:pointer;transition:.15s}
+.mech-btn.on{background:var(--gold);color:#0d1117}
+
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:11px;margin-top:11px}
+.resource-card{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:15px;text-decoration:none;display:block;transition:.15s}
+.resource-card:hover{border-color:rgba(201,165,92,0.3)}
+.resource-name{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.resource-desc{font-size:10px;color:var(--dim);line-height:1.6}
+
+.timeline{position:relative;padding-left:24px;margin-top:16px}
+.timeline-item{position:relative;padding-bottom:18px}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{position:absolute;left:-24px;top:2px;width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.timeline-line{position:absolute;left:-19.5px;top:14px;bottom:0;width:1px;background:rgba(201,165,92,0.25)}
+.timeline-item:last-child .timeline-line{display:none}
+.timeline-label{font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+.timeline-val{font-size:13px;font-weight:700;color:var(--txt)}
+.timeline-note{font-size:10.5px;color:var(--dim);margin-top:3px;line-height:1.5}
+
+.district-card{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:18px;margin-bottom:12px}
+.district-name{font-size:13px;font-weight:800;color:var(--txt);margin-bottom:10px}
+.district-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.district-stat{text-align:center}
+.district-stat-val{font-size:18px;font-weight:900;color:var(--gold)}
+.district-stat-label{font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+
+.checklist-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.checklist-item:last-child{border-bottom:none}
+.checklist-check{color:var(--gold);flex-shrink:0}
+.checklist-text{font-size:11px;color:var(--dim);line-height:1.6}
+
+.method-note{font-size:10px;color:var(--muted);line-height:1.8;margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.method-note a{color:var(--blue)}
+
+.loading-text{text-align:center;color:var(--muted);font-size:11px;padding:30px}
+
+@media(max-width:680px){
+  .form-row,.form-row3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hi-header">
+  <div class="hi-brand">AUDITDNA HOUSING INTELLIGENCE</div>
+  <div class="hi-brand-sub">MFGINC</div>
+  <h1 class="hi-title">One System.<br><span>Every Side of the Housing Equation.</span></h1>
+  <p class="hi-sub">Landlords, renters, homeowners, buyers, and communities — one connected calculator, built around a single idea: lower verified rent should permanently lower real cost, not just produce a one-time check.</p>
+  <div class="hi-designer">Designed by Saul Garcia &middot; AuditDNA Intelligence</div>
+</div>
+
+<div class="hi-nav" id="hi-nav">
+  <div class="hi-nav-item on" data-mode="landlord" onclick="showMode('landlord',this)">Landlord</div>
+  <div class="hi-nav-item" data-mode="curtailment" onclick="showMode('curtailment',this)">Principal Buydown</div>
+  <div class="hi-nav-item" data-mode="renter" onclick="showMode('renter',this)">Renter</div>
+  <div class="hi-nav-item" data-mode="homeowner" onclick="showMode('homeowner',this)">Homeowner Tax</div>
+  <div class="hi-nav-item" data-mode="buyer" onclick="showMode('buyer',this)">Buyer / Covenant</div>
+  <div class="hi-nav-item" data-mode="community" onclick="showMode('community',this)">Community Impact</div>
+  <div class="hi-nav-item" data-mode="crisis" onclick="showMode('crisis',this)" style="color:#f87171">Need Help Now</div>
+</div>
+
+<div class="hi-main">
+<!-- MODE SECTIONS INSERTED HERE BY BUILD SCRIPT -->
+<div class="hi-mode on" id="mode-landlord">
+  <div class="intro-card">
+    <div class="intro-card-title">For Landlords</div>
+    <p>Enter your mortgage, costs, and proposed rent reduction. This calculates your real breakeven rent, your margin sacrifice, and the tax benefit you would be eligible for — sized to what you can actually afford to give up, not a flat number.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Step 1 — Your Property &amp; Mortgage</div>
+    <div class="card-sub">This determines your real breakeven rent — the actual floor below which you start losing money every month.</div>
+
+    <div class="section-label">Mortgage</div>
+    <div class="form-row">
+      <div>
+        <label>Current Mortgage Balance</label>
+        <input type="number" id="hi-balance" value="250000">
+      </div>
+      <div>
+        <label>Interest Rate (%)</label>
+        <input type="number" step="0.01" id="hi-rate" value="5.5">
+      </div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Remaining Loan Term (years)</label>
+        <input type="number" id="hi-term" value="25">
+      </div>
+      <div>
+        <label>Number of Rental Units on This Loan</label>
+        <input type="number" id="hi-units" value="1">
+      </div>
+    </div>
+
+    <div class="section-label">Property Costs (Annual)</div>
+    <div class="form-row3">
+      <div>
+        <label>Property Tax</label>
+        <input type="number" id="hi-tax" value="3600">
+      </div>
+      <div>
+        <label>Insurance</label>
+        <input type="number" id="hi-insurance" value="1500">
+      </div>
+      <div>
+        <label>Maintenance Reserve</label>
+        <input type="number" id="hi-maintenance" value="1800">
+      </div>
+    </div>
+
+    <div class="section-label">Rent</div>
+    <div class="form-row">
+      <div>
+        <label>Current Market Rent (per unit / month)</label>
+        <input type="number" id="hi-marketrent" value="2600">
+      </div>
+      <div>
+        <label>Proposed Reduced Rent (per unit / month)</label>
+        <input type="number" id="hi-reducedrent" value="2300">
+      </div>
+    </div>
+
+    <div class="section-label">Property Identification (for Community Impact tracking)</div>
+    <label>County</label>
+    <select id="hi-county-select" onchange="document.getElementById('hi-district').value = this.value ? this.value + ' County' : '';">
+<option value="">Select your county</option>
+      <option value="Alameda">Alameda County — $162,800 AMI</option>
+      <option value="Alpine">Alpine County — $129,500 AMI</option>
+      <option value="Amador">Amador County — $110,500 AMI</option>
+      <option value="Butte">Butte County — $97,100 AMI</option>
+      <option value="Calaveras">Calaveras County — $102,600 AMI</option>
+      <option value="Colusa">Colusa County — $97,100 AMI</option>
+      <option value="Contra Costa">Contra Costa County — $162,800 AMI</option>
+      <option value="Del Norte">Del Norte County — $97,100 AMI</option>
+      <option value="El Dorado">El Dorado County — $124,000 AMI</option>
+      <option value="Fresno">Fresno County — $97,100 AMI</option>
+      <option value="Glenn">Glenn County — $97,100 AMI</option>
+      <option value="Humboldt">Humboldt County — $97,100 AMI</option>
+      <option value="Imperial">Imperial County — $97,100 AMI</option>
+      <option value="Inyo">Inyo County — $97,200 AMI</option>
+      <option value="Kern">Kern County — $97,100 AMI</option>
+      <option value="Kings">Kings County — $97,100 AMI</option>
+      <option value="Lake">Lake County — $97,100 AMI</option>
+      <option value="Lassen">Lassen County — $97,100 AMI</option>
+      <option value="Los Angeles">Los Angeles County — $108,100 AMI</option>
+      <option value="Madera">Madera County — $97,100 AMI</option>
+      <option value="Marin">Marin County — $200,800 AMI</option>
+      <option value="Mariposa">Mariposa County — $97,100 AMI</option>
+      <option value="Mendocino">Mendocino County — $99,100 AMI</option>
+      <option value="Merced">Merced County — $97,100 AMI</option>
+      <option value="Modoc">Modoc County — $97,100 AMI</option>
+      <option value="Mono">Mono County — $120,400 AMI</option>
+      <option value="Monterey">Monterey County — $110,500 AMI</option>
+      <option value="Napa">Napa County — $165,400 AMI</option>
+      <option value="Nevada">Nevada County — $140,400 AMI</option>
+      <option value="Orange">Orange County — $138,600 AMI</option>
+      <option value="Placer">Placer County — $124,000 AMI</option>
+      <option value="Plumas">Plumas County — $97,100 AMI</option>
+      <option value="Riverside">Riverside County — $106,500 AMI</option>
+      <option value="Sacramento">Sacramento County — $124,000 AMI</option>
+      <option value="San Benito">San Benito County — $140,200 AMI</option>
+      <option value="San Bernardino">San Bernardino County — $106,500 AMI</option>
+      <option value="San Diego">San Diego County — $130,900 AMI</option>
+      <option value="San Francisco">San Francisco County — $200,800 AMI</option>
+      <option value="San Joaquin">San Joaquin County — $108,100 AMI</option>
+      <option value="San Luis Obispo">San Luis Obispo County — $129,600 AMI</option>
+      <option value="San Mateo">San Mateo County — $200,800 AMI</option>
+      <option value="Santa Barbara">Santa Barbara County — $119,100 AMI</option>
+      <option value="Santa Clara">Santa Clara County — $205,500 AMI</option>
+      <option value="Santa Cruz">Santa Cruz County — $137,200 AMI</option>
+      <option value="Shasta">Shasta County — $101,800 AMI</option>
+      <option value="Sierra">Sierra County — $97,100 AMI</option>
+      <option value="Siskiyou">Siskiyou County — $97,100 AMI</option>
+      <option value="Solano">Solano County — $124,600 AMI</option>
+      <option value="Sonoma">Sonoma County — $133,400 AMI</option>
+      <option value="Stanislaus">Stanislaus County — $98,500 AMI</option>
+      <option value="Sutter">Sutter County — $101,900 AMI</option>
+      <option value="Tehama">Tehama County — $97,100 AMI</option>
+      <option value="Trinity">Trinity County — $97,100 AMI</option>
+      <option value="Tulare">Tulare County — $97,100 AMI</option>
+      <option value="Tuolumne">Tuolumne County — $102,200 AMI</option>
+      <option value="Ventura">Ventura County — $135,600 AMI</option>
+      <option value="Yolo">Yolo County — $135,900 AMI</option>
+      <option value="Yuba">Yuba County — $101,900 AMI</option>
+    </select>
+    <div class="form-row" style="margin-top:13px">
+      <div>
+        <label>County / District (auto-fills, edit to add district number)</label>
+        <input type="text" id="hi-district" placeholder="e.g. Monterey County — District 2" value="San Diego County — District 4">
+      </div>
+      <div>
+        <label>Property Reference (address or parcel #)</label>
+        <input type="text" id="hi-propref" placeholder="e.g. 123 Main St or Parcel #1234-567">
+      </div>
+    </div>
+
+    <button class="btn btn-gold btn-full" style="margin-top:20px" onclick="calcBreakeven()">Calculate My Breakeven &amp; Margin</button>
+  </div>
+
+  <div class="result-box" id="step1-result">
+    <div class="card">
+      <div class="card-title">Your Real Numbers</div>
+      <div class="warning-box" id="hi-warning"></div>
+      <div class="metric-grid" id="hi-metrics"></div>
+      <div class="sacrifice-meter">
+        <div class="sacrifice-meter-label"><span>Margin Sacrifice</span><span id="sacrifice-pct-label">0%</span></div>
+        <div class="sacrifice-meter-track"><div class="sacrifice-meter-fill" id="sacrifice-meter-fill" style="width:0%"></div></div>
+      </div>
+      <table class="breakdown-table">
+        <tr><td>Monthly mortgage payment (P&amp;I)</td><td id="bd-pi">—</td></tr>
+        <tr><td>+ Monthly property tax</td><td id="bd-tax-m">—</td></tr>
+        <tr><td>+ Monthly insurance</td><td id="bd-ins-m">—</td></tr>
+        <tr><td>+ Monthly maintenance reserve</td><td id="bd-maint-m">—</td></tr>
+        <tr class="subtotal"><td>Breakeven monthly rent (per unit)</td><td id="bd-breakeven">—</td></tr>
+        <tr><td>Market rent</td><td id="bd-market">—</td></tr>
+        <tr class="total"><td>Your real monthly margin at market rent</td><td id="bd-margin">—</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Step 2 — Tax Benefit Mechanism</div>
+    <div class="card-sub">Two real mechanisms. Compare both — note how dramatically different they are depending on your income situation.</div>
+
+    <div class="mech-toggle">
+      <button class="mech-btn on" id="mech-credit-btn" onclick="setMechanism('credit')">Property Tax Credit</button>
+      <button class="mech-btn" id="mech-deduction-btn" onclick="setMechanism('deduction')">Income Tax Deduction</button>
+    </div>
+
+    <div id="credit-inputs">
+      <label>Maximum Credit as % of Property Tax Bill</label>
+      <select id="hi-credit-cap-pct">
+        <option value="0.50">50% of property tax bill</option>
+        <option value="0.65" selected>65% of property tax bill</option>
+        <option value="0.80">80% of property tax bill</option>
+        <option value="1.00">100% of property tax bill</option>
+      </select>
+    </div>
+
+    <div id="deduction-inputs" style="display:none">
+      <label>Deduction Multiplier</label>
+      <select id="hi-deduction-mult">
+        <option value="1.00">1.00x (no multiplier)</option>
+        <option value="1.25" selected>1.25x (extra 25%)</option>
+        <option value="1.50">1.50x (extra 50%)</option>
+      </select>
+      <label>Your Marginal Tax Rate (federal + state combined, %)</label>
+      <input type="number" id="hi-marginal-rate" value="32">
+      <div class="info-box show" style="margin-top:10px">If your income is mostly Social Security, a pension, or otherwise has little federal taxable income, this mechanism may be worth very little to you — check the Principal Buydown tab instead, which works regardless of your income source.</div>
+    </div>
+
+    <label>Per-Unit Annual Cap (hard ceiling)</label>
+    <input type="number" id="hi-hardcap" value="3500">
+
+    <label>How Many Total Rental Properties Do You Own?</label>
+    <select id="hi-portfolio-size">
+      <option value="1">1 — this is my only rental</option>
+      <option value="3">2–4 properties</option>
+      <option value="10">5–19 properties</option>
+      <option value="50">20+ properties (portfolio investor)</option>
+    </select>
+    <div class="field-hint">Most affordability incentive programs scale down for larger portfolios — shown in your results below.</div>
+
+    <button class="btn btn-gold btn-full" style="margin-top:20px" onclick="calcCredit()">Calculate My Tax Benefit</button>
+  </div>
+
+  <div class="result-box" id="step2-result">
+    <div class="result-hero">
+      <div class="result-hero-label" id="result-hero-label">Estimated Annual Property Tax Credit</div>
+      <div class="result-hero-val" id="hi-final">$0</div>
+      <div class="result-hero-note" id="hi-final-note"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">How This Was Sized</div>
+      <div class="cap-grid" id="hi-caps"></div>
+      <table class="breakdown-table">
+        <tr><td>Monthly rent reduction</td><td id="bd2-monthly">—</td></tr>
+        <tr><td>Annual tenant savings</td><td id="bd2-annual">—</td></tr>
+        <tr><td>Margin sacrifice ratio</td><td id="bd2-sacrifice">—</td></tr>
+        <tr><td>Portfolio adjustment</td><td id="bd2-portfolio">—</td></tr>
+        <tr><td>Sized benefit before caps</td><td id="bd2-presize">—</td></tr>
+        <tr class="total"><td>Final benefit (smallest of all caps)</td><td id="bd2-final">—</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Validation Required</div>
+      <div id="validation-list"></div>
+    </div>
+
+    <div class="card" style="border-color:rgba(74,143,212,0.3)">
+      <div class="card-title" style="color:var(--blue)">Want This as a Permanent Reduction Instead?</div>
+      <p style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:14px">
+        Instead of a check or a one-time credit, this same benefit can be applied directly to your mortgage principal — permanently lowering your breakeven rent so you don't need a new credit every year to sustain the lower rent.
+      </p>
+      <button class="btn btn-blue btn-full" onclick="showMode('curtailment', document.querySelector('[data-mode=curtailment]'))">See My Principal Buydown Option &#8594;</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="hi-mode" id="mode-curtailment">
+  <div class="intro-card">
+    <div class="intro-card-title">Principal Buydown — The Permanent Fix</div>
+    <p>Instead of a check or a tax credit you have to requalify for every year, this applies your sized benefit directly to your mortgage principal — paid to your lender, not to you. Your breakeven rent permanently drops. Next year you don't need a new credit to sustain the same lower rent.</p>
+    <p>This is also why it works for everyone regardless of income: it isn't a deduction against income or a credit against a tax bill — it's a direct payment to your loan servicer, the same way any extra principal payment works today.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Apply Your Sized Benefit as a Curtailment</div>
+    <div class="card-sub">Run Step 1 and Step 2 on the Landlord tab first — this uses those numbers automatically.</div>
+    <div class="warning-box" id="curt-no-data-warning">Complete the Landlord tab first (Steps 1 and 2) so we know your loan balance, rate, and sized benefit.</div>
+
+    <div id="curt-form" style="display:none">
+      <div class="metric-grid" id="curt-source-metrics"></div>
+
+      <label>One-Time Curtailment Amount</label>
+      <input type="number" id="curt-amount" value="2205">
+      <div class="field-hint">Defaults to your sized benefit from the Landlord tab. You can adjust this — e.g. to model a multi-year accumulated curtailment.</div>
+
+      <label>Number of Years to Apply This Curtailment (compounding)</label>
+      <select id="curt-years">
+        <option value="1" selected>Single one-time curtailment</option>
+        <option value="3">Repeat annually for 3 years</option>
+        <option value="5">Repeat annually for 5 years</option>
+        <option value="10">Repeat annually for 10 years (full term)</option>
+      </select>
+
+      <button class="btn btn-gold btn-full" style="margin-top:20px" onclick="calcCurtailment()">Calculate New Amortization</button>
+    </div>
+  </div>
+
+  <div class="result-box" id="curt-result">
+    <div class="result-hero">
+      <div class="result-hero-label">New Permanent Breakeven Rent</div>
+      <div class="result-hero-val" id="curt-new-breakeven">$0</div>
+      <div class="result-hero-note" id="curt-breakeven-note"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Before &amp; After</div>
+      <div class="metric-grid" id="curt-before-after"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What Changed in Your Loan</div>
+      <table class="breakdown-table">
+        <tr><td>Original balance</td><td id="curt-bd-orig">—</td></tr>
+        <tr><td>Total curtailment applied</td><td id="curt-bd-applied">—</td></tr>
+        <tr><td>New balance</td><td id="curt-bd-newbal">—</td></tr>
+        <tr><td>Original monthly P&amp;I</td><td id="curt-bd-origpi">—</td></tr>
+        <tr class="total"><td>New monthly P&amp;I (re-amortized, same term remaining)</td><td id="curt-bd-newpi">—</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Lifetime Interest Saved</div>
+      <p style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:12px">
+        Because this pays down principal rather than handing you cash, it also permanently reduces the total interest you will ever pay on this loan — this is the part that makes a buydown different from a rebate. A rebate gets spent. A buydown keeps paying you back every month for the rest of the loan.
+      </p>
+      <div class="result-hero" style="background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(74,143,212,0.05));border-color:rgba(34,197,94,0.25)">
+        <div class="result-hero-label">Estimated Lifetime Interest Saved</div>
+        <div class="result-hero-val" id="curt-lifetime-interest" style="color:var(--green)">$0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Record This as a Deed Covenant</div>
+      <p style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:14px">
+        For this benefit to mean anything long-term, the affordability commitment needs to be recorded against the property itself — not just your loan — so it survives if you ever sell. This makes your participation count toward your district's Community Impact total, and sets up a future buyer to extend the benefit instead of losing it at sale.
+      </p>
+      <label>Commitment Term</label>
+      <select id="curt-covenant-term">
+        <option value="5">5 years</option>
+        <option value="10" selected>10 years</option>
+        <option value="15">15 years</option>
+      </select>
+      <button class="btn btn-blue btn-full" style="margin-top:14px" onclick="recordCovenant()">Record This Covenant (Demo)</button>
+      <div class="info-box" id="covenant-recorded-msg" style="margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="hi-mode" id="mode-renter">
+  <div class="intro-card">
+    <div class="intro-card-title">For Renters</div>
+    <p>See which affordability tier your household falls into, and what a fair "program rent" would look like for your area — useful for a conversation with your landlord or housing authority.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Household</div>
+
+    <label>Your County</label>
+    <select id="rn-county" onchange="document.getElementById('rn-ami').value = this.value || 120200;">
+<option value="">Select your county</option>
+      <option value="162800">Alameda County — $162,800</option>
+      <option value="129500">Alpine County — $129,500</option>
+      <option value="110500">Amador County — $110,500</option>
+      <option value="97100">Butte County — $97,100</option>
+      <option value="102600">Calaveras County — $102,600</option>
+      <option value="97100">Colusa County — $97,100</option>
+      <option value="162800">Contra Costa County — $162,800</option>
+      <option value="97100">Del Norte County — $97,100</option>
+      <option value="124000">El Dorado County — $124,000</option>
+      <option value="97100">Fresno County — $97,100</option>
+      <option value="97100">Glenn County — $97,100</option>
+      <option value="97100">Humboldt County — $97,100</option>
+      <option value="97100">Imperial County — $97,100</option>
+      <option value="97200">Inyo County — $97,200</option>
+      <option value="97100">Kern County — $97,100</option>
+      <option value="97100">Kings County — $97,100</option>
+      <option value="97100">Lake County — $97,100</option>
+      <option value="97100">Lassen County — $97,100</option>
+      <option value="108100">Los Angeles County — $108,100</option>
+      <option value="97100">Madera County — $97,100</option>
+      <option value="200800">Marin County — $200,800</option>
+      <option value="97100">Mariposa County — $97,100</option>
+      <option value="99100">Mendocino County — $99,100</option>
+      <option value="97100">Merced County — $97,100</option>
+      <option value="97100">Modoc County — $97,100</option>
+      <option value="120400">Mono County — $120,400</option>
+      <option value="110500">Monterey County — $110,500</option>
+      <option value="165400">Napa County — $165,400</option>
+      <option value="140400">Nevada County — $140,400</option>
+      <option value="138600">Orange County — $138,600</option>
+      <option value="124000">Placer County — $124,000</option>
+      <option value="97100">Plumas County — $97,100</option>
+      <option value="106500">Riverside County — $106,500</option>
+      <option value="124000">Sacramento County — $124,000</option>
+      <option value="140200">San Benito County — $140,200</option>
+      <option value="106500">San Bernardino County — $106,500</option>
+      <option value="130900">San Diego County — $130,900</option>
+      <option value="200800">San Francisco County — $200,800</option>
+      <option value="108100">San Joaquin County — $108,100</option>
+      <option value="129600">San Luis Obispo County — $129,600</option>
+      <option value="200800">San Mateo County — $200,800</option>
+      <option value="119100">Santa Barbara County — $119,100</option>
+      <option value="205500">Santa Clara County — $205,500</option>
+      <option value="137200">Santa Cruz County — $137,200</option>
+      <option value="101800">Shasta County — $101,800</option>
+      <option value="97100">Sierra County — $97,100</option>
+      <option value="97100">Siskiyou County — $97,100</option>
+      <option value="124600">Solano County — $124,600</option>
+      <option value="133400">Sonoma County — $133,400</option>
+      <option value="98500">Stanislaus County — $98,500</option>
+      <option value="101900">Sutter County — $101,900</option>
+      <option value="97100">Tehama County — $97,100</option>
+      <option value="97100">Trinity County — $97,100</option>
+      <option value="97100">Tulare County — $97,100</option>
+      <option value="102200">Tuolumne County — $102,200</option>
+      <option value="135600">Ventura County — $135,600</option>
+      <option value="135900">Yolo County — $135,900</option>
+      <option value="101900">Yuba County — $101,900</option>
+    </select>
+    <label>4-Person Area Median Income (auto-fills from county, or enter manually)</label>
+    <input type="number" id="rn-ami" value="120200">
+    <div class="field-hint">Official 2026 California HCD figures, verified per county. Source: <a href="https://www.hcd.ca.gov/funding/income-limits" target="_blank" style="color:var(--blue)">hcd.ca.gov/funding/income-limits</a></div>
+
+    <div class="form-row">
+      <div>
+        <label>Household Size</label>
+        <select id="rn-hhsize">
+          <option value="1">1 person</option>
+          <option value="2">2 people</option>
+          <option value="3">3 people</option>
+          <option value="4" selected>4 people</option>
+          <option value="5">5 people</option>
+          <option value="6">6+ people</option>
+        </select>
+      </div>
+      <div>
+        <label>Total Annual Household Income</label>
+        <input type="number" id="rn-income" value="58000">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label>Current Monthly Rent</label>
+        <input type="number" id="rn-rent" value="2400">
+      </div>
+      <div>
+        <label>Monthly Utilities You Pay</label>
+        <input type="number" id="rn-utilities" value="150">
+      </div>
+    </div>
+
+    <button class="btn btn-gold btn-full" style="margin-top:20px" onclick="calcRenter()">See My Affordability Tier</button>
+  </div>
+
+  <div class="result-box" id="rn-result">
+    <div class="result-hero">
+      <div class="result-hero-label">Your Affordability Tier</div>
+      <div class="result-hero-val" id="rn-tier">—</div>
+      <div class="result-hero-note" id="rn-tier-detail"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">What a Fair Rent Would Look Like</div>
+      <table class="breakdown-table">
+        <tr><td>Your household income</td><td id="rn-bd-income">—</td></tr>
+        <tr><td>Max affordable rent at 30% of income</td><td id="rn-bd-maxrent">—</td></tr>
+        <tr><td>Your current rent</td><td id="rn-bd-current">—</td></tr>
+        <tr class="total"><td>You are currently paying</td><td id="rn-bd-status">—</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Resources</div>
+      <div class="resource-grid">
+        <a href="https://www.hud.gov/states/california/renting" target="_blank" class="resource-card">
+          <div class="resource-name">HUD California Renter Resources</div>
+          <div class="resource-desc">Official federal renter assistance and rights information</div>
+        </a>
+        <a href="https://www.hcd.ca.gov/grants-and-funding/programs-active" target="_blank" class="resource-card">
+          <div class="resource-name">CA HCD Active Programs</div>
+          <div class="resource-desc">State-funded affordable housing and rental assistance programs</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="hi-mode" id="mode-homeowner">
+  <div class="intro-card">
+    <div class="intro-card-title">For Homeowners</div>
+    <p>These are real, existing California programs — separate from the rental incentive system. Answer a few questions to see which ones likely apply to you.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Property Tax Savings You May Already Qualify For</div>
+
+    <label>Is this your primary residence?</label>
+    <select id="ho-primary">
+      <option value="yes">Yes — I live here</option>
+      <option value="no">No — investment / rental property</option>
+    </select>
+
+    <div class="form-row">
+      <div>
+        <label>Your Age</label>
+        <input type="number" id="ho-age" value="45">
+      </div>
+      <div>
+        <label>Annual Household Income</label>
+        <input type="number" id="ho-income" value="75000">
+      </div>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="ho-disabled">
+      <label for="ho-disabled">Disabled (any household member)</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="ho-veteran">
+      <label for="ho-veteran">Veteran or disabled veteran</label>
+    </div>
+
+    <button class="btn btn-gold btn-full" style="margin-top:20px" onclick="calcHomeowner()">Check What I Likely Qualify For</button>
+  </div>
+
+  <div class="result-box" id="ho-result">
+    <div class="card">
+      <div class="card-title">Programs That Likely Apply to You</div>
+      <div id="ho-programs"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Always Verify With Your County Assessor</div>
+      <p style="font-size:11.5px;color:var(--dim);line-height:1.8">
+        Every California county assessor's office processes these exemptions directly. Filing deadlines and exact amounts vary by county and year. Search "[your county] assessor exemptions" or call your county assessor's office to file.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<div class="hi-mode" id="mode-buyer">
+  <div class="intro-card">
+    <div class="intro-card-title">For Buyers — Inheriting or Renewing a Commitment</div>
+    <p>A principal curtailment is permanent to the loan it was applied to — but the loan gets paid off when a property sells. To make the affordability commitment outlast a sale, it has to be recorded against the property itself as a deed covenant, the same way an HOA restriction or easement survives a sale.</p>
+    <p>If you're buying a property with an existing covenant, you inherit the <strong style="color:var(--txt)">obligation</strong> to honor it for the remaining term — but you don't automatically get a new curtailment. That only happens if you choose to extend the commitment on your own new loan.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Check a Property's Covenant Status</div>
+    <div class="card-sub">In a real system, this would look up the county deed record. This demo lets you check a property you've recorded a covenant on in the Principal Buydown tab, or model a hypothetical.</div>
+
+    <label>Property Reference (address or parcel #)</label>
+    <input type="text" id="buyer-propref" placeholder="Enter the same reference used when recording a covenant">
+    <button class="btn btn-outline" style="margin-top:10px" onclick="lookupCovenant()">Look Up This Property</button>
+
+    <div class="info-box" id="buyer-lookup-result" style="margin-top:14px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Model a Renewal — Your New Loan</div>
+    <div class="card-sub">If you extend the existing covenant (or start a new one) on your own mortgage, you become eligible for your own resized curtailment — using your actual new loan terms, not the seller's old ones.</div>
+
+    <div class="form-row">
+      <div>
+        <label>Your New Mortgage Balance</label>
+        <input type="number" id="buyer-balance" value="350000">
+      </div>
+      <div>
+        <label>Your New Interest Rate (%)</label>
+        <input type="number" step="0.01" id="buyer-rate" value="6.0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Loan Term (years)</label>
+        <input type="number" id="buyer-term" value="30">
+      </div>
+      <div>
+        <label>Annual Property Tax</label>
+        <input type="number" id="buyer-tax" value="4200">
+      </div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Market Rent You'll Charge</label>
+        <input type="number" id="buyer-marketrent" value="2900">
+      </div>
+      <div>
+        <label>Reduced Rent if You Extend Covenant</label>
+        <input type="number" id="buyer-reducedrent" value="2550">
+      </div>
+    </div>
+
+    <label>New Covenant Term You're Committing To</label>
+    <select id="buyer-newterm">
+      <option value="5">5 years</option>
+      <option value="10" selected>10 years</option>
+      <option value="15">15 years</option>
+    </select>
+
+    <button class="btn btn-gold btn-full" style="margin-top:20px" onclick="calcBuyerRenewal()">Calculate My Renewal Incentive</button>
+  </div>
+
+  <div class="result-box" id="buyer-result">
+    <div class="result-hero">
+      <div class="result-hero-label">Your Estimated Renewal Curtailment</div>
+      <div class="result-hero-val" id="buyer-final">$0</div>
+      <div class="result-hero-note">Sized the same way as a first-time landlord curtailment — your own breakeven, your own margin, your own sacrifice.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Why Renew Instead of Letting It Lapse</div>
+      <table class="breakdown-table">
+        <tr><td>If covenant lapses</td><td style="color:#f87171">Reverts to market rent — no further benefit, ever</td></tr>
+        <tr class="total"><td>If you extend the covenant</td><td style="color:var(--green)" id="buyer-bd-extend">—</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What This Does for the Property Long-Term</div>
+      <p style="font-size:11.5px;color:var(--dim);line-height:1.8">
+        Every time an owner renews instead of letting the covenant lapse, this unit stays counted as permanently-or-near-permanently affordable housing stock in your district's Community Impact tracker — instead of reverting to market rent and disappearing from the program the moment it changes hands.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<div class="hi-mode" id="mode-community">
+  <div class="intro-card">
+    <div class="intro-card-title">Community Impact — Where the Tax Dollars Actually Go</div>
+    <p>Every time someone uses this system to record a principal curtailment, it's tracked here, by district — not as an abstract rebate total, but as real numbers: how much mortgage debt got permanently extinguished, how many units stayed affordable across a sale, and how many lapsed back to market rent.</p>
+    <p>This is the answer to "what did my tax dollars actually do." Not a number disappearing into a general fund — a running, visible ledger tied to your own neighborhood.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Activity (This Device)</div>
+    <div class="card-sub">Everything you've recorded in the Principal Buydown tab on this device shows here, grouped by district.</div>
+    <div id="community-districts"></div>
+    <div class="loading-text" id="community-empty" style="display:none">No covenants recorded yet on this device. Go to the Principal Buydown tab, calculate a curtailment, and record a covenant to see it tracked here.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How District Funds Could Route to Local Projects</div>
+    <p style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:16px">
+      In a real implementation, a small administrative share of the program (separate from the curtailment itself, which always goes to the participating landlord's own loan) could be earmarked for visible capital improvements in the same district where participation happened — roads, schools, parks. The logic: a community participating heavily in affordability preservation should see some of the program's footprint show up as something they can point to.
+    </p>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div><div class="timeline-line"></div>
+        <div class="timeline-label">Step 1</div>
+        <div class="timeline-val">Verified rent reduction occurs</div>
+        <div class="timeline-note">Landlord and tenant both certify the reduced rent annually</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div><div class="timeline-line"></div>
+        <div class="timeline-label">Step 2</div>
+        <div class="timeline-val">Tax benefit sized and applied as principal curtailment</div>
+        <div class="timeline-note">Paid directly to the landlord's mortgage servicer — never cash to the landlord</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div><div class="timeline-line"></div>
+        <div class="timeline-label">Step 3</div>
+        <div class="timeline-val">Covenant recorded against the property deed</div>
+        <div class="timeline-note">Commitment survives a future sale — buyer inherits the obligation, can renew for a fresh curtailment</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div><div class="timeline-line"></div>
+        <div class="timeline-label">Step 4</div>
+        <div class="timeline-val">District ledger updates</div>
+        <div class="timeline-note">Total principal extinguished, units preserved, and units lapsed tracked per district</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Step 5</div>
+        <div class="timeline-val">Administrative share routes to local capital projects</div>
+        <div class="timeline-note">Visible, named projects — not a line item in a general fund</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Statewide Demonstration Data</div>
+    <div class="card-sub">Illustrative only — not real government data. Shows what a populated district dashboard could look like at scale.</div>
+    <div class="district-card">
+      <div class="district-name">San Diego County — District 4</div>
+      <div class="district-stats">
+        <div class="district-stat"><div class="district-stat-val">$1.8M</div><div class="district-stat-label">Principal Extinguished</div></div>
+        <div class="district-stat"><div class="district-stat-val">312</div><div class="district-stat-label">Units Preserved</div></div>
+        <div class="district-stat"><div class="district-stat-val">41</div><div class="district-stat-label">Renewed at Sale</div></div>
+        <div class="district-stat"><div class="district-stat-val">9</div><div class="district-stat-label">Lapsed</div></div>
+      </div>
+    </div>
+    <div class="district-card">
+      <div class="district-name">Los Angeles County — District 2</div>
+      <div class="district-stats">
+        <div class="district-stat"><div class="district-stat-val">$3.4M</div><div class="district-stat-label">Principal Extinguished</div></div>
+        <div class="district-stat"><div class="district-stat-val">567</div><div class="district-stat-label">Units Preserved</div></div>
+        <div class="district-stat"><div class="district-stat-val">78</div><div class="district-stat-label">Renewed at Sale</div></div>
+        <div class="district-stat"><div class="district-stat-val">22</div><div class="district-stat-label">Lapsed</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="hi-mode" id="mode-crisis">
+  <div class="card" style="border-color:rgba(239,68,68,0.3)">
+    <div class="card-title" style="color:#f87171">If You Are Facing Eviction or Homelessness Right Now</div>
+    <p style="font-size:13px;color:var(--txt);line-height:1.8;margin-bottom:18px">
+      Everything else in this system is a long-term affordability tool for people who already have stable housing. If you are unhoused or about to lose housing right now, the resources below connect you to real help today, not a calculator.
+    </p>
+    <div class="resource-grid">
+      <a href="https://www.211.org" target="_blank" class="resource-card">
+        <div class="resource-name">211 — Call or Text 211</div>
+        <div class="resource-desc">Free, 24/7 referral to local emergency shelter, food, and rental assistance nationwide</div>
+      </a>
+      <a href="https://www.hudexchange.info/programs/coc/" target="_blank" class="resource-card">
+        <div class="resource-name">HUD Continuum of Care</div>
+        <div class="resource-desc">Find your local Continuum of Care — the official coordinated entry system for homeless services</div>
+      </a>
+      <a href="https://www.hcd.ca.gov/housing-assistance" target="_blank" class="resource-card">
+        <div class="resource-name">CA HCD Housing Assistance</div>
+        <div class="resource-desc">State emergency rental assistance and homelessness prevention programs</div>
+      </a>
+      <a href="https://www.lawhelpca.org" target="_blank" class="resource-card">
+        <div class="resource-name">LawHelpCA — Free Legal Help</div>
+        <div class="resource-desc">Free legal aid for eviction defense and tenant rights in California</div>
+      </a>
+      <a href="https://988lifeline.org" target="_blank" class="resource-card">
+        <div class="resource-name">988 Suicide &amp; Crisis Lifeline</div>
+        <div class="resource-desc">Call or text 988 — free, confidential support if this crisis feels overwhelming</div>
+      </a>
+      <a href="https://www.usa.gov/rent-assistance" target="_blank" class="resource-card">
+        <div class="resource-name">USA.gov Rental Assistance Finder</div>
+        <div class="resource-desc">Federal directory of rental assistance programs by state</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="method-note">
+  <strong style="color:var(--txt)">Methodology:</strong> This system combines the Green Equity Housing Program (GEHP) rent-reduction framework, mortgage-cost-aware tax sizing, principal curtailment modeling, deed-covenant renewal logic, and district-level impact tracking — all original policy design by Saul Garcia, AuditDNA Intelligence. None of this is current law in any state, county, or jurisdiction. All figures are illustrative. Always verify with a CPA, tax attorney, mortgage servicer, or county assessor before relying on any number here for a real transaction. Community Impact data shown is demonstration data for this tool — not actual government records.
+</div>
+
+</div>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showMode(mode, el){
+  document.querySelectorAll('.hi-mode').forEach(function(m){m.classList.remove('on');});
+  document.querySelectorAll('.hi-nav-item').forEach(function(n){n.classList.remove('on');});
+  var target = document.getElementById('mode-'+mode);
+  if(target) target.classList.add('on');
+  if(el) el.classList.add('on');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── SHARED STORAGE (persists curtailment + covenant data across modes) ──
+var sharedData = {};
+try{ sharedData = JSON.parse(localStorage.getItem('hi_shared_data')||'{}'); }catch(e){ sharedData = {}; }
+function saveShared(key, val){
+  sharedData[key] = val;
+  try{ localStorage.setItem('hi_shared_data', JSON.stringify(sharedData)); }catch(e){}
+}
+function getShared(key){ return sharedData[key]; }
+
+// ── SHARED MORTGAGE MATH ─────────────────────────────────────────────
+function calcMonthlyPI(balance, ratePct, years){
+  var monthlyRate = (ratePct / 100) / 12;
+  var n = years * 12;
+  if(monthlyRate > 0 && n > 0){
+    return balance * (monthlyRate * Math.pow(1+monthlyRate, n)) / (Math.pow(1+monthlyRate, n) - 1);
+  } else if(n > 0){
+    return balance / n;
+  }
+  return 0;
+}
+
+function calcTotalInterest(balance, ratePct, years){
+  var monthlyPI = calcMonthlyPI(balance, ratePct, years);
+  return (monthlyPI * years * 12) - balance;
+}
+
+// ── LANDLORD: STEP 1 BREAKEVEN ───────────────────────────────────────
+var breakevenData = null;
+
+function calcBreakeven(){
+  var balance = parseFloat(document.getElementById('hi-balance').value) || 0;
+  var rate = parseFloat(document.getElementById('hi-rate').value) || 0;
+  var termYears = parseFloat(document.getElementById('hi-term').value) || 30;
+  var units = parseFloat(document.getElementById('hi-units').value) || 1;
+  var propTax = parseFloat(document.getElementById('hi-tax').value) || 0;
+  var insurance = parseFloat(document.getElementById('hi-insurance').value) || 0;
+  var maintenance = parseFloat(document.getElementById('hi-maintenance').value) || 0;
+  var marketRent = parseFloat(document.getElementById('hi-marketrent').value) || 0;
+  var reducedRent = parseFloat(document.getElementById('hi-reducedrent').value) || 0;
+  var district = document.getElementById('hi-district').value || 'Unspecified District';
+  var propRef = document.getElementById('hi-propref').value || '';
+
+  if(units < 1) units = 1;
+
+  var monthlyPI = calcMonthlyPI(balance, rate, termYears);
+  var monthlyTax = propTax / 12 / units;
+  var monthlyIns = insurance / 12 / units;
+  var monthlyMaint = maintenance / 12 / units;
+  var monthlyPIPerUnit = monthlyPI / units;
+
+  var breakeven = monthlyPIPerUnit + monthlyTax + monthlyIns + monthlyMaint;
+  var marginAtMarket = marketRent - breakeven;
+  var marginAtReduced = reducedRent - breakeven;
+
+  var warningEl = document.getElementById('hi-warning');
+  if(reducedRent < breakeven){
+    warningEl.classList.add('show');
+    warningEl.innerHTML = '<strong>Warning:</strong> Your proposed reduced rent ($' + reducedRent.toLocaleString() + ') is below your breakeven rent ($' + Math.round(breakeven).toLocaleString() + '). At this rent you would lose money every month before any tax benefit.';
+  } else {
+    warningEl.classList.remove('show');
+  }
+
+  var sacrificeRatio = marginAtMarket > 0 ? ((marketRent - reducedRent) / marginAtMarket) : 0;
+  if(sacrificeRatio > 1) sacrificeRatio = 1;
+  if(sacrificeRatio < 0) sacrificeRatio = 0;
+
+  document.getElementById('sacrifice-pct-label').textContent = Math.round(sacrificeRatio*100) + '%';
+  document.getElementById('sacrifice-meter-fill').style.width = Math.round(sacrificeRatio*100) + '%';
+
+  var metricsHtml = '';
+  metricsHtml += '<div class="metric-box"><div class="metric-label">Monthly P&I</div><div class="metric-val">$'+Math.round(monthlyPIPerUnit).toLocaleString()+'</div></div>';
+  metricsHtml += '<div class="metric-box"><div class="metric-label">Breakeven Rent</div><div class="metric-val">$'+Math.round(breakeven).toLocaleString()+'</div></div>';
+  metricsHtml += '<div class="metric-box'+(marginAtMarket<0?' flag':' good')+'"><div class="metric-label">Margin at Market</div><div class="metric-val">$'+Math.round(marginAtMarket).toLocaleString()+'</div></div>';
+  metricsHtml += '<div class="metric-box'+(marginAtReduced<0?' flag':' good')+'"><div class="metric-label">Margin at Reduced</div><div class="metric-val">$'+Math.round(marginAtReduced).toLocaleString()+'</div></div>';
+  document.getElementById('hi-metrics').innerHTML = metricsHtml;
+
+  document.getElementById('bd-pi').textContent = '$' + Math.round(monthlyPIPerUnit).toLocaleString() + '/mo';
+  document.getElementById('bd-tax-m').textContent = '$' + Math.round(monthlyTax).toLocaleString() + '/mo';
+  document.getElementById('bd-ins-m').textContent = '$' + Math.round(monthlyIns).toLocaleString() + '/mo';
+  document.getElementById('bd-maint-m').textContent = '$' + Math.round(monthlyMaint).toLocaleString() + '/mo';
+  document.getElementById('bd-breakeven').textContent = '$' + Math.round(breakeven).toLocaleString() + '/mo';
+  document.getElementById('bd-market').textContent = '$' + marketRent.toLocaleString() + '/mo';
+  document.getElementById('bd-margin').textContent = '$' + Math.round(marginAtMarket).toLocaleString() + '/mo';
+
+  breakevenData = {
+    balance: balance, rate: rate, termYears: termYears, units: units,
+    breakeven: breakeven, marketRent: marketRent, reducedRent: reducedRent,
+    marginAtMarket: marginAtMarket, sacrificeRatio: sacrificeRatio,
+    propTax: propTax, district: district, propRef: propRef,
+    monthlyPI: monthlyPI
+  };
+  saveShared('breakevenData', breakevenData);
+
+  document.getElementById('step1-result').classList.add('show');
+  document.getElementById('step1-result').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── LANDLORD: STEP 2 TAX BENEFIT ─────────────────────────────────────
+var currentMechanism = 'credit';
+var lastBenefitResult = null;
+
+function setMechanism(m){
+  currentMechanism = m;
+  document.getElementById('mech-credit-btn').classList.toggle('on', m==='credit');
+  document.getElementById('mech-deduction-btn').classList.toggle('on', m==='deduction');
+  document.getElementById('credit-inputs').style.display = m==='credit' ? 'block' : 'none';
+  document.getElementById('deduction-inputs').style.display = m==='deduction' ? 'block' : 'none';
+}
+
+function portfolioAdjustmentFactor(size){
+  if(size <= 1) return 1.00;
+  if(size <= 3) return 0.85;
+  if(size <= 10) return 0.60;
+  return 0.35;
+}
+function portfolioLabel(size){
+  if(size <= 1) return '1 property — full incentive (100%)';
+  if(size <= 3) return '2–4 properties — 85% of incentive';
+  if(size <= 10) return '5–19 properties — 60% of incentive';
+  return '20+ properties — 35% of incentive (portfolio investor)';
+}
+
+function calcCredit(){
+  if(!breakevenData){
+    alert('Please complete Step 1 first so we know your real breakeven rent and margin.');
+    return;
+  }
+
+  var monthlyReduction = breakevenData.marketRent - breakevenData.reducedRent;
+  var annualSavings = monthlyReduction * 12;
+  var sacrificeRatio = breakevenData.sacrificeRatio;
+  var hardCap = parseFloat(document.getElementById('hi-hardcap').value) || 3500;
+  var portfolioSize = parseFloat(document.getElementById('hi-portfolio-size').value) || 1;
+  var portfolioFactor = portfolioAdjustmentFactor(portfolioSize);
+
+  var presize, finalBenefit, caps, heroLabel, heroNote, bindingLabel;
+
+  if(currentMechanism === 'credit'){
+    var creditCapPct = parseFloat(document.getElementById('hi-credit-cap-pct').value);
+    var propTaxBill = breakevenData.propTax;
+    var propTaxCap = propTaxBill * creditCapPct;
+
+    presize = annualSavings * sacrificeRatio * portfolioFactor;
+
+    caps = [
+      {label:'Sized Benefit', val: presize},
+      {label:'Property Tax Cap', val: propTaxCap},
+      {label:'Hard Cap', val: hardCap},
+      {label:'65% Savings Cap', val: annualSavings * 0.65}
+    ];
+    finalBenefit = Math.min(presize, propTaxCap, hardCap, annualSavings*0.65);
+    heroLabel = 'Estimated Annual Property Tax Credit';
+    heroNote = 'Applied against your property tax bill — you simply owe less.';
+
+  } else {
+    var multiplier = parseFloat(document.getElementById('hi-deduction-mult').value);
+    var marginalRate = (parseFloat(document.getElementById('hi-marginal-rate').value) || 0) / 100;
+
+    var extraDeduction = annualSavings * (multiplier - 1) * sacrificeRatio * portfolioFactor;
+    var dollarValueOfDeduction = extraDeduction * marginalRate;
+    presize = dollarValueOfDeduction;
+
+    caps = [
+      {label:'Extra Deduction Value', val: dollarValueOfDeduction},
+      {label:'Hard Cap', val: hardCap},
+      {label:'65% Savings Cap', val: annualSavings * 0.65}
+    ];
+    finalBenefit = Math.min(dollarValueOfDeduction, hardCap, annualSavings*0.65);
+    heroLabel = 'Estimated Value of Extra Tax Deduction';
+    heroNote = 'Actual value depends on your marginal tax rate — tax savings, not a direct payment.';
+  }
+
+  bindingLabel = caps.find(function(c){ return Math.abs(c.val - finalBenefit) < 0.5; });
+  bindingLabel = bindingLabel ? bindingLabel.label : caps[0].label;
+
+  document.getElementById('hi-final').textContent = '$' + Math.round(Math.max(0,finalBenefit)).toLocaleString();
+  document.getElementById('result-hero-label').textContent = heroLabel;
+  document.getElementById('hi-final-note').textContent = heroNote + ' Binding: ' + bindingLabel + '.';
+
+  var capsHtml = '';
+  caps.forEach(function(c){
+    var binding = Math.abs(c.val - finalBenefit) < 0.5;
+    capsHtml += '<div class="cap-box'+(binding?' binding':'')+'"><div class="cap-label">'+c.label+'</div><div class="cap-val">$'+Math.round(Math.max(0,c.val)).toLocaleString()+'</div></div>';
+  });
+  document.getElementById('hi-caps').innerHTML = capsHtml;
+
+  document.getElementById('bd2-monthly').textContent = '$' + monthlyReduction.toLocaleString() + '/mo';
+  document.getElementById('bd2-annual').textContent = '$' + Math.round(annualSavings).toLocaleString() + '/yr';
+  document.getElementById('bd2-sacrifice').textContent = Math.round(sacrificeRatio*100) + '% of margin';
+  document.getElementById('bd2-portfolio').textContent = portfolioLabel(portfolioSize);
+  document.getElementById('bd2-presize').textContent = '$' + Math.round(Math.max(0,presize)).toLocaleString();
+  document.getElementById('bd2-final').textContent = '$' + Math.round(Math.max(0,finalBenefit)).toLocaleString() + ' / year';
+
+  var validations = [
+    'Landlord reports full rental income on Schedule E (or equivalent) — no unreported cash discounts',
+    'Lease on file showing the reduced rent, dated and signed by both parties',
+    'Mortgage statement or county recorder data confirms loan balance and rate',
+    'Tenant certifies they are actually paying the reduced rent, not a side payment',
+    'No double-dipping with other rent-reduction incentives for the same unit',
+    'Annual recertification required to keep the credit or deduction active'
+  ];
+  var valHtml = '';
+  validations.forEach(function(v){
+    valHtml += '<div class="checklist-item"><span class="checklist-check">&#10003;</span><span class="checklist-text">'+v+'</span></div>';
+  });
+  document.getElementById('validation-list').innerHTML = valHtml;
+
+  lastBenefitResult = Math.max(0, finalBenefit);
+  saveShared('lastBenefitResult', lastBenefitResult);
+
+  document.getElementById('step2-result').classList.add('show');
+  document.getElementById('step2-result').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── PRINCIPAL CURTAILMENT ────────────────────────────────────────────
+function initCurtailmentTab(){
+  var data = getShared('breakevenData');
+  var benefit = getShared('lastBenefitResult');
+  var formEl = document.getElementById('curt-form');
+  var warnEl = document.getElementById('curt-no-data-warning');
+  if(!data){
+    warnEl.style.display = 'block';
+    formEl.style.display = 'none';
+    return;
+  }
+  warnEl.style.display = 'none';
+  formEl.style.display = 'block';
+  breakevenData = data;
+
+  var metricsHtml = '';
+  metricsHtml += '<div class="metric-box"><div class="metric-label">Loan Balance</div><div class="metric-val">$'+Math.round(data.balance).toLocaleString()+'</div></div>';
+  metricsHtml += '<div class="metric-box"><div class="metric-label">Rate</div><div class="metric-val">'+data.rate+'%</div></div>';
+  metricsHtml += '<div class="metric-box"><div class="metric-label">Current Breakeven</div><div class="metric-val">$'+Math.round(data.breakeven).toLocaleString()+'</div></div>';
+  document.getElementById('curt-source-metrics').innerHTML = metricsHtml;
+
+  if(benefit){
+    document.getElementById('curt-amount').value = Math.round(benefit);
+  }
+}
+
+function calcCurtailment(){
+  if(!breakevenData) return;
+  var oneTimeAmount = parseFloat(document.getElementById('curt-amount').value) || 0;
+  var years = parseInt(document.getElementById('curt-years').value) || 1;
+
+  var totalCurtailment = oneTimeAmount * years;
+  var origBalance = breakevenData.balance;
+  var newBalance = Math.max(0, origBalance - totalCurtailment);
+  var rate = breakevenData.rate;
+  var termYears = breakevenData.termYears;
+  var units = breakevenData.units;
+
+  var origMonthlyPI = breakevenData.monthlyPI;
+  var newMonthlyPI = calcMonthlyPI(newBalance, rate, termYears);
+
+  var origMonthlyPIPerUnit = origMonthlyPI / units;
+  var newMonthlyPIPerUnit = newMonthlyPI / units;
+
+  var nonDebtCosts = breakevenData.breakeven - origMonthlyPIPerUnit;
+  var newBreakeven = newMonthlyPIPerUnit + nonDebtCosts;
+
+  var origTotalInterest = calcTotalInterest(origBalance, rate, termYears);
+  var newTotalInterest = calcTotalInterest(newBalance, rate, termYears);
+  var lifetimeInterestSaved = origTotalInterest - newTotalInterest;
+
+  document.getElementById('curt-new-breakeven').textContent = '$' + Math.round(newBreakeven).toLocaleString();
+  document.getElementById('curt-breakeven-note').textContent = 'Down from $' + Math.round(breakevenData.breakeven).toLocaleString() + '/mo — permanently, without needing a new credit next year.';
+
+  var baHtml = '';
+  baHtml += '<div class="metric-box"><div class="metric-label">Old Breakeven</div><div class="metric-val">$'+Math.round(breakevenData.breakeven).toLocaleString()+'</div></div>';
+  baHtml += '<div class="metric-box good"><div class="metric-label">New Breakeven</div><div class="metric-val">$'+Math.round(newBreakeven).toLocaleString()+'</div></div>';
+  baHtml += '<div class="metric-box"><div class="metric-label">Old Monthly P&I</div><div class="metric-val">$'+Math.round(origMonthlyPIPerUnit).toLocaleString()+'</div></div>';
+  baHtml += '<div class="metric-box good"><div class="metric-label">New Monthly P&I</div><div class="metric-val">$'+Math.round(newMonthlyPIPerUnit).toLocaleString()+'</div></div>';
+  document.getElementById('curt-before-after').innerHTML = baHtml;
+
+  document.getElementById('curt-bd-orig').textContent = '$' + Math.round(origBalance).toLocaleString();
+  document.getElementById('curt-bd-applied').textContent = '$' + Math.round(totalCurtailment).toLocaleString();
+  document.getElementById('curt-bd-newbal').textContent = '$' + Math.round(newBalance).toLocaleString();
+  document.getElementById('curt-bd-origpi').textContent = '$' + Math.round(origMonthlyPIPerUnit).toLocaleString() + '/mo';
+  document.getElementById('curt-bd-newpi').textContent = '$' + Math.round(newMonthlyPIPerUnit).toLocaleString() + '/mo';
+  document.getElementById('curt-lifetime-interest').textContent = '$' + Math.round(Math.max(0,lifetimeInterestSaved)).toLocaleString();
+
+  saveShared('curtailmentResult', {
+    totalCurtailment: totalCurtailment,
+    newBalance: newBalance,
+    newBreakeven: newBreakeven,
+    district: breakevenData.district,
+    propRef: breakevenData.propRef
+  });
+
+  document.getElementById('curt-result').classList.add('show');
+  document.getElementById('curt-result').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function recordCovenant(){
+  var curtResult = getShared('curtailmentResult');
+  if(!curtResult){
+    alert('Calculate your new amortization first.');
+    return;
+  }
+  var term = parseInt(document.getElementById('curt-covenant-term').value);
+  var district = curtResult.district || 'Unspecified District';
+  var propRef = breakevenData.propRef || ('Property #' + Date.now());
+
+  var covenants = [];
+  try{ covenants = JSON.parse(localStorage.getItem('hi_covenants')||'[]'); }catch(e){}
+
+  covenants.unshift({
+    propRef: propRef,
+    district: district,
+    term: term,
+    principalExtinguished: curtResult.totalCurtailment,
+    newBreakeven: curtResult.newBreakeven,
+    recordedDate: new Date().toLocaleDateString(),
+    status: 'active'
+  });
+  try{ localStorage.setItem('hi_covenants', JSON.stringify(covenants)); }catch(e){}
+
+  var msgEl = document.getElementById('covenant-recorded-msg');
+  msgEl.classList.add('show');
+  msgEl.innerHTML = 'Covenant recorded (demo): <strong>' + propRef + '</strong> in <strong>' + district + '</strong> — ' + term + '-year affordability commitment, $' + Math.round(curtResult.totalCurtailment).toLocaleString() + ' principal extinguished. This now appears in Community Impact.';
+}
+
+// ── BUYER / COVENANT LOOKUP & RENEWAL ────────────────────────────────
+function lookupCovenant(){
+  var ref = document.getElementById('buyer-propref').value.trim();
+  var resultEl = document.getElementById('buyer-lookup-result');
+  if(!ref){
+    resultEl.classList.add('show');
+    resultEl.innerHTML = 'Enter a property reference to search.';
+    return;
+  }
+  var covenants = [];
+  try{ covenants = JSON.parse(localStorage.getItem('hi_covenants')||'[]'); }catch(e){}
+  var match = covenants.find(function(c){ return c.propRef.toLowerCase() === ref.toLowerCase(); });
+
+  resultEl.classList.add('show');
+  if(match){
+    resultEl.innerHTML = '<strong>Covenant found.</strong> ' + match.propRef + ' in ' + match.district + ' carries a ' + match.term + '-year affordability commitment recorded ' + match.recordedDate + '. $' + Math.round(match.principalExtinguished).toLocaleString() + ' in principal was extinguished. Breakeven rent on this property is approximately $' + Math.round(match.newBreakeven).toLocaleString() + '/mo. As the buyer, you would inherit the obligation to honor this commitment for any remaining term, or extend it below for a fresh curtailment of your own.';
+  } else {
+    resultEl.innerHTML = 'No recorded covenant found for "' + ref + '" on this device. In a real system, this would check the county deed record directly.';
+  }
+}
+
+function calcBuyerRenewal(){
+  var balance = parseFloat(document.getElementById('buyer-balance').value) || 0;
+  var rate = parseFloat(document.getElementById('buyer-rate').value) || 0;
+  var termYears = parseFloat(document.getElementById('buyer-term').value) || 30;
+  var propTax = parseFloat(document.getElementById('buyer-tax').value) || 0;
+  var marketRent = parseFloat(document.getElementById('buyer-marketrent').value) || 0;
+  var reducedRent = parseFloat(document.getElementById('buyer-reducedrent').value) || 0;
+  var newTerm = parseInt(document.getElementById('buyer-newterm').value);
+
+  var termFactorMap = {5:1.00, 10:1.10, 15:1.20};
+  var termFactor = termFactorMap[newTerm] || 1.00;
+
+  var monthlyPI = calcMonthlyPI(balance, rate, termYears);
+  var monthlyTax = propTax / 12;
+  var breakeven = monthlyPI + monthlyTax;
+  var marginAtMarket = marketRent - breakeven;
+
+  var monthlyReduction = marketRent - reducedRent;
+  var annualSavings = monthlyReduction * 12;
+  var sacrificeRatio = marginAtMarket > 0 ? (monthlyReduction / marginAtMarket) : 0;
+  if(sacrificeRatio > 1) sacrificeRatio = 1;
+  if(sacrificeRatio < 0) sacrificeRatio = 0;
+
+  var presize = annualSavings * sacrificeRatio * termFactor * 0.40; // depth share approximation for renewal context
+  var hardCap = 3500;
+  var finalBenefit = Math.min(presize, hardCap, annualSavings*0.65);
+  finalBenefit = Math.max(0, finalBenefit);
+
+  document.getElementById('buyer-final').textContent = '$' + Math.round(finalBenefit).toLocaleString();
+  document.getElementById('buyer-bd-extend').textContent = '$' + Math.round(finalBenefit).toLocaleString() + '/yr curtailment on your own loan, ' + newTerm + '-year commitment';
+
+  document.getElementById('buyer-result').classList.add('show');
+  document.getElementById('buyer-result').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── RENTER ────────────────────────────────────────────────────────────
+function calcRenter(){
+  var ami = parseFloat(document.getElementById('rn-ami').value) || 120200;
+  var hhsize = parseInt(document.getElementById('rn-hhsize').value) || 4;
+  var income = parseFloat(document.getElementById('rn-income').value) || 0;
+  var rent = parseFloat(document.getElementById('rn-rent').value) || 0;
+  var utilities = parseFloat(document.getElementById('rn-utilities').value) || 0;
+
+  var sizeFactors = {1:0.70, 2:0.80, 3:0.90, 4:1.00, 5:1.08, 6:1.16};
+  var adjustedAMI = ami * (sizeFactors[hhsize] || 1.00);
+
+  var pctOfAMI = (income / adjustedAMI) * 100;
+  var tier, tierLabel;
+  if(pctOfAMI <= 30){ tier='Extremely Low Income'; tierLabel='30% AMI or below'; }
+  else if(pctOfAMI <= 50){ tier='Very Low Income'; tierLabel='31–50% AMI'; }
+  else if(pctOfAMI <= 80){ tier='Low Income'; tierLabel='51–80% AMI'; }
+  else if(pctOfAMI <= 120){ tier='Moderate Income'; tierLabel='81–120% AMI'; }
+  else { tier='Above Moderate Income'; tierLabel='Over 120% AMI'; }
+
+  var maxAffordableMonthly = ((income * 0.30) / 12) - utilities;
+  if(maxAffordableMonthly < 0) maxAffordableMonthly = 0;
+
+  document.getElementById('rn-tier').textContent = tier;
+  document.getElementById('rn-tier-detail').textContent = 'Household income is approximately ' + Math.round(pctOfAMI) + '% of area median income (' + tierLabel + ')';
+  document.getElementById('rn-bd-income').textContent = '$' + income.toLocaleString() + '/yr';
+  document.getElementById('rn-bd-maxrent').textContent = '$' + Math.round(maxAffordableMonthly).toLocaleString() + '/mo';
+  document.getElementById('rn-bd-current').textContent = '$' + rent.toLocaleString() + '/mo';
+
+  var diff = rent - maxAffordableMonthly;
+  var statusEl = document.getElementById('rn-bd-status');
+  if(diff > 0){
+    statusEl.innerHTML = '<span style="color:#f87171">$' + Math.round(diff).toLocaleString() + '/mo above affordable line</span>';
+  } else {
+    statusEl.innerHTML = '<span style="color:#22c55e">Within affordable range</span>';
+  }
+
+  document.getElementById('rn-result').classList.add('show');
+  document.getElementById('rn-result').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── HOMEOWNER ─────────────────────────────────────────────────────────
+function calcHomeowner(){
+  var primary = document.getElementById('ho-primary').value;
+  var age = parseInt(document.getElementById('ho-age').value) || 0;
+  var income = parseFloat(document.getElementById('ho-income').value) || 0;
+  var disabled = document.getElementById('ho-disabled').checked;
+  var veteran = document.getElementById('ho-veteran').checked;
+
+  var programs = [];
+
+  if(primary === 'yes'){
+    programs.push({name:'Homeowners\' Exemption', desc:'Reduces your assessed value by $7,000 if this is your primary residence. Most California homeowners qualify and many never file for it.', status:'Likely Qualify', badge:'badge-green'});
+  }
+  if(primary === 'yes' && age >= 55){
+    programs.push({name:'Prop 19 Base Year Value Transfer', desc:'If you are 55+, you can transfer your current property tax base to a new home anywhere in California, up to three times, without a full reassessment.', status:'Likely Qualify', badge:'badge-green'});
+  }
+  if(disabled){
+    programs.push({name:'Disabled Persons Tax Postponement / Transfer', desc:'Disabled homeowners may qualify for the same Prop 19 base-value transfer as seniors, plus state property tax postponement programs for qualifying low-income disabled homeowners.', status:'Worth Checking', badge:'badge-amber'});
+  }
+  if(veteran){
+    programs.push({name:'Disabled Veterans\' Exemption', desc:'California offers a property tax exemption up to roughly $100,000+ of assessed value (higher for lower-income veterans) for veterans with a service-connected disability rating.', status:'Worth Checking', badge:'badge-amber'});
+  }
+  if(primary === 'yes' && income > 0 && income < 60000 && age >= 62){
+    programs.push({name:'Property Tax Postponement Program (PTP)', desc:'State program allowing eligible seniors and disabled homeowners with limited income to postpone current-year property taxes on their primary residence.', status:'Worth Checking', badge:'badge-amber'});
+  }
+  if(primary === 'no'){
+    programs.push({name:'Investment Property — Different Path', desc:'Most California property tax exemptions require the property to be your primary residence. Use the Landlord tab instead — that part of this system is specifically for rental property owners.', status:'Different Path', badge:'badge-blue'});
+  }
+  if(programs.length === 0){
+    programs.push({name:'No Strong Matches Found', desc:'Based on your answers, none of the common California exemptions clearly apply, but county-specific programs vary. Contact your county assessor directly.', status:'Check Locally', badge:'badge-blue'});
+  }
+
+  var html = '';
+  programs.forEach(function(p){
+    html += '<div style="background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:15px;margin-bottom:9px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:7px">' +
+      '<div style="font-size:12.5px;font-weight:700;color:var(--txt)">' + p.name + '</div>' +
+      '<span class="badge ' + p.badge + '">' + p.status + '</span>' +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--dim);line-height:1.7">' + p.desc + '</div>' +
+      '</div>';
+  });
+  document.getElementById('ho-programs').innerHTML = html;
+  document.getElementById('ho-result').classList.add('show');
+  document.getElementById('ho-result').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── COMMUNITY IMPACT TRACKER ──────────────────────────────────────────
+function renderCommunityImpact(){
+  var covenants = [];
+  try{ covenants = JSON.parse(localStorage.getItem('hi_covenants')||'[]'); }catch(e){}
+
+  var container = document.getElementById('community-districts');
+  var emptyEl = document.getElementById('community-empty');
+
+  if(!covenants.length){
+    container.innerHTML = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  var byDistrict = {};
+  covenants.forEach(function(c){
+    var d = c.district || 'Unspecified District';
+    if(!byDistrict[d]) byDistrict[d] = {principal:0, units:0, items:[]};
+    byDistrict[d].principal += c.principalExtinguished;
+    byDistrict[d].units += 1;
+    byDistrict[d].items.push(c);
+  });
+
+  var html = '';
+  Object.keys(byDistrict).forEach(function(d){
+    var stats = byDistrict[d];
+    html += '<div class="district-card"><div class="district-name">' + d + '</div><div class="district-stats">' +
+      '<div class="district-stat"><div class="district-stat-val">$' + Math.round(stats.principal).toLocaleString() + '</div><div class="district-stat-label">Principal Extinguished</div></div>' +
+      '<div class="district-stat"><div class="district-stat-val">' + stats.units + '</div><div class="district-stat-label">Units Recorded</div></div>' +
+      '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+// ── NAV HOOK: refresh data-dependent tabs when opened ────────────────
+var _origShowMode = showMode;
+showMode = function(mode, el){
+  _origShowMode(mode, el);
+  if(mode === 'curtailment') initCurtailmentTab();
+  if(mode === 'community') renderCommunityImpact();
+};
+
+// init on load in case curtailment or community is somehow the default
+document.addEventListener('DOMContentLoaded', function(){
+  renderCommunityImpact();
+});
+
+
+</script>
+<!-- ════════════════════════════════════════════════════════════════════
+     MFG FLOATING AI ASSISTANT — drop this block before 
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+ on any portal
+     Talks to Claude API, logs activity to /api/alerts/notify for owner alerts
+════════════════════════════════════════════════════════════════════ -->
+<div id="mfg-bot-bubble" onclick="mfgBotToggle()" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#C9A55C,#a8803a);box-shadow:0 4px 20px rgba(201,165,92,0.4);cursor:pointer;z-index:99990;display:flex;align-items:center;justify-content:center;transition:.2s">
+  <span id="mfg-bot-icon" style="font-size:24px;color:#0d1117">&#128172;</span>
+</div>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+</body>
+</html>

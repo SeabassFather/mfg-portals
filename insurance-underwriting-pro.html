@@ -8,7 +8,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#020912;color:#e2e8f0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 :root{--gold:#C9A55C;--dark:#020912;--navy:#0d1117;--card:#161b22;--bord:rgba(255,255,255,0.07);--txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;--green:#22c55e;--red:#ef4444;--blue:#4a8fd4;--purple:#8b5cf6}
-#gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px}
+#gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:14px}
 .gate-card{background:var(--card);border:1px solid rgba(201,165,92,0.3);border-radius:20px;padding:36px 28px;width:90%;max-width:340px;text-align:center;box-shadow:0 0 60px rgba(201,165,92,0.07)}
 .gate-logo{width:62px;height:62px;background:linear-gradient(135deg,#C9A55C,#8a6930);border-radius:15px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:12px;font-weight:900;color:#020912;letter-spacing:.5px}
 .gate-brand{font-size:15px;font-weight:900;color:#e2e8f0;margin-bottom:3px}
@@ -73,6 +73,17 @@ input:focus,select:focus{border-color:rgba(201,165,92,0.5)}
 .footer-bar{background:#0d1117;border-top:1px solid var(--bord);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 @media(max-width:480px){.kpi-val{font-size:18px}.body{padding:12px}}
 </style>
+<style id="plp-css">
+#portal-login-panel{display:none;position:fixed;bottom:20px;right:20px;width:400px;max-height:300px;background:#0d1117;border:1px solid #C9A55C;border-radius:8px;z-index:9999;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+#portal-login-panel .plp-hdr{background:#161b22;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d}
+#portal-login-panel .plp-title{color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:2px}
+#portal-login-panel .plp-close{color:#64748b;cursor:pointer;font-size:13px;background:none;border:none;padding:0}
+#portal-login-panel table{width:100%;border-collapse:collapse;font-size:10px}
+#portal-login-panel th{color:#64748b;padding:3px 6px;text-align:left;border-bottom:1px solid #21262d}
+#portal-login-panel td{color:#e2e8f0;padding:3px 6px;border-bottom:1px solid #21262d}
+#portal-login-panel .plp-body{overflow-y:auto;max-height:240px;padding:6px}
+#plp-trigger{display:none;position:fixed;bottom:20px;right:20px;background:#161b22;border:1px solid #C9A55C;color:#C9A55C;font-size:9px;padding:5px 10px;border-radius:4px;cursor:pointer;z-index:9998;letter-spacing:1px;font-weight:700}
+</style>
 </head>
 <body>
 
@@ -85,10 +96,10 @@ input:focus,select:focus{border-color:rgba(201,165,92,0.5)}
     <div id="dots"></div>
     <div id="g-err"></div>
     <div class="numpad">
-      <div class="nb" onclick="np('1')">1</div><div class="nb" onclick="np('2')">2</div><div class="nb" onclick="np('3')">3</div>
-      <div class="nb" onclick="np('4')">4</div><div class="nb" onclick="np('5')">5</div><div class="nb" onclick="np('6')">6</div>
-      <div class="nb" onclick="np('7')">7</div><div class="nb" onclick="np('8')">8</div><div class="nb" onclick="np('9')">9</div>
-      <div class="nb del" onclick="nd()">DEL</div><div class="nb" onclick="np('0')">0</div><div class="nb del" onclick="nc()">CLR</div>
+      <div class="nb" onclick="np('1')" ontouchend="event.preventDefault();np('1')">1</div><div class="nb" onclick="np('2')" ontouchend="event.preventDefault();np('2')">2</div><div class="nb" onclick="np('3')" ontouchend="event.preventDefault();np('3')">3</div>
+      <div class="nb" onclick="np('4')" ontouchend="event.preventDefault();np('4')">4</div><div class="nb" onclick="np('5')" ontouchend="event.preventDefault();np('5')">5</div><div class="nb" onclick="np('6')" ontouchend="event.preventDefault();np('6')">6</div>
+      <div class="nb" onclick="np('7')" ontouchend="event.preventDefault();np('7')">7</div><div class="nb" onclick="np('8')" ontouchend="event.preventDefault();np('8')">8</div><div class="nb" onclick="np('9')" ontouchend="event.preventDefault();np('9')">9</div>
+      <div class="nb del" onclick="nd()" ontouchend="event.preventDefault();nd()">DEL</div><div class="nb" onclick="np('0')" ontouchend="event.preventDefault();np('0')">0</div><div class="nb del" onclick="nc()" ontouchend="event.preventDefault();nc()">CLR</div>
     </div>
   </div>
   <div class="powered">Powered by AuditDNA Intelligence &bull; Mexausa Food Group, Inc. &bull; Patent Pending</div>
@@ -125,6 +136,26 @@ input:focus,select:focus{border-color:rgba(201,165,92,0.5)}
     <button class="tab-btn" onclick="goTab('reports')">REPORTS</button>
     <button class="tab-btn" onclick="goTab('tasks')">TASKS</button>
     <button class="tab-btn" onclick="goTab('docs')">DOCUMENTS</button>
+  
+    <button class="tab-btn" onclick="goTab('cert-payroll')">CERTIFIED PAYROLL</button>
+    <button class="tab-btn" onclick="goTab('timecards')">TIMECARDS</button>
+    <button class="tab-btn" onclick="goTab('workers-comp')">WORKERS COMP (CA)</button>
+    <button class="tab-btn" onclick="goTab('payroll-tax')">PAYROLL TAX</button>
+    <button class="tab-btn" onclick="goTab('insurance-docs')">INSURANCE DOCS</button>
+    <button class="tab-btn" onclick="goTab('contract-docs')">CONTRACT DOCS</button>
+    <button class="tab-btn" onclick="goTab('public-works')">PUBLIC WORKS</button>
+  
+    <button class="tab-btn" onclick="goTab('chart-accounts')">CHART OF ACCOUNTS</button>
+    <button class="tab-btn" onclick="goTab('financials')">P&amp;L / FINANCIALS</button>
+    <button class="tab-btn" onclick="goTab('forecast')">FORECAST &amp; BUDGET</button>
+    <button class="tab-btn" onclick="goTab('bill-pay')">BILL PAY / AUTO PAY</button>
+    <button class="tab-btn" onclick="goTab('bank-coding')">BANK CODING</button>
+  
+    <button class="tab-btn" onclick="goTab('contracts')">CONTRACTS</button>
+    <button class="tab-btn" onclick="goTab('change-orders')">CHANGE ORDERS</button>
+    <button class="tab-btn" onclick="goTab('draws')">DRAWS &amp; COLLECTIONS</button>
+    <button class="tab-btn" onclick="goTab('subcontractors')">SUBCONTRACTORS</button>
+    <button class="tab-btn" onclick="goTab('materials-sel')">MATERIALS SELECTION</button>
   </div>
 
   <div class="body">
@@ -538,7 +569,298 @@ input:focus,select:focus{border-color:rgba(201,165,92,0.5)}
       <button class="btn btn-blue" onclick="loadDocs()" style="padding:6px 12px;font-size:10px">REFRESH</button>
     </div>
     <div id="docs-list"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">Click REFRESH to load uploaded documents.</div></div>
-  </div>
+  
+    <!-- CERTIFIED PAYROLL -->
+    <div id="tab-cert-payroll" class="section">
+      <div class="section-title">Certified Payroll Processing</div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Prevailing Wage Jobs</div><div class="kpi-val" style="color:var(--blue)">4</div><div class="kpi-sub">Active public works</div></div>
+        <div class="kpi"><div class="kpi-lbl">Last Certified Payroll</div><div class="kpi-val" style="color:var(--green)">Filed</div><div class="kpi-sub">DIR submitted</div></div>
+        <div class="kpi"><div class="kpi-lbl">Next Due Date</div><div class="kpi-val" style="color:var(--gold)">Jun 27</div><div class="kpi-sub">Weekly cycle</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Submit Certified Payroll Report — DIR eCPR</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Project Name / PWC #</div><input class="inp" placeholder="e.g. SDCWA Pipeline Project 2026"/></div>
+          <div><div class="field-lbl">Awarding Agency</div><input class="inp" placeholder="e.g. City of San Diego Public Works"/></div>
+          <div><div class="field-lbl">Week Ending Date</div><input class="inp" type="date"/></div>
+          <div><div class="field-lbl">Prime Contractor EIN</div><input class="inp" placeholder="XX-XXXXXXX"/></div>
+        </div>
+        <table class="tbl" style="margin-bottom:10px">
+          <thead><tr><th>Employee</th><th>Classification</th><th>Reg Hrs</th><th>OT Hrs</th><th>Prevailing Rate</th><th>Gross Pay</th><th>Deductions</th><th>Net</th></tr></thead>
+          <tbody>
+            <tr><td>J. Ramirez</td><td>Pipe Layer</td><td>40</td><td>8</td><td>$52.18/hr</td><td>$2,506.40</td><td>$380.20</td><td>$2,126.20</td></tr>
+            <tr><td>M. Torres</td><td>Laborer</td><td>40</td><td>0</td><td>$44.62/hr</td><td>$1,784.80</td><td>$290.10</td><td>$1,494.70</td></tr>
+            <tr><td>R. Garcia</td><td>Foreman</td><td>40</td><td>12</td><td>$68.44/hr</td><td>$3,627.68</td><td>$542.40</td><td>$3,085.28</td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex;gap:8px">
+          <button class="btn">Generate DIR eCPR XML</button>
+          <button class="btn btn-secondary">Print WH-347 Form</button>
+          <a href="https://www.dir.ca.gov/OPRL/eCPRmanual.pdf" target="_blank" class="btn btn-secondary">DIR Instructions</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Prevailing Wage Lookup — CA DIR</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">County</div>
+            <select class="inp">
+              <option>San Diego</option><option>Los Angeles</option><option>Orange</option><option>Riverside</option><option>San Bernardino</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">Trade / Classification</div>
+            <select class="inp">
+              <option>Pipe Layer</option><option>Laborer</option><option>Foreman</option><option>Plumber</option><option>Electrician</option><option>Carpenter</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <a href="https://www.dir.ca.gov/OPRL/DPreWageDetermination.htm" target="_blank" class="btn">Look Up Prevailing Wage</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMECARDS -->
+    <div id="tab-timecards" class="section">
+      <div class="section-title">Weekly Timecard Management</div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Timecards This Week</div><div class="kpi-val" style="color:var(--blue)">8</div><div class="kpi-sub">Field employees</div></div>
+        <div class="kpi"><div class="kpi-lbl">Total Hours</div><div class="kpi-val" style="color:var(--green)">368</div><div class="kpi-sub">Reg + OT</div></div>
+        <div class="kpi"><div class="kpi-lbl">Pending Approval</div><div class="kpi-val" style="color:var(--gold)">3</div><div class="kpi-sub">Awaiting signature</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Weekly Timecard Entry</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Employee Name</div><input class="inp" placeholder="Full name"/></div>
+          <div><div class="field-lbl">Job / Project</div><input class="inp" placeholder="Project or job number"/></div>
+          <div><div class="field-lbl">Week Ending</div><input class="inp" type="date"/></div>
+          <div><div class="field-lbl">Classification</div><input class="inp" placeholder="e.g. Pipe Layer, Foreman"/></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr) 1fr 1fr;gap:6px;margin-bottom:10px">
+          <div style="text-align:center"><div class="field-lbl">Mon</div><input class="inp" type="number" placeholder="0" style="text-align:center"/></div>
+          <div style="text-align:center"><div class="field-lbl">Tue</div><input class="inp" type="number" placeholder="0" style="text-align:center"/></div>
+          <div style="text-align:center"><div class="field-lbl">Wed</div><input class="inp" type="number" placeholder="0" style="text-align:center"/></div>
+          <div style="text-align:center"><div class="field-lbl">Thu</div><input class="inp" type="number" placeholder="0" style="text-align:center"/></div>
+          <div style="text-align:center"><div class="field-lbl">Fri</div><input class="inp" type="number" placeholder="0" style="text-align:center"/></div>
+          <div style="text-align:center"><div class="field-lbl">Sat</div><input class="inp" type="number" placeholder="0" style="text-align:center"/></div>
+          <div style="text-align:center"><div class="field-lbl">Sun</div><input class="inp" type="number" placeholder="0" style="text-align:center"/></div>
+          <div style="text-align:center"><div class="field-lbl">Reg Hrs</div><input class="inp" readonly style="text-align:center;background:rgba(74,143,212,0.08)"/></div>
+          <div style="text-align:center"><div class="field-lbl">OT Hrs</div><input class="inp" readonly style="text-align:center;background:rgba(239,68,68,0.08)"/></div>
+        </div>
+        <button class="btn">Save Timecard</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Current Week — All Employees</div>
+        <table class="tbl">
+          <thead><tr><th>Employee</th><th>Classification</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Reg</th><th>OT</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>J. Ramirez</td><td>Pipe Layer</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>4</td><td>40</td><td>4</td><td><span style="color:var(--green)">Approved</span></td></tr>
+            <tr><td>M. Torres</td><td>Laborer</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>0</td><td>40</td><td>0</td><td><span style="color:var(--gold)">Pending</span></td></tr>
+            <tr><td>R. Garcia</td><td>Foreman</td><td>10</td><td>10</td><td>10</td><td>10</td><td>10</td><td>2</td><td>40</td><td>12</td><td><span style="color:var(--gold)">Pending</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- WORKERS COMP (CA) -->
+    <div id="tab-workers-comp" class="section">
+      <div class="section-title">Workers Compensation — California</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Policy Status</div><div class="kpi-val" style="color:var(--green)">Active</div><div class="kpi-sub">CA State Fund</div></div>
+        <div class="kpi"><div class="kpi-lbl">Experience Mod</div><div class="kpi-val" style="color:var(--blue)">0.88</div><div class="kpi-sub">Below 1.0 = good</div></div>
+        <div class="kpi"><div class="kpi-lbl">Annual Audit</div><div class="kpi-val" style="color:var(--gold)">Nov 2026</div><div class="kpi-sub">Due date</div></div>
+        <div class="kpi"><div class="kpi-lbl">Open Claims</div><div class="kpi-val" style="color:var(--red)">0</div><div class="kpi-sub">YTD</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">File Incident / Claim Report</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Injured Employee</div><input class="inp" placeholder="Full name"/></div>
+          <div><div class="field-lbl">Date of Injury</div><input class="inp" type="date"/></div>
+          <div><div class="field-lbl">Job Site / Location</div><input class="inp" placeholder="Address or project name"/></div>
+          <div><div class="field-lbl">Injury Type</div>
+            <select class="inp">
+              <option>Slip and Fall</option><option>Strain / Overexertion</option><option>Struck by Object</option><option>Cut / Laceration</option><option>Equipment Related</option><option>Other</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">Body Part Affected</div><input class="inp" placeholder="e.g. Lower back, right hand"/></div>
+          <div><div class="field-lbl">Medical Treatment</div>
+            <select class="inp"><option>First Aid Only</option><option>Doctor Visit</option><option>Emergency Room</option><option>Hospitalized</option></select>
+          </div>
+        </div>
+        <div><div class="field-lbl">Incident Description</div><textarea class="inp" rows="3" placeholder="Describe what happened, how, and witnesses..."></textarea></div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn">File DWC-1 Claim Form</button>
+          <a href="https://www.dir.ca.gov/dwc/DWCForm1.pdf" target="_blank" class="btn btn-secondary">DWC-1 PDF</a>
+          <a href="https://www.statefundca.com" target="_blank" class="btn btn-secondary">CA State Fund Portal</a>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Annual Audit Preparation</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:11px">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--txt)">Payroll registers by class code — sorted by employee</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:8px">
+            <span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--txt)">1099s and subcontractor certificates of insurance</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.15);border-radius:8px">
+            <span style="color:var(--gold);font-size:16px">&#9888;</span><span style="color:var(--txt)">OSHA 300 log — injuries and illness records YTD</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.15);border-radius:8px">
+            <span style="color:var(--gold);font-size:16px">&#9888;</span><span style="color:var(--txt)">Job cost allocation by WC class code per quarter</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <a href="https://www.statefundca.com/Employers/AuditInformation" target="_blank" class="btn">CA State Fund Audit Info</a>
+          <a href="https://www.dir.ca.gov/dosh/dosh1.html" target="_blank" class="btn btn-secondary">OSHA CA Requirements</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYROLL TAX -->
+    <div id="tab-payroll-tax" class="section">
+      <div class="section-title">Payroll Tax Management — State &amp; Federal</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Federal Tax Due</div><div class="kpi-val" style="color:var(--red)">$14,820</div><div class="kpi-sub">941 — this quarter</div></div>
+        <div class="kpi"><div class="kpi-lbl">CA SDI / PIT Due</div><div class="kpi-val" style="color:var(--gold)">$3,240</div><div class="kpi-sub">EDD quarterly</div></div>
+        <div class="kpi"><div class="kpi-lbl">FUTA Balance</div><div class="kpi-val" style="color:var(--blue)">$840</div><div class="kpi-sub">Annual — Form 940</div></div>
+        <div class="kpi"><div class="kpi-lbl">Next Deposit Due</div><div class="kpi-val" style="color:var(--red)">Jun 30</div><div class="kpi-sub">Semi-weekly depositor</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Federal Payroll Tax — IRS Obligations</div>
+        <table class="tbl">
+          <thead><tr><th>Form</th><th>Description</th><th>Frequency</th><th>Due Date</th><th>Status</th><th>Link</th></tr></thead>
+          <tbody>
+            <tr><td>941</td><td>Employer Quarterly Federal Tax</td><td>Quarterly</td><td>Jul 31, 2026</td><td><span style="color:var(--gold)">Pending</span></td><td><a href="https://www.irs.gov/forms-pubs/about-form-941" target="_blank" style="color:var(--blue)">IRS.gov</a></td></tr>
+            <tr><td>940</td><td>FUTA Annual Unemployment Tax</td><td>Annual</td><td>Jan 31, 2027</td><td><span style="color:var(--green)">On Track</span></td><td><a href="https://www.irs.gov/forms-pubs/about-form-940" target="_blank" style="color:var(--blue)">IRS.gov</a></td></tr>
+            <tr><td>W-2</td><td>Employee Wage Statements</td><td>Annual</td><td>Jan 31, 2027</td><td><span style="color:var(--green)">On Track</span></td><td><a href="https://www.irs.gov/forms-pubs/about-form-w-2" target="_blank" style="color:var(--blue)">IRS.gov</a></td></tr>
+            <tr><td>EFTPS</td><td>Federal Tax Deposit System</td><td>Semi-weekly</td><td>Rolling</td><td><span style="color:var(--green)">Active</span></td><td><a href="https://www.eftps.gov" target="_blank" style="color:var(--blue)">EFTPS</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">California EDD Payroll Tax — State Obligations</div>
+        <table class="tbl">
+          <thead><tr><th>Form</th><th>Description</th><th>Frequency</th><th>Due Date</th><th>Status</th><th>Link</th></tr></thead>
+          <tbody>
+            <tr><td>DE 9</td><td>Quarterly Contribution Return</td><td>Quarterly</td><td>Jul 31, 2026</td><td><span style="color:var(--gold)">Pending</span></td><td><a href="https://edd.ca.gov/en/payroll_taxes/de_9_and_de_9c/" target="_blank" style="color:var(--blue)">EDD</a></td></tr>
+            <tr><td>DE 9C</td><td>Quarterly Wage and Withholding Report</td><td>Quarterly</td><td>Jul 31, 2026</td><td><span style="color:var(--gold)">Pending</span></td><td><a href="https://edd.ca.gov" target="_blank" style="color:var(--blue)">EDD</a></td></tr>
+            <tr><td>DE 88</td><td>Payroll Tax Deposit Coupon</td><td>Semi-weekly</td><td>Rolling</td><td><span style="color:var(--green)">Active</span></td><td><a href="https://edd.ca.gov/en/payroll_taxes/e-services_for_business/" target="_blank" style="color:var(--blue)">e-Services</a></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <a href="https://edd.ca.gov/en/payroll_taxes/e-services_for_business/" target="_blank" class="btn">CA EDD e-Services</a>
+          <a href="https://www.eftps.gov" target="_blank" class="btn btn-secondary">Federal EFTPS</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSURANCE DOCS -->
+    <div id="tab-insurance-docs" class="section">
+      <div class="section-title">Insurance Document Coordination</div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Active Policies</div><div class="kpi-val" style="color:var(--blue)">4</div><div class="kpi-sub">GL, WC, Auto, Umbrella</div></div>
+        <div class="kpi"><div class="kpi-lbl">COIs Pending</div><div class="kpi-val" style="color:var(--gold)">2</div><div class="kpi-sub">Customer requests</div></div>
+        <div class="kpi"><div class="kpi-lbl">Next Renewal</div><div class="kpi-val" style="color:var(--green)">Sep 2026</div><div class="kpi-sub">General Liability</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Policy Register</div>
+        <table class="tbl">
+          <thead><tr><th>Policy Type</th><th>Carrier</th><th>Policy #</th><th>Coverage</th><th>Expiration</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>General Liability</td><td><input class="inp" style="width:120px" placeholder="Carrier name"/></td><td><input class="inp" style="width:100px" placeholder="Policy #"/></td><td>$2M / $4M</td><td><input class="inp" type="date" style="width:130px"/></td><td><span style="color:var(--green)">Active</span></td></tr>
+            <tr><td>Workers Comp</td><td><input class="inp" style="width:120px" placeholder="Carrier name"/></td><td><input class="inp" style="width:100px" placeholder="Policy #"/></td><td>Statutory CA</td><td><input class="inp" type="date" style="width:130px"/></td><td><span style="color:var(--green)">Active</span></td></tr>
+            <tr><td>Commercial Auto</td><td><input class="inp" style="width:120px" placeholder="Carrier name"/></td><td><input class="inp" style="width:100px" placeholder="Policy #"/></td><td>$1M CSL</td><td><input class="inp" type="date" style="width:130px"/></td><td><span style="color:var(--green)">Active</span></td></tr>
+            <tr><td>Umbrella</td><td><input class="inp" style="width:120px" placeholder="Carrier name"/></td><td><input class="inp" style="width:100px" placeholder="Policy #"/></td><td>$5M excess</td><td><input class="inp" type="date" style="width:130px"/></td><td><span style="color:var(--green)">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">COI Request Tracker — Broker to Customer</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Requesting Customer / Agency</div><input class="inp" placeholder="e.g. City of San Diego"/></div>
+          <div><div class="field-lbl">Policy Type Needed</div>
+            <select class="inp"><option>General Liability</option><option>Workers Comp</option><option>Commercial Auto</option><option>All Policies</option></select>
+          </div>
+          <div><div class="field-lbl">Additional Insured Required?</div>
+            <select class="inp"><option>Yes — add to cert</option><option>No</option></select>
+          </div>
+          <div><div class="field-lbl">Date Needed By</div><input class="inp" type="date"/></div>
+        </div>
+        <button class="btn">Request COI from Broker</button>
+      </div>
+    </div>
+
+    <!-- CONTRACT DOCS -->
+    <div id="tab-contract-docs" class="section">
+      <div class="section-title">Contract Document Packages</div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Active Contracts</div><div class="kpi-val" style="color:var(--blue)">6</div><div class="kpi-sub">In progress</div></div>
+        <div class="kpi"><div class="kpi-lbl">Pending Signatures</div><div class="kpi-val" style="color:var(--gold)">2</div><div class="kpi-sub">Awaiting execution</div></div>
+        <div class="kpi"><div class="kpi-lbl">Docs Due This Week</div><div class="kpi-val" style="color:var(--red)">3</div><div class="kpi-sub">Submittals + bonds</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">New Contract Package Checklist</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:11px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Executed Contract / Purchase Order</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Certificate of Insurance (GL + WC + Auto)</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Performance Bond (if required)</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Payment Bond / Labor &amp; Material Bond</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">DIR Public Works Registration Number</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Contractor License (CSLB) Copy</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Prevailing Wage Determination</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Subcontractor List (if applicable)</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Notice to Proceed copy on file</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Backflow Certification (if applicable)</span></label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Contract Register</div>
+        <table class="tbl">
+          <thead><tr><th>Project</th><th>Agency</th><th>Contract Value</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><input class="inp" placeholder="Project name"/></td><td><input class="inp" placeholder="Agency"/></td><td><input class="inp" placeholder="$"/></td><td><input class="inp" type="date"/></td><td><input class="inp" type="date"/></td><td><select class="inp"><option>Active</option><option>Pending</option><option>Complete</option><option>Closed</option></select></td></tr>
+            <tr><td>Pipeline Disinfection — SD</td><td>City of San Diego</td><td>$284,000</td><td>03/01/2026</td><td>09/30/2026</td><td><span style="color:var(--green)">Active</span></td></tr>
+            <tr><td>Backflow Repair — Alpine USD</td><td>Alpine Unified SD</td><td>$48,000</td><td>05/15/2026</td><td>08/15/2026</td><td><span style="color:var(--green)">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PUBLIC WORKS -->
+    <div id="tab-public-works" class="section">
+      <div class="section-title">Public Works Compliance — California</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">DIR Registration</div><div class="kpi-val" style="color:var(--green)">Active</div><div class="kpi-sub">SB 854 required</div></div>
+        <div class="kpi"><div class="kpi-lbl">CSLB License</div><div class="kpi-val" style="color:var(--green)">Active</div><div class="kpi-sub">A + C-34 + C-16</div></div>
+        <div class="kpi"><div class="kpi-lbl">LCP Tracker</div><div class="kpi-val" style="color:var(--gold)">2 Projects</div><div class="kpi-sub">Labor compliance</div></div>
+        <div class="kpi"><div class="kpi-lbl">DIR eCPR Filed</div><div class="kpi-val" style="color:var(--green)">Current</div><div class="kpi-sub">Week ending Jun 20</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">CA Public Works Compliance Links</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <a href="https://www.dir.ca.gov/Public-Works/PublicWorks.html" target="_blank" class="btn">DIR Public Works Home</a>
+          <a href="https://efiling.dir.ca.gov/PWCR/" target="_blank" class="btn btn-secondary">DIR Registration Portal</a>
+          <a href="https://www.dir.ca.gov/OPRL/DPreWageDetermination.htm" target="_blank" class="btn btn-secondary">Prevailing Wage Lookup</a>
+          <a href="https://efiling.dir.ca.gov/eCPR/" target="_blank" class="btn btn-secondary">eCPR Filing Portal</a>
+          <a href="https://www.cslb.ca.gov/contractors/Applicants/License_Services/check_status.aspx" target="_blank" class="btn btn-secondary">CSLB License Check</a>
+          <a href="https://www.dir.ca.gov/dlse/lcp.htm" target="_blank" class="btn btn-secondary">Labor Compliance Program</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Certified Payroll Filing Schedule — This Project</div>
+        <table class="tbl">
+          <thead><tr><th>Week Ending</th><th>Project</th><th>Filed To</th><th>Filed Date</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Jun 20, 2026</td><td>Pipeline Disinfection SD</td><td>DIR eCPR</td><td>Jun 23, 2026</td><td><span style="color:var(--green)">Filed</span></td></tr>
+            <tr><td>Jun 13, 2026</td><td>Pipeline Disinfection SD</td><td>DIR eCPR</td><td>Jun 16, 2026</td><td><span style="color:var(--green)">Filed</span></td></tr>
+            <tr><td>Jun 20, 2026</td><td>Backflow Repair Alpine USD</td><td>District Office</td><td>Jun 23, 2026</td><td><span style="color:var(--green)">Filed</span></td></tr>
+            <tr><td>Jun 27, 2026</td><td>Pipeline Disinfection SD</td><td>DIR eCPR</td><td>—</td><td><span style="color:var(--gold)">Upcoming</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
 </div>
 
 <script>
@@ -672,11 +994,24 @@ function checkDocuSign() {
 <script>
 var entered='',PIN='2641';
 function updDots(){var d=document.getElementById('dots');d.textContent='';for(var i=0;i<entered.length;i++)d.textContent+='\u25CF ';}
-function np(v){if(entered.length>=6)return;entered+=v;updDots();if(entered.length===4)checkPin();}
+function np(v){if(entered.length>=4)return;entered+=v;updDots();if(entered.length===4)checkPin();}
 function nd(){entered=entered.slice(0,-1);updDots();}
 function nc(){entered='';updDots();}
 function checkPin(){
-  if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';startClock();}
+  if(entered===PIN){document.getElementById('gate').style.display='none'
+  try{
+    fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        portal:window.location.pathname.split('/').pop(),
+        username:typeof cu!=='undefined'?(cu&&cu.name?cu.name:(typeof cu==='string'?cu:'user')):'user',
+        role:typeof cu!=='undefined'&&cu&&cu.role?cu.role:'unknown',
+        pin:_lastPin||''
+      })
+    }).catch(function(){});
+  }catch(e){}
+
+  checkOwnerPin(_lastPin);;document.getElementById('app').style.display='block';startClock();}
   else{var e=document.getElementById('g-err');e.textContent='Incorrect PIN. Try again.';entered='';updDots();setTimeout(function(){e.textContent='';},2000);}
 }
 function lock(){entered='';updDots();document.getElementById('app').style.display='none';document.getElementById('gate').style.display='flex';}
@@ -691,5 +1026,1498 @@ function startClock(){
   tick();setInterval(tick,1000);
 }
 </script>
+
+    <!-- CHART OF ACCOUNTS / CODING -->
+    <div id="tab-chart-accounts" class="section">
+      <div class="section-title">Chart of Accounts — Transaction Coding</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Total Accounts</div><div class="kpi-val" style="color:var(--blue)">84</div><div class="kpi-sub">Active in QB</div></div>
+        <div class="kpi"><div class="kpi-lbl">Uncoded Transactions</div><div class="kpi-val" style="color:var(--red)">12</div><div class="kpi-sub">Need assignment</div></div>
+        <div class="kpi"><div class="kpi-lbl">Last QB Sync</div><div class="kpi-val" style="color:var(--green)">Live</div><div class="kpi-sub">QuickBooks 2024</div></div>
+        <div class="kpi"><div class="kpi-lbl">Old Accounts</div><div class="kpi-val" style="color:var(--gold)">7</div><div class="kpi-sub">Flagged to delete</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Code Transaction from Bank Statement</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Transaction Description</div><input class="inp" placeholder="e.g. HOME DEPOT #1234 SAN DIEGO"/></div>
+          <div><div class="field-lbl">Amount</div><input class="inp" type="number" placeholder="0.00"/></div>
+          <div><div class="field-lbl">Date</div><input class="inp" type="date"/></div>
+          <div><div class="field-lbl">Type</div><select class="inp"><option>Expense</option><option>Income</option><option>Transfer</option><option>Liability Payment</option></select></div>
+        </div>
+        <div><div class="field-lbl">Assign Account Code</div>
+          <select class="inp" style="margin-bottom:10px">
+            <optgroup label="INCOME (4000s)">
+              <option value="4000">4000 — Service Revenue</option>
+              <option value="4100">4100 — Contract Revenue</option>
+              <option value="4200">4200 — Other Income</option>
+            </optgroup>
+            <optgroup label="COST OF GOODS (5000s)">
+              <option value="5000">5000 — Direct Labor</option>
+              <option value="5100">5100 — Materials / Supplies</option>
+              <option value="5200">5200 — Subcontractors</option>
+            </optgroup>
+            <optgroup label="OPERATING EXPENSES (6000s)">
+              <option value="6000">6000 — Rent / Lease</option>
+              <option value="6100">6100 — Utilities</option>
+              <option value="6200">6200 — Office Supplies</option>
+              <option value="6300">6300 — Insurance</option>
+              <option value="6400">6400 — Professional Fees</option>
+              <option value="6420">6420 — Vehicle / Fuel</option>
+              <option value="6500">6500 — Payroll Expense</option>
+              <option value="6600">6600 — Advertising / Marketing</option>
+              <option value="6700">6700 — Equipment / Tools</option>
+              <option value="6800">6800 — Repairs &amp; Maintenance</option>
+            </optgroup>
+            <optgroup label="LIABILITIES (2000s)">
+              <option value="2000">2000 — Accounts Payable</option>
+              <option value="2100">2100 — Credit Cards Payable</option>
+              <option value="2200">2200 — Payroll Liabilities</option>
+              <option value="2300">2300 — Sales Tax Payable</option>
+            </optgroup>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn">Code &amp; Post to QuickBooks</button>
+          <button class="btn btn-secondary">Mark for Review</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Uncoded Transactions — Needs Assignment</div>
+        <table class="tbl">
+          <thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Suggested Code</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Jun 18</td><td>HOME DEPOT #4521</td><td style="color:var(--red)">-$284.40</td><td>6700 — Equipment</td><td><button class="btn" style="padding:3px 8px;font-size:9px">Accept</button></td></tr>
+            <tr><td>Jun 17</td><td>ARCO #1284 FUEL</td><td style="color:var(--red)">-$124.80</td><td>6420 — Vehicle/Fuel</td><td><button class="btn" style="padding:3px 8px;font-size:9px">Accept</button></td></tr>
+            <tr><td>Jun 16</td><td>CLIENT PMT — SDCWA</td><td style="color:var(--green)">+$48,000.00</td><td>4100 — Contract Revenue</td><td><button class="btn" style="padding:3px 8px;font-size:9px">Accept</button></td></tr>
+            <tr><td>Jun 15</td><td>STAPLES OFFICE SUPPLY</td><td style="color:var(--red)">-$67.20</td><td>6200 — Office Supplies</td><td><button class="btn" style="padding:3px 8px;font-size:9px">Accept</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- P&L / FINANCIALS -->
+    <div id="tab-financials" class="section">
+      <div class="section-title">Financial Statements — P&amp;L &amp; Balance Sheet</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Gross Revenue MTD</div><div class="kpi-val" style="color:var(--green)">$284,600</div><div class="kpi-sub">June 2026</div></div>
+        <div class="kpi"><div class="kpi-lbl">Total Expenses MTD</div><div class="kpi-val" style="color:var(--red)">$190,400</div><div class="kpi-sub">June 2026</div></div>
+        <div class="kpi"><div class="kpi-lbl">Net Income MTD</div><div class="kpi-val" style="color:var(--green)">$94,200</div><div class="kpi-sub">33.1% margin</div></div>
+        <div class="kpi"><div class="kpi-lbl">Total Assets</div><div class="kpi-val" style="color:var(--blue)">$842,400</div><div class="kpi-sub">Balance sheet</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Profit &amp; Loss Statement — June 2026</div>
+        <table class="tbl">
+          <thead><tr><th>Account</th><th>Code</th><th>MTD</th><th>YTD</th><th>Budget</th><th>Variance</th></tr></thead>
+          <tbody>
+            <tr style="background:rgba(34,197,94,0.06)"><td><strong style="color:var(--green)">TOTAL REVENUE</strong></td><td>4000-4200</td><td style="color:var(--green)">$284,600</td><td style="color:var(--green)">$1,482,400</td><td>$280,000</td><td style="color:var(--green)">+$4,600</td></tr>
+            <tr><td>Direct Labor</td><td>5000</td><td style="color:var(--red)">$84,200</td><td style="color:var(--red)">$440,800</td><td>$80,000</td><td style="color:var(--red)">-$4,200</td></tr>
+            <tr><td>Materials / Supplies</td><td>5100</td><td style="color:var(--red)">$42,800</td><td style="color:var(--red)">$224,600</td><td>$40,000</td><td style="color:var(--red)">-$2,800</td></tr>
+            <tr><td>Subcontractors</td><td>5200</td><td style="color:var(--red)">$28,400</td><td style="color:var(--red)">$148,200</td><td>$30,000</td><td style="color:var(--green)">+$1,600</td></tr>
+            <tr style="background:rgba(201,165,92,0.06)"><td><strong style="color:var(--gold)">GROSS PROFIT</strong></td><td></td><td style="color:var(--gold)">$129,200</td><td style="color:var(--gold)">$668,800</td><td>$130,000</td><td style="color:var(--red)">-$800</td></tr>
+            <tr><td>Payroll / Admin</td><td>6500</td><td style="color:var(--red)">$18,400</td><td style="color:var(--red)">$96,200</td><td>$18,000</td><td style="color:var(--red)">-$400</td></tr>
+            <tr><td>Insurance</td><td>6300</td><td style="color:var(--red)">$8,200</td><td style="color:var(--red)">$42,800</td><td>$8,000</td><td style="color:var(--red)">-$200</td></tr>
+            <tr><td>Vehicle / Fuel</td><td>6420</td><td style="color:var(--red)">$4,800</td><td style="color:var(--red)">$24,400</td><td>$5,000</td><td style="color:var(--green)">+$200</td></tr>
+            <tr><td>Office / Admin</td><td>6200</td><td style="color:var(--red)">$2,400</td><td style="color:var(--red)">$12,800</td><td>$2,500</td><td style="color:var(--green)">+$100</td></tr>
+            <tr style="background:rgba(74,143,212,0.06)"><td><strong style="color:var(--blue)">NET INCOME</strong></td><td></td><td style="color:var(--green)">$94,200</td><td style="color:var(--green)">$488,600</td><td>$96,500</td><td style="color:var(--red)">-$2,300</td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn">Export to PDF</button>
+          <button class="btn btn-secondary">Sync from QuickBooks</button>
+          <button class="btn btn-secondary">Email to Owner</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Balance Sheet — As of June 20, 2026</div>
+        <div class="grid2" style="gap:14px">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:8px;letter-spacing:1px">ASSETS</div>
+            <table class="tbl">
+              <tbody>
+                <tr><td>Cash — Operating</td><td style="color:var(--green)">$148,400</td></tr>
+                <tr><td>Accounts Receivable</td><td style="color:var(--blue)">$84,200</td></tr>
+                <tr><td>Equipment (Net)</td><td>$420,000</td></tr>
+                <tr><td>Vehicles (Net)</td><td>$189,800</td></tr>
+                <tr><td><strong>Total Assets</strong></td><td><strong style="color:var(--green)">$842,400</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:8px;letter-spacing:1px">LIABILITIES &amp; EQUITY</div>
+            <table class="tbl">
+              <tbody>
+                <tr><td>Accounts Payable</td><td style="color:var(--red)">$42,800</td></tr>
+                <tr><td>Payroll Liabilities</td><td style="color:var(--red)">$14,820</td></tr>
+                <tr><td>Line of Credit</td><td style="color:var(--red)">$80,000</td></tr>
+                <tr><td>Owner Equity</td><td style="color:var(--blue)">$704,780</td></tr>
+                <tr><td><strong>Total L + Equity</strong></td><td><strong style="color:var(--green)">$842,400</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORECAST & BUDGET -->
+    <div id="tab-forecast" class="section">
+      <div class="section-title">Financial Forecasting &amp; Budget</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Annual Revenue Target</div><div class="kpi-val" style="color:var(--blue)">$3.2M</div><div class="kpi-sub">FY 2026</div></div>
+        <div class="kpi"><div class="kpi-lbl">YTD Actual</div><div class="kpi-val" style="color:var(--green)">$1.48M</div><div class="kpi-sub">46.4% of target</div></div>
+        <div class="kpi"><div class="kpi-lbl">Projected Year End</div><div class="kpi-val" style="color:var(--gold)">$2.96M</div><div class="kpi-sub">Based on run rate</div></div>
+        <div class="kpi"><div class="kpi-lbl">Budget Variance YTD</div><div class="kpi-val" style="color:var(--red)">-$48K</div><div class="kpi-sub">Under budget</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">6-Month Revenue Forecast</div>
+        <table class="tbl">
+          <thead><tr><th>Month</th><th>Projected Revenue</th><th>Projected Expenses</th><th>Projected Net</th><th>Confidence</th></tr></thead>
+          <tbody>
+            <tr><td>July 2026</td><td style="color:var(--green)">$310,000</td><td style="color:var(--red)">$208,000</td><td style="color:var(--green)">$102,000</td><td><span style="color:var(--green)">High</span></td></tr>
+            <tr><td>August 2026</td><td style="color:var(--green)">$295,000</td><td style="color:var(--red)">$198,000</td><td style="color:var(--green)">$97,000</td><td><span style="color:var(--green)">High</span></td></tr>
+            <tr><td>September 2026</td><td style="color:var(--green)">$280,000</td><td style="color:var(--red)">$192,000</td><td style="color:var(--green)">$88,000</td><td><span style="color:var(--gold)">Medium</span></td></tr>
+            <tr><td>October 2026</td><td style="color:var(--green)">$260,000</td><td style="color:var(--red)">$178,000</td><td style="color:var(--green)">$82,000</td><td><span style="color:var(--gold)">Medium</span></td></tr>
+            <tr><td>November 2026</td><td style="color:var(--green)">$240,000</td><td style="color:var(--red)">$164,000</td><td style="color:var(--green)">$76,000</td><td><span style="color:var(--red)">Low</span></td></tr>
+            <tr><td>December 2026</td><td style="color:var(--green)">$220,000</td><td style="color:var(--red)">$152,000</td><td style="color:var(--green)">$68,000</td><td><span style="color:var(--red)">Low</span></td></tr>
+            <tr style="background:rgba(201,165,92,0.08)"><td><strong>6-Month Total</strong></td><td style="color:var(--green)"><strong>$1,605,000</strong></td><td style="color:var(--red)"><strong>$1,092,000</strong></td><td style="color:var(--green)"><strong>$513,000</strong></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Annual Budget by Category</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Budget Period</div><select class="inp"><option>FY 2026 (Jan-Dec)</option><option>FY 2027</option></select></div>
+          <div><div class="field-lbl">Revenue Target</div><input class="inp" placeholder="$3,200,000"/></div>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>Category</th><th>Annual Budget</th><th>YTD Actual</th><th>Remaining</th><th>% Used</th></tr></thead>
+          <tbody>
+            <tr><td>Direct Labor</td><td><input class="inp" value="$960,000" style="width:110px"/></td><td style="color:var(--red)">$440,800</td><td style="color:var(--green)">$519,200</td><td>45.9%</td></tr>
+            <tr><td>Materials</td><td><input class="inp" value="$480,000" style="width:110px"/></td><td style="color:var(--red)">$224,600</td><td style="color:var(--green)">$255,400</td><td>46.8%</td></tr>
+            <tr><td>Insurance</td><td><input class="inp" value="$96,000" style="width:110px"/></td><td style="color:var(--red)">$42,800</td><td style="color:var(--green)">$53,200</td><td>44.6%</td></tr>
+            <tr><td>Payroll / Admin</td><td><input class="inp" value="$216,000" style="width:110px"/></td><td style="color:var(--red)">$96,200</td><td style="color:var(--green)">$119,800</td><td>44.5%</td></tr>
+          </tbody>
+        </table>
+        <button class="btn" style="margin-top:10px">Save Budget</button>
+      </div>
+    </div>
+
+    <!-- BILL PAY / AUTO PAY -->
+    <div id="tab-bill-pay" class="section">
+      <div class="section-title">Bill Pay &amp; Auto Pay Management</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Bills Due This Week</div><div class="kpi-val" style="color:var(--red)">5</div><div class="kpi-sub">Total $28,400</div></div>
+        <div class="kpi"><div class="kpi-lbl">Auto Pay Active</div><div class="kpi-val" style="color:var(--green)">8</div><div class="kpi-sub">Recurring vendors</div></div>
+        <div class="kpi"><div class="kpi-lbl">Overdue</div><div class="kpi-val" style="color:var(--red)">1</div><div class="kpi-sub">Past due 5 days</div></div>
+        <div class="kpi"><div class="kpi-lbl">Monthly AP Total</div><div class="kpi-val" style="color:var(--gold)">$42,800</div><div class="kpi-sub">All vendors</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Add / Pay Bill</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Vendor Name</div><input class="inp" placeholder="e.g. Home Depot Pro"/></div>
+          <div><div class="field-lbl">Invoice #</div><input class="inp" placeholder="Invoice number"/></div>
+          <div><div class="field-lbl">Amount Due</div><input class="inp" type="number" placeholder="0.00"/></div>
+          <div><div class="field-lbl">Due Date</div><input class="inp" type="date"/></div>
+          <div><div class="field-lbl">Account Code</div>
+            <select class="inp">
+              <option>5100 — Materials</option><option>6300 — Insurance</option><option>6420 — Vehicle/Fuel</option><option>6400 — Professional Fees</option><option>6700 — Equipment</option><option>6500 — Payroll</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">Payment Method</div>
+            <select class="inp"><option>ACH / Bank Transfer</option><option>Check</option><option>Credit Card</option><option>Auto Pay (recurring)</option></select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn">Pay Now</button>
+          <button class="btn btn-secondary">Schedule Payment</button>
+          <button class="btn btn-secondary">Set as Auto Pay</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Auto Pay Schedule — Recurring Vendors</div>
+        <table class="tbl">
+          <thead><tr><th>Vendor</th><th>Amount</th><th>Frequency</th><th>Next Date</th><th>Account Code</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>CA State Fund (WC)</td><td>$3,840</td><td>Monthly</td><td>Jul 1</td><td>6300</td><td><span style="color:var(--green)">Active</span></td></tr>
+            <tr><td>General Liability Ins.</td><td>$1,840</td><td>Monthly</td><td>Jul 1</td><td>6300</td><td><span style="color:var(--green)">Active</span></td></tr>
+            <tr><td>Office Lease</td><td>$2,400</td><td>Monthly</td><td>Jul 1</td><td>6000</td><td><span style="color:var(--green)">Active</span></td></tr>
+            <tr><td>QuickBooks Online</td><td>$85</td><td>Monthly</td><td>Jul 5</td><td>6200</td><td><span style="color:var(--green)">Active</span></td></tr>
+            <tr><td>Vehicle Fleet Fuel</td><td>~$1,200</td><td>Weekly</td><td>Jun 23</td><td>6420</td><td><span style="color:var(--green)">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BANK STATEMENT CODING -->
+    <div id="tab-bank-coding" class="section">
+      <div class="section-title">Bank Statement Import &amp; Coding</div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Imported Transactions</div><div class="kpi-val" style="color:var(--blue)">284</div><div class="kpi-sub">June statement</div></div>
+        <div class="kpi"><div class="kpi-lbl">Coded</div><div class="kpi-val" style="color:var(--green)">272</div><div class="kpi-sub">95.8% complete</div></div>
+        <div class="kpi"><div class="kpi-lbl">Needs Review</div><div class="kpi-val" style="color:var(--red)">12</div><div class="kpi-sub">Unmatched</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Import Bank Statement</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Bank / Account</div>
+            <select class="inp"><option>Chase Business Checking — xxxx4821</option><option>Chase Business Savings — xxxx2094</option><option>BofA Operating — xxxx9182</option></select>
+          </div>
+          <div><div class="field-lbl">Statement Period</div><input class="inp" type="month"/></div>
+        </div>
+        <div style="border:2px dashed rgba(74,143,212,0.3);border-radius:10px;padding:20px;text-align:center;margin-bottom:10px">
+          <div style="font-size:28px;margin-bottom:6px">&#8682;</div>
+          <div style="font-size:11px;color:var(--txt2)">Drop .CSV or .QFX bank file here — or click to upload</div>
+          <div style="font-size:10px;color:var(--txt3);margin-top:4px">Supports: QuickBooks QFX, OFX, CSV, Excel</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn">Import &amp; Auto-Code</button>
+          <button class="btn btn-secondary">Manual Entry</button>
+          <button class="btn btn-secondary">Connect Bank Feed (QB)</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Reconciliation — June 2026</div>
+        <div class="grid2" style="gap:12px">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:8px">BANK STATEMENT</div>
+            <table class="tbl">
+              <tbody>
+                <tr><td>Opening Balance</td><td>$124,800</td></tr>
+                <tr><td>Total Deposits</td><td style="color:var(--green)">+$284,600</td></tr>
+                <tr><td>Total Payments</td><td style="color:var(--red)">-$261,000</td></tr>
+                <tr><td><strong>Ending Balance</strong></td><td><strong style="color:var(--green)">$148,400</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--blue);margin-bottom:8px">QUICKBOOKS BALANCE</div>
+            <table class="tbl">
+              <tbody>
+                <tr><td>QB Ending Balance</td><td style="color:var(--green)">$148,400</td></tr>
+                <tr><td>Outstanding Checks</td><td style="color:var(--red)">-$0</td></tr>
+                <tr><td>Deposits in Transit</td><td style="color:var(--green)">+$0</td></tr>
+                <tr><td><strong>Adjusted Balance</strong></td><td><strong style="color:var(--green)">$148,400</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding:10px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:8px;text-align:center;font-size:12px;font-weight:700;color:var(--green)">
+          RECONCILED — Difference: $0.00
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn">Mark Reconciled in QB</button>
+          <button class="btn btn-secondary">Print Reconciliation Report</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- CONTRACTS -->
+    <div id="tab-contracts" class="section">
+      <div class="section-title">Customer Contracts — Preparation &amp; Management</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Active Contracts</div><div class="kpi-val" style="color:var(--blue)">14</div><div class="kpi-sub">In progress</div></div>
+        <div class="kpi"><div class="kpi-lbl">Pending Signature</div><div class="kpi-val" style="color:var(--gold)">3</div><div class="kpi-sub">Sent electronically</div></div>
+        <div class="kpi"><div class="kpi-lbl">Total Contract Value</div><div class="kpi-val" style="color:var(--green)">$2.84M</div><div class="kpi-sub">Active projects</div></div>
+        <div class="kpi"><div class="kpi-lbl">Contracts This Month</div><div class="kpi-val" style="color:var(--blue)">4</div><div class="kpi-sub">New June 2026</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Prepare New Customer Contract</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Customer Full Name</div><input class="inp" id="ct-cust" placeholder="First Last"/></div>
+          <div><div class="field-lbl">Project Address</div><input class="inp" id="ct-addr" placeholder="123 Main St, San Diego CA"/></div>
+          <div><div class="field-lbl">Project Type</div>
+            <select class="inp" id="ct-type">
+              <option>Pipeline / Piping Construction</option>
+              <option>Pipeline Disinfection</option>
+              <option>Backflow Certification / Repair</option>
+              <option>General Construction</option>
+              <option>Home Improvement / Remodel</option>
+              <option>Commercial Build-Out</option>
+              <option>Roofing</option>
+              <option>HVAC</option>
+              <option>Electrical</option>
+              <option>Plumbing</option>
+              <option>Concrete / Flatwork</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">Contract Total ($)</div><input class="inp" id="ct-total" type="number" placeholder="0.00"/></div>
+          <div><div class="field-lbl">Start Date</div><input class="inp" id="ct-start" type="date"/></div>
+          <div><div class="field-lbl">Completion Date</div><input class="inp" id="ct-end" type="date"/></div>
+          <div><div class="field-lbl">Project Manager</div><input class="inp" id="ct-pm" placeholder="PM name"/></div>
+          <div><div class="field-lbl">Director of Operations</div><input class="inp" id="ct-do" placeholder="Director name"/></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="field-lbl">Draw Schedule</div>
+          <table class="tbl" style="margin-bottom:8px">
+            <thead><tr><th>Draw #</th><th>Milestone / Phase</th><th>% of Contract</th><th>Amount</th><th>Due</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td><input class="inp" placeholder="e.g. Contract signing"/></td><td><input class="inp" style="width:60px" placeholder="10%"/></td><td><input class="inp" style="width:90px" placeholder="$"/></td><td><input class="inp" type="date" style="width:130px"/></td></tr>
+              <tr><td>2</td><td><input class="inp" placeholder="e.g. Site prep complete"/></td><td><input class="inp" style="width:60px" placeholder="25%"/></td><td><input class="inp" style="width:90px" placeholder="$"/></td><td><input class="inp" type="date" style="width:130px"/></td></tr>
+              <tr><td>3</td><td><input class="inp" placeholder="e.g. Rough-in complete"/></td><td><input class="inp" style="width:60px" placeholder="25%"/></td><td><input class="inp" style="width:90px" placeholder="$"/></td><td><input class="inp" type="date" style="width:130px"/></td></tr>
+              <tr><td>4</td><td><input class="inp" placeholder="e.g. Final inspection"/></td><td><input class="inp" style="width:60px" placeholder="30%"/></td><td><input class="inp" style="width:90px" placeholder="$"/></td><td><input class="inp" type="date" style="width:130px"/></td></tr>
+              <tr><td>5</td><td><input class="inp" placeholder="e.g. Certificate of occupancy"/></td><td><input class="inp" style="width:60px" placeholder="10%"/></td><td><input class="inp" style="width:90px" placeholder="$"/></td><td><input class="inp" type="date" style="width:130px"/></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="alert('Contract generated and sent to customer email for e-signature')">Generate &amp; Send for E-Signature</button>
+          <button class="btn btn-secondary">Post to QuickBooks Estimate</button>
+          <button class="btn btn-secondary">Save Draft</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Active Contract Register</div>
+        <table class="tbl">
+          <thead><tr><th>Customer</th><th>Project Type</th><th>Contract Value</th><th>Signed</th><th>Start</th><th>End</th><th>Draw Status</th><th>QB</th></tr></thead>
+          <tbody>
+            <tr><td>J. Martinez</td><td>Pipeline Construction</td><td>$284,000</td><td><span style="color:var(--green)">Yes</span></td><td>03/01/26</td><td>09/30/26</td><td><span style="color:var(--blue)">Draw 2 of 5</span></td><td><span style="color:var(--green)">Posted</span></td></tr>
+            <tr><td>Alpine USD</td><td>Backflow Repair</td><td>$48,000</td><td><span style="color:var(--green)">Yes</span></td><td>05/15/26</td><td>08/15/26</td><td><span style="color:var(--blue)">Draw 1 of 3</span></td><td><span style="color:var(--green)">Posted</span></td></tr>
+            <tr><td>R. Henderson</td><td>Home Remodel</td><td>$124,800</td><td><span style="color:var(--gold)">Pending</span></td><td>—</td><td>—</td><td><span style="color:var(--gold)">Awaiting sig</span></td><td><span style="color:var(--gold)">Draft</span></td></tr>
+            <tr><td>SD Water Authority</td><td>Pipe Disinfection</td><td>$420,000</td><td><span style="color:var(--green)">Yes</span></td><td>04/01/26</td><td>12/31/26</td><td><span style="color:var(--blue)">Draw 3 of 6</span></td><td><span style="color:var(--green)">Posted</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CHANGE ORDERS -->
+    <div id="tab-change-orders" class="section">
+      <div class="section-title">Change Orders, Credits &amp; Supplements</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Open Change Orders</div><div class="kpi-val" style="color:var(--gold)">6</div><div class="kpi-sub">Awaiting approval</div></div>
+        <div class="kpi"><div class="kpi-lbl">Approved This Month</div><div class="kpi-val" style="color:var(--green)">11</div><div class="kpi-sub">Total +$84,200</div></div>
+        <div class="kpi"><div class="kpi-lbl">Credits Issued</div><div class="kpi-val" style="color:var(--red)">2</div><div class="kpi-sub">-$4,800 total</div></div>
+        <div class="kpi"><div class="kpi-lbl">Supplements Pending</div><div class="kpi-val" style="color:var(--blue)">3</div><div class="kpi-sub">Insurance / owner</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Prepare Change Order / Credit / Supplement</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Document Type</div>
+            <select class="inp" id="co-type">
+              <option value="CO">Change Order</option>
+              <option value="CR">Customer Credit</option>
+              <option value="SUP">Supplement</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">Customer / Contract</div><input class="inp" id="co-cust" placeholder="Customer name or contract #"/></div>
+          <div><div class="field-lbl">CO / Credit #</div><input class="inp" id="co-num" placeholder="e.g. CO-007"/></div>
+          <div><div class="field-lbl">Amount</div><input class="inp" id="co-amt" type="number" placeholder="0.00 (negative for credit)"/></div>
+          <div><div class="field-lbl">Reason / Description</div><input class="inp" id="co-reason" placeholder="e.g. Additional scope — owner requested"/></div>
+          <div><div class="field-lbl">Project Manager</div><input class="inp" id="co-pm" placeholder="PM assigned"/></div>
+        </div>
+        <div style="margin-bottom:10px"><div class="field-lbl">Detailed Scope of Change</div><textarea class="inp" rows="3" id="co-scope" placeholder="Describe the change in full detail — materials, labor, timeframe impact..."></textarea></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="alert('Change order sent to customer for approval — call to confirm receipt')">Send for Customer Approval</button>
+          <button class="btn btn-secondary" onclick="alert('Posted to QuickBooks and customer file updated')">Post to QuickBooks</button>
+          <button class="btn btn-secondary">Invoice &amp; Collect</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Change Order Log — All Active Contracts</div>
+        <table class="tbl">
+          <thead><tr><th>CO #</th><th>Type</th><th>Customer</th><th>Description</th><th>Amount</th><th>Sent</th><th>Approved</th><th>QB Posted</th><th>Invoiced</th></tr></thead>
+          <tbody>
+            <tr><td>CO-001</td><td>Change Order</td><td>J. Martinez</td><td>Additional pipe footage — 200 LF</td><td style="color:var(--green)">+$18,400</td><td><span style="color:var(--green)">Yes</span></td><td><span style="color:var(--green)">Yes</span></td><td><span style="color:var(--green)">Yes</span></td><td><span style="color:var(--green)">Yes</span></td></tr>
+            <tr><td>CO-002</td><td>Supplement</td><td>Alpine USD</td><td>Insurance supplement — water damage</td><td style="color:var(--blue)">$12,800</td><td><span style="color:var(--green)">Yes</span></td><td><span style="color:var(--gold)">Pending</span></td><td><span style="color:var(--gold)">No</span></td><td><span style="color:var(--gold)">No</span></td></tr>
+            <tr><td>CO-003</td><td>Customer Credit</td><td>R. Henderson</td><td>Credit — tile upgrade discount</td><td style="color:var(--red)">-$2,400</td><td><span style="color:var(--green)">Yes</span></td><td><span style="color:var(--green)">Yes</span></td><td><span style="color:var(--green)">Yes</span></td><td><span style="color:var(--green)">Applied</span></td></tr>
+            <tr><td>CO-004</td><td>Change Order</td><td>SD Water Authority</td><td>Scope expansion — valve replacements</td><td style="color:var(--green)">+$28,000</td><td><span style="color:var(--green)">Yes</span></td><td><span style="color:var(--gold)">Pending</span></td><td><span style="color:var(--gold)">No</span></td><td><span style="color:var(--gold)">No</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DRAWS & COLLECTIONS -->
+    <div id="tab-draws" class="section">
+      <div class="section-title">Construction Draws &amp; Collections</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Draws Pending</div><div class="kpi-val" style="color:var(--gold)">4</div><div class="kpi-sub">$284,000 total</div></div>
+        <div class="kpi"><div class="kpi-lbl">Collected This Month</div><div class="kpi-val" style="color:var(--green)">$148,000</div><div class="kpi-sub">3 draws received</div></div>
+        <div class="kpi"><div class="kpi-lbl">Mortgage Co. Draws</div><div class="kpi-val" style="color:var(--blue)">2</div><div class="kpi-sub">In process</div></div>
+        <div class="kpi"><div class="kpi-lbl">Insurance Payments</div><div class="kpi-val" style="color:var(--purple)">1</div><div class="kpi-sub">Third-party vendor</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Request Construction Draw</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Customer / Project</div><input class="inp" placeholder="Customer name"/></div>
+          <div><div class="field-lbl">Draw Source</div>
+            <select class="inp">
+              <option>Customer — Direct Payment</option>
+              <option>Mortgage Company Draw</option>
+              <option>Insurance Third-Party Payment</option>
+              <option>Construction Lender Draw</option>
+              <option>SBA / Government Fund</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">Draw # / Milestone</div><input class="inp" placeholder="e.g. Draw 2 — Rough-in complete"/></div>
+          <div><div class="field-lbl">Amount Requested</div><input class="inp" type="number" placeholder="0.00"/></div>
+          <div><div class="field-lbl">Lender / Mortgage Company</div><input class="inp" placeholder="e.g. Wells Fargo Home Lending"/></div>
+          <div><div class="field-lbl">Inspector Required?</div><select class="inp"><option>Yes — schedule inspection</option><option>No — draw on completion</option></select></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="alert('Draw request submitted and tracked')">Submit Draw Request</button>
+          <button class="btn btn-secondary">Generate Draw Invoice in QB</button>
+          <button class="btn btn-secondary">Record Deposit</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Draw Schedule Tracker — All Active Projects</div>
+        <table class="tbl">
+          <thead><tr><th>Customer</th><th>Draw #</th><th>Milestone</th><th>Amount</th><th>Source</th><th>Requested</th><th>Received</th><th>Deposited</th></tr></thead>
+          <tbody>
+            <tr><td>J. Martinez</td><td>Draw 2</td><td>Site prep complete</td><td>$71,000</td><td>Mortgage Co.</td><td>Jun 10</td><td><span style="color:var(--green)">Jun 14 — $71,000</span></td><td><span style="color:var(--green)">Yes</span></td></tr>
+            <tr><td>Alpine USD</td><td>Draw 1</td><td>Mobilization</td><td>$14,400</td><td>Direct</td><td>Jun 1</td><td><span style="color:var(--green)">Jun 3 — $14,400</span></td><td><span style="color:var(--green)">Yes</span></td></tr>
+            <tr><td>R. Henderson</td><td>Draw 1</td><td>Contract signing</td><td>$12,480</td><td>Customer</td><td>—</td><td><span style="color:var(--gold)">Awaiting contract sig</span></td><td><span style="color:var(--gold)">No</span></td></tr>
+            <tr><td>SD Water Auth.</td><td>Draw 3</td><td>Pressure testing</td><td>$70,000</td><td>Govt. PO</td><td>Jun 18</td><td><span style="color:var(--gold)">Pending — 15 days</span></td><td><span style="color:var(--gold)">No</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Insurance Third-Party Payments</div>
+        <table class="tbl">
+          <thead><tr><th>Claim #</th><th>Insurance Co.</th><th>Customer</th><th>Scope</th><th>Supplement</th><th>Payment Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>CLM-2026-084</td><td>State Farm</td><td>Alpine USD</td><td>Water damage — backflow failure</td><td>CO-002 — $12,800</td><td>$48,000</td><td><span style="color:var(--gold)">Supplement pending</span></td></tr>
+            <tr><td>CLM-2026-091</td><td>Farmers</td><td>M. Gonzalez</td><td>Pipe burst — kitchen</td><td>None</td><td>$22,400</td><td><span style="color:var(--green)">Paid — deposited</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SUBCONTRACTORS -->
+    <div id="tab-subcontractors" class="section">
+      <div class="section-title">Subcontractor Compliance &amp; Database</div>
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Active Subs</div><div class="kpi-val" style="color:var(--green)">18</div><div class="kpi-sub">Fully compliant</div></div>
+        <div class="kpi"><div class="kpi-lbl">Renewals Due</div><div class="kpi-val" style="color:var(--red)">3</div><div class="kpi-sub">Next 30 days</div></div>
+        <div class="kpi"><div class="kpi-lbl">Background Screens</div><div class="kpi-val" style="color:var(--gold)">2</div><div class="kpi-sub">Pending results</div></div>
+        <div class="kpi"><div class="kpi-lbl">COI Expired</div><div class="kpi-val" style="color:var(--red)">1</div><div class="kpi-sub">Suspended until renewed</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Onboard New Subcontractor</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Company Name</div><input class="inp" placeholder="Subcontractor business name"/></div>
+          <div><div class="field-lbl">Contact Name</div><input class="inp" placeholder="Primary contact"/></div>
+          <div><div class="field-lbl">Phone</div><input class="inp" placeholder="(619) 555-0000"/></div>
+          <div><div class="field-lbl">Email</div><input class="inp" type="email" placeholder="sub@company.com"/></div>
+          <div><div class="field-lbl">Trade / Specialty</div>
+            <select class="inp">
+              <option>Plumbing</option><option>Electrical</option><option>HVAC</option><option>Concrete</option><option>Framing / Carpentry</option><option>Roofing</option><option>Drywall</option><option>Flooring</option><option>Painting</option><option>Landscaping</option><option>Pipeline / Utility</option><option>Backflow</option><option>General Labor</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">CSLB License #</div><input class="inp" placeholder="California Contractors License #"/></div>
+          <div><div class="field-lbl">DIR Registration #</div><input class="inp" placeholder="Required for public works"/></div>
+          <div><div class="field-lbl">EIN / Tax ID</div><input class="inp" placeholder="XX-XXXXXXX"/></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="field-lbl" style="margin-bottom:6px">Compliance Checklist</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">W-9 Collected</span></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Certificate of Insurance — GL</span></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Workers Comp Certificate</span></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">CSLB License Verified</span></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">DIR Registration Verified</span></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Background Screen Passed</span></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Subcontractor Agreement Signed</span></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--gold)"/> <span style="color:var(--txt)">Added to QuickBooks Vendor List</span></label>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="alert('Subcontractor onboarded and added to database')">Add to Database</button>
+          <button class="btn btn-secondary">Run Background Screen</button>
+          <button class="btn btn-secondary">Request COI from Broker</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Annual Renewal Tracker</div>
+        <table class="tbl">
+          <thead><tr><th>Subcontractor</th><th>Trade</th><th>COI Expires</th><th>WC Expires</th><th>License Exp.</th><th>Background</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Ace Pipeline Inc.</td><td>Pipeline</td><td style="color:var(--green)">Dec 2026</td><td style="color:var(--green)">Dec 2026</td><td style="color:var(--green)">Jul 2027</td><td style="color:var(--green)">Clear — Jan 2026</td><td><span style="color:var(--green)">Compliant</span></td></tr>
+            <tr><td>SoCal Backflow LLC</td><td>Backflow</td><td style="color:var(--red)">Jun 15, 2026</td><td style="color:var(--green)">Sep 2026</td><td style="color:var(--green)">Apr 2027</td><td style="color:var(--green)">Clear — Mar 2026</td><td><span style="color:var(--red)">COI EXPIRED</span></td></tr>
+            <tr><td>Martinez Electric</td><td>Electrical</td><td style="color:var(--gold)">Jul 1, 2026</td><td style="color:var(--gold)">Jul 15, 2026</td><td style="color:var(--green)">Feb 2028</td><td style="color:var(--gold)">Pending</td><td><span style="color:var(--gold)">Renewal Due</span></td></tr>
+            <tr><td>Alpine Concrete Co.</td><td>Concrete</td><td style="color:var(--green)">Nov 2026</td><td style="color:var(--green)">Nov 2026</td><td style="color:var(--green)">Jan 2027</td><td style="color:var(--green)">Clear — Apr 2026</td><td><span style="color:var(--green)">Compliant</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Background Screening</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Subject Name</div><input class="inp" placeholder="Full legal name"/></div>
+          <div><div class="field-lbl">Screen Type</div>
+            <select class="inp">
+              <option>Annual renewal (8-year lookback)</option>
+              <option>New hire — initial screen</option>
+              <option>Subcontractor onboard</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">DOB</div><input class="inp" type="date"/></div>
+          <div><div class="field-lbl">SSN (last 4)</div><input class="inp" placeholder="XXXX" maxlength="4"/></div>
+        </div>
+        <div style="font-size:10px;color:var(--txt2);margin-bottom:10px;padding:8px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+          Background screen requires no misdemeanors or felonies in the previous <strong style="color:var(--red)">8 years</strong>. Disqualifying offenses result in immediate suspension from all active projects.
+        </div>
+        <div style="display:flex;gap:8px">
+          <a href="https://www.checkr.com" target="_blank" class="btn">Run via Checkr</a>
+          <a href="https://www.sterlingbackcheck.com" target="_blank" class="btn btn-secondary">Sterling BackCheck</a>
+          <a href="https://www.hireright.com" target="_blank" class="btn btn-secondary">HireRight</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATERIALS SELECTION -->
+    <div id="tab-materials-sel" class="section">
+      <div class="section-title">Materials Selection Forms</div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="kpi"><div class="kpi-lbl">Forms Sent</div><div class="kpi-val" style="color:var(--blue)">8</div><div class="kpi-sub">Awaiting return</div></div>
+        <div class="kpi"><div class="kpi-lbl">Forms Returned</div><div class="kpi-val" style="color:var(--green)">6</div><div class="kpi-sub">Selections confirmed</div></div>
+        <div class="kpi"><div class="kpi-lbl">Change Orders Generated</div><div class="kpi-val" style="color:var(--gold)">3</div><div class="kpi-sub">From selections</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Create &amp; Send Materials Selection Form</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="field-lbl">Customer</div><input class="inp" placeholder="Customer name"/></div>
+          <div><div class="field-lbl">Project / Contract #</div><input class="inp" placeholder="Contract reference"/></div>
+          <div><div class="field-lbl">Selection Category</div>
+            <select class="inp">
+              <option>Flooring — Tile, Hardwood, LVP</option>
+              <option>Cabinetry — Kitchen / Bath</option>
+              <option>Countertops — Granite, Quartz, Marble</option>
+              <option>Plumbing Fixtures</option>
+              <option>Electrical Fixtures / Lighting</option>
+              <option>Roofing Material</option>
+              <option>Paint / Exterior Colors</option>
+              <option>Windows / Doors</option>
+              <option>HVAC Equipment</option>
+              <option>Pipe / Material Spec</option>
+              <option>Custom — Other</option>
+            </select>
+          </div>
+          <div><div class="field-lbl">Deadline to Return Form</div><input class="inp" type="date"/></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="field-lbl">Selection Options / Notes</div>
+          <textarea class="inp" rows="3" placeholder="List the options available for the customer to choose from. e.g.: Option A — 12x24 Porcelain Tile $4.20/sqft, Option B — 18x18 Travertine $6.80/sqft, Option C — 5&quot; Hardwood LVP $3.90/sqft"></textarea>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="alert('Materials selection form sent to customer electronically')">Send Form Electronically</button>
+          <button class="btn btn-secondary" onclick="alert('Confirm receipt logged in customer file')">Confirm Receipt</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Materials Selection Log</div>
+        <table class="tbl">
+          <thead><tr><th>Customer</th><th>Category</th><th>Sent</th><th>Deadline</th><th>Returned</th><th>Selection Made</th><th>Change Order</th><th>Invoiced</th></tr></thead>
+          <tbody>
+            <tr><td>J. Martinez</td><td>Flooring</td><td>Jun 1</td><td>Jun 8</td><td><span style="color:var(--green)">Jun 7</span></td><td>Option B — Travertine</td><td><span style="color:var(--green)">CO-005 — +$4,200</span></td><td><span style="color:var(--green)">Yes</span></td></tr>
+            <tr><td>J. Martinez</td><td>Cabinetry</td><td>Jun 1</td><td>Jun 8</td><td><span style="color:var(--green)">Jun 9</span></td><td>Semi-custom white shaker</td><td><span style="color:var(--green)">Included in contract</span></td><td><span style="color:var(--green)">Yes</span></td></tr>
+            <tr><td>R. Henderson</td><td>Countertops</td><td>Jun 10</td><td>Jun 17</td><td><span style="color:var(--gold)">Pending</span></td><td>—</td><td>—</td><td>—</td></tr>
+            <tr><td>R. Henderson</td><td>Plumbing Fixtures</td><td>Jun 10</td><td>Jun 17</td><td><span style="color:var(--gold)">Pending</span></td><td>—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     AUDITDNA UNIVERSAL PATCH v1.0
+     - Multi-Role PIN System (Owner/Sales/Employee/Demo)
+     - EN/ES Bilingual Toggle
+     - Floating OCR Receipt Scanner
+     Injected by AuditDNA Platform Bot
+═══════════════════════════════════════════════════════════ -->
+<style>
+/* ROLE BADGE */
+#mfg-role-badge{position:fixed;top:8px;right:8px;z-index:8000;display:none;
+  background:rgba(10,22,40,0.95);border:1px solid rgba(201,165,92,0.4);
+  border-radius:99px;padding:4px 14px;font-size:9px;font-weight:800;
+  color:#C9A55C;letter-spacing:1.5px;text-transform:uppercase;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4);cursor:default;font-family:Arial,sans-serif}
+/* LANG TOGGLE */
+#mfg-lang-toggle{position:fixed;top:8px;right:120px;z-index:8000;display:none;
+  background:rgba(10,22,40,0.95);border:1px solid rgba(201,165,92,0.3);
+  border-radius:99px;padding:4px 0;font-size:9px;font-weight:800;
+  color:#94a3b8;letter-spacing:1px;font-family:Arial,sans-serif;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4);overflow:hidden;display:none;flex-direction:row}
+.mfg-lang-btn{padding:4px 14px;cursor:pointer;transition:.15s;border-radius:99px}
+.mfg-lang-btn.on{background:#C9A55C;color:#020912}
+/* ROLE GATE OVERLAY */
+#mfg-role-gate{position:fixed;inset:0;background:#020912;z-index:9500;
+  display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif}
+.mrg-card{background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:16px;
+  padding:32px 28px;max-width:380px;width:calc(100% - 32px);text-align:center}
+.mrg-logo{font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:2px;margin-bottom:16px}
+.mrg-title{font-size:16px;font-weight:800;color:#e2e8f0;margin-bottom:4px}
+.mrg-sub{font-size:11px;color:#64748b;margin-bottom:20px}
+/* ROLE SELECTOR */
+.mrg-roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.mrg-role-btn{padding:12px 8px;border:1px solid rgba(201,165,92,0.2);border-radius:10px;
+  background:rgba(255,255,255,0.03);cursor:pointer;transition:.15s;
+  font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.5px;
+  font-family:Arial,sans-serif}
+.mrg-role-btn:hover,.mrg-role-btn.sel{background:rgba(201,165,92,0.12);
+  border-color:rgba(201,165,92,0.5);color:#C9A55C}
+.mrg-role-icon{font-size:18px;display:block;margin-bottom:4px}
+/* PIN PAD */
+#mrg-pin-area{display:none}
+.mrg-back{font-size:10px;color:#64748b;cursor:pointer;margin-bottom:12px;
+  text-decoration:underline;display:block}
+.mrg-dots{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
+.mrg-dot{width:12px;height:12px;border-radius:50%;
+  border:2px solid rgba(201,165,92,0.2);transition:.15s}
+.mrg-dot.on{background:#C9A55C;border-color:#C9A55C}
+.mrg-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.mrg-key{padding:14px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.07);border-radius:10px;
+  font-size:18px;font-weight:500;color:#e2e8f0;cursor:pointer;
+  transition:.1s;user-select:none;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;font-family:Arial,sans-serif}
+.mrg-key:active{background:rgba(201,165,92,0.15);color:#C9A55C}
+.mrg-key-del{background:rgba(239,68,68,0.06);color:rgba(239,68,68,0.5);font-size:13px}
+.mrg-key-ok{background:rgba(201,165,92,0.1);color:#C9A55C;font-size:11px;font-weight:800}
+.mrg-err{font-size:11px;color:#ef4444;min-height:16px;margin-top:6px}
+/* OCR FLOAT */
+#mfg-ocr-float{position:fixed;bottom:20px;right:20px;z-index:7500;display:none;flex-direction:column;align-items:flex-end;gap:8px}
+.mfg-ocr-fab{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#C9A55C,#8B5E1A);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(201,165,92,0.4);transition:.2s;font-family:Arial,sans-serif}
+.mfg-ocr-fab:hover{transform:scale(1.08)}
+.mfg-ocr-fab svg{width:22px;height:22px;fill:#020912}
+.mfg-ocr-label{background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:6px;
+  padding:4px 10px;font-size:9px;font-weight:700;color:#C9A55C;letter-spacing:1px;
+  white-space:nowrap;font-family:Arial,sans-serif}
+/* OCR MODAL */
+#mfg-ocr-modal{position:fixed;inset:0;background:rgba(2,9,18,0.92);z-index:9000;
+  display:none;align-items:center;justify-content:center;padding:16px;font-family:Arial,sans-serif}
+#mfg-ocr-modal.on{display:flex}
+.mfg-ocr-card{background:#0d1117;border:1px solid rgba(201,165,92,0.25);border-radius:16px;
+  padding:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto}
+.mfg-ocr-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.mfg-ocr-title{font-size:13px;font-weight:800;color:#e2e8f0}
+.mfg-ocr-close{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);
+  color:#ef4444;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700}
+.mfg-fg{margin-bottom:10px}
+.mfg-fg label{display:block;font-size:9px;font-weight:700;color:#64748b;
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.mfg-fg input,.mfg-fg select{width:100%;background:#161b22;border:1px solid rgba(201,165,92,0.15);
+  color:#e2e8f0;padding:9px 12px;border-radius:8px;font-size:12px;outline:none;box-sizing:border-box}
+.mfg-fg input:focus{border-color:#C9A55C}
+.mfg-upload-zone{border:2px dashed rgba(201,165,92,0.2);border-radius:10px;padding:20px;
+  text-align:center;cursor:pointer;margin-bottom:10px;transition:.2s}
+.mfg-upload-zone:hover{border-color:#C9A55C;background:rgba(201,165,92,0.03)}
+.mfg-upload-zone input{display:none}
+.mfg-btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.mfg-btn{padding:9px 18px;border-radius:8px;font-size:10px;font-weight:800;
+  cursor:pointer;border:none;letter-spacing:.5px;transition:.15s;font-family:Arial,sans-serif}
+.mfg-btn-gold{background:linear-gradient(135deg,#C9A55C,#8B5E1A);color:#020912}
+.mfg-btn-outline{background:transparent;border:1px solid rgba(201,165,92,0.25);color:#C9A55C}
+.mfg-btn-green{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#22c55e}
+.mfg-ocr-status{font-size:11px;color:#C9A55C;min-height:16px;margin:8px 0;font-weight:700}
+.mfg-ocr-result{background:#161b22;border:1px solid rgba(34,197,94,0.2);border-radius:8px;
+  padding:12px;font-size:10px;color:#22c55e;white-space:pre-wrap;margin-top:8px;display:none}
+.mfg-rec-table{width:100%;border-collapse:collapse;font-size:10px;margin-top:10px}
+.mfg-rec-table th{text-align:left;padding:6px 8px;font-size:9px;font-weight:700;
+  color:#64748b;letter-spacing:1px;border-bottom:1px solid rgba(201,165,92,0.1)}
+.mfg-rec-table td{padding:6px 8px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,0.04)}
+/* ROLE-BASED VISIBILITY */
+.owner-only{display:none !important}
+.sales-only{display:none !important}
+.emp-only{display:none !important}
+body.role-owner .owner-only{display:block !important}
+body.role-sales .sales-only{display:block !important}
+body.role-employee .emp-only{display:block !important}
+/* INTERNAL DATA HIDE for non-owners */
+body.role-sales .internal-data,
+body.role-employee .internal-data,
+body.role-demo .internal-data{display:none !important}
+/* Financial sections hidden from employee/demo */
+body.role-employee .financials-section,
+body.role-demo .financials-section{display:none !important;pointer-events:none}
+/* Bilingual */
+[data-es]{transition:opacity .2s}
+</style>
+
+<!-- ROLE BADGE -->
+<div id="mfg-role-badge"></div>
+
+<!-- LANG TOGGLE -->
+<div id="mfg-lang-toggle" style="display:none">
+  <div class="mfg-lang-btn on" id="mfg-en" onclick="mfgSetLang('en')">EN</div>
+  <div class="mfg-lang-btn" id="mfg-es" onclick="mfgSetLang('es')">ES</div>
+</div>
+
+<!-- ROLE GATE OVERLAY -->
+<div id="mfg-role-gate">
+  <div class="mrg-card">
+    <div class="mrg-logo">AUDITDNA &bull; MINI-OFFICE</div>
+    <div class="mrg-title" id="mrg-title-text">Select Your Role</div>
+    <div class="mrg-sub" id="mrg-sub-text">Each role has its own secure access / Cada rol tiene acceso seguro</div>
+
+    <!-- ROLE SELECTOR -->
+    <div class="mrg-roles" id="mrg-role-selector">
+      <div class="mrg-role-btn" onclick="mrgSelectRole('owner')" id="mrg-btn-owner">
+        <span class="mrg-role-icon">&#9670;</span>
+        <span data-en="Owner / Admin" data-es="Dueno / Admin">Owner / Admin</span>
+      </div>
+      <div class="mrg-role-btn" onclick="mrgSelectRole('sales')" id="mrg-btn-sales">
+        <span class="mrg-role-icon">&#128176;</span>
+        <span data-en="Sales Rep" data-es="Vendedor">Sales Rep</span>
+      </div>
+      <div class="mrg-role-btn" onclick="mrgSelectRole('employee')" id="mrg-btn-employee">
+        <span class="mrg-role-icon">&#128119;</span>
+        <span data-en="Employee" data-es="Empleado">Employee</span>
+      </div>
+      <div class="mrg-role-btn" onclick="mrgSelectRole('demo')" id="mrg-btn-demo">
+        <span class="mrg-role-icon">&#128065;</span>
+        <span data-en="Demo / Preview" data-es="Demo / Vista Previa">Demo / Preview</span>
+      </div>
+    </div>
+
+    <!-- PIN ENTRY -->
+    <div id="mrg-pin-area">
+      <span class="mrg-back" onclick="mrgBack()" data-en="Back to roles" data-es="Volver a roles">Back to roles</span>
+      <div id="mrg-role-label" style="font-size:11px;font-weight:800;color:#C9A55C;margin-bottom:12px;letter-spacing:1px"></div>
+      <div class="mrg-dots">
+        <div class="mrg-dot" id="mrd0"></div><div class="mrg-dot" id="mrd1"></div>
+        <div class="mrg-dot" id="mrd2"></div><div class="mrg-dot" id="mrd3"></div>
+      </div>
+      <div class="mrg-pad">
+        <div class="mrg-key" onclick="mrk('1')">1</div><div class="mrg-key" onclick="mrk('2')">2</div><div class="mrg-key" onclick="mrk('3')">3</div>
+        <div class="mrg-key" onclick="mrk('4')">4</div><div class="mrg-key" onclick="mrk('5')">5</div><div class="mrg-key" onclick="mrk('6')">6</div>
+        <div class="mrg-key" onclick="mrk('7')">7</div><div class="mrg-key" onclick="mrk('8')">8</div><div class="mrg-key" onclick="mrk('9')">9</div>
+        <div class="mrg-key mrg-key-del" onclick="mrk('del')">DEL</div>
+        <div class="mrg-key" onclick="mrk('0')">0</div>
+        <div class="mrg-key mrg-key-ok" onclick="mrk('ok')">OPEN</div>
+      </div>
+      <div class="mrg-err" id="mrg-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING OCR RECEIPT BUTTON -->
+<div id="mfg-ocr-float" style="display:none;position:fixed;bottom:20px;right:20px;z-index:7500;flex-direction:column;align-items:flex-end;gap:6px">
+  <div class="mfg-ocr-label" id="mfg-ocr-label">OCR RECEIPT</div>
+  <button class="mfg-ocr-fab" onclick="mfgOcrOpen()" title="Scan Receipt">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-9 13H5v-2h6v2zm8 0h-6v-2h6v2zm0-4H5V8h14v5z"/></svg>
+  </button>
+</div>
+
+<!-- OCR RECEIPT MODAL -->
+<div id="mfg-ocr-modal">
+  <div class="mfg-ocr-card">
+    <div class="mfg-ocr-head">
+      <div class="mfg-ocr-title" data-en="OCR Receipt Scanner" data-es="Escaner de Recibo OCR">OCR Receipt Scanner</div>
+      <button class="mfg-ocr-close" onclick="mfgOcrClose()" data-en="CLOSE" data-es="CERRAR">CLOSE</button>
+    </div>
+
+    <!-- CAMERA/UPLOAD ZONE -->
+    <div class="mfg-upload-zone" onclick="document.getElementById('mfg-ocr-input').click()">
+      <input type="file" id="mfg-ocr-input" accept="image/*" capture="environment" onchange="mfgOcrScan(this)">
+      <div style="font-size:28px;color:#C9A55C;margin-bottom:6px">&#128247;</div>
+      <div style="font-size:12px;font-weight:700;color:#e2e8f0" data-en="Take Photo or Upload Receipt" data-es="Tomar Foto o Subir Recibo">Take Photo or Upload Receipt</div>
+      <div style="font-size:10px;color:#64748b;margin-top:4px" data-en="AI reads vendor, amount, date automatically" data-es="IA lee proveedor, monto y fecha automaticamente">AI reads vendor, amount, date automatically</div>
+    </div>
+
+    <div class="mfg-ocr-status" id="mfg-ocr-status"></div>
+    <div class="mfg-ocr-result" id="mfg-ocr-result"></div>
+
+    <!-- FORM FIELDS (auto-filled by OCR) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+      <div class="mfg-fg">
+        <label data-en="Vendor / Store" data-es="Proveedor / Tienda">Vendor / Store</label>
+        <input id="mfg-rec-vendor" placeholder="Auto-filled...">
+      </div>
+      <div class="mfg-fg">
+        <label data-en="Amount ($)" data-es="Monto ($)">Amount ($)</label>
+        <input id="mfg-rec-amount" type="number" placeholder="0.00">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="mfg-fg">
+        <label data-en="Date" data-es="Fecha">Date</label>
+        <input id="mfg-rec-date" type="date">
+      </div>
+      <div class="mfg-fg">
+        <label data-en="Category" data-es="Categoria">Category</label>
+        <select id="mfg-rec-cat">
+          <option data-en="Materials" data-es="Materiales">Materials</option>
+          <option data-en="Fuel" data-es="Combustible">Fuel</option>
+          <option data-en="Labor" data-es="Mano de Obra">Labor</option>
+          <option data-en="Equipment" data-es="Equipo">Equipment</option>
+          <option data-en="Supplies" data-es="Suministros">Supplies</option>
+          <option data-en="Food & Beverage" data-es="Alimentos y Bebidas">Food & Beverage</option>
+          <option data-en="Insurance" data-es="Seguro">Insurance</option>
+          <option data-en="Rent" data-es="Renta">Rent</option>
+          <option data-en="Marketing" data-es="Mercadeo">Marketing</option>
+          <option data-en="Other" data-es="Otro">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="mfg-fg">
+      <label data-en="Notes" data-es="Notas">Notes</label>
+      <input id="mfg-rec-notes" placeholder="Optional notes...">
+    </div>
+
+    <div class="mfg-btn-row">
+      <button class="mfg-btn mfg-btn-gold" onclick="mfgRecSave()" data-en="SAVE RECEIPT" data-es="GUARDAR RECIBO">SAVE RECEIPT</button>
+      <button class="mfg-btn mfg-btn-green" onclick="mfgRecExport()" data-en="EXPORT CSV" data-es="EXPORTAR CSV">EXPORT CSV</button>
+      <button class="mfg-btn mfg-btn-outline" onclick="mfgOcrClose()" data-en="CLOSE" data-es="CERRAR">CLOSE</button>
+    </div>
+
+    <!-- RECEIPT LOG -->
+    <div style="margin-top:16px">
+      <div style="font-size:9px;font-weight:700;color:#C9A55C;letter-spacing:1.5px;margin-bottom:8px" data-en="RECEIPT LOG" data-es="REGISTRO DE RECIBOS">RECEIPT LOG</div>
+      <table class="mfg-rec-table">
+        <thead><tr>
+          <th data-en="Vendor" data-es="Proveedor">Vendor</th>
+          <th data-en="Amount" data-es="Monto">Amount</th>
+          <th data-en="Date" data-es="Fecha">Date</th>
+          <th data-en="Category" data-es="Categoria">Category</th>
+        </tr></thead>
+        <tbody id="mfg-rec-tbody"><tr><td colspan="4" style="color:#64748b;font-style:italic;padding:12px 8px" data-en="No receipts yet" data-es="Sin recibos aun">No receipts yet</td></tr></tbody>
+      </table>
+      <div id="mfg-rec-total" style="font-size:11px;font-weight:800;color:#C9A55C;text-align:right;margin-top:8px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+// ── ROLE PINS ─────────────────────────────────────────────────────────────────
+var ROLE_PINS = {
+  'owner':    { pins:['0609'], label:'OWNER / ADMIN',     labelEs:'DUENO / ADMIN',    color:'#C9A55C', body:'role-owner'   },
+  'sales':    { pins:['1111'], label:'SALES REP',         labelEs:'VENDEDOR',         color:'#4a8fd4', body:'role-sales'   },
+  'employee': { pins:['2222'], label:'EMPLOYEE',          labelEs:'EMPLEADO',         color:'#22c55e', body:'role-employee'},
+  'demo':     { pins:['4321'], label:'DEMO / PREVIEW',    labelEs:'DEMO / VISTA',     color:'#94a3b8', body:'role-demo'   }
+};
+
+// Role-specific tab visibility (what tabs/sections each role sees)
+var ROLE_TABS = {
+  'owner':    null,             // sees everything
+  'sales':    ['clients','invoices','quotes','email','dashboard'],
+  'employee': ['workorders','clients','receipts','fieldlog','dashboard'],
+  'demo':     ['dashboard','clients','invoices','quotes']
+};
+
+var mrgRole = '';
+var mrgPin  = '';
+var mfgLang = 'en';
+var mfgReceipts = [];
+
+// ── ROLE GATE ─────────────────────────────────────────────────────────────────
+function mrgSelectRole(role) {
+  mrgRole = role;
+  mrgPin  = '';
+  document.querySelectorAll('.mrg-role-btn').forEach(function(b){ b.classList.remove('sel'); });
+  var btn = document.getElementById('mrg-btn-'+role);
+  if(btn) btn.classList.add('sel');
+  document.getElementById('mrg-role-selector').style.display = 'none';
+  document.getElementById('mrg-pin-area').style.display = 'block';
+  var lbl = document.getElementById('mrg-role-label');
+  if(lbl) lbl.textContent = (mfgLang==='es' ? ROLE_PINS[role].labelEs : ROLE_PINS[role].label) + ' — ' + (mfgLang==='es' ? 'Ingrese su PIN' : 'Enter PIN');
+  mrgUpdDots();
+}
+
+function mrgBack() {
+  mrgRole = ''; mrgPin = '';
+  document.getElementById('mrg-role-selector').style.display = 'grid';
+  document.getElementById('mrg-pin-area').style.display = 'none';
+  document.getElementById('mrg-err').textContent = '';
+  mrgUpdDots();
+}
+
+function mrk(k) {
+  if(k==='del'){ mrgPin=mrgPin.slice(0,-1); }
+  else if(k==='ok'){ mrgCheckPin(); return; }
+  else if(mrgPin.length<4){ mrgPin+=k; }
+  mrgUpdDots();
+  if(mrgPin.length===4){ setTimeout(mrgCheckPin,100); }
+}
+
+function mrgUpdDots() {
+  for(var i=0;i<4;i++){
+    var d=document.getElementById('mrd'+i);
+    if(d) d.className='mrg-dot'+(i<mrgPin.length?' on':'');
+  }
+}
+
+function mrgCheckPin() {
+  var cfg = ROLE_PINS[mrgRole];
+  if(!cfg){ mrgRole=''; return; }
+  if(cfg.pins.indexOf(mrgPin)>=0) {
+    // HIDE the existing gate too (legacy single-PIN gate)
+    var oldGate = document.getElementById('gate');
+    if(oldGate) oldGate.style.display='none';
+    var app = document.getElementById('app');
+    if(app) app.style.display='block';
+
+    // Hide this gate
+    document.getElementById('mfg-role-gate').style.display='none';
+
+    // Apply role to body
+    document.body.className = (document.body.className||'').replace(/role-w+/g,'').trim() + ' ' + cfg.body;
+
+    // Show role badge
+    var badge = document.getElementById('mfg-role-badge');
+    if(badge){ badge.textContent=cfg.label; badge.style.display='block'; badge.style.borderColor=cfg.color; badge.style.color=cfg.color; }
+
+    // Show lang toggle
+    var lt = document.getElementById('mfg-lang-toggle');
+    if(lt) lt.style.display='flex';
+
+    // Show OCR float (not for demo)
+    if(mrgRole!=='demo'){
+      var fl = document.getElementById('mfg-ocr-float');
+      if(fl) fl.style.display='flex';
+    }
+
+    // Apply role-based tab hiding
+    applyRoleTabs(mrgRole);
+
+    // Hide financial sections from employee/demo
+    if(mrgRole==='employee'||mrgRole==='demo'){
+      document.querySelectorAll('.financials-section,.internal-data').forEach(function(el){
+        el.style.display='none';
+      });
+    }
+
+    // Try to call original app launch functions if they exist
+    if(typeof startClock==='function') try{startClock();}catch(e){}
+    if(typeof initDashboard==='function') try{initDashboard();}catch(e){}
+    if(typeof launch==='function') try{launch(cfg.label);}catch(e){}
+
+  } else {
+    var err = document.getElementById('mrg-err');
+    if(err) err.textContent = mfgLang==='es' ? 'PIN incorrecto. Intente de nuevo.' : 'Incorrect PIN. Try again.';
+    mrgPin=''; mrgUpdDots();
+    setTimeout(function(){ if(err) err.textContent=''; }, 2000);
+  }
+}
+
+function applyRoleTabs(role) {
+  var allowed = ROLE_TABS[role];
+  if(!allowed) return; // owner sees all
+  // Hide nav tabs not in allowed list
+  document.querySelectorAll('.ntab,.nav-tab,.tab-btn,[onclick*="sw("]').forEach(function(el){
+    var onclick = el.getAttribute('onclick')||'';
+    var match = onclick.match(/sw(['"]([^'"]+)['"])/);
+    if(match && allowed.indexOf(match[1])<0){
+      el.style.display='none';
+    }
+  });
+  // Also hide the corresponding sections
+  document.querySelectorAll('.sec,.section,[id^="sec-"]').forEach(function(el){
+    var id = el.id.replace('sec-','');
+    if(id && allowed.indexOf(id)<0 && allowed.indexOf(el.id)<0){
+      // Only hide if it looks like a nav section
+      if(el.id.startsWith('sec-')){
+        el.style.display='none';
+      }
+    }
+  });
+}
+
+// ── BILINGUAL ─────────────────────────────────────────────────────────────────
+function mfgSetLang(lang) {
+  mfgLang = lang;
+  document.getElementById('mfg-en').className='mfg-lang-btn'+(lang==='en'?' on':'');
+  document.getElementById('mfg-es').className='mfg-lang-btn'+(lang==='es'?' on':'');
+
+  // Apply to all [data-en] / [data-es] elements
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(el.children.length===0){ // only text nodes
+      el.textContent = lang==='es' ? (el.getAttribute('data-es')||el.textContent) : el.getAttribute('data-en');
+    }
+  });
+
+  // Apply to existing platform bilingual system if present
+  if(typeof setLang==='function') try{setLang(lang);}catch(e){}
+  if(typeof changeLang==='function') try{changeLang(lang);}catch(e){}
+
+  // Update OCR modal label
+  var ocrLabel = document.getElementById('mfg-ocr-label');
+  if(ocrLabel) ocrLabel.textContent = lang==='es' ? 'RECIBO OCR' : 'OCR RECEIPT';
+}
+
+// ── OCR RECEIPT SCANNER ───────────────────────────────────────────────────────
+function mfgOcrOpen() {
+  document.getElementById('mfg-ocr-modal').className='on';
+}
+function mfgOcrClose() {
+  document.getElementById('mfg-ocr-modal').className='';
+}
+
+async function mfgOcrScan(input) {
+  var file = input.files[0]; if(!file) return;
+  var st = document.getElementById('mfg-ocr-status');
+  if(st) st.textContent = mfgLang==='es' ? 'Escaneando recibo...' : 'Scanning receipt with AI...';
+
+  // Read as base64
+  var b64 = await new Promise(function(res){
+    var r=new FileReader(); r.onload=function(e){res(e.target.result.split(',')[1]);}; r.readAsDataURL(file);
+  });
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:400,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:file.type,data:b64}},
+          {type:'text',text:'Extract from this receipt: vendor name, total amount, date, and best category from: Materials, Fuel, Labor, Equipment, Supplies, Food & Beverage, Insurance, Rent, Marketing, Other. Also any brief notes. Return ONLY valid JSON: {"vendor":"","amount":"","date":"YYYY-MM-DD","category":"","notes":""}'}
+        ]}]
+      })
+    });
+    var data = await resp.json();
+    var txt = (data.content&&data.content[0]&&data.content[0].text)||'{}';
+    // Strip any markdown
+    txt = txt.replace(/^[^{]*/,'').replace(/[^}]*$/,'').trim();
+    var d = {};
+    try{ d=JSON.parse(txt); }catch(e){}
+
+    if(d.vendor) document.getElementById('mfg-rec-vendor').value = d.vendor;
+    if(d.amount) document.getElementById('mfg-rec-amount').value = d.amount.toString().replace(/[^0-9.]/g,'');
+    if(d.date)   document.getElementById('mfg-rec-date').value   = d.date;
+    if(d.notes)  document.getElementById('mfg-rec-notes').value  = d.notes;
+    if(d.category){
+      var sel=document.getElementById('mfg-rec-cat');
+      for(var i=0;i<sel.options.length;i++){
+        if(sel.options[i].text.toLowerCase()===d.category.toLowerCase()){sel.selectedIndex=i;break;}
+      }
+    }
+
+    if(st) st.textContent = mfgLang==='es' ? 'Recibo escaneado exitosamente' : 'Receipt scanned successfully';
+    var res=document.getElementById('mfg-ocr-result');
+    if(res){ res.textContent=JSON.stringify(d,null,2); res.style.display='block'; }
+
+  } catch(e) {
+    if(st) st.textContent = mfgLang==='es' ? 'Error de escaneo — llene manualmente' : 'Scan failed — fill in manually';
+  }
+}
+
+function mfgRecSave() {
+  var rec = {
+    vendor:   document.getElementById('mfg-rec-vendor').value||'',
+    amount:   parseFloat(document.getElementById('mfg-rec-amount').value)||0,
+    date:     document.getElementById('mfg-rec-date').value||new Date().toLocaleDateString(),
+    category: document.getElementById('mfg-rec-cat').value||'',
+    notes:    document.getElementById('mfg-rec-notes').value||''
+  };
+  if(!rec.vendor&&!rec.amount){ return; }
+  mfgReceipts.push(rec);
+  mfgRenderRecLog();
+
+  // Clear fields
+  ['mfg-rec-vendor','mfg-rec-amount','mfg-rec-notes'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('mfg-ocr-result').style.display='none';
+  document.getElementById('mfg-ocr-status').textContent = mfgLang==='es' ? 'Recibo guardado' : 'Receipt saved';
+}
+
+function mfgRenderRecLog() {
+  var tbody = document.getElementById('mfg-rec-tbody');
+  if(!tbody) return;
+  if(!mfgReceipts.length){
+    tbody.innerHTML='<tr><td colspan="4" style="color:#64748b;font-style:italic;padding:12px 8px">'+(mfgLang==='es'?'Sin recibos aun':'No receipts yet')+'</td></tr>';
+    return;
+  }
+  tbody.innerHTML = mfgReceipts.map(function(r){
+    return '<tr><td style="color:#e2e8f0">'+r.vendor+'</td><td style="color:#22c55e;font-weight:700">$'+r.amount.toFixed(2)+'</td><td style="color:#94a3b8">'+r.date+'</td><td style="color:#94a3b8">'+r.category+'</td></tr>';
+  }).join('');
+  var total = mfgReceipts.reduce(function(s,r){return s+r.amount;},0);
+  var tot = document.getElementById('mfg-rec-total');
+  if(tot) tot.textContent=(mfgLang==='es'?'Total: ':'Total: ')+'$'+total.toFixed(2);
+}
+
+function mfgRecExport() {
+  if(!mfgReceipts.length) return;
+  var csv = 'Vendor,Amount,Date,Category,Notes
+' +
+    mfgReceipts.map(function(r){
+      return [r.vendor,r.amount,r.date,r.category,r.notes].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');
+    }).join('
+');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='receipts-'+Date.now()+'.csv';
+  a.click();
+}
+
+// ── EXPOSE GLOBALS ────────────────────────────────────────────────────────────
+window.mrgSelectRole=mrgSelectRole;
+window.mrgBack=mrgBack;
+window.mrk=mrk;
+window.mfgSetLang=mfgSetLang;
+window.mfgOcrOpen=mfgOcrOpen;
+window.mfgOcrClose=mfgOcrClose;
+window.mfgOcrScan=mfgOcrScan;
+window.mfgRecSave=mfgRecSave;
+window.mfgRecExport=mfgRecExport;
+
+// ── INIT: hide original gate immediately, show our role gate ──────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  // Hide original gate
+  var og=document.getElementById('gate');
+  if(og) og.style.display='none';
+  // Hide app until role selected
+  var app=document.getElementById('app');
+  if(app) app.style.display='none';
+  // Show our gate
+  var rg=document.getElementById('mfg-role-gate');
+  if(rg) rg.style.display='flex';
+});
+
+// Fallback if DOMContentLoaded already fired
+if(document.readyState!=='loading'){
+  var og=document.getElementById('gate');
+  if(og) og.style.display='none';
+  var app=document.getElementById('app');
+  if(app) app.style.display='none';
+}
+
+})();
+
+var _lastPin='';
+function loadPlpData(){
+  var portal=window.location.pathname.split('/').pop();
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/logins?portal='+encodeURIComponent(portal))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var tb=document.getElementById('plp-tbody');
+      if(!tb)return;
+      if(!d.logins||!d.logins.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No logins yet.</td></tr>';return;}
+      tb.innerHTML=d.logins.slice(0,50).map(function(l){
+        var dt=new Date(l.logged_in_at);
+        var ts=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        return '<tr><td style="color:#e2e8f0;font-weight:700">'+l.username+'</td><td style="color:#C9A55C">'+l.role+'</td><td style="color:#64748b;font-size:9px">'+l.ip_address+'</td><td style="color:#64748b">'+ts+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+function showPlpPanel(){
+  var p=document.getElementById('portal-login-panel');
+  var t=document.getElementById('plp-trigger');
+  if(p){p.style.display='block';if(t)t.style.display='none';loadPlpData();}
+}
+function checkOwnerPin(pin){
+  _lastPin=pin;
+  if(pin==='0609'){var t=document.getElementById('plp-trigger');if(t)t.style.display='block';}
+}
+
+</script>
+<!-- ═══════════════════════ END AUDITDNA UNIVERSAL PATCH ═══════════════════ -->
+<div id="portal-login-panel"><div class="plp-hdr"><span class="plp-title">LOGIN ACTIVITY</span><button class="plp-close" onclick="document.getElementById('portal-login-panel').style.display='none';document.getElementById('plp-trigger').style.display='block'">x</button></div><div class="plp-body"><table><thead><tr><th>USER</th><th>ROLE</th><th>IP</th><th>TIME</th></tr></thead><tbody id="plp-tbody"><tr><td colspan="4" style="text-align:center;color:#64748b">Loading...</td></tr></tbody></table></div></div><button id="plp-trigger" onclick="showPlpPanel()">LOGIN LOG</button>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
 </body>
+
 </html>

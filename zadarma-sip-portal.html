@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SIP / VoIP Manager — AuditDNA</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+:root{--bg:#020912;--card:#161b22;--bord:rgba(201,165,92,0.25);--gold:#C9A55C;--goldd:#8B5E1A;--blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b}
+body{background:var(--bg);color:var(--txt);min-height:100vh}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:#020912;z-index:9999;display:flex;align-items:center;justify-content:center}
+.g-card{background:#0d1117;border:1px solid var(--bord);border-radius:16px;padding:36px 32px;max-width:360px;width:100%;text-align:center}
+.g-logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#1a3a6b,#0a1628);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--gold);margin:0 auto 14px;letter-spacing:1px}
+.g-title{font-size:14px;font-weight:800;color:var(--txt);margin-bottom:4px}
+.g-sub{font-size:10px;color:var(--txt3);margin-bottom:20px;letter-spacing:1px}
+.g-dots{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.g-dot{width:12px;height:12px;border-radius:50%;border:2px solid rgba(201,165,92,0.2);transition:.15s}
+.g-dot.on{background:var(--gold);border-color:var(--gold)}
+.g-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.g-key{padding:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;font-size:18px;font-weight:500;cursor:pointer;transition:.1s;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.g-key:active{background:rgba(201,165,92,0.12);color:var(--gold)}
+.g-key-del{background:rgba(239,68,68,0.06);color:rgba(239,68,68,0.5);font-size:12px}
+.g-key-ok{background:rgba(201,165,92,0.1);color:var(--gold);font-size:11px;font-weight:800}
+.g-err{font-size:11px;color:var(--red);min-height:16px;margin-top:8px}
+
+/* APP */
+#app{display:none}
+.topbar{background:#0d1117;border-bottom:1px solid var(--bord);padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.tb-logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1a3a6b,#0a1628);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--gold);flex-shrink:0;letter-spacing:.5px}
+.tb-name{font-size:13px;font-weight:800;color:var(--txt)}
+.tb-sub{font-size:9px;color:var(--txt3);letter-spacing:1px}
+.tb-badge{margin-left:auto;padding:4px 12px;border-radius:99px;font-size:9px;font-weight:800;letter-spacing:1px}
+.badge-green{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:var(--green)}
+.badge-red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
+.badge-gold{background:rgba(201,165,92,0.1);border:1px solid var(--bord);color:var(--gold)}
+
+/* TABS */
+.tabs{display:flex;overflow-x:auto;background:#0d1117;border-bottom:1px solid rgba(201,165,92,0.1);scrollbar-width:none;position:sticky;top:61px;z-index:99}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 20px;font-size:9px;font-weight:700;color:var(--txt3);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;letter-spacing:1.5px;text-transform:uppercase;transition:.15s}
+.tab:hover{color:var(--gold)}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* SECTIONS */
+.sec{display:none;padding:20px;max-width:900px;margin:0 auto}
+.sec.on{display:block}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid rgba(201,165,92,0.1);border-radius:12px;padding:18px;margin-bottom:14px}
+.card-title{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:#0d1117;border:1px solid rgba(201,165,92,0.1);border-radius:10px;padding:14px;text-align:center}
+.stat-val{font-size:24px;font-weight:800;color:var(--gold)}
+.stat-lbl{font-size:9px;color:var(--txt3);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+
+/* FORM */
+.fg{margin-bottom:10px}
+.fg label{display:block;font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.fg input,.fg select{width:100%;background:#0d1117;border:1px solid rgba(201,165,92,0.15);color:var(--txt);padding:10px 12px;border-radius:8px;font-size:12px;outline:none;transition:.15s}
+.fg input:focus,.fg select:focus{border-color:var(--gold)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* BUTTONS */
+.btn{padding:10px 20px;border-radius:8px;font-size:10px;font-weight:800;cursor:pointer;border:none;letter-spacing:.5px;transition:.15s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldd));color:#020912}
+.btn-blue{background:rgba(74,143,212,0.1);border:1px solid rgba(74,143,212,0.2);color:var(--blue)}
+.btn-green{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:var(--green)}
+.btn-red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.btn-outline{background:transparent;border:1px solid var(--bord);color:var(--gold)}
+.btn-sm{padding:6px 12px;font-size:9px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1px;padding:8px 12px;border-bottom:1px solid rgba(201,165,92,0.1)}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--txt2);vertical-align:middle}
+tr:hover td{background:rgba(201,165,92,0.03)}
+
+/* STATUS BADGES */
+.pill{padding:3px 10px;border-radius:99px;font-size:9px;font-weight:700;display:inline-block}
+.pill-green{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:var(--green)}
+.pill-blue{background:rgba(74,143,212,0.1);border:1px solid rgba(74,143,212,0.2);color:var(--blue)}
+.pill-red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.pill-gold{background:rgba(201,165,92,0.1);border:1px solid var(--bord);color:var(--gold)}
+.pill-gray{background:rgba(148,163,184,0.1);border:1px solid rgba(148,163,184,0.2);color:var(--txt2)}
+
+/* SETUP CARD */
+.setup-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.setup-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--gold);color:#020912;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-title{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:3px}
+.step-desc{font-size:11px;color:var(--txt3);line-height:1.6}
+.step-code{background:#0d1117;border:1px solid rgba(201,165,92,0.15);border-radius:6px;padding:8px 12px;font-family:Consolas,monospace;font-size:11px;color:var(--gold);margin-top:6px;word-break:break-all}
+
+/* CREDENTIALS CARD */
+.cred-box{background:#0d1117;border:1px solid rgba(201,165,92,0.2);border-radius:10px;padding:16px}
+.cred-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.cred-row:last-child{border-bottom:none}
+.cred-label{font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1px;text-transform:uppercase}
+.cred-val{font-family:Consolas,monospace;font-size:12px;color:var(--txt);font-weight:700}
+.copy-btn{background:rgba(201,165,92,0.1);border:1px solid var(--bord);color:var(--gold);padding:3px 10px;border-radius:6px;font-size:9px;font-weight:700;cursor:pointer}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#161b22;border:1px solid var(--gold);color:var(--txt);padding:10px 20px;border-radius:8px;font-size:11px;font-weight:700;z-index:99999;display:none;white-space:nowrap}
+
+/* ALERT */
+.alert{border-radius:10px;padding:14px 16px;font-size:11px;margin-bottom:14px;line-height:1.6}
+.alert-gold{background:rgba(201,165,92,0.08);border:1px solid rgba(201,165,92,0.25);color:var(--gold)}
+.alert-green{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);color:var(--green)}
+.alert-red{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.alert-blue{background:rgba(74,143,212,0.08);border:1px solid rgba(74,143,212,0.2);color:var(--blue)}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="g-card">
+    <div class="g-logo">SIP</div>
+    <div class="g-title">SIP / VoIP Manager</div>
+    <div class="g-sub">AUDITDNA &bull; ZADARMA PLATFORM</div>
+    <div class="g-dots"><div class="g-dot" id="d0"></div><div class="g-dot" id="d1"></div><div class="g-dot" id="d2"></div><div class="g-dot" id="d3"></div></div>
+    <div class="g-pad">
+      <div class="g-key" onclick="np('1')">1</div><div class="g-key" onclick="np('2')">2</div><div class="g-key" onclick="np('3')">3</div>
+      <div class="g-key" onclick="np('4')">4</div><div class="g-key" onclick="np('5')">5</div><div class="g-key" onclick="np('6')">6</div>
+      <div class="g-key" onclick="np('7')">7</div><div class="g-key" onclick="np('8')">8</div><div class="g-key" onclick="np('9')">9</div>
+      <div class="g-key g-key-del" onclick="np('del')">DEL</div>
+      <div class="g-key" onclick="np('0')">0</div>
+      <div class="g-key g-key-ok" onclick="np('ok')">OPEN</div>
+    </div>
+    <div class="g-err" id="g-err"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-logo">SIP</div>
+    <div>
+      <div class="tb-name">SIP / VoIP Manager</div>
+      <div class="tb-sub">ZADARMA PLATFORM &bull; AUDITDNA</div>
+    </div>
+    <div class="tb-badge badge-gold" id="conn-badge">CHECKING...</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="sw('dashboard')">DASHBOARD</div>
+    <div class="tab" onclick="sw('users')">SIP USERS</div>
+    <div class="tab" onclick="sw('numbers')">NUMBERS</div>
+    <div class="tab" onclick="sw('pbx')">PBX / EXTENSIONS</div>
+    <div class="tab" onclick="sw('setup')">SETUP GUIDE</div>
+    <div class="tab" onclick="sw('calllog')">CALL LOG</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="sec on" id="sec-dashboard">
+    <div class="stat-row" id="dash-stats">
+      <div class="stat"><div class="stat-val" id="stat-bal">--</div><div class="stat-lbl">Balance</div></div>
+      <div class="stat"><div class="stat-val" id="stat-users">--</div><div class="stat-lbl">SIP Users</div></div>
+      <div class="stat"><div class="stat-val" id="stat-nums">--</div><div class="stat-lbl">Numbers</div></div>
+      <div class="stat"><div class="stat-val" id="stat-calls">--</div><div class="stat-lbl">Recent Calls</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ZADARMA ACCOUNT STATUS</div>
+      <div id="status-out" class="alert alert-gold">Loading account status...</div>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="loadDashboard()">REFRESH</button>
+        <button class="btn btn-blue" onclick="sw('users')">MANAGE SIP USERS</button>
+        <button class="btn btn-outline" onclick="sw('setup')">SETUP GUIDE</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">QUICK ACTIONS</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+        <button class="btn btn-gold" onclick="sw('users');setTimeout(()=>document.getElementById('new-user-section').scrollIntoView(),200)">+ NEW SIP USER</button>
+        <button class="btn btn-blue" onclick="sw('numbers')">VIEW NUMBERS</button>
+        <button class="btn btn-green" onclick="sw('pbx');setTimeout(()=>document.getElementById('new-ext-section').scrollIntoView(),200)">+ NEW EXTENSION</button>
+        <button class="btn btn-outline" onclick="sw('setup')">APP SETUP GUIDE</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">WHAT IS THIS?</div>
+      <div style="font-size:12px;color:var(--txt2);line-height:1.8">
+        This panel manages your <strong style="color:var(--gold)">Zadarma VoIP account</strong> — allowing users with <strong style="color:var(--txt)">WiFi-only phones</strong> (no cellular service) to make and receive real phone calls via the Zadarma app.<br><br>
+        <strong style="color:var(--gold)">How it works:</strong><br>
+        1. You create a SIP user here and assign them a virtual number<br>
+        2. They download the <strong style="color:var(--txt)">Zadarma app</strong> (iOS / Android) — free<br>
+        3. They log in with the SIP credentials you provide<br>
+        4. They make and receive calls over WiFi — no cellular needed<br>
+        5. Calls show your virtual number as caller ID
+      </div>
+    </div>
+  </div>
+
+  <!-- SIP USERS -->
+  <div class="sec" id="sec-users">
+    <div class="card" id="new-user-section">
+      <div class="card-title">CREATE NEW SIP USER</div>
+      <div class="alert alert-blue" style="margin-bottom:14px">After creating, give the user the SIP credentials and they log into the Zadarma app. Works on any WiFi-connected phone with no cellular service.</div>
+      <div class="row2">
+        <div class="fg"><label>SIP Login / Username</label><input id="sip-login" placeholder="e.g. hector_mfg"></div>
+        <div class="fg"><label>Password</label><input id="sip-pass" type="password" placeholder="Strong password"></div>
+      </div>
+      <div class="fg"><label>Description / Name</label><input id="sip-desc" placeholder="e.g. Hector Mariscal — Field Sales"></div>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="createSipUser()">CREATE SIP USER</button>
+        <button class="btn btn-outline" onclick="loadSipUsers()">REFRESH LIST</button>
+      </div>
+      <div id="sip-create-status" style="font-size:11px;margin-top:8px;min-height:16px"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">SIP USERS</div>
+      <div id="sip-users-table"><div style="color:var(--txt3);font-size:11px">Loading...</div></div>
+    </div>
+
+    <!-- SIP CREDENTIALS DISPLAY -->
+    <div class="card" id="sip-creds-card" style="display:none">
+      <div class="card-title">SIP CREDENTIALS — SHARE WITH USER</div>
+      <div class="alert alert-green" style="margin-bottom:14px">Send these credentials to the user. They enter them in the Zadarma app to start making calls over WiFi.</div>
+      <div class="cred-box" id="sip-creds-box"></div>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="copyCredsEmail()">COPY FOR EMAIL</button>
+        <button class="btn btn-outline" onclick="document.getElementById('sip-creds-card').style.display='none'">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NUMBERS -->
+  <div class="sec" id="sec-numbers">
+    <div class="card">
+      <div class="card-title">YOUR VIRTUAL NUMBERS</div>
+      <div class="alert alert-gold" style="margin-bottom:14px">Virtual numbers are assigned to SIP users so callers can reach them. Buy new numbers at <a href="https://my.zadarma.com/num/" target="_blank" style="color:var(--blue)">my.zadarma.com/num/</a></div>
+      <div id="numbers-table"><div style="color:var(--txt3);font-size:11px">Loading...</div></div>
+      <div class="btn-row"><button class="btn btn-outline" onclick="loadNumbers()">REFRESH</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ASSIGN NUMBER TO SIP USER</div>
+      <div class="row2">
+        <div class="fg"><label>Virtual Number</label><input id="assign-num" placeholder="+15551234567"></div>
+        <div class="fg"><label>SIP User ID</label><input id="assign-sip" placeholder="SIP user ID or login"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-gold" onclick="assignNumber()">ASSIGN NUMBER</button></div>
+      <div id="assign-status" style="font-size:11px;margin-top:8px;min-height:16px"></div>
+    </div>
+  </div>
+
+  <!-- PBX EXTENSIONS -->
+  <div class="sec" id="sec-pbx">
+    <div class="card" id="new-ext-section">
+      <div class="card-title">CREATE PBX EXTENSION</div>
+      <div class="alert alert-blue" style="margin-bottom:14px">PBX extensions let multiple SIP users share one account with internal extensions (100, 101, 102...). Useful for team setups.</div>
+      <div class="row3">
+        <div class="fg"><label>Extension Number</label><input id="ext-num" placeholder="100" type="number"></div>
+        <div class="fg"><label>Name</label><input id="ext-name" placeholder="Hector Sales"></div>
+        <div class="fg"><label>Password</label><input id="ext-pass" type="password" placeholder="Password"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="createExtension()">CREATE EXTENSION</button>
+        <button class="btn btn-outline" onclick="loadPbx()">REFRESH</button>
+      </div>
+      <div id="ext-status" style="font-size:11px;margin-top:8px;min-height:16px"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">PBX EXTENSIONS</div>
+      <div id="pbx-table"><div style="color:var(--txt3);font-size:11px">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- SETUP GUIDE -->
+  <div class="sec" id="sec-setup">
+    <div class="card">
+      <div class="card-title">SETUP GUIDE — WiFi-Only Phone</div>
+      <div class="alert alert-green" style="margin-bottom:16px">Step-by-step: get a user with no cellular service making real calls over WiFi in under 10 minutes.</div>
+
+      <div class="setup-step">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Create SIP User (above in SIP Users tab)</div>
+          <div class="step-desc">Create a SIP login for the user. Use their name as the login (no spaces). Set a strong password. Copy the credentials.</div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">User Downloads Zadarma App</div>
+          <div class="step-desc">User installs <strong style="color:var(--txt)">Zadarma</strong> from App Store or Google Play — it is free. Needs only WiFi to download.</div>
+          <div class="step-code">App Store: search "Zadarma" &bull; Google Play: search "Zadarma"</div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">User Logs In With SIP Credentials</div>
+          <div class="step-desc">Open Zadarma app. Tap Login. Enter the SIP credentials you created. App connects automatically over WiFi.</div>
+          <div class="step-code">SIP Server: sip.zadarma.com &bull; Login: [sip_login] &bull; Password: [sip_password]</div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Assign Virtual Number (optional but recommended)</div>
+          <div class="step-desc">Buy a US or MX virtual number from Zadarma (~$4-6/mo). Assign it to their SIP user here. Now people can call that number and it rings in the app — and outbound calls show that number as caller ID.</div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">5</div>
+        <div>
+          <div class="step-title">Test — Make a Call Over WiFi</div>
+          <div class="step-desc">User dials any number from the Zadarma app. Call routes over WiFi. No cellular plan or SIM card needed — just internet connection.</div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">6</div>
+        <div>
+          <div class="step-title">Set ZADARMA_SECRET in Railway</div>
+          <div class="step-desc">To enable live API sync in this panel, add your Zadarma API secret to Railway environment variables. Find it at my.zadarma.com under API settings.</div>
+          <div class="step-code">Railway → auditdna-backend-1 → Variables → ZADARMA_SECRET = [your_secret]</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ZADARMA APP SETUP — SIP SETTINGS</div>
+      <div class="cred-box">
+        <div class="cred-row"><span class="cred-label">SIP Server</span><span class="cred-val">sip.zadarma.com</span><button class="copy-btn" onclick="copyText('sip.zadarma.com')">COPY</button></div>
+        <div class="cred-row"><span class="cred-label">SIP Port</span><span class="cred-val">5060</span><button class="copy-btn" onclick="copyText('5060')">COPY</button></div>
+        <div class="cred-row"><span class="cred-label">Transport</span><span class="cred-val">UDP or TLS</span></div>
+        <div class="cred-row"><span class="cred-label">STUN Server</span><span class="cred-val">stun.zadarma.com</span><button class="copy-btn" onclick="copyText('stun.zadarma.com')">COPY</button></div>
+        <div class="cred-row"><span class="cred-label">Account Key</span><span class="cred-val">e86bd758897d8f5595ed</span><button class="copy-btn" onclick="copyText('e86bd758897d8f5595ed')">COPY</button></div>
+        <div class="cred-row"><span class="cred-label">MX Number</span><span class="cred-val">+52-646-340-2686</span><button class="copy-btn" onclick="copyText('+526463402686')">COPY</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ALTERNATIVE SIP APPS</div>
+      <div style="font-size:11px;color:var(--txt2);line-height:1.8">
+        If the user prefers a different app, any SIP-compatible dialer works with Zadarma credentials:<br><br>
+        <strong style="color:var(--txt)">Zoiper</strong> — iOS/Android/Desktop — very reliable, good for power users<br>
+        <strong style="color:var(--txt)">Linphone</strong> — iOS/Android — open source, free<br>
+        <strong style="color:var(--txt)">Grandstream Wave</strong> — iOS/Android — clean UI<br>
+        <strong style="color:var(--txt)">Bria</strong> — iOS/Android — professional grade<br><br>
+        All use the same SIP credentials: server=sip.zadarma.com, login+password from this panel.
+      </div>
+    </div>
+  </div>
+
+  <!-- CALL LOG -->
+  <div class="sec" id="sec-calllog">
+    <div class="card">
+      <div class="card-title">RECENT CALL LOG</div>
+      <div class="btn-row" style="margin-bottom:14px"><button class="btn btn-outline" onclick="loadCallLog()">REFRESH</button></div>
+      <div id="calllog-table"><div style="color:var(--txt3);font-size:11px">Loading...</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var pin = '';
+var PINS = {'0609':'Owner','4321':'Demo'};
+var BE = 'https://auditdna-backend-1-production.up.railway.app';
+var currentSipCreds = null;
+
+function np(k) {
+  if(k==='del'){pin=pin.slice(0,-1);}
+  else if(k==='ok'){checkPin();return;}
+  else if(pin.length<4){pin+=k;}
+  for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='g-dot'+(i<pin.length?' on':'');}
+  if(pin.length===4)setTimeout(checkPin,100);
+}
+function checkPin(){
+  if(PINS[pin]){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    loadDashboard();
+    loadSipUsers();
+    loadNumbers();
+    loadPbx();
+    loadCallLog();
+  } else {
+    var e=document.getElementById('g-err');e.textContent='Incorrect PIN';
+    pin='';for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='g-dot';}
+    setTimeout(function(){e.textContent='';},2000);
+  }
+}
+
+function sw(id) {
+  document.querySelectorAll('.tab').forEach(function(t){t.className='tab';});
+  document.querySelectorAll('.sec').forEach(function(s){s.className='sec';});
+  var tab=document.querySelector('[onclick="sw(\''+id+'\')"]');
+  if(tab)tab.className='tab on';
+  var sec=document.getElementById('sec-'+id);
+  if(sec)sec.className='sec on';
+}
+
+async function api(path, opts) {
+  try {
+    var r = await fetch(BE+'/api/zadarma-sip'+path, opts||{});
+    return await r.json();
+  } catch(e) { return {ok:false,error:e.message}; }
+}
+
+async function loadDashboard() {
+  var badge = document.getElementById('conn-badge');
+  var statusOut = document.getElementById('status-out');
+  
+  var d = await api('/status');
+  if(d.ok) {
+    badge.className='tb-badge badge-green';
+    badge.textContent='CONNECTED';
+    document.getElementById('stat-bal').textContent = '$'+(parseFloat(d.balance||0).toFixed(2));
+    statusOut.className='alert alert-green';
+    statusOut.innerHTML='Zadarma API connected. Balance: <strong>$'+parseFloat(d.balance||0).toFixed(2)+' '+( d.currency||'USD')+'</strong>';
+  } else {
+    badge.className='tb-badge badge-red';
+    badge.textContent='OFFLINE';
+    statusOut.className='alert alert-red';
+    statusOut.innerHTML='<strong>Not connected.</strong> '+(d.error||'Set ZADARMA_SECRET in Railway env vars. See Setup Guide tab.')+'<br><br>Your API Key: <span style="font-family:monospace;color:var(--gold)">e86bd758897d8f5595ed</span>';
+  }
+}
+
+async function loadSipUsers() {
+  var el = document.getElementById('sip-users-table');
+  var d = await api('/sip-users');
+  if(d.status==='success'&&d.sips&&d.sips.length) {
+    document.getElementById('stat-users').textContent=d.sips.length;
+    el.innerHTML='<table><tr><th>Login</th><th>Description</th><th>Lines</th><th>Status</th><th>Actions</th></tr>'+
+      d.sips.map(function(s){
+        return '<tr><td style="color:var(--txt);font-weight:700;font-family:Consolas,monospace">'+s.login+'</td>'+
+          '<td>'+(s.description||'-')+'</td>'+
+          '<td>'+(s.lines||1)+'</td>'+
+          '<td><span class="pill '+(s.online?'pill-green':'pill-gray')+'">'+(s.online?'ONLINE':'OFFLINE')+'</span></td>'+
+          '<td><button class="btn btn-blue btn-sm" onclick="showCreds(\''+s.login+'\',\''+s.id+'\')">SHOW CREDS</button></td></tr>';
+      }).join('')+'</table>';
+  } else if(d.error&&d.error.includes('SECRET')) {
+    el.innerHTML='<div class="alert alert-gold">ZADARMA_SECRET not set. Add it in Railway and SIP users will load here.</div>';
+  } else {
+    el.innerHTML='<div style="color:var(--txt3);font-size:11px">No SIP users yet. Create one above.</div>';
+  }
+}
+
+async function createSipUser() {
+  var login=document.getElementById('sip-login').value.trim();
+  var pass=document.getElementById('sip-pass').value.trim();
+  var desc=document.getElementById('sip-desc').value.trim();
+  var st=document.getElementById('sip-create-status');
+  if(!login||!pass){st.style.color='var(--red)';st.textContent='Login and password required';return;}
+  st.style.color='var(--gold)';st.textContent='Creating...';
+  var d=await api('/sip-users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({login,password:pass,description:desc})});
+  if(d.status==='success'||d.ok){
+    st.style.color='var(--green)';st.textContent='SIP user created: '+login;
+    currentSipCreds={login,password:pass,desc};
+    showCredsCard(login,pass,desc);
+    loadSipUsers();
+    document.getElementById('sip-login').value='';
+    document.getElementById('sip-pass').value='';
+    document.getElementById('sip-desc').value='';
+  } else {
+    st.style.color='var(--red)';st.textContent='Error: '+(d.message||d.error||'Check Railway ZADARMA_SECRET');
+  }
+}
+
+function showCredsCard(login,password,desc) {
+  var card=document.getElementById('sip-creds-card');
+  var box=document.getElementById('sip-creds-box');
+  card.style.display='block';
+  box.innerHTML='<div class="cred-row"><span class="cred-label">SIP Server</span><span class="cred-val">sip.zadarma.com</span><button class="copy-btn" onclick="copyText(\'sip.zadarma.com\')">COPY</button></div>'+
+    '<div class="cred-row"><span class="cred-label">Login</span><span class="cred-val">'+login+'</span><button class="copy-btn" data-v="'+login+'" onclick="copyText(this.getAttribute(\'data-v\'))">COPY</button></div>'+
+    '<div class="cred-row"><span class="cred-label">Password</span><span class="cred-val">'+password+'</span><button class="copy-btn" data-v="'+password+'" onclick="copyText(this.getAttribute(\'data-v\'))">COPY</button></div>'+
+    '<div class="cred-row"><span class="cred-label">User</span><span class="cred-val">'+(desc||login)+'</span></div>'+
+    '<div class="cred-row"><span class="cred-label">Port</span><span class="cred-val">5060 (UDP)</span></div>'+
+    '<div class="cred-row"><span class="cred-label">App</span><span class="cred-val">Zadarma (iOS / Android) — Free</span></div>';
+  card.scrollIntoView({behavior:'smooth'});
+}
+
+function showCreds(login,id) {
+  showCredsCard(login,'[use password set at creation]','SIP User: '+login);
+}
+
+async function loadNumbers() {
+  var el=document.getElementById('numbers-table');
+  var d=await api('/numbers');
+  if(d.status==='success'&&d.direct_numbers&&d.direct_numbers.length){
+    document.getElementById('stat-nums').textContent=d.direct_numbers.length;
+    el.innerHTML='<table><tr><th>Number</th><th>Country</th><th>Assigned To</th><th>Monthly Cost</th><th>Actions</th></tr>'+
+      d.direct_numbers.map(function(n){
+        return '<tr><td style="color:var(--gold);font-weight:700;font-family:Consolas,monospace">'+n.number+'</td>'+
+          '<td>'+(n.country||'-')+'</td>'+
+          '<td>'+(n.sipLogin||n.redirect2||'Unassigned')+'</td>'+
+          '<td>'+(n.price_per_month?'$'+n.price_per_month:'-')+'</td>'+
+          '<td><button class="btn btn-outline btn-sm" onclick="prefillAssign(\''+n.number+'\')">ASSIGN</button></td></tr>';
+      }).join('')+'</table>';
+  } else {
+    el.innerHTML='<div class="alert alert-gold">No virtual numbers yet. Buy at <a href="https://my.zadarma.com/num/" target="_blank" style="color:var(--blue)">my.zadarma.com/num/</a> then they appear here.</div>';
+  }
+}
+
+function prefillAssign(num) {
+  sw('numbers');
+  document.getElementById('assign-num').value=num;
+}
+
+async function assignNumber() {
+  var num=document.getElementById('assign-num').value.trim();
+  var sip=document.getElementById('assign-sip').value.trim();
+  var st=document.getElementById('assign-status');
+  if(!num||!sip){st.style.color='var(--red)';st.textContent='Number and SIP user required';return;}
+  st.style.color='var(--gold)';st.textContent='Assigning...';
+  var d=await api('/assign',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number:num,sip_id:sip})});
+  if(d.status==='success'||d.ok){
+    st.style.color='var(--green)';st.textContent='Number '+num+' assigned to '+sip;
+    loadNumbers();
+  } else {
+    st.style.color='var(--red)';st.textContent='Error: '+(d.message||d.error||'Check credentials');
+  }
+}
+
+async function loadPbx() {
+  var el=document.getElementById('pbx-table');
+  var d=await api('/pbx');
+  if(d.status==='success'&&d.pbx&&d.pbx.length){
+    el.innerHTML='<table><tr><th>Extension</th><th>Name</th><th>SIP Login</th><th>Status</th></tr>'+
+      d.pbx.map(function(e){
+        return '<tr><td style="color:var(--gold);font-weight:700">'+e.num+'</td>'+
+          '<td style="color:var(--txt)">'+(e.name||'-')+'</td>'+
+          '<td style="font-family:Consolas,monospace">'+(e.sipLogin||'-')+'</td>'+
+          '<td><span class="pill '+(e.status==='online'?'pill-green':'pill-gray')+'">'+(e.status||'offline').toUpperCase()+'</span></td></tr>';
+      }).join('')+'</table>';
+  } else {
+    el.innerHTML='<div style="color:var(--txt3);font-size:11px">No PBX extensions yet. Create one above.</div>';
+  }
+}
+
+async function createExtension() {
+  var ext=document.getElementById('ext-num').value.trim();
+  var name=document.getElementById('ext-name').value.trim();
+  var pass=document.getElementById('ext-pass').value.trim();
+  var st=document.getElementById('ext-status');
+  if(!ext){st.style.color='var(--red)';st.textContent='Extension number required';return;}
+  st.style.color='var(--gold)';st.textContent='Creating...';
+  var d=await api('/pbx',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({extension:ext,name,password:pass})});
+  if(d.status==='success'||d.ok){
+    st.style.color='var(--green)';st.textContent='Extension '+ext+' created';
+    loadPbx();
+  } else {
+    st.style.color='var(--red)';st.textContent='Error: '+(d.message||d.error||'Check Railway ZADARMA_SECRET');
+  }
+}
+
+async function loadCallLog() {
+  var el=document.getElementById('calllog-table');
+  var d=await api('/call-log');
+  if(d.ok&&d.calls&&d.calls.length){
+    document.getElementById('stat-calls').textContent=d.calls.length;
+    el.innerHTML='<table><tr><th>Phone</th><th>Event</th><th>Duration</th><th>Status</th><th>Time</th></tr>'+
+      d.calls.map(function(c){
+        return '<tr><td style="color:var(--txt);font-weight:700;font-family:Consolas,monospace">'+(c.phone||'-')+'</td>'+
+          '<td><span class="pill pill-blue">'+(c.event||'-')+'</span></td>'+
+          '<td>'+(c.duration?c.duration+'s':'-')+'</td>'+
+          '<td><span class="pill '+(c.status==='answered'?'pill-green':c.status==='missed'?'pill-red':'pill-gray')+'">'+(c.status||'-')+'</span></td>'+
+          '<td style="color:var(--txt3)">'+(c.created_at?new Date(c.created_at).toLocaleString():'')+'</td></tr>';
+      }).join('')+'</table>';
+  } else {
+    el.innerHTML='<div style="color:var(--txt3);font-size:11px">No calls logged yet. Calls appear here automatically when Zadarma webhook fires.</div>';
+  }
+}
+
+function copyText(v) {
+  var ta=document.createElement('textarea');
+  ta.value=v; document.body.appendChild(ta); ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+  toast('Copied: '+v.slice(0,30));
+}
+
+function copyCredsEmail() {
+  if(!currentSipCreds)return;
+  var txt='ZADARMA SIP CREDENTIALS\n\n'+
+    'SIP Server: sip.zadarma.com\n'+
+    'SIP Port: 5060\n'+
+    'Login: '+currentSipCreds.login+'\n'+
+    'Password: '+currentSipCreds.password+'\n'+
+    'User/Description: '+(currentSipCreds.desc||currentSipCreds.login)+'\n\n'+
+    'SETUP:\n'+
+    '1. Download Zadarma app (App Store or Google Play)\n'+
+    '2. Open app > Tap Login\n'+
+    '3. Enter the credentials above\n'+
+    '4. You are ready to make and receive calls over WiFi\n\n'+
+    'No cellular service needed - WiFi only';
+  copyText(txt);
+}
+
+function toast(msg){
+  var el=document.getElementById('toast');if(!el)return;
+  el.textContent=msg;el.style.display='block';
+  setTimeout(function(){el.style.display='none';},2500);
+}
+</script>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+
+</html>

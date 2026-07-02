@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>Pamela Macias Realtor — Command Center</title>
+<style>
+:root{
+  --red:#D22F25;--reddark:#a01e1a;--redlight:rgba(210,47,37,.12);
+  --bg:#0a0a0a;--bg2:#111;--card:#1a1a1a;--card2:#222;
+  --gold:#C9A55C;--white:#f8f8f8;--dim:#999;--muted:#555;
+  --green:#22c55e;--blue:#3b82f6;--orange:#f59e0b;
+  --bord:rgba(210,47,37,.2);--borddim:rgba(255,255,255,.07)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,'Segoe UI',sans-serif;min-height:100vh}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gc{background:var(--card);border:1px solid var(--bord);border-radius:20px;padding:40px 30px;width:340px;text-align:center}
+.glogo{width:60px;height:60px;background:var(--red);border-radius:14px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;letter-spacing:-1px}
+.gtitle{font-size:12px;font-weight:800;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.gsub{font-size:11px;color:var(--dim);margin-bottom:22px}
+.dots{display:flex;gap:12px;justify-content:center;margin-bottom:22px}
+.dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--red);transition:.2s}
+.dot.on{background:var(--red)}
+.np{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:230px;margin:0 auto}
+.npb{background:var(--card2);border:1px solid var(--borddim);border-radius:10px;color:var(--white);font-size:20px;font-weight:600;padding:14px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:.15s}
+.npb:active{background:var(--redlight);color:var(--red)}
+.gerr{color:var(--red);font-size:12px;margin-top:10px;min-height:16px}
+
+/* APP */
+#app{display:none}
+
+/* TOPBAR */
+#tb{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(10,10,10,.97);border-bottom:1px solid var(--bord);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:200;backdrop-filter:blur(12px)}
+.tb-left{display:flex;align-items:center;gap:12px}
+.tb-logo{width:34px;height:34px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0}
+.tb-name{font-size:13px;font-weight:800;color:var(--white)}
+.tb-sub{font-size:9px;color:var(--dim);margin-top:1px}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-btn{background:none;border:1px solid var(--borddim);color:var(--dim);border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer}
+.mob-fab{position:fixed;top:58px;left:8px;z-index:201;background:var(--red);border:none;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;color:#fff;display:none}
+
+/* SIDEBAR */
+#sb{position:fixed;top:54px;left:0;bottom:0;width:195px;background:var(--bg2);border-right:1px solid var(--borddim);z-index:199;overflow-y:auto;transform:translateX(-100%);transition:.25s}
+#sb.open{transform:translateX(0)}
+#sb-ov{display:none;position:fixed;inset:0;top:54px;background:rgba(0,0,0,.55);z-index:198}
+.sb-sec{padding:10px 14px 4px;font-size:9px;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:12px;font-weight:600;color:var(--dim);cursor:pointer;transition:.15s}
+.sb-item:hover,.sb-item.act{background:var(--redlight);color:var(--red)}
+.sb-item .ico{font-size:15px;width:20px;text-align:center}
+
+/* MAIN */
+#mn{padding:72px 16px 80px;max-width:860px;margin:0 auto}
+@media(min-width:680px){#mn{margin-left:195px}#sb{transform:translateX(0)}#sb-ov{display:none!important}.mob-fab{display:none!important}}
+@media(max-width:679px){.mob-fab{display:block!important}}
+
+.sec{display:none}.sec.act{display:block}
+.sech{font-size:18px;font-weight:800;color:var(--red);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--bord)}
+.card{background:var(--card);border:1px solid var(--borddim);border-radius:14px;padding:18px;margin-bottom:14px}
+.ct{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:10px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.fld input,.fld select,.fld textarea{background:var(--card2);border:1px solid var(--borddim);border-radius:8px;color:var(--white);font-size:12.5px;padding:9px 11px;outline:none;width:100%;transition:.15s}
+.fld input:focus,.fld select:focus{border-color:var(--red)}
+.fld select option{background:var(--card)}
+.btn{border:none;border-radius:9px;padding:11px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;width:100%}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:var(--reddark)}
+.btn-dark{background:var(--card2);color:var(--white);border:1px solid var(--borddim)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--card2);border:1px solid var(--borddim);border-radius:10px;padding:14px;text-align:center}
+.stat-v{font-size:20px;font-weight:800;color:var(--red);margin-bottom:3px}
+.stat-l{font-size:10px;color:var(--dim)}
+.row{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--borddim);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.row-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.row-main{flex:1;min-width:0}
+.row-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sub{font-size:10px;color:var(--dim);margin-top:2px}
+.row-right{text-align:right;flex-shrink:0}
+.tag{display:inline-block;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;margin-top:3px}
+.empty{text-align:center;padding:36px;color:var(--muted);font-size:13px}
+.listing-card{background:var(--card);border:1px solid var(--bord);border-radius:14px;padding:20px;margin-bottom:14px}
+.listing-title{font-size:18px;font-weight:800;color:var(--white);margin-bottom:4px}
+.listing-sub{font-size:12px;color:var(--red);font-weight:600;margin-bottom:14px}
+.listing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.listing-stat{background:var(--card2);border:1px solid var(--borddim);border-radius:8px;padding:10px 12px}
+.listing-stat-v{font-size:15px;font-weight:800;color:var(--red)}
+.listing-stat-l{font-size:9px;color:var(--dim);margin-top:2px}
+.badge{display:inline-block;font-size:10px;padding:3px 10px;border-radius:20px;font-weight:800;letter-spacing:.5px}
+.badge-active{background:rgba(34,197,94,.15);color:#22c55e}
+.badge-escrow{background:rgba(245,158,11,.15);color:var(--orange)}
+.badge-sold{background:rgba(210,47,37,.15);color:var(--red)}
+.calc-result{background:var(--redlight);border:1px solid var(--bord);border-radius:10px;padding:14px;margin-top:10px;text-align:center}
+.calc-result-v{font-size:24px;font-weight:800;color:var(--red)}
+.calc-result-l{font-size:11px;color:var(--dim);margin-top:3px}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="gc">
+    <div class="glogo">PM</div>
+    <div class="gtitle">Pamela Macias, Realtor</div>
+    <div class="gsub">DRE #01967517 — Radius Agent<br>Enter access PIN</div>
+    <div class="dots"><div class="dot" id="d0"></div><div class="dot" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div></div>
+    <div class="np">
+      <button class="npb" ontouchstart="np('1');event.preventDefault()" onclick="np('1')">1</button>
+      <button class="npb" ontouchstart="np('2');event.preventDefault()" onclick="np('2')">2</button>
+      <button class="npb" ontouchstart="np('3');event.preventDefault()" onclick="np('3')">3</button>
+      <button class="npb" ontouchstart="np('4');event.preventDefault()" onclick="np('4')">4</button>
+      <button class="npb" ontouchstart="np('5');event.preventDefault()" onclick="np('5')">5</button>
+      <button class="npb" ontouchstart="np('6');event.preventDefault()" onclick="np('6')">6</button>
+      <button class="npb" ontouchstart="np('7');event.preventDefault()" onclick="np('7')">7</button>
+      <button class="npb" ontouchstart="np('8');event.preventDefault()" onclick="np('8')">8</button>
+      <button class="npb" ontouchstart="np('9');event.preventDefault()" onclick="np('9')">9</button>
+      <button class="npb" style="font-size:12px" ontouchstart="np('C');event.preventDefault()" onclick="np('C')">CLR</button>
+      <button class="npb" ontouchstart="np('0');event.preventDefault()" onclick="np('0')">0</button>
+      <button class="npb" style="font-size:12px" ontouchstart="np('D');event.preventDefault()" onclick="np('D')">DEL</button>
+    </div>
+    <div class="gerr" id="gerr"></div>
+  </div>
+  <div style="margin-top:18px;font-size:10px;color:var(--muted);text-align:center">Powered by MFGINC &nbsp;|&nbsp; mexausafg.com</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="tb">
+    <div class="tb-left">
+      <div class="tb-logo">PM</div>
+      <div><div class="tb-name">Pamela Macias, Realtor</div><div class="tb-sub" id="role-lbl">DRE #01967517 — Radius Agent</div></div>
+    </div>
+    <div class="tb-right">
+      <span style="font-size:10px;color:var(--dim)" id="tb-date"></span>
+      <button class="tb-btn" onclick="doLock()">LOCK</button>
+    </div>
+  </div>
+  <button class="mob-fab" id="mob-fab" ontouchstart="toggleSB();event.preventDefault()" onclick="toggleSB()">☰</button>
+  <div id="sb-ov" onclick="closeSB()"></div>
+  <div id="sb">
+    <div class="sb-sec">OVERVIEW</div>
+    <div class="sb-item act" onclick="showSec('dashboard')"><span class="ico">📊</span>Dashboard</div>
+    <div class="sb-item" onclick="showSec('listings')"><span class="ico">🏗</span>My Listings</div>
+    <div class="sb-item" onclick="showSec('mortgage')"><span class="ico">🏦</span>Loan Pre-Qual</div>
+    <div class="sb-sec">CRM</div>
+    <div class="sb-item" onclick="showSec('buyers')"><span class="ico">👤</span>Buyer Pipeline</div>
+    <div class="sb-item" onclick="showSec('investors')"><span class="ico">💼</span>Investor CRM</div>
+    <div class="sb-item" onclick="showSec('pipeline')"><span class="ico">📂</span>Deal Pipeline</div>
+    <div class="sb-sec">TOOLS</div>
+    <div class="sb-item" onclick="showSec('calc')"><span class="ico">🧮</span>Investment Calc</div>
+    <div class="sb-item" onclick="showSec('comps')"><span class="ico">📈</span>Comp Tracker</div>
+    <div class="sb-item" onclick="showSec('docs')"><span class="ico">📁</span>Document Vault</div>
+    <div class="sb-sec">CONTACT</div>
+    <div class="sb-item" onclick="showSec('contact')"><span class="ico">📞</span>My Info</div>
+    <div class="sb-item" onclick="showSec('mfginc')"><span class="ico">🚀</span>MFGINC Portal</div>
+  </div>
+
+  <div id="mn">
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="sec act">
+      <div class="sech">Dashboard</div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-v">1</div><div class="stat-l">Active Listings</div></div>
+        <div class="stat"><div class="stat-v">2</div><div class="stat-l">In Escrow</div></div>
+        <div class="stat"><div class="stat-v" id="st-buyers">0</div><div class="stat-l">Buyers Tracked</div></div>
+        <div class="stat"><div class="stat-v" id="st-investors">0</div><div class="stat-l">Investors</div></div>
+        <div class="stat"><div class="stat-v" id="st-deals">0</div><div class="stat-l">Active Deals</div></div>
+        <div class="stat"><div class="stat-v">$1.3M</div><div class="stat-l">Top Comp (New)</div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Active Offering</div>
+        <div class="listing-card" style="background:var(--card2);margin-bottom:0">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+            <div><div class="listing-title">11041 Summit Avenue</div><div class="listing-sub">Santee, CA 92071 — R-7 Land Development</div></div>
+            <span class="badge badge-active">ACTIVE</span>
+          </div>
+          <div class="listing-grid">
+            <div class="listing-stat"><div class="listing-stat-v">2.32 ac</div><div class="listing-stat-l">Total Acreage</div></div>
+            <div class="listing-stat"><div class="listing-stat-v">Up to 32</div><div class="listing-stat-l">Unit Potential</div></div>
+            <div class="listing-stat"><div class="listing-stat-v">R-7</div><div class="listing-stat-l">Zoning</div></div>
+            <div class="listing-stat"><div class="listing-stat-v">Unentitled</div><div class="listing-stat-l">Status</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);margin-bottom:12px;line-height:1.7">7–14 units/gross acre. Approved Oct 2022 for R-7 up-zoning — 6th Cycle Housing Element. New construction comps: <strong style="color:var(--white)">$905K–$1.3M</strong> townhomes and condos. 30–60 day close of escrow.</div>
+          <button class="btn btn-red" onclick="window.open('https://pamelamaciasrealtor.com/11041-summit-ave','_blank')">VIEW OFFERING MEMORANDUM</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Recent Activity</div>
+        <div class="row"><div class="row-dot" style="background:var(--orange)"></div><div class="row-main"><div class="row-title">11025 Summit Ave — In Escrow</div><div class="row-sub">Pending entitlements</div></div></div>
+        <div class="row"><div class="row-dot" style="background:var(--orange)"></div><div class="row-main"><div class="row-title">11009 Summit Ave — In Escrow</div><div class="row-sub">Pending entitlements</div></div></div>
+        <div class="row"><div class="row-dot" style="background:var(--red)"></div><div class="row-main"><div class="row-title">10939 Summit Ave — SOLD</div><div class="row-sub">Entitlements approved ✓</div></div></div>
+      </div>
+    </div>
+
+    <!-- LISTINGS -->
+    <div id="sec-listings" class="sec">
+      <div class="sech">My Listings</div>
+      <div class="listing-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+          <div><div class="listing-title">11041 Summit Avenue, Santee CA 92071</div><div class="listing-sub">R-7 Multifamily Land — ACTIVE OFFERING</div></div>
+          <span class="badge badge-active">ACTIVE</span>
+        </div>
+        <div class="listing-grid">
+          <div class="listing-stat"><div class="listing-stat-v">2.32 ac</div><div class="listing-stat-l">Lot Size</div></div>
+          <div class="listing-stat"><div class="listing-stat-v">32 units</div><div class="listing-stat-l">Max Development</div></div>
+          <div class="listing-stat"><div class="listing-stat-v">R-7</div><div class="listing-stat-l">Zoning</div></div>
+          <div class="listing-stat"><div class="listing-stat-v">7–14/ac</div><div class="listing-stat-l">Density Range</div></div>
+          <div class="listing-stat"><div class="listing-stat-v">35 ft</div><div class="listing-stat-l">Max Height (3 stories)</div></div>
+          <div class="listing-stat"><div class="listing-stat-v">55%</div><div class="listing-stat-l">Max Lot Coverage</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.8;margin-bottom:14px">
+          <strong style="color:var(--white)">Current Improvements:</strong> 3BR/2BA approx 2,800 sq ft SFR, 2 bonus rooms, patio w/ fireplace, pool. Owner-occupied with tenant in guest house. Do not disturb residents — all tours through Pamela Macias.<br/><br/>
+          <strong style="color:var(--white)">Location:</strong> Northern Santee — mins to 700-acre Town Center District, Santee Trolley Square, MTS Trolley station. Close to Santee Lakes, Mission Trails, San Diego River Trail.<br/><br/>
+          <strong style="color:var(--white)">Comps:</strong> Walker Trails, Noble Way, Castlerock, River Village. New construction SFR/townhome closes: $905,500–$1,300,000.
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn btn-red" onclick="window.open('https://heyzine.com/flip-book/11041summit','_blank')">FLIP BOOK / OFFERING MEMO</button>
+          <button class="btn btn-dark" onclick="window.open('https://pamelamaciasrealtor.com/11041-summit-ave','_blank')">LISTING PAGE</button>
+        </div>
+      </div>
+      <div class="listing-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div><div class="listing-title">11025 Summit Avenue</div><div class="listing-sub">Santee, CA 92071</div></div>
+          <span class="badge badge-escrow">IN ESCROW</span>
+        </div>
+        <div style="font-size:12px;color:var(--dim)">Pending entitlements. Not available for new offers.</div>
+        <button class="btn btn-dark" style="margin-top:10px" onclick="window.open('https://pamelamaciasrealtor.com/11025-summit-ave-1','_blank')">VIEW PAGE</button>
+      </div>
+      <div class="listing-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div><div class="listing-title">11009 Summit Avenue</div><div class="listing-sub">Santee, CA 92071</div></div>
+          <span class="badge badge-escrow">IN ESCROW</span>
+        </div>
+        <div style="font-size:12px;color:var(--dim)">Pending entitlements. Not available for new offers.</div>
+        <button class="btn btn-dark" style="margin-top:10px" onclick="window.open('https://pamelamaciasrealtor.com/11009-summit-ave','_blank')">VIEW PAGE</button>
+      </div>
+      <div class="listing-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div><div class="listing-title">10939 Summit Avenue</div><div class="listing-sub">Santee, CA 92071</div></div>
+          <span class="badge badge-sold">SOLD</span>
+        </div>
+        <div style="font-size:12px;color:var(--green)">Entitlements approved ✓ Closed.</div>
+        <button class="btn btn-dark" style="margin-top:10px" onclick="window.open('https://pamelamaciasrealtor.com/10939-summit-ave','_blank')">VIEW PAGE</button>
+      </div>
+    </div>
+
+    <!-- MORTGAGE -->
+    <div id="sec-mortgage" class="sec">
+      <div class="sech">Loan Pre-Qualification</div>
+      <div class="card">
+        <div class="ct">Send Buyers to Pre-Qual</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:16px;line-height:1.7">Send your buyers and investors directly to our licensed mortgage team for pre-qualification on construction, multifamily, and conventional loans. NMLS #337526 — American 1st Partners NMLS #1773303.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div class="listing-stat"><div class="listing-stat-v">USDA 504</div><div class="listing-stat-l">Low-income housing</div></div>
+          <div class="listing-stat"><div class="listing-stat-v">Conventional</div><div class="listing-stat-l">Purchase + refi</div></div>
+          <div class="listing-stat"><div class="listing-stat-v">Hard Money</div><div class="listing-stat-l">Land + construction</div></div>
+          <div class="listing-stat"><div class="listing-stat-v">Personal</div><div class="listing-stat-l">$70–$300/lead earned</div></div>
+        </div>
+        <button class="btn btn-red" onclick="window.open('https://financelend.me','_blank')">OPEN FINANCELEND.ME — PRE-QUAL TOOL</button>
+        <div style="margin-top:10px">
+          <button class="btn btn-dark" onclick="window.open('https://mexausafg.com/re-command-center.html','_blank')">RE COMMAND CENTER — LOAN FINDER</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Quick Pre-Qual Form</div>
+        <div class="grid2">
+          <div class="fld"><label>Buyer Name</label><input id="pq-name" placeholder="Full name"/></div>
+          <div class="fld"><label>Phone</label><input id="pq-phone" type="tel"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Email</label><input id="pq-email" type="email"/></div>
+          <div class="fld"><label>Annual Income</label><input id="pq-income" placeholder="$85,000"/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Purchase Price</label><input id="pq-price" placeholder="$900,000"/></div>
+          <div class="fld"><label>Down Payment</label><input id="pq-down" placeholder="$180,000"/></div>
+          <div class="fld"><label>Credit Score</label>
+            <select id="pq-credit"><option>760+ Excellent</option><option>720-759 Very Good</option><option>680-719 Good</option><option>620-679 Fair</option><option>Below 620</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Loan Type Needed</label>
+          <select id="pq-type"><option>Conventional Purchase</option><option>Construction Loan</option><option>Land + Construction</option><option>USDA 504</option><option>Hard Money / Bridge</option><option>Multifamily</option></select></div>
+        <button class="btn btn-red" onclick="savePQ()">SAVE PRE-QUAL LEAD</button>
+      </div>
+      <div class="card">
+        <div class="ct">Pre-Qual Leads</div>
+        <div id="pq-list"><div class="empty">No pre-qual leads saved.</div></div>
+      </div>
+    </div>
+
+    <!-- BUYERS -->
+    <div id="sec-buyers" class="sec">
+      <div class="sech">Buyer Pipeline</div>
+      <div class="card">
+        <div class="ct">Add Buyer</div>
+        <div class="grid2">
+          <div class="fld"><label>Full Name</label><input id="b-name"/></div>
+          <div class="fld"><label>Phone</label><input id="b-phone" type="tel"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Email</label><input id="b-email" type="email"/></div>
+          <div class="fld"><label>Budget</label><input id="b-budget" placeholder="$900,000"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Property Interest</label>
+            <select id="b-interest"><option>11041 Summit Ave</option><option>Multifamily Land</option><option>New Construction</option><option>Townhome</option><option>Condo</option><option>SFR</option></select></div>
+          <div class="fld"><label>Status</label>
+            <select id="b-status"><option>New Lead</option><option>Contacted</option><option>Pre-Qual Sent</option><option>Pre-Qualified</option><option>Offer Submitted</option><option>In Escrow</option><option>Closed</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Notes</label><textarea id="b-notes" rows="2"></textarea></div>
+        <button class="btn btn-red" onclick="addBuyer()">+ ADD BUYER</button>
+      </div>
+      <div class="card">
+        <div class="ct">Buyer List</div>
+        <div id="buyer-list"><div class="empty">No buyers added.</div></div>
+      </div>
+    </div>
+
+    <!-- INVESTORS -->
+    <div id="sec-investors" class="sec">
+      <div class="sech">Investor CRM</div>
+      <div class="card">
+        <div class="ct">Add Investor</div>
+        <div class="grid2">
+          <div class="fld"><label>Investor Name / Entity</label><input id="inv-name"/></div>
+          <div class="fld"><label>Phone</label><input id="inv-phone" type="tel"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Email</label><input id="inv-email" type="email"/></div>
+          <div class="fld"><label>Investment Range</label><input id="inv-range" placeholder="$1M–$5M"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Investment Type</label>
+            <select id="inv-type"><option>Land Development</option><option>Multifamily</option><option>Fix & Flip</option><option>New Construction</option><option>Ground-Up</option><option>Mixed Use</option></select></div>
+          <div class="fld"><label>Status</label>
+            <select id="inv-status"><option>Prospect</option><option>Contacted</option><option>NDA Sent</option><option>Package Sent</option><option>Interested</option><option>LOI Received</option><option>Closed</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Notes</label><textarea id="inv-notes" rows="2" placeholder="Source, requirements, last contact..."></textarea></div>
+        <button class="btn btn-red" onclick="addInvestor()">+ ADD INVESTOR</button>
+      </div>
+      <div class="card">
+        <div class="ct">Investor List</div>
+        <div id="investor-list"><div class="empty">No investors added.</div></div>
+      </div>
+    </div>
+
+    <!-- DEAL PIPELINE -->
+    <div id="sec-pipeline" class="sec">
+      <div class="sech">Deal Pipeline</div>
+      <div class="card">
+        <div class="ct">Add Deal</div>
+        <div class="grid2">
+          <div class="fld"><label>Property / Deal Name</label><input id="dp-name" placeholder="11041 Summit Ave"/></div>
+          <div class="fld"><label>Buyer / Investor</label><input id="dp-party"/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Offer Price</label><input id="dp-price" type="number"/></div>
+          <div class="fld"><label>Stage</label>
+            <select id="dp-stage"><option>Inquiry</option><option>NDA Sent</option><option>Package Delivered</option><option>LOI Received</option><option>Counter</option><option>Accepted</option><option>In Escrow</option><option>Closed</option></select></div>
+          <div class="fld"><label>Close Date</label><input id="dp-close" type="date"/></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Notes</label><textarea id="dp-notes" rows="2"></textarea></div>
+        <button class="btn btn-red" onclick="addDeal()">+ ADD TO PIPELINE</button>
+      </div>
+      <div class="card">
+        <div class="ct">Active Deals</div>
+        <div id="deal-list"><div class="empty">No deals in pipeline.</div></div>
+      </div>
+    </div>
+
+    <!-- INVESTMENT CALCULATOR -->
+    <div id="sec-calc" class="sec">
+      <div class="sech">Investment Calculator</div>
+      <div class="card">
+        <div class="ct">R-7 Development Pro Forma — 11041 Summit Ave</div>
+        <div class="grid3">
+          <div class="fld"><label>Land Purchase Price ($)</label><input id="c-land" type="number" placeholder="2500000" oninput="calcDev()"/></div>
+          <div class="fld"><label>Units to Build</label><input id="c-units" type="number" placeholder="24" oninput="calcDev()"/></div>
+          <div class="fld"><label>Cost Per Unit ($)</label><input id="c-cpu" type="number" placeholder="280000" oninput="calcDev()"/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Sale Price Per Unit ($)</label><input id="c-spu" type="number" placeholder="965000" oninput="calcDev()"/></div>
+          <div class="fld"><label>Soft Costs % of Hard</label><input id="c-soft" type="number" placeholder="18" oninput="calcDev()"/></div>
+          <div class="fld"><label>Financing Cost %</label><input id="c-fin" type="number" placeholder="6" oninput="calcDev()"/></div>
+        </div>
+        <div id="calc-results" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px"></div>
+      </div>
+      <div class="card">
+        <div class="ct">Mortgage Payment Calculator</div>
+        <div class="grid3">
+          <div class="fld"><label>Loan Amount ($)</label><input id="m-loan" type="number" placeholder="720000" oninput="calcMortgage()"/></div>
+          <div class="fld"><label>Rate (%)</label><input id="m-rate" type="number" placeholder="6.75" oninput="calcMortgage()"/></div>
+          <div class="fld"><label>Term (Years)</label><input id="m-term" type="number" placeholder="30" oninput="calcMortgage()"/></div>
+        </div>
+        <div id="mtg-result" style="display:none" class="calc-result">
+          <div class="calc-result-v" id="mtg-pmt"></div>
+          <div class="calc-result-l">Monthly Payment (P+I)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
+            <div><div style="font-size:14px;font-weight:700;color:var(--white)" id="mtg-total"></div><div style="font-size:9px;color:var(--dim)">Total Paid</div></div>
+            <div><div style="font-size:14px;font-weight:700;color:var(--red)" id="mtg-interest"></div><div style="font-size:9px;color:var(--dim)">Total Interest</div></div>
+            <div><div style="font-size:14px;font-weight:700;color:var(--green)" id="mtg-equity"></div><div style="font-size:9px;color:var(--dim)">Equity at Start</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPS -->
+    <div id="sec-comps" class="sec">
+      <div class="sech">Comp Tracker</div>
+      <div class="card">
+        <div class="ct">Santee New Construction Comps — On Record</div>
+        <div class="row"><div class="row-dot" style="background:var(--green)"></div><div class="row-main"><div class="row-title">Walker Trails — Mastercraft Residential</div><div class="row-sub">Santee — New Construction SFR</div></div><div class="row-right"><div style="font-size:14px;font-weight:800;color:var(--red)">$905K–$1.3M</div><div style="font-size:9px;color:var(--dim)">Closed Range</div></div></div>
+        <div class="row"><div class="row-dot" style="background:var(--green)"></div><div class="row-main"><div class="row-title">Noble Way — Summit Santee</div><div class="row-sub">Santee — New Construction</div></div><div class="row-right"><div style="font-size:14px;font-weight:800;color:var(--red)">$905K–$1.3M</div></div></div>
+        <div class="row"><div class="row-dot" style="background:var(--green)"></div><div class="row-main"><div class="row-title">Castlerock — Pardee Homes</div><div class="row-sub">Santee — New Construction</div></div><div class="row-right"><div style="font-size:14px;font-weight:800;color:var(--red)">$905K–$1.3M</div></div></div>
+        <div class="row"><div class="row-dot" style="background:var(--orange)"></div><div class="row-main"><div class="row-title">Laurel Heights — Presidio Cornerstone</div><div class="row-sub">Santee — Townhome/Condo</div></div><div class="row-right"><div style="font-size:14px;font-weight:800;color:var(--orange)">$738K–$964K</div><div style="font-size:9px;color:var(--dim)">Closed Range</div></div></div>
+        <div class="row"><div class="row-dot" style="background:var(--orange)"></div><div class="row-main"><div class="row-title">Caribbean Way — City Ventures</div><div class="row-sub">Santee — Townhome</div></div><div class="row-right"><div style="font-size:14px;font-weight:800;color:var(--orange)">$738K–$964K</div></div></div>
+        <div class="row"><div class="row-dot" style="background:var(--orange)"></div><div class="row-main"><div class="row-title">Weston — Pardee Homes</div><div class="row-sub">Santee — Condo</div></div><div class="row-right"><div style="font-size:14px;font-weight:800;color:var(--orange)">$738K–$964K</div></div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Add Custom Comp</div>
+        <div class="grid2">
+          <div class="fld"><label>Address / Project</label><input id="cmp-addr" placeholder="123 Main St, Santee CA"/></div>
+          <div class="fld"><label>Sale Price</label><input id="cmp-price" type="number"/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Type</label>
+            <select id="cmp-type"><option>SFR</option><option>Townhome</option><option>Condo</option><option>Land</option><option>Multifamily</option></select></div>
+          <div class="fld"><label>Sq Ft</label><input id="cmp-sqft" type="number"/></div>
+          <div class="fld"><label>Close Date</label><input id="cmp-date" type="date"/></div>
+        </div>
+        <button class="btn btn-red" onclick="addComp()">+ ADD COMP</button>
+      </div>
+      <div class="card">
+        <div class="ct">Custom Comps</div>
+        <div id="comp-list"><div class="empty">No custom comps added.</div></div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS -->
+    <div id="sec-docs" class="sec">
+      <div class="sech">Document Vault</div>
+      <div class="card">
+        <div class="ct">Quick Access</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <button class="btn btn-red" onclick="window.open('https://heyzine.com/flip-book/11041summit','_blank')">11041 SUMMIT — FLIP BOOK</button>
+          <button class="btn btn-dark" onclick="window.open('https://pamelamaciasrealtor.com','_blank')">PAMELA MACIAS WEBSITE</button>
+          <button class="btn btn-dark" onclick="window.open('https://financelend.me','_blank')">FINANCELEND.ME — LOANS</button>
+          <button class="btn btn-dark" onclick="window.open('https://mexausafg.com/re-command-center.html','_blank')">RE COMMAND CENTER</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Add Document</div>
+        <div class="grid2">
+          <div class="fld"><label>Document Name</label><input id="doc-name" placeholder="Offering Memo, NDA, LOI..."/></div>
+          <div class="fld"><label>Category</label>
+            <select id="doc-cat"><option>Offering Memo</option><option>NDA</option><option>LOI</option><option>Purchase Agreement</option><option>Escrow Docs</option><option>Entitlement</option><option>Survey</option><option>Environmental</option><option>Marketing</option><option>Other</option></select></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>File</label><input id="doc-file" type="file" accept=".pdf,.doc,.docx,.jpg,.png"/></div>
+          <div class="fld"><label>Notes</label><input id="doc-notes" placeholder="Version, property..."/></div>
+        </div>
+        <button class="btn btn-red" onclick="addDoc()">+ ADD DOCUMENT</button>
+      </div>
+      <div class="card"><div class="ct">Saved Documents</div><div id="doc-list"><div class="empty">No documents added.</div></div></div>
+    </div>
+
+    <!-- CONTACT -->
+    <div id="sec-contact" class="sec">
+      <div class="sech">My Info</div>
+      <div class="card">
+        <div style="text-align:center;padding:10px 0 20px">
+          <div style="width:70px;height:70px;background:var(--red);border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff">PM</div>
+          <div style="font-size:20px;font-weight:800;color:var(--white)">Pamela Macias</div>
+          <div style="font-size:12px;color:var(--red);font-weight:600;margin-top:4px">Realtor — DRE #01967517</div>
+          <div style="font-size:11px;color:var(--dim);margin-top:3px">Radius Agent — Broker Lic #02051216</div>
+        </div>
+        <div style="display:grid;gap:10px">
+          <div class="listing-stat"><div class="listing-stat-l">Phone</div><div class="listing-stat-v" style="font-size:18px"><a href="tel:6198202454" style="color:var(--red);text-decoration:none">(619) 820-2454</a></div></div>
+          <div class="listing-stat"><div class="listing-stat-l">Email</div><div class="listing-stat-v" style="font-size:14px"><a href="mailto:Pamela.Macias@RadiusAgent.com" style="color:var(--red);text-decoration:none">Pamela.Macias@RadiusAgent.com</a></div></div>
+          <div class="listing-stat"><div class="listing-stat-l">Website</div><div class="listing-stat-v" style="font-size:14px"><a href="https://pamelamaciasrealtor.com" target="_blank" style="color:var(--red);text-decoration:none">pamelamaciasrealtor.com</a></div></div>
+          <div class="listing-stat"><div class="listing-stat-l">Specialty</div><div class="listing-stat-v" style="font-size:13px">R-7 Land Development — Santee, CA</div></div>
+        </div>
+        <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button class="btn btn-red" onclick="window.open('tel:6198202454')">CALL NOW</button>
+          <button class="btn btn-dark" onclick="window.open('mailto:Pamela.Macias@RadiusAgent.com')">SEND EMAIL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MFGINC PORTAL -->
+    <div id="sec-mfginc" class="sec">
+      <div class="sech">MFGINC Partnership</div>
+      <div class="card" style="border-color:var(--gold);background:linear-gradient(135deg,rgba(201,165,92,.06),var(--card))">
+        <div style="text-align:center;padding:10px 0 16px">
+          <div style="font-size:22px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:6px">MFGINC</div>
+          <div style="font-size:11px;color:var(--dim)">Mexausa Food Group Inc. — EIN 88-1698129</div>
+          <div style="font-size:11px;color:var(--dim)">Saul Garcia — NMLS #337526 — American 1st Partners NMLS #1773303</div>
+        </div>
+        <div style="display:grid;gap:8px;margin-bottom:16px">
+          <div class="listing-stat"><div class="listing-stat-l">Platform</div><div class="listing-stat-v" style="font-size:13px">AuditDNA — 120 industry portals — financelend.me</div></div>
+          <div class="listing-stat"><div class="listing-stat-l">Services</div><div class="listing-stat-v" style="font-size:12px">Mortgage origination, mini-office SaaS, RE lending tools, affiliate finance</div></div>
+          <div class="listing-stat"><div class="listing-stat-l">Coverage</div><div class="listing-stat-v" style="font-size:12px">San Diego County, Baja California, Imperial Valley, Salinas</div></div>
+          <div class="listing-stat"><div class="listing-stat-l">This Portal</div><div class="listing-stat-v" style="font-size:12px">Custom-built for Pamela Macias — yours exclusively</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:16px;line-height:1.8;border-left:3px solid var(--gold);padding-left:12px">
+          This command center was built specifically for your practice. I build private digital offices for real estate professionals, general contractors, attorneys, and service companies across San Diego and the border corridor. I am looking to base operations locally and would welcome the opportunity to discuss office space with you.
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button class="btn btn-dark" style="border-color:var(--gold);color:var(--gold)" onclick="window.open('tel:8312513116')">CALL SAUL: (831) 251-3116</button>
+          <button class="btn btn-dark" style="border-color:var(--gold);color:var(--gold)" onclick="window.open('mailto:sgarcia1911@gmail.com')">EMAIL SAUL</button>
+          <button class="btn btn-dark" onclick="window.open('https://mexausafg.com','_blank')">AUDITDNA PLATFORM</button>
+          <button class="btn btn-dark" onclick="window.open('https://financelend.me','_blank')">FINANCELEND.ME</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /mn -->
+</div><!-- /app -->
+
+<script>
+'use strict';
+var _p='',_plock=false;
+var PINS={'7979':'PAMELA MACIAS','5150':'ADMIN','0609':'MFGINC OWNER','4321':'DEMO'};
+
+function np(v){
+  if(_plock)return;_plock=true;setTimeout(function(){_plock=false;},80);
+  if(v==='C'){_p='';upd();document.getElementById('gerr').textContent='';return;}
+  if(v==='D'){_p=_p.slice(0,-1);upd();return;}
+  if(_p.length<4)_p+=v;
+  upd();
+  if(_p.length===4)setTimeout(ck,100);
+}
+function upd(){for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='dot'+(_p.length>i?' on':'');}}
+function ck(){
+  if(PINS[_p]){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('role-lbl').textContent=PINS[_p]+' — DRE #01967517';
+    initApp();
+  } else {
+    document.getElementById('gerr').textContent='Invalid PIN';
+    _p='';upd();
+    setTimeout(function(){document.getElementById('gerr').textContent='';},1500);
+  }
+}
+function doLock(){
+  document.getElementById('gate').style.display='flex';
+  document.getElementById('app').style.display='none';
+  _p='';upd();
+}
+
+function toggleSB(){var sb=document.getElementById('sb');var ov=document.getElementById('sb-ov');var o=sb.classList.toggle('open');ov.style.display=o?'block':'none';}
+function closeSB(){document.getElementById('sb').classList.remove('open');document.getElementById('sb-ov').style.display='none';}
+function initSB(){if(window.innerWidth<680)document.getElementById('sb').classList.remove('open');}
+function showSec(id){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('act');});
+  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('act');});
+  var sec=document.getElementById('sec-'+id);if(sec)sec.classList.add('act');
+  document.querySelectorAll('.sb-item').forEach(function(i){if(i.getAttribute('onclick')&&i.getAttribute('onclick').indexOf("'"+id+"'")!==-1)i.classList.add('act');});
+  closeSB();window.scrollTo(0,0);
+}
+
+var DB={buyers:[],investors:[],deals:[],comps:[],docs:[],pqLeads:[]};
+function save(){try{localStorage.setItem('pm_db',JSON.stringify(DB));}catch(e){}}
+function load(){try{var d=localStorage.getItem('pm_db');if(d)DB=JSON.parse(d);}catch(e){}}
+function num(n){return parseFloat(n||0).toLocaleString('en-US',{maximumFractionDigits:0});}
+function today(){return new Date().toISOString().split('T')[0];}
+
+function initApp(){
+  load();initSB();
+  document.getElementById('tb-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  document.getElementById('dp-close').value=today();
+  renderAll();
+}
+
+function renderAll(){
+  renderDash();renderBuyers();renderInvestors();renderDeals();renderComps();renderDocs();renderPQ();
+}
+
+function renderDash(){
+  document.getElementById('st-buyers').textContent=DB.buyers.length;
+  document.getElementById('st-investors').textContent=DB.investors.length;
+  document.getElementById('st-deals').textContent=DB.deals.filter(function(d){return d.stage!=='Closed';}).length;
+}
+
+function addBuyer(){
+  var name=document.getElementById('b-name').value.trim();
+  if(!name){alert('Name required.');return;}
+  DB.buyers.push({id:'B'+Date.now(),name:name,phone:document.getElementById('b-phone').value,
+    email:document.getElementById('b-email').value,budget:document.getElementById('b-budget').value,
+    interest:document.getElementById('b-interest').value,status:document.getElementById('b-status').value,
+    notes:document.getElementById('b-notes').value,created:today()});
+  ['b-name','b-phone','b-email','b-budget','b-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();
+}
+function renderBuyers(){
+  var STATUS={'New Lead':'var(--dim)','Contacted':'var(--orange)','Pre-Qual Sent':'var(--blue)',
+    'Pre-Qualified':'var(--blue)','Offer Submitted':'var(--gold)','In Escrow':'var(--green)','Closed':'var(--red)'};
+  var h='';
+  DB.buyers.slice().reverse().forEach(function(b){
+    h+='<div class="row"><div class="row-dot" style="background:'+(STATUS[b.status]||'var(--dim)')+'"></div>';
+    h+='<div class="row-main"><div class="row-title">'+b.name+'</div><div class="row-sub">'+b.phone+' | '+b.interest+' | Budget: '+b.budget+'</div></div>';
+    h+='<div class="row-right"><span class="tag" style="background:rgba(255,255,255,.08);color:'+(STATUS[b.status]||'var(--dim)')+'">'+b.status+'</span></div></div>';
+  });
+  document.getElementById('buyer-list').innerHTML=h||'<div class="empty">No buyers added.</div>';
+}
+
+function addInvestor(){
+  var name=document.getElementById('inv-name').value.trim();
+  if(!name){alert('Name required.');return;}
+  DB.investors.push({id:'I'+Date.now(),name:name,phone:document.getElementById('inv-phone').value,
+    email:document.getElementById('inv-email').value,range:document.getElementById('inv-range').value,
+    type:document.getElementById('inv-type').value,status:document.getElementById('inv-status').value,
+    notes:document.getElementById('inv-notes').value,created:today()});
+  ['inv-name','inv-phone','inv-email','inv-range','inv-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();
+}
+function renderInvestors(){
+  var h='';
+  DB.investors.slice().reverse().forEach(function(inv){
+    h+='<div class="row"><div class="row-dot" style="background:var(--gold)"></div>';
+    h+='<div class="row-main"><div class="row-title">'+inv.name+'</div><div class="row-sub">'+inv.type+' | '+inv.range+' | '+inv.status+'</div></div>';
+    h+='<div class="row-right"><span class="tag" style="background:rgba(201,165,92,.12);color:var(--gold)">'+inv.status+'</span></div></div>';
+  });
+  document.getElementById('investor-list').innerHTML=h||'<div class="empty">No investors added.</div>';
+}
+
+function addDeal(){
+  var name=document.getElementById('dp-name').value.trim();
+  if(!name){alert('Deal name required.');return;}
+  DB.deals.push({id:'D'+Date.now(),name:name,party:document.getElementById('dp-party').value,
+    price:document.getElementById('dp-price').value,stage:document.getElementById('dp-stage').value,
+    close:document.getElementById('dp-close').value,notes:document.getElementById('dp-notes').value,created:today()});
+  ['dp-name','dp-party','dp-price','dp-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();
+}
+function renderDeals(){
+  var STAGE_C={'Inquiry':'var(--dim)','NDA Sent':'var(--blue)','Package Delivered':'var(--blue)',
+    'LOI Received':'var(--gold)','Counter':'var(--orange)','Accepted':'var(--green)',
+    'In Escrow':'var(--green)','Closed':'var(--red)'};
+  var h='';
+  DB.deals.slice().reverse().forEach(function(d){
+    h+='<div class="row"><div class="row-dot" style="background:'+(STAGE_C[d.stage]||'var(--dim)')+'"></div>';
+    h+='<div class="row-main"><div class="row-title">'+d.name+'</div><div class="row-sub">'+d.party+(d.price?' | $'+num(d.price):'')+(d.close?' | Close: '+d.close:'')+'</div></div>';
+    h+='<div class="row-right"><span class="tag" style="background:rgba(255,255,255,.06);color:'+(STAGE_C[d.stage]||'var(--dim)')+'">'+d.stage+'</span></div></div>';
+  });
+  document.getElementById('deal-list').innerHTML=h||'<div class="empty">No deals in pipeline.</div>';
+}
+
+function addComp(){
+  var addr=document.getElementById('cmp-addr').value.trim();if(!addr)return;
+  DB.comps.push({id:'C'+Date.now(),addr:addr,price:document.getElementById('cmp-price').value,
+    type:document.getElementById('cmp-type').value,sqft:document.getElementById('cmp-sqft').value,
+    date:document.getElementById('cmp-date').value});
+  ['cmp-addr','cmp-price','cmp-sqft','cmp-date'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();
+}
+function renderComps(){
+  var h='';
+  DB.comps.slice().reverse().forEach(function(c){
+    var ppsf=c.price&&c.sqft?'$'+Math.round(c.price/c.sqft)+'/sqft':'';
+    h+='<div class="row"><div class="row-dot" style="background:var(--green)"></div>';
+    h+='<div class="row-main"><div class="row-title">'+c.addr+'</div><div class="row-sub">'+c.type+(c.sqft?' | '+num(c.sqft)+' sqft':'')+' | '+c.date+'</div></div>';
+    h+='<div class="row-right"><div style="font-size:14px;font-weight:800;color:var(--red)">$'+num(c.price)+'</div><div style="font-size:9px;color:var(--dim)">'+ppsf+'</div></div></div>';
+  });
+  document.getElementById('comp-list').innerHTML=h||'<div class="empty">No custom comps added.</div>';
+}
+
+function addDoc(){
+  var name=document.getElementById('doc-name').value.trim();if(!name)return;
+  DB.docs.push({id:'DOC'+Date.now(),name:name,cat:document.getElementById('doc-cat').value,
+    notes:document.getElementById('doc-notes').value,added:today()});
+  ['doc-name','doc-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderAll();
+}
+function renderDocs(){
+  var h='';
+  DB.docs.forEach(function(d){
+    h+='<div class="row"><div class="row-dot" style="background:var(--blue)"></div>';
+    h+='<div class="row-main"><div class="row-title">'+d.name+' <span class="tag" style="background:rgba(59,130,246,.1);color:var(--blue)">'+d.cat+'</span></div>';
+    h+='<div class="row-sub">Added: '+d.added+(d.notes?' — '+d.notes:'')+'</div></div></div>';
+  });
+  document.getElementById('doc-list').innerHTML=h||'<div class="empty">No documents added.</div>';
+}
+
+function savePQ(){
+  var name=document.getElementById('pq-name').value.trim();if(!name)return;
+  DB.pqLeads.push({id:'PQ'+Date.now(),name:name,phone:document.getElementById('pq-phone').value,
+    email:document.getElementById('pq-email').value,income:document.getElementById('pq-income').value,
+    price:document.getElementById('pq-price').value,down:document.getElementById('pq-down').value,
+    credit:document.getElementById('pq-credit').value,type:document.getElementById('pq-type').value,
+    created:today()});
+  ['pq-name','pq-phone','pq-email','pq-income','pq-price','pq-down'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderPQ();alert('Pre-qual lead saved!');
+}
+function renderPQ(){
+  var h='';
+  DB.pqLeads.slice().reverse().forEach(function(p){
+    h+='<div class="row"><div class="row-dot" style="background:var(--red)"></div>';
+    h+='<div class="row-main"><div class="row-title">'+p.name+'</div><div class="row-sub">'+p.type+' | '+p.credit+' | Buy: '+p.price+'</div></div>';
+    h+='<div class="row-right"><div style="font-size:11px;color:var(--dim)">'+p.created+'</div></div></div>';
+  });
+  document.getElementById('pq-list').innerHTML=h||'<div class="empty">No pre-qual leads.</div>';
+}
+
+function calcDev(){
+  var land=parseFloat(document.getElementById('c-land').value)||0;
+  var units=parseFloat(document.getElementById('c-units').value)||1;
+  var cpu=parseFloat(document.getElementById('c-cpu').value)||0;
+  var spu=parseFloat(document.getElementById('c-spu').value)||0;
+  var soft=(parseFloat(document.getElementById('c-soft').value)||18)/100;
+  var fin=(parseFloat(document.getElementById('c-fin').value)||6)/100;
+  var hardCost=units*cpu;
+  var softCost=hardCost*soft;
+  var finCost=(land+hardCost)*fin;
+  var totalCost=land+hardCost+softCost+finCost;
+  var revenue=units*spu;
+  var profit=revenue-totalCost;
+  var margin=revenue>0?((profit/revenue)*100).toFixed(1):0;
+  var roi=totalCost>0?((profit/totalCost)*100).toFixed(1):0;
+  document.getElementById('calc-results').innerHTML=
+    '<div class="listing-stat"><div class="listing-stat-v" style="font-size:15px">$'+num(hardCost)+'</div><div class="listing-stat-l">Hard Costs</div></div>'+
+    '<div class="listing-stat"><div class="listing-stat-v" style="font-size:15px">$'+num(softCost)+'</div><div class="listing-stat-l">Soft Costs</div></div>'+
+    '<div class="listing-stat"><div class="listing-stat-v" style="font-size:15px">$'+num(totalCost)+'</div><div class="listing-stat-l">Total All-In Cost</div></div>'+
+    '<div class="listing-stat"><div class="listing-stat-v" style="font-size:15px">$'+num(revenue)+'</div><div class="listing-stat-l">Gross Revenue</div></div>'+
+    '<div class="listing-stat"><div class="listing-stat-v" style="color:'+( profit>=0?'#22c55e':'#ef4444')+';font-size:16px">$'+num(profit)+'</div><div class="listing-stat-l">Gross Profit</div></div>'+
+    '<div class="listing-stat"><div class="listing-stat-v" style="font-size:15px">'+margin+'% / '+roi+'%</div><div class="listing-stat-l">Margin / ROI</div></div>';
+}
+function calcMortgage(){
+  var p=parseFloat(document.getElementById('m-loan').value)||0;
+  var r=(parseFloat(document.getElementById('m-rate').value)||6.75)/100/12;
+  var n=(parseFloat(document.getElementById('m-term').value)||30)*12;
+  if(!p||!r||!n)return;
+  var pmt=p*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+  var total=pmt*n;
+  var interest=total-p;
+  document.getElementById('mtg-result').style.display='block';
+  document.getElementById('mtg-pmt').textContent='$'+num(pmt)+'/mo';
+  document.getElementById('mtg-total').textContent='$'+num(total);
+  document.getElementById('mtg-interest').textContent='$'+num(interest);
+  document.getElementById('mtg-equity').textContent='$'+num(p);
+}
+
+window.addEventListener('resize',initSB);
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+</html>

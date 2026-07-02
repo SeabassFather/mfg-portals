@@ -624,6 +624,15 @@ function loafBrain(eventType, payload) {
       <div class="ll-tag">Invoice · Same-Day Capital</div>
     </div>
 
+    <div class="ll-card" style="background:linear-gradient(135deg,rgba(201,165,92,0.12),rgba(74,143,212,0.08));border:1px solid rgba(201,165,92,0.35);cursor:pointer" onclick="lpGo('lp-marketing')" title="Marketing Command">
+      <div class="ll-ghost" style="color:rgba(201,165,92,0.12)">M</div>
+      <div class="ll-badge" style="background:linear-gradient(135deg,#C9A55C,#4a8fd4)">M</div>
+      <div class="ll-word" style="color:#C9A55C">Marketing</div>
+      <div class="ll-es" style="color:#94a3b8">Comando</div>
+      <div class="ll-desc">Full marketing command center. Email blasts, agent triggers (HERMES/OBSIDIAN/KELLAR), CRM segments, portal management, AI copy writer. All platforms from one panel.</div>
+      <div class="ll-tag" style="background:rgba(201,165,92,0.15);color:#C9A55C;border-color:rgba(201,165,92,0.3)">Owner Access Only</div>
+    </div>
+
   </div>
 
   <!-- ═══ REGISTRATION CARDS ═══ -->
@@ -6748,6 +6757,618 @@ function speakPrecio(lang) {
     </div>
   </div>
 </div>
+
+<div id="lp-marketing" class="lp" style="display:none;flex-direction:column;overflow-y:auto;background:var(--bg);min-height:100vh">
+  <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(13,17,23,0.95);position:sticky;top:0;z-index:50">
+    <div style="cursor:pointer;font-size:18px;color:#C9A55C" onclick="lpBack()">&#8592;</div>
+    <div style="font-size:11px;letter-spacing:3px;font-weight:700;color:#C9A55C">MARKETING COMMAND</div>
+    <div style="margin-left:auto;font-size:10px;color:#64748b" id="mkt-clock"></div>
+  </div>
+  <div style="padding:16px;max-width:1200px;margin:0 auto;width:100%">
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:700;color:#C9A55C">65K+</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">CRM Contacts</div></div>
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:700;color:#C9A55C">5,884</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">EnjoyBaja List</div></div>
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:700;color:#C9A55C">107</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">Active Portals</div></div>
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:14px;text-align:center"><div style="font-size:22px;font-weight:700;color:#C9A55C">3</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">Night Agents</div></div>
+    </div>
+
+    <div style="display:flex;gap:4px;background:#0d1117;border-radius:8px;padding:4px;margin-bottom:16px;overflow-x:auto">
+      <button id="mkt-tab-dash" onclick="mktTab('dash')" style="flex:1;padding:8px 12px;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:#C9A55C;color:#020912;white-space:nowrap">Dashboard</button>
+      <button id="mkt-tab-blast" onclick="mktTab('blast')" style="flex:1;padding:8px 12px;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:transparent;color:#64748b;white-space:nowrap">Email Blast</button>
+      <button id="mkt-tab-agents" onclick="mktTab('agents')" style="flex:1;padding:8px 12px;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:transparent;color:#64748b;white-space:nowrap">Agents</button>
+      <button id="mkt-tab-portals" onclick="mktTab('portals')" style="flex:1;padding:8px 12px;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:transparent;color:#64748b;white-space:nowrap">Portals</button>
+      <button id="mkt-tab-crm" onclick="mktTab('crm')" style="flex:1;padding:8px 12px;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:transparent;color:#64748b;white-space:nowrap">CRM</button>
+      <button id="mkt-tab-ai" onclick="mktTab('ai')" style="flex:1;padding:8px 12px;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:transparent;color:#64748b;white-space:nowrap">AI Writer</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="mkt-panel-dash">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+          <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #21262d">Platform Status</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:#94a3b8">mexausafg.com</span><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(34,197,94,0.15);color:#22c55e">LIVE</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:#94a3b8">enjoybaja.com</span><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(34,197,94,0.15);color:#22c55e">LIVE</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:#94a3b8">Railway Backend</span><span id="mkt-s-rail" style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(74,143,212,0.15);color:#4a8fd4">CHECKING</span></div>
+          </div>
+        </div>
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+          <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #21262d">Agent Schedule</div>
+          <div style="font-size:11px;color:#94a3b8;line-height:2.2">
+            <div style="display:flex;justify-content:space-between"><span style="color:#e2e8f0;font-weight:700">HERMES</span><span>10PM / 2AM / 5AM PST</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#e2e8f0;font-weight:700">OBSIDIAN</span><span>11PM / 3AM PST</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#e2e8f0;font-weight:700">KELLAR</span><span>9PM / 1AM / 4AM PST</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px;margin-bottom:14px">
+        <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px">Quick Fire</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="mktTab('blast')" style="padding:8px 16px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer">New Blast</button>
+          <button onclick="mktFireAgent('hermes')" style="padding:8px 16px;background:#4a8fd4;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer">Fire HERMES</button>
+          <button onclick="mktFireAgent('obsidian')" style="padding:8px 16px;background:#4a8fd4;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer">Fire OBSIDIAN</button>
+          <button onclick="mktFireAgent('kellar')" style="padding:8px 16px;background:#4a8fd4;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer">Fire KELLAR</button>
+          <button onclick="mktTab('ai')" style="padding:8px 16px;background:transparent;color:#94a3b8;border:1px solid #21262d;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer">AI Writer</button>
+        </div>
+      </div>
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+        <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:10px">Activity Log</div>
+        <div id="mkt-log" style="background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:10px;font-family:Consolas,monospace;font-size:11px;color:#64748b;max-height:140px;overflow-y:auto;line-height:1.7"></div>
+      </div>
+    </div>
+
+    <!-- EMAIL BLAST -->
+    <div id="mkt-panel-blast" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+          <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #21262d">Blast Config</div>
+          <div style="display:flex;gap:0;border:1px solid #21262d;border-radius:6px;overflow:hidden;margin-bottom:14px">
+            <button id="mkt-pt-audit" onclick="mktSetPlatform('audit')" style="flex:1;padding:7px;font-size:10px;font-weight:700;border:none;cursor:pointer;background:#C9A55C;color:#020912">AUDITDNA</button>
+            <button id="mkt-pt-enjoy" onclick="mktSetPlatform('enjoy')" style="flex:1;padding:7px;font-size:10px;font-weight:700;border:none;cursor:pointer;background:transparent;color:#64748b">ENJOYBAJA</button>
+          </div>
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Segment</label>
+          <select id="mkt-seg" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:12px;outline:none">
+            <optgroup label="AuditDNA CRM"><option value="crm_all">All CRM (~31K)</option><option value="crm_shippers">Shippers (~28K)</option><option value="crm_growers">Growers (~3.2K)</option><option value="crm_buyers">Buyers (~3K)</option></optgroup>
+            <optgroup label="EnjoyBaja"><option value="eb_all">All EnjoyBaja (5,884)</option><option value="eb_agents">SD RE Agents (101)</option><option value="eb_ensenada">Ensenada</option><option value="eb_tijuana">Tijuana</option><option value="eb_colonet">Colonet</option></optgroup>
+          </select>
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Template</label>
+          <select id="mkt-tpl" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:12px;outline:none">
+            <option value="">-- Select --</option>
+            <optgroup label="AuditDNA"><option value="auditdna_intro">Platform Introduction</option><option value="minioffice_promo">Mini-Office $499/mo</option><option value="prospectiq">ProspectIQ Launch</option><option value="plateguard">PlateGuard v2</option></optgroup>
+            <optgroup label="EnjoyBaja"><option value="tuntan_en">TunTan (EN)</option><option value="tuntan_es">TunTan (ES)</option><option value="mortgage_en">Mortgage NMLS #337526 (EN)</option><option value="mortgage_es">Mortgage NMLS #337526 (ES)</option><option value="colonet_en">Colonet Land (EN)</option><option value="colonet_es">Colonet Land (ES)</option></optgroup>
+          </select>
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Subject</label>
+          <input id="mkt-subj" type="text" placeholder="Subject line..." style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:12px;outline:none">
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Schedule</label>
+          <select id="mkt-sched" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:14px;outline:none"><option value="now">Send Now</option><option value="hermes">Via HERMES (10PM PST)</option></select>
+          <div style="font-size:9px;color:#475569;margin-bottom:12px">CAN-SPAM compliant. nicholaswindle@yahoo.com suppressed. NMLS #337526 auto-appended on EnjoyBaja.</div>
+          <div style="display:flex;gap:8px">
+            <button onclick="mktSendBlast()" style="flex:1;padding:9px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer">Send Blast</button>
+            <button onclick="mktPreviewBlast()" style="padding:9px 14px;background:transparent;color:#94a3b8;border:1px solid #21262d;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">Preview</button>
+          </div>
+        </div>
+        <div>
+          <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px;margin-bottom:14px">
+            <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:10px">Preview</div>
+            <div id="mkt-blast-preview" style="background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:12px;font-size:12px;color:#94a3b8;min-height:150px;white-space:pre-wrap;line-height:1.6">Select template and click Preview.</div>
+          </div>
+          <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+            <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:10px">Blast Log</div>
+            <div id="mkt-blast-log" style="background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:10px;font-family:Consolas,monospace;font-size:11px;color:#64748b;max-height:100px;overflow-y:auto;line-height:1.7"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENTS -->
+    <div id="mkt-panel-agents" style="display:none">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px">
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><div style="font-size:14px;font-weight:700;color:#e2e8f0">HERMES</div><div style="font-size:10px;color:#64748b">Email Commander</div></div><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(34,197,94,0.15);color:#22c55e">ACTIVE</span></div>
+          <div style="font-size:10px;color:#475569;margin-bottom:12px;line-height:1.6">10PM / 2AM / 5AM PST<br>/api/agent/hermes/trigger</div>
+          <div style="display:flex;gap:6px"><button onclick="mktFireAgent('hermes')" style="flex:1;padding:7px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">FIRE</button><button onclick="mktCheckAgent('hermes')" style="padding:7px 10px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:6px;font-size:10px;cursor:pointer">STATUS</button></div>
+          <div id="mkt-log-hermes" style="background:#0d1117;border:1px solid #21262d;border-radius:4px;padding:8px;font-family:Consolas,monospace;font-size:10px;color:#64748b;max-height:70px;overflow-y:auto;margin-top:10px;line-height:1.6"></div>
+        </div>
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><div style="font-size:14px;font-weight:700;color:#e2e8f0">OBSIDIAN</div><div style="font-size:10px;color:#64748b">Visual Content</div></div><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(34,197,94,0.15);color:#22c55e">ACTIVE</span></div>
+          <div style="font-size:10px;color:#475569;margin-bottom:12px;line-height:1.6">11PM / 3AM PST<br>/api/agent/obsidian/trigger</div>
+          <div style="display:flex;gap:6px"><button onclick="mktFireAgent('obsidian')" style="flex:1;padding:7px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">FIRE</button><button onclick="mktCheckAgent('obsidian')" style="padding:7px 10px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:6px;font-size:10px;cursor:pointer">STATUS</button></div>
+          <div id="mkt-log-obsidian" style="background:#0d1117;border:1px solid #21262d;border-radius:4px;padding:8px;font-family:Consolas,monospace;font-size:10px;color:#64748b;max-height:70px;overflow-y:auto;margin-top:10px;line-height:1.6"></div>
+        </div>
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><div style="font-size:14px;font-weight:700;color:#e2e8f0">KELLAR</div><div style="font-size:10px;color:#64748b">Template Architect</div></div><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(34,197,94,0.15);color:#22c55e">ACTIVE</span></div>
+          <div style="font-size:10px;color:#475569;margin-bottom:12px;line-height:1.6">9PM / 1AM / 4AM PST<br>/api/agent/kellar/trigger</div>
+          <div style="display:flex;gap:6px"><button onclick="mktFireAgent('kellar')" style="flex:1;padding:7px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">FIRE</button><button onclick="mktCheckAgent('kellar')" style="padding:7px 10px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:6px;font-size:10px;cursor:pointer">STATUS</button></div>
+          <div id="mkt-log-kellar" style="background:#0d1117;border:1px solid #21262d;border-radius:4px;padding:8px;font-family:Consolas,monospace;font-size:10px;color:#64748b;max-height:70px;overflow-y:auto;margin-top:10px;line-height:1.6"></div>
+        </div>
+      </div>
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+        <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px">Custom Payload</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Agent</label><select id="mkt-agent-sel" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;outline:none"><option value="hermes">HERMES</option><option value="obsidian">OBSIDIAN</option><option value="kellar">KELLAR</option></select></div>
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Action</label><select id="mkt-agent-act" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;outline:none"><option value="run">Default Run</option><option value="blast">Email Blast</option><option value="template_gen">Generate Template</option><option value="report">Status Report</option></select></div>
+        </div>
+        <textarea id="mkt-agent-payload" placeholder='Optional JSON payload' style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;outline:none;resize:vertical;min-height:60px;font-family:Consolas,monospace;margin-bottom:10px"></textarea>
+        <button onclick="mktFireCustom()" style="padding:9px 20px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">FIRE AGENT</button>
+        <div id="mkt-agent-log" style="background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:10px;font-family:Consolas,monospace;font-size:11px;color:#64748b;max-height:80px;overflow-y:auto;margin-top:10px;line-height:1.7"></div>
+      </div>
+    </div>
+
+    <!-- PORTALS -->
+        <div id="mkt-panel-portals" style="display:none">
+      <!-- MONITOR BAR -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px">
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:#C9A55C">59</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Total Portals</div></div>
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px;text-align:center"><div id="mkt-stat-live" style="font-size:20px;font-weight:700;color:#22c55e">59</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Live</div></div>
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px;text-align:center"><div id="mkt-stat-checked" style="font-size:20px;font-weight:700;color:#4a8fd4">0</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Verified</div></div>
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px;text-align:center"><div id="mkt-stat-issue" style="font-size:20px;font-weight:700;color:#ef4444">0</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Issues</div></div>
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px;text-align:center"><div id="mkt-stat-pct" style="font-size:20px;font-weight:700;color:#C9A55C">—</div><div style="font-size:9px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Health</div></div>
+      </div>
+
+      <!-- CONTROLS -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <input id="mkt-portal-search" type="text" placeholder="Search portals..." oninput="mktFilterPortals(this.value)" style="flex:1;min-width:180px;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px 12px;outline:none">
+        <select id="mkt-portal-cat" onchange="mktFilterPortals(document.getElementById('mkt-portal-search').value)" style="background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;outline:none">
+          <option value="">All Categories</option>
+          <option value="Professional &amp; Legal">Professional &amp; Legal</option>
+          <option value="Finance &amp; Insurance">Finance &amp; Insurance</option>
+          <option value="Construction &amp; MFG">Construction &amp; MFG</option>
+          <option value="Energy &amp; Tech">Energy &amp; Tech</option>
+          <option value="Real Estate &amp; Title">Real Estate &amp; Title</option>
+          <option value="Fleet &amp; Ops">Fleet &amp; Ops</option>
+          <option value="Creative &amp; Lifestyle">Creative &amp; Lifestyle</option>
+          <option value="AuditDNA Platform">AuditDNA Platform</option>
+          <option value="Meyenberg">Meyenberg</option>
+        </select>
+        <button onclick="mktRunHealthCheck()" style="padding:8px 14px;background:#4a8fd4;color:#fff;border:none;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer">RUN HEALTH CHECK</button>
+        <button onclick="mktResetHealth()" style="padding:8px 12px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:6px;font-size:10px;cursor:pointer">RESET</button>
+      </div>
+
+      <!-- PORTAL TABLE -->
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;overflow:hidden">
+        <table style="width:100%;border-collapse:collapse;font-size:11px" id="mkt-portal-table">
+          <thead>
+            <tr style="background:#0d1117">
+              <th style="text-align:left;padding:10px 12px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">#</th>
+              <th style="text-align:left;padding:10px 12px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">Portal Name</th>
+              <th style="text-align:left;padding:10px 12px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">Category</th>
+              <th style="text-align:left;padding:10px 12px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">Group</th>
+              <th style="text-align:left;padding:10px 12px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">PIN</th>
+              <th style="text-align:left;padding:10px 12px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">Status</th>
+              <th style="padding:10px 12px;border-bottom:1px solid #21262d"></th>
+            </tr>
+          </thead>
+          <tbody id="mkt-portal-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- DEPLOY NEW -->
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px;margin-top:14px">
+        <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px">Deploy New Portal</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:4px">Client Name</label><input id="mkt-p-name" type="text" placeholder="Acme Law Group" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:7px;outline:none"></div>
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:4px">Type</label><select id="mkt-p-type" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:7px;outline:none"><option value="attorney">Attorney (jj.html)</option><option value="cpa">CPA</option><option value="doctor">Medical</option><option value="consultant">Consultant</option><option value="wholesale">Wholesale</option><option value="tech">Tech/MSP</option></select></div>
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:4px">Slug</label><input id="mkt-p-slug" type="text" placeholder="acme-law" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:7px;outline:none"></div>
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:4px">Tier + PIN</label><select id="mkt-p-tier" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:7px;outline:none"><option>Starter $299/mo</option><option>Pro $499/mo</option><option>Enterprise $999/mo</option></select></div>
+        </div>
+        <button onclick="mktGenPortal()" style="padding:8px 20px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">GENERATE BRIEF</button>
+        <div id="mkt-portal-brief" style="background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:10px;font-family:Consolas,monospace;font-size:11px;color:#94a3b8;min-height:60px;white-space:pre-wrap;line-height:1.6;margin-top:10px">Fill form and click Generate.</div>
+      </div>
+    </div>
+
+    <!-- CRM -->
+    <div id="mkt-panel-crm" style="display:none">
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px;margin-bottom:14px">
+        <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px">Segment Builder</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Table</label><select id="mkt-crm-tbl" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;outline:none"><option value="crm_contacts">crm_contacts</option><option value="shipper_contacts">shipper_contacts</option><option value="growers">growers</option><option value="buyers">buyers</option></select></div>
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Commodity</label><input id="mkt-crm-com" type="text" placeholder="strawberry, all" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;outline:none"></div>
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">State</label><input id="mkt-crm-st" type="text" placeholder="CA, all" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;outline:none"></div>
+          <div><label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Country</label><select id="mkt-crm-co" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;outline:none"><option value="all">All</option><option value="US">US</option><option value="MX">MX</option></select></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="mktBuildSeg()" style="padding:8px 16px;background:#4a8fd4;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">BUILD QUERY</button>
+          <button onclick="mktExportSeg()" style="padding:8px 16px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">EXPORT TO BLAST</button>
+        </div>
+        <div id="mkt-seg-q" style="background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:12px;font-family:Consolas,monospace;font-size:11px;color:#94a3b8;margin-top:12px;white-space:pre-wrap;line-height:1.6;min-height:80px">Configure filters above.</div>
+      </div>
+      <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+        <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px">EnjoyBaja Segments</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr><th style="text-align:left;padding:8px 10px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">Segment</th><th style="text-align:left;padding:8px 10px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">City</th><th style="text-align:left;padding:8px 10px;font-size:9px;letter-spacing:1px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #21262d;font-weight:700">Count</th><th style="padding:8px 10px;border-bottom:1px solid #21262d"></th></tr></thead>
+          <tbody>
+            <tr><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">RE Agents SD</td><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">San Diego, CA</td><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">101</td><td style="padding:9px 10px;border-bottom:1px solid rgba(33,38,45,0.5)"><button onclick="mktSelEBSeg('eb_agents')" style="padding:4px 10px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer">SELECT</button></td></tr>
+            <tr><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">Ensenada</td><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">Ensenada, BC</td><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">~420</td><td style="padding:9px 10px;border-bottom:1px solid rgba(33,38,45,0.5)"><button onclick="mktSelEBSeg('eb_ensenada')" style="padding:4px 10px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer">SELECT</button></td></tr>
+            <tr><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">Tijuana</td><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">Tijuana, BC</td><td style="padding:9px 10px;color:#94a3b8;border-bottom:1px solid rgba(33,38,45,0.5)">~510</td><td style="padding:9px 10px;border-bottom:1px solid rgba(33,38,45,0.5)"><button onclick="mktSelEBSeg('eb_tijuana')" style="padding:4px 10px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer">SELECT</button></td></tr>
+            <tr><td style="padding:9px 10px;color:#94a3b8">All EnjoyBaja</td><td style="padding:9px 10px;color:#94a3b8">26 cities</td><td style="padding:9px 10px;color:#94a3b8">5,884</td><td style="padding:9px 10px"><button onclick="mktSelEBSeg('eb_all')" style="padding:4px 10px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer">SELECT</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AI WRITER -->
+    <div id="mkt-panel-ai" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+          <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #21262d">AI Copy Generator</div>
+          <div style="display:flex;gap:0;border:1px solid #21262d;border-radius:6px;overflow:hidden;margin-bottom:14px">
+            <button id="mkt-ai-pt-audit" onclick="mktSetAIPlatform('audit')" style="flex:1;padding:7px;font-size:10px;font-weight:700;border:none;cursor:pointer;background:#C9A55C;color:#020912">AUDITDNA</button>
+            <button id="mkt-ai-pt-enjoy" onclick="mktSetAIPlatform('enjoy')" style="flex:1;padding:7px;font-size:10px;font-weight:700;border:none;cursor:pointer;background:transparent;color:#64748b">ENJOYBAJA</button>
+          </div>
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Content Type</label>
+          <select id="mkt-ai-type" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:10px;outline:none"><option value="email_subject">Email Subject Lines (5 options)</option><option value="email_body">Email Body Copy</option><option value="portal_headline">Portal Headline + Tagline</option><option value="sms">SMS (160 chars)</option><option value="social">Social Post</option><option value="pitch">Sales Pitch</option></select>
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Topic</label>
+          <input id="mkt-ai-topic" type="text" placeholder="Mini-Office Portal, TunTan lots..." style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:10px;outline:none">
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Audience</label>
+          <input id="mkt-ai-audience" type="text" placeholder="SD agents, Baja buyers, shippers..." style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:10px;outline:none">
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Key Points</label>
+          <textarea id="mkt-ai-pts" placeholder="$499/mo, no setup fee, 10 tabs..." style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:10px;outline:none;resize:vertical;min-height:60px;font-family:inherit"></textarea>
+          <label style="display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:5px">Language</label>
+          <select id="mkt-ai-lang" style="width:100%;background:#0d1117;border:1px solid #21262d;border-radius:6px;color:#e2e8f0;font-size:12px;padding:8px;margin-bottom:14px;outline:none"><option value="en">English</option><option value="es">Spanish</option><option value="both">EN + ES</option></select>
+          <button id="mkt-ai-btn" onclick="mktGenAI()" style="width:100%;padding:9px;background:#C9A55C;color:#020912;border:none;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">GENERATE COPY</button>
+        </div>
+        <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px">
+          <div style="font-size:9px;letter-spacing:2px;color:#C9A55C;font-weight:700;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #21262d">Generated Copy</div>
+          <div id="mkt-ai-out" style="background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:12px;font-size:12px;color:#94a3b8;min-height:280px;white-space:pre-wrap;line-height:1.7;overflow-y:auto">Configure and click Generate.</div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button onclick="mktCopyAI()" style="padding:7px 14px;background:#4a8fd4;color:#fff;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">COPY</button>
+            <button onclick="mktSendAIToBlast()" style="padding:7px 14px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">SEND TO BLAST</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>
+var mktCurrentPlatform='audit',mktAIPlatform='audit';
+function mktLog(id,type,msg){var el=document.getElementById(id);if(!el)return;var now=new Date().toTimeString().slice(0,8);var color=type==='ok'?'#22c55e':type==='err'?'#ef4444':'#4a8fd4';el.innerHTML+='<span style="color:#475569">['+now+']</span> <span style="color:'+color+'">'+msg+'</span>\n';el.scrollTop=el.scrollHeight;}
+function mktToast(msg,ok){var t=document.getElementById('mkt-toast');if(!t){t=document.createElement('div');t.id='mkt-toast';t.style.cssText='position:fixed;bottom:24px;right:24px;background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px 18px;font-size:12px;color:#e2e8f0;z-index:99999;transition:opacity 0.25s;pointer-events:none;max-width:280px;font-family:inherit';document.body.appendChild(t);}t.textContent=msg;t.style.borderColor=ok===false?'#ef4444':'#22c55e';t.style.opacity='1';clearTimeout(t._tt);t._tt=setTimeout(function(){t.style.opacity='0';},3000);}
+function mktTab(id){['dash','blast','agents','portals','crm','ai'].forEach(function(p){var panel=document.getElementById('mkt-panel-'+p);var btn=document.getElementById('mkt-tab-'+p);if(panel)panel.style.display=p===id?'block':'none';if(btn){btn.style.background=p===id?'#C9A55C':'transparent';btn.style.color=p===id?'#020912':'#64748b';}});}
+function mktSetPlatform(p){mktCurrentPlatform=p;var a=document.getElementById('mkt-pt-audit'),b=document.getElementById('mkt-pt-enjoy');if(a){a.style.background=p==='audit'?'#C9A55C':'transparent';a.style.color=p==='audit'?'#020912':'#64748b';}if(b){b.style.background=p==='enjoy'?'#C9A55C':'transparent';b.style.color=p==='enjoy'?'#020912':'#64748b';}}
+function mktSetAIPlatform(p){mktAIPlatform=p;var a=document.getElementById('mkt-ai-pt-audit'),b=document.getElementById('mkt-ai-pt-enjoy');if(a){a.style.background=p==='audit'?'#C9A55C':'transparent';a.style.color=p==='audit'?'#020912':'#64748b';}if(b){b.style.background=p==='enjoy'?'#C9A55C':'transparent';b.style.color=p==='enjoy'?'#020912':'#64748b';}}
+function mktFireAgent(name){mktLog('mkt-log','info','Firing '+name.toUpperCase()+'...');if(document.getElementById('mkt-log-'+name))mktLog('mkt-log-'+name,'info','Firing...');fetch('https://auditdna-backend-1-production.up.railway.app/api/agent/'+name+'/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({manual:true})}).then(function(r){mktLog('mkt-log','ok',name.toUpperCase()+' '+r.status);if(document.getElementById('mkt-log-'+name))mktLog('mkt-log-'+name,'ok',''+r.status);mktToast(name.toUpperCase()+' triggered');}).catch(function(e){mktLog('mkt-log','err',name+': '+e.message);if(document.getElementById('mkt-log-'+name))mktLog('mkt-log-'+name,'err',e.message);mktToast('Trigger failed',false);});}
+function mktCheckAgent(name){if(document.getElementById('mkt-log-'+name))mktLog('mkt-log-'+name,'info','Checking...');fetch('https://auditdna-backend-1-production.up.railway.app/api/agent/'+name+'/status').then(function(r){return r.json();}).then(function(d){if(document.getElementById('mkt-log-'+name))mktLog('mkt-log-'+name,'ok','Status: '+(d.status||'ok'));}).catch(function(e){if(document.getElementById('mkt-log-'+name))mktLog('mkt-log-'+name,'err',e.message);});}
+function mktFireCustom(){var name=document.getElementById('mkt-agent-sel').value;var action=document.getElementById('mkt-agent-act').value;var payload={manual:true,action:action};try{var raw=document.getElementById('mkt-agent-payload').value.trim();if(raw)payload=Object.assign(payload,JSON.parse(raw));}catch(e){mktToast('Invalid JSON',false);return;}mktLog('mkt-agent-log','info','Firing '+name.toUpperCase()+' / '+action);fetch('https://auditdna-backend-1-production.up.railway.app/api/agent/'+name+'/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){mktLog('mkt-agent-log','ok',''+d.message||'Triggered');mktToast(name.toUpperCase()+' fired');}).catch(function(e){mktLog('mkt-agent-log','err',e.message);mktToast('Failed',false);});}
+function mktPreviewBlast(){var tpl=document.getElementById('mkt-tpl').value;var sub=document.getElementById('mkt-subj').value;var TPLS={auditdna_intro:'FROM: sgarcia1911@gmail.com\nTO: crm_contacts\nSUBJECT: '+(sub||'Introducing AuditDNA Agriculture Intelligence')+'\n\nAuditDNA: full-stack agriculture intelligence for the US-Mexico produce corridor.\n65K+ contacts. AI agents. Real-time data.\n\nmexausafg.com\n---\nMexausa Food Group, Inc. | Salinas, CA | Reply STOP to unsubscribe',tuntan_en:'FROM: sgarcia1911@gmail.com\nSUBJECT: '+(sub||'TunTan -- Premium Baja Lots Now Available')+'\n\nPrime lots at TunTan Development, Baja California. 84 qualified buyers engaged.\n\nenjoybaja.com\n\nSaul Garcia | NMLS #337526 | American 1st Partners | NMLS #1773303\n15615 Alton Pkwy Suite 450, Irvine CA 92618',mortgage_en:'FROM: sgarcia1911@gmail.com\nSUBJECT: '+(sub||'Finance Your Baja Property')+'\n\nCross-border mortgage from a licensed US loan officer.\n\nSaul Garcia | NMLS #337526\nAmerican 1st Partners | NMLS #1773303\n15615 Alton Pkwy Suite 450, Irvine CA 92618\nfinancelend.me'};var preview=TPLS[tpl]||('Template: '+(tpl||'none')+'\nSubject: '+(sub||'(none)')+'\nPlatform: '+(mktCurrentPlatform==='audit'?'AuditDNA':'EnjoyBaja'));document.getElementById('mkt-blast-preview').textContent=preview;mktLog('mkt-blast-log','info','Preview: '+(tpl||'custom'));}
+function mktSendBlast(){var seg=document.getElementById('mkt-seg').value;var sub=document.getElementById('mkt-subj').value;var tpl=document.getElementById('mkt-tpl').value;var sched=document.getElementById('mkt-sched').value;if(!sub&&!tpl){mktToast('Subject or template required',false);return;}if(sched==='hermes'){mktLog('mkt-blast-log','info','Routing to HERMES for 10PM send...');mktFireAgent('hermes');mktToast('Blast queued via HERMES (10PM PST)');return;}mktLog('mkt-blast-log','info','Sending: '+seg);fetch('https://auditdna-backend-1-production.up.railway.app/api/email/blast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({segment:seg,subject:sub,template:tpl,platform:mktCurrentPlatform})}).then(function(r){return r.json().catch(function(){return {};});}).then(function(d){mktLog('mkt-blast-log','ok','Queued: '+(d.message||'ok'));mktToast('Blast queued');}).catch(function(e){mktLog('mkt-blast-log','err',e.message);mktToast('Blast unreachable',false);});}
+function mktBuildSeg(){var tbl=document.getElementById('mkt-crm-tbl').value;var com=document.getElementById('mkt-crm-com').value.trim();var st=document.getElementById('mkt-crm-st').value.trim();var co=document.getElementById('mkt-crm-co').value;var q='SELECT id, name, email, phone, commodity, state, country\nFROM '+tbl+'\nWHERE 1=1';if(com&&com!=='all')q+='\n  AND LOWER(commodity) LIKE '%'+com.toLowerCase()+'%'';if(st&&st!=='all')q+='\n  AND UPPER(state) = ''+st.toUpperCase()+''';if(co!=='all')q+='\n  AND country = ''+co+''';q+='\n  AND email IS NOT NULL\n  AND email != 'nicholaswindle@yahoo.com'\nORDER BY created_at DESC;';document.getElementById('mkt-seg-q').textContent=q;mktLog('mkt-log','info','Segment: '+tbl);}
+function mktExportSeg(){var q=document.getElementById('mkt-seg-q').textContent;if(!q||q.includes('Configure')){mktToast('Build segment first',false);return;}mktTab('blast');mktToast('Exported to Blast');}
+function mktSelEBSeg(val){mktTab('blast');document.getElementById('mkt-seg').value=val;mktToast('Selected: '+val);}
+function mktGenPortal(){var name=document.getElementById('mkt-p-name').value.trim();var type=document.getElementById('mkt-p-type').value;var tier=document.getElementById('mkt-p-tier').value;var slug=document.getElementById('mkt-p-slug').value.trim();var pin=document.getElementById('mkt-p-pin').value.trim();if(!name||!slug||!pin){mktToast('Name, slug, PIN required',false);return;}var base=type==='wholesale'?'meyenberg-wholesale.html':'jj.html';var brief='PORTAL BRIEF\n============\nClient: '+name+'\nType: '+type+'\nBase: public/'+base+'\nURL: mexausafg.com/'+slug+'\nFile: public/'+slug+'.html\nBilling: '+tier+'\nClient PIN: '+pin+' | Admin: 0609\n\nDEPLOY:\n1. cp public/'+base+' public/'+slug+'.html\n2. Replace branding: '+name+'\n3. Set PIN: '+pin+'\n4. Add to _redirects: /'+slug+' /'+slug+'.html 200\n5. Push to SeabassFather/audit-frontend\n6. Wire Stripe: '+tier+'\n7. Update Admin (107 -> 108)';document.getElementById('mkt-portal-brief').textContent=brief;mktToast('Brief ready');}
+function mktGenAI(){var type=document.getElementById('mkt-ai-type').value;var topic=document.getElementById('mkt-ai-topic').value.trim();var audience=document.getElementById('mkt-ai-audience').value.trim();var pts=document.getElementById('mkt-ai-pts').value.trim();var lang=document.getElementById('mkt-ai-lang').value;if(!topic){mktToast('Topic required',false);return;}var btn=document.getElementById('mkt-ai-btn');btn.textContent='GENERATING...';btn.disabled=true;document.getElementById('mkt-ai-out').textContent='Generating...';var ctx=mktAIPlatform==='audit'?'AuditDNA Agriculture Intelligence (mexausafg.com). B2B produce/agriculture. NO NMLS, NO mortgage.':'EnjoyBaja real estate + mortgage (enjoybaja.com). ALWAYS include: NMLS #337526 | American 1st Partners | NMLS #1773303 | 15615 Alton Pkwy Suite 450, Irvine CA 92618.';var prompt='Marketing copywriter for Mexausa Food Group. Platform: '+ctx+'\n\nWrite '+type+' for:\nTopic: '+topic+'\nAudience: '+audience+'\nKey points: '+(pts||'none')+'\nLanguage: '+lang+'\n\nRules: No emojis. No placeholder brackets. Direct. CAN-SPAM compliant on emails. Output copy only.';fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})}).then(function(r){return r.json();}).then(function(d){var text=d.content?d.content.map(function(b){return b.text||'';}).join(''):'Error: '+JSON.stringify(d);document.getElementById('mkt-ai-out').textContent=text;mktLog('mkt-log','ok','AI: '+type+' / '+topic);mktToast('Copy generated');}).catch(function(e){document.getElementById('mkt-ai-out').textContent='Error: '+e.message;mktToast('AI failed',false);}).finally(function(){btn.textContent='GENERATE COPY';btn.disabled=false;});}
+function mktCopyAI(){var text=document.getElementById('mkt-ai-out').textContent;var el=document.createElement('textarea');el.value=text;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);mktToast('Copied');}
+function mktSendAIToBlast(){mktTab('blast');mktToast('Switched to Blast tab');}
+function mktInitPortalList(){
+  var portals=[{"name":"JJ Law Group","file":"jj.html","pin":"5566","cat":"Attorney","status":"LIVE"},{"name":"LawFirm Escrow Pro","file":"lawfirm-escrow-pro.html","pin":"2819","cat":"Legal","status":"LIVE"},{"name":"LawFirm Finance Pro","file":"lawfirm-finance-pro.html","pin":"3742","cat":"Legal/Finance","status":"LIVE"},{"name":"Coach Salazar","file":"coach-salazar.html","pin":"9031","cat":"Coaching","status":"LIVE"},{"name":"Rudy Jacinto","file":"rudy-jacinto.html","pin":"4488","cat":"Professional","status":"LIVE"},{"name":"Luis Oliva","file":"luis-oliva.html","pin":"6612","cat":"Professional","status":"LIVE"},{"name":"Walter Rodriguez","file":"walter-rodriguez.html","pin":"7753","cat":"Professional","status":"LIVE"},{"name":"KS Services BD","file":"ks-services-bd.html","pin":"2290","cat":"Business Dev","status":"LIVE"},{"name":"Bookkeeper/Accountant Pro","file":"bookkeeper-accountant-pro.html","pin":"4401","cat":"Accounting","status":"LIVE"},{"name":"LedgerVault Portal","file":"ledgervault-portal.html","pin":"8834","cat":"Accounting","status":"LIVE"},{"name":"HedgeFund Ops Pro","file":"hedgefund-ops-pro.html","pin":"5529","cat":"Finance","status":"LIVE"},{"name":"MytWorks Financial Hub","file":"mytworks-financial-hub.html","pin":"3317","cat":"Finance","status":"LIVE"},{"name":"MytWorks Financial Pro","file":"mytworks-financial-pro.html","pin":"6684","cat":"Finance","status":"LIVE"},{"name":"Restaurant Finance Pro","file":"restaurant-finance-pro.html","pin":"1156","cat":"Restaurant","status":"LIVE"},{"name":"Insurance Underwriting Pro","file":"insurance-underwriting-pro.html","pin":"9920","cat":"Insurance","status":"LIVE"},{"name":"AuditDNA Factoring App","file":"AuditDNA-Factoring-Application.html","pin":"0609","cat":"Factoring","status":"LIVE"},{"name":"Alloy Systems Pro","file":"alloy-systems-pro.html","pin":"7731","cat":"Manufacturing","status":"LIVE"},{"name":"Construction Ops Pro","file":"construction-ops-pro.html","pin":"4466","cat":"Construction","status":"LIVE"},{"name":"Douglas Pipeline Pro","file":"douglas-pipeline-pro.html","pin":"6147","cat":"Pipeline","status":"LIVE"},{"name":"Manufacture Ops Hub","file":"manufacture-ops-hub.html","pin":"8803","cat":"Manufacturing","status":"LIVE"},{"name":"PrintOps Studio","file":"printops-studio.html","pin":"2291","cat":"Print","status":"LIVE"},{"name":"Worxs Haulers Demo","file":"worxs-haulers-demo.html","pin":"5512","cat":"Hauling","status":"LIVE"},{"name":"Dack Trading Export","file":"dack-trading-export.html","pin":"3308","cat":"Trading","status":"LIVE"},{"name":"HelixMotion","file":"helixmotion.html","pin":"7749","cat":"Tech","status":"LIVE"},{"name":"Solar Dispatch Pro","file":"solar-dispatch-pro.html","pin":"7744","cat":"Solar","status":"LIVE"},{"name":"LowVolt Pro","file":"lowvolt-pro.html","pin":"1129","cat":"Electrical","status":"LIVE"},{"name":"MSP Command Center","file":"msp-command-center.html","pin":"5583","cat":"MSP/Tech","status":"LIVE"},{"name":"HVAC Estimator Demo","file":"hvac-estimator-demo.html","pin":"6678","cat":"HVAC","status":"LIVE"},{"name":"Workcomp360 Demo","file":"workcomp360-demo.html","pin":"4423","cat":"Workers Comp","status":"LIVE"},{"name":"Auto Dealer Pro","file":"auto-dealer-pro.html","pin":"8811","cat":"Auto","status":"LIVE"},{"name":"GreatNeck Realty Pro","file":"greatneck-realty-pro.html","pin":"2277","cat":"Real Estate","status":"LIVE"},{"name":"TitleOps Portal","file":"titleops-portal.html","pin":"9934","cat":"Title/Escrow","status":"LIVE"},{"name":"First Rate Escrow","file":"first-rate-escrow-portal.html","pin":"3356","cat":"Escrow","status":"LIVE"},{"name":"Property Mgmt Pro","file":"property-mgmt-pro.html","pin":"6601","cat":"Property Mgmt","status":"LIVE"},{"name":"Mortgage Search Engine","file":"mortgage-search-engine.html","pin":"0609","cat":"Mortgage","status":"LIVE"},{"name":"Sprinter HQ","file":"sprinter-hq.html","pin":"4492","cat":"Fleet","status":"LIVE"},{"name":"Sprinter Demo","file":"sprinter-demo.html","pin":"4321","cat":"Fleet/Demo","status":"LIVE"},{"name":"Produce Ops Pro","file":"produce-ops-pro.html","pin":"1178","cat":"Produce","status":"LIVE"},{"name":"Banning & Son Pro","file":"banning-son-pro.html","pin":"4812","cat":"Professional","status":"LIVE"},{"name":"SW District Pro","file":"sw-district-pro.html","pin":"3614","cat":"District","status":"LIVE"},{"name":"VA Command","file":"va-command.html","pin":"5541","cat":"Veterans","status":"LIVE"},{"name":"JE Market Floor Mgr","file":"je-market-floor-manager.html","pin":"8867","cat":"Market","status":"LIVE"},{"name":"Old School Bordados","file":"old-school-bordados.html","pin":"3389","cat":"Embroidery","status":"LIVE"},{"name":"ArtHaus Wholesale","file":"arthaus.html","pin":"4321","cat":"Art/Wholesale","status":"LIVE"},{"name":"Kiki Cinema","file":"kiki-cinema.html","pin":"2256","cat":"Entertainment","status":"LIVE"},{"name":"Don Azul Sales","file":"don-azul-sales.html","pin":"0609","cat":"Tequila/Sales","status":"LIVE"},{"name":"PlateGuard v2","file":"plateguard.html","pin":"0609/4321","cat":"Security","status":"LIVE"},{"name":"ProspectIQ","file":"prospectiq.html","pin":"0609","cat":"Intelligence","status":"LIVE"},{"name":"Prospect Field","file":"prospect-field.html","pin":"4321","cat":"Intelligence","status":"LIVE"},{"name":"Book A Call","file":"book-a-call.html","pin":"open","cat":"Scheduling","status":"LIVE"},{"name":"Sponsor Intake","file":"sponsor-intake.html","pin":"open","cat":"Intake","status":"LIVE"},{"name":"We Link","file":"we-link.html","pin":"open","cat":"Network","status":"LIVE"},{"name":"We Link Supplier","file":"we-link-supplier.html","pin":"open","cat":"Network","status":"LIVE"},{"name":"Loaf Guide","file":"loaf-guide.html","pin":"open","cat":"LOAF","status":"LIVE"},{"name":"Loaf Invitation","file":"loaf-invitation.html","pin":"open","cat":"LOAF","status":"LIVE"},{"name":"Meyenberg Wholesale","file":"meyenberg-wholesale.html","pin":"0609","cat":"Wholesale","status":"LIVE"},{"name":"Sarahy — Sales Portal","file":"sarahy-portal.html","pin":"0505","cat":"Meyenberg","status":"LIVE"},{"name":"Fernanda — Sales Portal","file":"fernanda-portal.html","pin":"0606","cat":"Meyenberg","status":"LIVE"},{"name":"Sara Portal","file":"sara-portal.html","pin":"0505","cat":"Meyenberg","status":"LIVE"}];
+  var GROUPS={
+    'Attorney':'Professional & Legal','Legal':'Professional & Legal','Legal/Finance':'Professional & Legal',
+    'Coaching':'Professional & Legal','Professional':'Professional & Legal','Business Dev':'Professional & Legal',
+    'Accounting':'Finance & Insurance','Finance':'Finance & Insurance','Restaurant':'Finance & Insurance',
+    'Insurance':'Finance & Insurance','Factoring':'Finance & Insurance',
+    'Manufacturing':'Construction & MFG','Construction':'Construction & MFG','Pipeline':'Construction & MFG',
+    'Print':'Construction & MFG','Hauling':'Construction & MFG','Trading':'Construction & MFG',
+    'Tech':'Energy & Tech','Solar':'Energy & Tech','Electrical':'Energy & Tech',
+    'MSP/Tech':'Energy & Tech','HVAC':'Energy & Tech','Workers Comp':'Energy & Tech','Auto':'Energy & Tech',
+    'Real Estate':'Real Estate & Title','Title/Escrow':'Real Estate & Title','Escrow':'Real Estate & Title',
+    'Property Mgmt':'Real Estate & Title','Mortgage':'Real Estate & Title',
+    'Fleet':'Fleet & Ops','Fleet/Demo':'Fleet & Ops','Produce':'Fleet & Ops',
+    'District':'Fleet & Ops','Veterans':'Fleet & Ops','Market':'Fleet & Ops',
+    'Embroidery':'Creative & Lifestyle','Art/Wholesale':'Creative & Lifestyle',
+    'Entertainment':'Creative & Lifestyle','Tequila/Sales':'Creative & Lifestyle',
+    'Security':'AuditDNA Platform','Intelligence':'AuditDNA Platform','Scheduling':'AuditDNA Platform',
+    'Intake':'AuditDNA Platform','Network':'AuditDNA Platform','LOAF':'AuditDNA Platform',
+    'Wholesale':'Meyenberg','Meyenberg':'Meyenberg'
+  };
+  window._mktPortals = portals.map(function(p,i){
+    return Object.assign({},p,{idx:i+1,group:GROUPS[p.cat]||'Other',healthStatus:'unknown'});
+  });
+  mktRenderPortalTable(window._mktPortals);
+}
+function mktRenderPortalTable(portals){
+  var tbody=document.getElementById('mkt-portal-tbody');
+  if(!tbody)return;
+  tbody.innerHTML=portals.map(function(p){
+    var color=p.healthStatus==='ok'?'#22c55e':p.healthStatus==='err'?'#ef4444':'#64748b';
+    var badge=p.healthStatus==='ok'?'LIVE':p.healthStatus==='err'?'ERROR':'UNCHECKED';
+    var bg=p.healthStatus==='ok'?'rgba(34,197,94,0.15)':p.healthStatus==='err'?'rgba(239,68,68,0.15)':'rgba(100,116,139,0.1)';
+    return '<tr id="mkt-row-'+p.idx+'" style="border-bottom:1px solid rgba(33,38,45,0.5);transition:background 0.15s" onmouseover="this.style.background=\'rgba(255,255,255,0.02)\'" onmouseout="this.style.background=\'\'">'+
+      '<td style="padding:9px 12px;color:#475569;font-size:10px">'+p.idx+'</td>'+
+      '<td style="padding:9px 12px;color:#e2e8f0;font-weight:600">'+p.name+'</td>'+
+      '<td style="padding:9px 12px;color:#94a3b8">'+p.cat+'</td>'+
+      '<td style="padding:9px 12px;color:#64748b;font-size:10px">'+p.group+'</td>'+
+      '<td style="padding:9px 12px;color:#C9A55C;font-family:Consolas,monospace;font-size:10px">'+p.pin+'</td>'+
+      '<td style="padding:9px 12px"><span id="mkt-status-'+p.idx+'" style="padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;background:'+bg+';color:'+color+'">'+badge+'</span></td>'+
+      '<td style="padding:9px 12px"><div style="display:flex;gap:4px">'+
+        '<button onclick="window.open(\'https://mexausafg.com/'+p.file+'\',\'_blank\')" style="padding:3px 8px;background:transparent;color:#64748b;border:1px solid #21262d;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer">OPEN</button>'+
+        '<button onclick="mktCheckOne('+p.idx+')" style="padding:3px 8px;background:transparent;color:#4a8fd4;border:1px solid rgba(74,143,212,0.3);border-radius:4px;font-size:9px;cursor:pointer">CHECK</button>'+
+      '</div></td>'+
+      '</tr>';
+  }).join('');
+}
+function mktFilterPortals(q){
+  if(!window._mktPortals)return;
+  var cat=document.getElementById('mkt-portal-cat')?document.getElementById('mkt-portal-cat').value:'';
+  q=(q||'').toLowerCase();
+  var filtered=window._mktPortals.filter(function(p){
+    var matchQ=!q||p.name.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)||p.file.toLowerCase().includes(q)||p.pin.includes(q);
+    var matchCat=!cat||p.group===cat;
+    return matchQ&&matchCat;
+  });
+  mktRenderPortalTable(filtered);
+}
+function mktCheckOne(idx){
+  var p=window._mktPortals&&window._mktPortals.find(function(x){return x.idx===idx;});
+  if(!p)return;
+  var el=document.getElementById('mkt-status-'+idx);
+  if(el){el.textContent='CHECKING...';el.style.color='#C9A55C';el.style.background='rgba(201,165,92,0.1)';}
+  fetch('https://mexausafg.com/'+p.file,{mode:'no-cors'}).then(function(){
+    p.healthStatus='ok';
+    if(el){el.textContent='LIVE';el.style.color='#22c55e';el.style.background='rgba(34,197,94,0.15)';}
+    mktUpdateHealthStats();
+  }).catch(function(){
+    p.healthStatus='err';
+    if(el){el.textContent='ERROR';el.style.color='#ef4444';el.style.background='rgba(239,68,68,0.15)';}
+    mktUpdateHealthStats();
+  });
+}
+function mktRunHealthCheck(){
+  if(!window._mktPortals)return;
+  mktLog('mkt-log','info','Running health check on all '+window._mktPortals.length+' portals...');
+  var delay=0;
+  window._mktPortals.forEach(function(p){
+    setTimeout(function(){mktCheckOne(p.idx);},delay);
+    delay+=150;
+  });
+}
+function mktResetHealth(){
+  if(!window._mktPortals)return;
+  window._mktPortals.forEach(function(p){p.healthStatus='unknown';});
+  mktRenderPortalTable(window._mktPortals);
+  mktUpdateHealthStats();
+}
+function mktUpdateHealthStats(){
+  if(!window._mktPortals)return;
+  var live=window._mktPortals.filter(function(p){return p.healthStatus==='ok';}).length;
+  var err=window._mktPortals.filter(function(p){return p.healthStatus==='err';}).length;
+  var checked=live+err;
+  var pct=checked>0?Math.round(live/checked*100):0;
+  var liveEl=document.getElementById('mkt-stat-live');
+  var chkEl=document.getElementById('mkt-stat-checked');
+  var issEl=document.getElementById('mkt-stat-issue');
+  var pctEl=document.getElementById('mkt-stat-pct');
+  if(liveEl)liveEl.textContent=live;
+  if(chkEl)chkEl.textContent=checked;
+  if(issEl)issEl.textContent=err;
+  if(pctEl)pctEl.textContent=checked>0?pct+'%':'—';
+}
+function mktCheckRailway(){var el=document.getElementById('mkt-s-rail');fetch('https://auditdna-backend-1-production.up.railway.app/api/health',{mode:'no-cors'}).then(function(){if(el){el.textContent='LIVE';el.style.background='rgba(34,197,94,0.15)';el.style.color='#22c55e';}}).catch(function(){if(el){el.textContent='UNREACHABLE';el.style.background='rgba(239,68,68,0.15)';el.style.color='#ef4444';}});}
+function mktStartClock(){var el=document.getElementById('mkt-clock');if(!el)return;function tick(){el.textContent=new Date().toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}tick();setInterval(tick,30000);}
+(function(){var orig=typeof lpGo==='function'?lpGo:null;if(orig){lpGo=function(id){orig(id);if(id==='lp-marketing'){mktInitPortalList();mktStartClock();mktCheckRailway();mktLog('mkt-log','info','Marketing Command loaded');}};}})();
+</script>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+<!-- ROUND SKY AFFILIATE PANEL — APPENDED, NO EXISTING CODE TOUCHED -->
+<style>
+#loaf-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.4);font-family:-apple-system,sans-serif;display:flex;align-items:center;gap:6px;touch-action:manipulation}
+#loaf-aff-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:7001}
+#loaf-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:90vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif}
+#loaf-aff-panel.open{transform:translateY(0)}
+.laff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+.laff-title{font-size:14px;font-weight:800;color:#C9A55C}
+.laff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.laff-body{padding:16px}
+.laff-rs{background:#020912;border-radius:10px;overflow:hidden;min-height:300px;margin-bottom:12px;padding:4px}
+.laff-links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.laff-link{border-radius:10px;padding:12px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block}
+.laff-disc{font-size:9px;color:#555;line-height:1.6;padding:12px;border-top:1px solid rgba(255,255,255,.05)}
+</style>
+<button id="loaf-aff-fab" ontouchstart="loafAffOpen();event.preventDefault()" onclick="loafAffOpen()">💰 GET FUNDING</button>
+<div id="loaf-aff-ov" onclick="loafAffClose()"></div>
+<div id="loaf-aff-panel">
+  <div class="laff-hdr">
+    <div class="laff-title">💰 Personal Loans — Up to $50,000</div>
+    <button class="laff-close" onclick="loafAffClose()">✕</button>
+  </div>
+  <div class="laff-body">
+    <div class="laff-rs" id="loaf-rs-container"></div>
+    <div class="laff-links">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" class="laff-link" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117">APPLY — ENGLISH →</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" class="laff-link" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3)">🇲🇽 SOLICITAR — ESPAÑOL →</a>
+    </div>
+    <div class="laff-disc">Este sitio no es un prestamista / This website is not a lender. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by lender and state. Not available in all states. US residents only. Para residentes de los Estados Unidos solamente.</div>
+  </div>
+</div>
+<script>
+var loafRsLoaded=false;
+function loafAffOpen(){
+  document.getElementById('loaf-aff-ov').style.display='block';
+  document.getElementById('loaf-aff-panel').classList.add('open');
+  if(!loafRsLoaded){loafRsLoaded=true;loafLoadRS();}
+}
+function loafAffClose(){
+  document.getElementById('loaf-aff-ov').style.display='none';
+  document.getElementById('loaf-aff-panel').classList.remove('open');
+}
+function loafLoadRS(){
+  var s1=document.createElement('script');
+  s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+  s1.onload=function(){
+    window.srcURL='https://www.rndframe.com/server';
+    window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'mexausafg.com',Height:'AUTO',StepAmountSelect:'buttons'};
+    var c=document.getElementById('loaf-rs-container');
+    var s2=document.createElement('script');
+    s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+    c.appendChild(s2);
+  };
+  document.head.appendChild(s1);
+}
+</script>
+<!-- END ROUND SKY AFFILIATE PANEL -->
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
 </body>
 
 <script>

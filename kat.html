@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kat — Sales &amp; Marketing Command Center</title>
+<style>
+:root{
+  --bg:#020912;--card:#161b22;--gold:#C9A55C;--blue:#4a8fd4;
+  --green:#22c55e;--red:#ef4444;--txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;
+  --navy:#0d1117;--sb:200px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:9999}
+.gate-card{background:var(--card);border:1px solid rgba(201,165,92,0.25);border-radius:14px;padding:36px 32px;width:320px;text-align:center}
+.gate-logo{font-size:14px;font-weight:800;letter-spacing:2px;color:var(--gold);margin-bottom:4px}
+.gate-sub{font-size:11px;color:var(--dim);margin-bottom:22px}
+.role-sel{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.role-btn{padding:6px 14px;border:1px solid rgba(201,165,92,0.3);border-radius:20px;background:transparent;color:var(--dim);font-size:11px;cursor:pointer;transition:.2s}
+.role-btn.active{background:rgba(201,165,92,0.15);border-color:var(--gold);color:var(--gold)}
+.dots{display:flex;justify-content:center;gap:12px;margin-bottom:18px}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--gold);transition:.2s}
+.dot.filled{background:var(--gold)}
+.np{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.np-btn{background:#1e2530;border:none;border-radius:8px;color:var(--txt);font-size:20px;font-weight:600;padding:14px;cursor:pointer;transition:.15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.np-btn:active{background:rgba(201,165,92,0.2)}
+.np-enter{background:var(--gold);color:#0d1117;font-size:13px;font-weight:800}
+.np-clr{background:#1e2530;font-size:13px}
+.gate-err{color:var(--red);font-size:12px;margin-top:12px;min-height:16px}
+
+/* APP */
+#app{display:none;padding-top:50px}
+
+/* TOPBAR */
+#tb{position:fixed;top:0;left:0;right:0;height:50px;background:var(--navy);border-bottom:1px solid rgba(201,165,92,0.15);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:1000}
+#tb .tb-logo{font-size:11px;font-weight:900;letter-spacing:2px;color:var(--gold)}
+#tb .tb-role{font-size:10px;color:var(--dim);margin-left:auto}
+#tb .tb-logout{font-size:10px;color:var(--muted);cursor:pointer;padding:4px 10px;border:1px solid rgba(255,255,255,0.1);border-radius:4px}
+
+/* SIDEBAR */
+#sb{position:fixed;top:50px;left:0;bottom:0;width:var(--sb);background:var(--navy);border-right:1px solid rgba(201,165,92,0.1);overflow-y:auto;z-index:900;transition:transform .22s}
+.sb-nav{padding:12px 0}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);padding:14px 16px 6px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:12px;color:var(--dim);border-left:3px solid transparent;transition:.15s}
+.sb-item:hover{color:var(--txt);background:rgba(255,255,255,0.03)}
+.sb-item.on{color:var(--gold);border-left-color:var(--gold);background:rgba(201,165,92,0.06)}
+.sb-close{display:none;position:absolute;top:8px;right:10px;background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer}
+
+/* OVERLAY */
+#sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:800}
+#mob-fab{display:none;position:fixed;top:55px;left:8px;z-index:950;background:var(--gold);border:none;border-radius:6px;color:#0d1117;font-size:16px;width:34px;height:34px;cursor:pointer;font-weight:900}
+
+/* MAIN */
+#mn{padding:24px;transition:margin-left .22s}
+.sec{display:none}
+.sec.on{display:block}
+.sec-hdr{margin-bottom:20px}
+.sec-hdr h2{font-size:18px;font-weight:800;color:var(--txt)}
+.sec-hdr p{font-size:12px;color:var(--dim);margin-top:4px}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-size:24px;font-weight:800;color:var(--gold)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:20px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+
+/* INPUTS */
+input,select,textarea{background:#1e2530;border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--txt);padding:8px 12px;font-size:12px;font-family:inherit;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+label{font-size:11px;color:var(--dim);display:block;margin-bottom:4px;margin-top:10px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* BUTTONS */
+.btn{padding:9px 20px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:.15s}
+.btn-gold{background:var(--gold);color:#0d1117}
+.btn-gold:hover{opacity:.88}
+.btn-outline{background:transparent;border:1px solid rgba(201,165,92,0.4);color:var(--gold)}
+.btn-outline:hover{background:rgba(201,165,92,0.1)}
+.btn-red{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
+.btn-blue{background:rgba(74,143,212,0.15);border:1px solid rgba(74,143,212,0.3);color:var(--blue)}
+.btn-sm{padding:6px 12px;font-size:10px}
+
+/* PORTAL DIRECTORY */
+.pd-group{margin-bottom:30px}
+.pd-group-header{font-size:13px;font-weight:800;color:var(--txt);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(201,165,92,0.15);display:flex;align-items:center;gap:10px}
+.pd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pd-card{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden;transition:.2s}
+.pd-card:hover{border-color:rgba(201,165,92,0.3);transform:translateY(-2px)}
+.pd-card-top{padding:13px 16px;font-size:13px;font-weight:800}
+.pd-card-body{padding:13px 16px}
+.pd-card-desc{font-size:11px;color:var(--dim);line-height:1.6;margin-bottom:10px;min-height:44px}
+.pd-pin-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:7px 10px;background:rgba(201,165,92,0.06);border-radius:6px}
+.pd-pin-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.pd-pin-val{font-size:14px;font-weight:900;color:var(--gold);letter-spacing:2px}
+.pd-actions{display:flex;gap:6px}
+.pd-copy-btn{flex:1;padding:8px 10px;background:rgba(201,165,92,0.12);border:1px solid rgba(201,165,92,0.3);border-radius:6px;color:var(--gold);font-size:9px;font-weight:800;letter-spacing:.5px;cursor:pointer}
+.pd-copy-btn.copied{background:rgba(34,197,94,0.18);border-color:rgba(34,197,94,0.4);color:var(--green)}
+.pd-open-btn{padding:8px 12px;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:var(--dim);font-size:9px;font-weight:700;text-decoration:none;display:flex;align-items:center;white-space:nowrap}
+.pd-email-btn{padding:8px 12px;background:rgba(74,143,212,0.12);border:1px solid rgba(74,143,212,0.3);border-radius:6px;color:var(--blue);font-size:9px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* SEARCH BAR */
+.search-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:rgba(201,165,92,0.05);border:1px solid rgba(201,165,92,0.15);border-radius:10px;padding:12px 16px;margin-bottom:24px}
+.search-bar input{flex:1;min-width:200px}
+.search-bar select{min-width:160px}
+
+/* EMAIL COMPOSER */
+.email-field-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.email-field-label{width:50px;font-size:11px;color:var(--dim);font-weight:700;flex-shrink:0}
+.cc-toggle{font-size:10px;color:var(--blue);cursor:pointer;text-decoration:underline}
+
+/* TEMPLATE LIBRARY */
+.tmpl-card{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;margin-bottom:10px;cursor:pointer;transition:.15s}
+.tmpl-card:hover{border-color:rgba(201,165,92,0.3)}
+.tmpl-title{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.tmpl-preview{font-size:11px;color:var(--dim);line-height:1.6;max-height:40px;overflow:hidden}
+.tmpl-tag{display:inline-block;font-size:8px;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(201,165,92,0.1);color:var(--gold);margin-right:4px}
+
+/* OCR UPLOAD */
+.upload-zone{border:2px dashed rgba(201,165,92,0.3);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:.15s}
+.upload-zone:hover{border-color:var(--gold);background:rgba(201,165,92,0.04)}
+.upload-zone.drag{border-color:var(--blue);background:rgba(74,143,212,0.08)}
+.upload-icon{font-size:30px;margin-bottom:10px}
+.upload-text{font-size:13px;color:var(--dim)}
+.upload-sub{font-size:11px;color:var(--muted);margin-top:6px}
+#ocr-file-input{display:none}
+.ocr-result{background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;margin-top:14px;font-size:12px;color:var(--txt);line-height:1.8;white-space:pre-wrap}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:rgba(201,165,92,0.08);color:var(--gold);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:10px 12px;text-align:left;border-bottom:1px solid rgba(201,165,92,0.15)}
+.tbl td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--dim)}
+.tbl tr:hover td{background:rgba(255,255,255,0.02);color:var(--txt)}
+
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LIVE DEMO CARDS — large, presentation-ready */
+.demo-group{margin-bottom:30px}
+.demo-group-header{font-size:13px;font-weight:800;color:var(--txt);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(34,197,94,0.2);display:flex;align-items:center;gap:10px}
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.demo-card{background:linear-gradient(160deg,#0d1117,#0a0e14);border:2px solid rgba(34,197,94,0.15);border-radius:14px;overflow:hidden;transition:.2s;cursor:pointer}
+.demo-card:hover{border-color:rgba(34,197,94,0.5);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.5)}
+.demo-card-top{padding:18px 20px 10px}
+.demo-card-name{font-size:16px;font-weight:900;color:var(--txt);margin-bottom:3px}
+.demo-card-industry{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.demo-card-desc{font-size:11px;color:var(--dim);line-height:1.6;padding:0 20px 14px;min-height:42px}
+.demo-pin-display{display:flex;align-items:center;justify-content:space-between;background:rgba(34,197,94,0.08);padding:14px 20px;border-top:1px solid rgba(34,197,94,0.1)}
+.demo-pin-num{font-size:24px;font-weight:900;color:#22c55e;letter-spacing:4px}
+.demo-launch-btn{display:block;width:100%;padding:16px;background:#22c55e;border:none;color:#0d1117;font-size:13px;font-weight:900;letter-spacing:1px;text-align:center;text-decoration:none;cursor:pointer}
+.demo-launch-btn:hover{background:#16a34a}
+
+@media(max-width:768px){
+  .form-row,.form-row3{grid-template-columns:1fr}
+  .kpi-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">KAT — SALES &amp; MARKETING</div>
+    <div class="gate-sub">Mexausa Food Group / AuditDNA Command Center</div>
+    <div class="dots" id="dots">
+      <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+    </div>
+    <div class="np">
+      <button class="np-btn" ontouchend="np('1');event.preventDefault()" onclick="np('1')">1</button>
+      <button class="np-btn" ontouchend="np('2');event.preventDefault()" onclick="np('2')">2</button>
+      <button class="np-btn" ontouchend="np('3');event.preventDefault()" onclick="np('3')">3</button>
+      <button class="np-btn" ontouchend="np('4');event.preventDefault()" onclick="np('4')">4</button>
+      <button class="np-btn" ontouchend="np('5');event.preventDefault()" onclick="np('5')">5</button>
+      <button class="np-btn" ontouchend="np('6');event.preventDefault()" onclick="np('6')">6</button>
+      <button class="np-btn" ontouchend="np('7');event.preventDefault()" onclick="np('7')">7</button>
+      <button class="np-btn" ontouchend="np('8');event.preventDefault()" onclick="np('8')">8</button>
+      <button class="np-btn" ontouchend="np('9');event.preventDefault()" onclick="np('9')">9</button>
+      <button class="np-btn np-clr" ontouchend="np('C');event.preventDefault()" onclick="np('C')">CLR</button>
+      <button class="np-btn" ontouchend="np('0');event.preventDefault()" onclick="np('0')">0</button>
+      <button class="np-btn np-enter" ontouchend="checkPin();event.preventDefault()" onclick="checkPin()">ENTER</button>
+    </div>
+    <div class="gate-err" id="gate-err"></div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div id="tb" style="display:none">
+  <div class="tb-logo">KAT COMMAND CENTER</div>
+  <span class="tb-role" id="tb-role"></span>
+  <button class="tb-logout" onclick="logout()">LOGOUT</button>
+</div>
+
+<button id="mob-fab" onclick="toggleSB()">&#9776;</button>
+<div id="sb-ov" onclick="toggleSB()"></div>
+
+<!-- SIDEBAR -->
+<div id="sb">
+  <button class="sb-close" id="sb-close" onclick="toggleSB()">&#x2715;</button>
+  <div class="sb-nav">
+    <div class="sb-section">Overview</div>
+    <div class="sb-item on" data-sec="dashboard" onclick="showSec('dashboard',this)"><span>&#9646;</span> Dashboard</div>
+    <div class="sb-section">Portals</div>
+    <div class="sb-item" data-sec="portals" onclick="showSec('portals',this)"><span>&#9634;</span> Portal Directory</div>
+    <div class="sb-item" data-sec="demos" onclick="showSec('demos',this)" style="color:#22c55e"><span>&#9658;</span> Live Demos</div>
+    <div class="sb-item" data-sec="financelend" onclick="showSec('financelend',this)"><span>&#36;</span> FinanceLend.me</div>
+    <div class="sb-section">Marketing</div>
+    <div class="sb-item" data-sec="email" onclick="showSec('email',this)"><span>&#9993;</span> Email Composer</div>
+    <div class="sb-item" data-sec="templates" onclick="showSec('templates',this)"><span>&#128221;</span> Templates &amp; Flyers</div>
+    <div class="sb-item" data-sec="ocr" onclick="showSec('ocr',this)"><span>&#128247;</span> Upload / OCR</div>
+    <div class="sb-section">Activity</div>
+    <div class="sb-item" data-sec="history" onclick="showSec('history',this)"><span>&#8635;</span> Send History</div>
+    <div class="sb-item" data-sec="settings" onclick="showSec('settings',this)"><span>&#9881;</span> Settings</div>
+  </div>
+</div>
+
+<div id="app">
+<div id="mn">
+
+<!-- DASHBOARD -->
+<div class="sec on" id="sec-dashboard">
+  <div class="sec-hdr">
+    <h2>Welcome, Kat</h2>
+    <p>Sales &amp; Marketing Command Center — Mexausa Food Group / AuditDNA Intelligence</p>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Portals Available</div><div class="kpi-val" id="kpi-portals">0</div></div>
+    <div class="kpi"><div class="kpi-label">Emails Sent</div><div class="kpi-val" id="kpi-emails">0</div></div>
+    <div class="kpi"><div class="kpi-label">Templates</div><div class="kpi-val" id="kpi-templates">0</div></div>
+    <div class="kpi"><div class="kpi-label">Docs Scanned</div><div class="kpi-val" id="kpi-ocr">0</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Quick Start</div>
+    <div style="font-size:12px;color:var(--dim);line-height:2">
+      1. <strong style="color:var(--txt)">Portal Directory</strong> — find any mini-office portal by industry, copy its link, or jump straight to its email template<br>
+      2. <strong style="color:var(--txt)">Email Composer</strong> — full To/CC/BCC, subject, body, with one-click insert from any flyer or marketing template<br>
+      3. <strong style="color:var(--txt)">Templates &amp; Flyers</strong> — pre-written marketing copy for every portal, ready to customize and send<br>
+      4. <strong style="color:var(--txt)">Upload / OCR</strong> — snap a photo of any document, business card, or flyer and extract the text instantly<br>
+      5. <strong style="color:var(--txt)">FinanceLend.me</strong> — direct access to the full mortgage/mini-office storefront site
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Recent Activity</div>
+    <div id="recent-activity" style="font-size:12px;color:var(--dim)">No activity yet. Start by sending your first email or exploring the Portal Directory.</div>
+  </div>
+</div>
+
+<!-- PORTAL DIRECTORY -->
+<div class="sec" id="sec-portals">
+  <div class="sec-hdr">
+    <h2>Portal Directory</h2>
+    <p>Every mini-office portal, organized by industry. Copy the link, open a demo, or jump to an email template.</p>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="pd-search" placeholder="Search portal or industry..." oninput="pdFilter()">
+    <select id="pd-industry-filter" onchange="pdFilter()">
+      <option value="">All Industries</option>
+      <option value="security">Security &amp; Surveillance</option>
+      <option value="financial">Financial Operations</option>
+      <option value="fieldservice">Field Service &amp; Trades</option>
+      <option value="escrow">Escrow &amp; Title</option>
+      <option value="manufacturing">Manufacturing &amp; Distribution</option>
+      <option value="retail">Retail &amp; Custom Manufacturing</option>
+      <option value="personal">Personal Training &amp; Fitness</option>
+      <option value="templates">Industry Templates</option>
+      <option value="enterprise">Enterprise / Active Pitches</option>
+    </select>
+  </div>
+  <div id="pd-results-count" style="text-align:center;font-size:10px;color:var(--muted);margin-bottom:16px"></div>
+  <div id="pd-directory"></div>
+</div>
+
+<!-- LIVE DEMOS — for in-person / on-the-spot client presentations -->
+<div class="sec" id="sec-demos">
+  <div class="sec-hdr">
+    <h2 style="color:#22c55e">Live Demos</h2>
+    <p>Tap any portal below to open it instantly — built for in-person presentations. Every card shows the demo PIN big and clear so you can walk a client straight through it on the spot.</p>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="demo-search" placeholder="Search portal or industry (e.g. HVAC, landscaper, solar)..." oninput="demoFilter()">
+  </div>
+  <div id="demo-results-count" style="text-align:center;font-size:10px;color:var(--muted);margin-bottom:16px"></div>
+  <div id="demo-grid"></div>
+</div>
+
+<!-- FINANCELEND.ME -->
+<div class="sec" id="sec-financelend">
+  <div class="sec-hdr">
+    <h2>FinanceLend.me</h2>
+
+    <p>Full mortgage storefront and mini-office showcase site — accessible directly below.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Quick Access</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+      <a href="https://financelend.me" target="_blank" class="btn btn-gold" style="text-decoration:none;display:inline-block">Open FinanceLend.me &#8594;</a>
+      <button class="btn btn-outline" onclick="pdCopyLinkRaw('https://financelend.me',this)">COPY LINK</button>
+    </div>
+    <div style="font-size:11px;color:var(--dim);line-height:1.8">
+      Use this for: mortgage application sends, mini-office portal showcase for prospects, marketing vault PDFs, agent referral sign-ups.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Embedded View</div>
+    <div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;height:600px">
+      <iframe src="https://financelend.me" style="width:100%;height:100%;border:none" loading="lazy"></iframe>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:8px">If the embedded view does not load, use Open FinanceLend.me above to view in a new tab.</div>
+  </div>
+</div>
+
+<!-- EMAIL COMPOSER -->
+<div class="sec" id="sec-email">
+  <div class="sec-hdr">
+    <h2>Email Composer</h2>
+    <p>Full To/CC/BCC composer. Insert a template, customize, and send.</p>
+  </div>
+  <div class="card">
+    <div class="email-field-row">
+      <div class="email-field-label">To</div>
+      <input type="text" id="em-to" placeholder="recipient@email.com">
+    </div>
+    <div class="email-field-row">
+      <div class="email-field-label">CC</div>
+      <input type="text" id="em-cc" placeholder="cc@email.com (optional, comma-separated)">
+    </div>
+    <div class="email-field-row">
+      <div class="email-field-label">BCC</div>
+      <input type="text" id="em-bcc" placeholder="bcc@email.com (optional, comma-separated)">
+    </div>
+    <div class="email-field-row">
+      <div class="email-field-label">From</div>
+      <input type="text" id="em-from" value="Kat — Mexausa Food Group / AuditDNA" placeholder="Your name">
+    </div>
+    <label>Subject</label>
+    <input type="text" id="em-subject" placeholder="Email subject line">
+    <label>Insert Template</label>
+    <select id="em-template-select" onchange="loadEmailTemplate()">
+      <option value="">-- Select a template to insert --</option>
+    </select>
+    <label>Message Body</label>
+    <textarea id="em-body" rows="16" style="font-size:12px;line-height:1.7" placeholder="Write or insert a template above..."></textarea>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-gold" onclick="sendComposedEmail()">SEND EMAIL</button>
+      <button class="btn btn-outline" onclick="openInMailApp()">OPEN IN MAIL APP</button>
+      <button class="btn btn-outline" onclick="copyEmailBody()">COPY BODY</button>
+      <button class="btn btn-red" onclick="clearComposer()">CLEAR</button>
+    </div>
+    <div id="em-msg" style="margin-top:10px;font-size:12px;min-height:16px"></div>
+  </div>
+</div>
+
+<!-- TEMPLATES & FLYERS -->
+<div class="sec" id="sec-templates">
+  <div class="sec-hdr">
+    <h2>Templates &amp; Flyers</h2>
+    <p>Marketing copy for every portal. Click to load into the Email Composer.</p>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="tmpl-search" placeholder="Search templates..." oninput="tmplFilter()">
+  </div>
+  <div id="tmpl-list"></div>
+</div>
+
+<!-- OCR UPLOAD -->
+<div class="sec" id="sec-ocr">
+  <div class="sec-hdr">
+    <h2>Upload / OCR</h2>
+    <p>Upload a photo or PDF of a document, business card, receipt, or flyer. Extract the text instantly.</p>
+  </div>
+  <div class="card">
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('ocr-file-input').click()">
+      <div class="upload-icon">&#128247;</div>
+      <div class="upload-text">Tap to upload a photo or PDF</div>
+      <div class="upload-sub">Business cards, receipts, flyers, contracts, notes</div>
+    </div>
+    <input type="file" id="ocr-file-input" accept="image/*,application/pdf" multiple onchange="handleOcrFiles(this.files)">
+    <div class="preview-row" id="ocr-preview-row" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"></div>
+    <button class="btn btn-gold" id="ocr-analyze-btn" style="width:100%;margin-top:14px" onclick="analyzeOcr()" disabled>UPLOAD A FILE TO BEGIN</button>
+    <div id="ocr-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:12px;font-size:12px;color:#f87171;margin-top:12px"></div>
+    <div class="ocr-result" id="ocr-result" style="display:none"></div>
+    <div style="display:flex;gap:10px;margin-top:12px" id="ocr-actions" style="display:none">
+      <button class="btn btn-outline" onclick="copyOcrText()">COPY TEXT</button>
+      <button class="btn btn-blue" onclick="insertOcrIntoEmail()">INSERT INTO EMAIL</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Recent Scans</div>
+    <table class="tbl"><thead><tr><th>Date</th><th>File</th><th>Preview</th></tr></thead>
+    <tbody id="ocr-history-body"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:20px">No scans yet.</td></tr></tbody></table>
+  </div>
+</div>
+
+<!-- SEND HISTORY -->
+<div class="sec" id="sec-history">
+  <div class="sec-hdr"><h2>Send History</h2><p>Emails sent from this device.</p></div>
+  <div class="card">
+    <table class="tbl"><thead><tr><th>Date</th><th>To</th><th>Subject</th><th>Status</th></tr></thead>
+    <tbody id="history-body"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">No emails sent yet.</td></tr></tbody></table>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="sec" id="sec-settings">
+  <div class="sec-hdr"><h2>Settings</h2></div>
+  <div class="card">
+    <div class="card-title">Your Info</div>
+    <label>Name</label><input type="text" id="set-name" value="Kat">
+    <label>Title</label><input type="text" id="set-title" value="Sales &amp; Marketing">
+    <label>Email</label><input type="email" id="set-email" placeholder="kat@mexausafg.com">
+    <label>Phone</label><input type="text" id="set-phone" placeholder="">
+    <button class="btn btn-gold" style="margin-top:14px" onclick="saveSettings()">Save Settings</button>
+    <div id="set-msg" style="margin-top:8px;font-size:12px;color:var(--green)"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Scope Notice</div>
+    <div style="font-size:11px;color:var(--dim);line-height:1.8">
+      This portal includes all Mexausa Food Group / AuditDNA Intelligence mini-office portals and marketing tools.
+      Real estate and ProspectIQ tools are reserved for Saul Garcia's personal use and are not included here.
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+var pin='';
+
+function np(v){
+  if(v==='C'){pin='';updateDots();document.getElementById('gate-err').textContent='';return;}
+  if(pin.length<4) pin+=v;
+  updateDots();
+  if(pin.length===4) setTimeout(checkPin,100);
+}
+function updateDots(){
+  for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='dot'+(i<pin.length?' filled':'');}
+}
+function checkPin(){
+  var PINS={
+    '7474':'Kat — Sales & Marketing',
+    '7475':'Sales Team — Rep 1',
+    '7476':'Sales Team — Rep 2',
+    '7477':'Sales Team — Rep 3',
+    '7478':'Sales Team — Rep 4',
+    '4321':'Demo / Guest Access'
+  };
+  var label=PINS[pin];
+  if(!label){
+    document.getElementById('gate-err').textContent='Invalid PIN.';
+    pin='';updateDots();return;
+  }
+  document.getElementById('gate').style.display='none';
+  document.getElementById('tb').style.display='flex';
+  document.getElementById('app').style.display='block';
+  document.getElementById('tb-role').textContent=label;
+  initSB();
+  initDirectory();
+  initDemos();
+  initTemplates();
+  loadHistory();
+  loadOcrHistory();
+  updateKPIs();
+}
+function logout(){pin='';location.reload();}
+
+function initSB(){
+  var sb=document.getElementById('sb');var mn=document.getElementById('mn');
+  var fab=document.getElementById('mob-fab');var cls=document.getElementById('sb-close');
+  if(window.innerWidth<769){
+    sb.style.transform='translateX(-100%)';mn.style.marginLeft='0';
+    fab.style.display='flex';fab.style.alignItems='center';fab.style.justifyContent='center';
+    cls.style.display='block';
+  } else {
+    sb.style.transform='translateX(0)';mn.style.marginLeft='200px';
+    fab.style.display='none';cls.style.display='none';
+  }
+}
+function toggleSB(){
+  var sb=document.getElementById('sb');var ov=document.getElementById('sb-ov');var mn=document.getElementById('mn');
+  var open=sb.style.transform==='translateX(0px)'||sb.style.transform==='translateX(0)';
+  if(open){sb.style.transform='translateX(-100%)';ov.style.display='none';if(window.innerWidth<769)mn.style.marginLeft='0';}
+  else{sb.style.transform='translateX(0)';ov.style.display='block';if(window.innerWidth>=769)mn.style.marginLeft='200px';}
+}
+function showSec(id,el,skipHistory){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.sb-item').forEach(function(b){b.classList.remove('on');});
+  var s=document.getElementById('sec-'+id);if(s)s.classList.add('on');
+  if(el)el.classList.add('on');
+  else {
+    var matchBtn=document.querySelector('.sb-item[data-sec="'+id+'"]');
+    if(matchBtn)matchBtn.classList.add('on');
+  }
+  if(!skipHistory){
+    try{
+      history.pushState({katSec:id},'',window.location.pathname+'#'+id);
+    }catch(e){}
+  }
+  if(window.innerWidth<769 && document.getElementById('sb').style.transform==='translateX(0px)')toggleSB();
+}
+window.addEventListener('resize',function(){if(document.getElementById('app').style.display!=='none')initSB();});
+window.addEventListener('popstate',function(e){
+  if(document.getElementById('app').style.display==='none')return;
+  var sec=(e.state&&e.state.katSec)||(window.location.hash?window.location.hash.slice(1):'dashboard');
+  showSec(sec,null,true);
+});
+
+// ── PORTAL DIRECTORY DATA ──────────────────────────────────────────────
+// NOTE: Real estate / ProspectIQ tools are intentionally excluded — personal use only, not shared.
+// NOTE: ReportClarity is intentionally excluded — medical/health tool, owner-only, still in development. See financelend.me owner vault.
+var PORTAL_DATA = [
+  {industry:'security', icon:'&#9888;', label:'Security & Surveillance', items:[
+    {name:'PlateGuard v2', color:'#ef4444', bg:'linear-gradient(135deg,#1a0d0d,#0d0606)', desc:'AI plate OCR, GPS cross-check, BOLO alerts, patrol tracking for HOAs.', pin:'4321', url:'https://mexausafg.com/plateguard.html', emailKey:'plateguard'}
+  ]},
+  {industry:'financial', icon:'&#128202;', label:'Financial Operations', items:[
+    {name:'LedgerVault', color:'#C9A55C', bg:'linear-gradient(135deg,#1a2840,#0d1525)', desc:'Full-stack accounting replacing QuickBooks. GL, AR, AP, Payroll, P&L.', pin:'4321', url:'https://mexausafg.com/ledgervault-portal.html', emailKey:'ledgervault'},
+    {name:'AuditDNA Recovery', color:'#22c55e', bg:'linear-gradient(135deg,#1a2840,#0d1525)', desc:'12-agent AI mortgage compliance auditing. RESPA/TILA violations. No fee unless recovered.', pin:'4321', url:'https://mexausafg.com/mortgage-search-engine.html', emailKey:'auditdna-recovery'}
+  ]},
+  {industry:'escrow', icon:'&#128196;', label:'Escrow & Title', items:[
+    {name:'First Rate Escrow', color:'#4a8fd4', bg:'linear-gradient(135deg,#0d2840,#0a1420)', desc:'9-tab escrow operations. NOD pipeline, 1031 exchange tracker, agent CRM.', pin:'4321', url:'https://mexausafg.com/first-rate-escrow-portal.html', emailKey:'escrow'},
+    {name:'TitleOps', color:'#4a8fd4', bg:'linear-gradient(135deg,#0d2840,#0a1420)', desc:'12-tab title company portal. ALTA policies, lien clearance, TRID compliance.', pin:'4321', url:'https://mexausafg.com/titleops-portal.html', emailKey:'titleops'}
+  ]},
+  {industry:'fieldservice', icon:'&#128295;', label:'Field Service & Trades', items:[
+    {name:'SolarDispatch Pro', color:'#f97316', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'9-tab dispatch command center. Call log, CSR scripts, ServiceTitan integration.', pin:'7744', url:'https://mexausafg.com/solar-dispatch-pro.html', emailKey:'solardispatch'},
+    {name:'HVAC Estimator', color:'#06b6d4', bg:'linear-gradient(135deg,#002030,#001018)', desc:'Bid calculator for HVAC contractors. Takeoff, labor costs, auto bid proposal.', pin:'4321', url:'https://mexausafg.com/hvac-estimator-demo.html', emailKey:'hvac'},
+    {name:'Banning & Son Pro', color:'#f97316', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'General contracting operations. Job tracking, subcontractors, permits.', pin:'4812', url:'https://mexausafg.com/banning-son-pro.html', emailKey:'contracting'},
+    {name:'Douglas Pipeline Pro', color:'#f97316', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'Pipeline & utilities operations. Field crew tracking, compliance docs.', pin:'6147', url:'https://mexausafg.com/douglas-pipeline-pro.html', emailKey:'pipeline'},
+    {name:'LowVolt Pro', color:'#f97316', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'Low voltage & security install/service portal.', pin:'2938', url:'https://mexausafg.com/lowvolt-pro.html', emailKey:'lowvolt'},
+    {name:'MSP Command Center', color:'#f97316', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'IT managed services dispatch and client ticketing.', pin:'3847', url:'https://mexausafg.com/msp-command-center.html', emailKey:'msp'},
+    {name:'WorkComp360', color:'#f97316', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'Workers comp & insurance compliance tracking.', pin:'4716', url:'https://mexausafg.com/workcomp360-demo.html', emailKey:'workcomp'},
+    {name:'Sprinter HQ', color:'#f97316', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'Transportation/events business portal. Booking, e-sign, GPS, P&L.', pin:'1847', url:'https://mexausafg.com/sprinter-hq.html', emailKey:'sprinter'},
+    {name:'JE Market Floor Manager', color:'#f97316', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'Retail market floor operations portal.', pin:'3639', url:'https://mexausafg.com/je-market-floor-manager.html', emailKey:'jemarket'}
+  ]},
+  {industry:'manufacturing', icon:'&#127981;', label:'Manufacturing & Distribution', items:[
+    {name:'WORXS Haulers', color:'#fb923c', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'Trailer manufacturer dealer portal. Product specs, OEM parts, affiliate program.', pin:'4321', url:'https://mexausafg.com/worxs-haulers-demo.html', emailKey:'worxs'},
+    {name:'Manufacture Ops Hub', color:'#fb923c', bg:'linear-gradient(135deg,#3d2500,#1a0f00)', desc:'Production tracking, raw material AP, warranty management.', pin:'6284', url:'https://mexausafg.com/manufacture-ops-hub.html', emailKey:'manufops'}
+  ]},
+  {industry:'retail', icon:'&#127978;', label:'Retail & Custom Manufacturing', items:[
+    {name:'Old School Bordados', color:'#60a5fa', bg:'linear-gradient(135deg,#1a2840,#0d1525)', desc:'Bilingual embroidery/print shop portal. WhatsApp intake, MXN pricing.', pin:'4321', url:'https://mexausafg.com/old-school-bordados.html', emailKey:'bordados'}
+  ]},
+  {industry:'personal', icon:'&#127939;', label:'Personal Training & Fitness', items:[
+    {name:'Xavier — Weight Trainer', color:'#22c55e', bg:'linear-gradient(135deg,#0a2e1a,#05170d)', desc:'Personal training studio portal. Client intake, session tracking, programs.', pin:'4321', url:'https://mexausafg.com/xavier-weight-trainer.html', emailKey:'xavier'}
+  ]},
+  {industry:'enterprise', icon:'&#128640;', label:'Enterprise / Active Pitches', items:[
+    {name:'DACK Trading', color:'#C9A55C', bg:'linear-gradient(135deg,#020912,#0a1628)', desc:'Export sales intelligence. 14-tab command center. Buyer network, NY.', pin:'4321', url:'https://mexausafg.com/dack-trading-export.html', emailKey:'dack'},
+    {name:'KS Services', color:'#C9A55C', bg:'linear-gradient(135deg,#020912,#0a1628)', desc:'BD command center for security/building services. Prospect tracking, NY.', pin:'4321', url:'https://mexausafg.com/ks-services-bd.html', emailKey:'ksservices'}
+  ]}
+];
+
+var TEMPLATE_INDUSTRIES = [
+  {code:'RST', color:'#ef4444', industry:'Restaurant & Food Service', name:'Restaurant', desc:'Orders, Staff Pay, Vendor Invoices, Receipt OCR, P&L'},
+  {code:'HVC', color:'#06b6d4', industry:'HVAC & Mechanical', name:'HVACOps Pro', desc:'Service Dispatch, Equipment Log, Warranty, Invoices'},
+  {code:'AUT', color:'#94a3b8', industry:'Auto Shop & Mechanic', name:'AutoShop Pro', desc:'RO Management, Parts Inventory, Vehicle History'},
+  {code:'PLB', color:'#4a8fd4', industry:'Plumbing', name:'PlumbingPro', desc:'Job Scheduling, Permit Upload, Material Costs'},
+  {code:'ELC', color:'#fbbf24', industry:'Electrical & Low Voltage', name:'ElectricalPro', desc:'Bidding, Permits, T&M Billing, Panel Schedule'},
+  {code:'RFG', color:'#f97316', industry:'Roofing & Construction', name:'RoofingPro', desc:'Estimates, Insurance Upload, Supplement Track'},
+  {code:'CLN', color:'#22c55e', industry:'Cleaning & Janitorial', name:'CleanOps Pro', desc:'Contracts, Route Scheduling, Inspection'},
+  {code:'SLN', color:'#f472b6', industry:'Salon & Barbershop', name:'SalonPro', desc:'Appointments, Stylist Pay, Product Retail'},
+  {code:'RTL', color:'#a78bfa', industry:'Retail & Boutique', name:'RetailPro', desc:'Product Catalog, Vendor Invoices, PO Upload'},
+  {code:'TRK', color:'#fb923c', industry:'Trucking & Logistics', name:'TruckingPro', desc:'Load Manifest, BOL Upload, Fuel OCR'},
+  {code:'MED', color:'#60a5fa', industry:'Medical & Dental Office', name:'MedOfficePro', desc:'Patient Ledger, Insurance Upload, Co-pay'},
+  {code:'GYM', color:'#f472b6', industry:'Gym & Fitness', name:'GymPro', desc:'Member Roster, Recurring Billing, Commission'},
+  {code:'DTL', color:'#67e8f9', industry:'Auto Detailing', name:'DetailPro', desc:'Service Packages, Before/After Photos'},
+  {code:'FTK', color:'#fbbf24', industry:'Food Truck', name:'FoodTruckPro', desc:'Location Log, Daily Revenue, Supply OCR'}
+];
+
+function initDirectory(){
+  var container = document.getElementById('pd-directory');
+  var html = '';
+  PORTAL_DATA.forEach(function(group){
+    html += '<div class="pd-group" data-industry="'+group.industry+'"><div class="pd-group-header"><span>'+group.icon+'</span> '+group.label+'</div><div class="pd-grid">';
+    group.items.forEach(function(item){
+      var pinDisplay = (item.pin==='Private Access') ? '<span class="pd-pin-val" style="font-size:11px;letter-spacing:0">Private</span>' : '<span class="pd-pin-val">'+item.pin+'</span>';
+      html += '<div class="pd-card" data-search="'+(group.label+' '+item.name).toLowerCase()+'">'+
+        '<div class="pd-card-top" style="background:'+item.bg+'"><span style="color:'+item.color+'">'+item.name+'</span></div>'+
+        '<div class="pd-card-body">'+
+        '<div class="pd-card-desc">'+item.desc+'</div>'+
+        '<div class="pd-pin-row"><span class="pd-pin-label">Demo PIN:</span>'+pinDisplay+'</div>'+
+        '<div class="pd-actions">'+
+        '<button class="pd-copy-btn" data-url="'+item.url+'" onclick="pdCopyLink(this)">COPY</button>'+
+        '<a href="'+item.url+'" target="_blank" class="pd-open-btn">OPEN</a>'+
+        '<button class="pd-email-btn" data-key="'+item.emailKey+'" onclick="emailThisPortal(this.getAttribute(&quot;data-key&quot;))">EMAIL</button>'+
+        '</div></div></div>';
+    });
+    html += '</div></div>';
+  });
+
+  // Industry templates group
+  html += '<div class="pd-group" data-industry="templates"><div class="pd-group-header"><span>&#128221;</span> Industry Templates (Build-On-Request)</div><div class="pd-grid">';
+  TEMPLATE_INDUSTRIES.forEach(function(t){
+    var slug = t.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    var url = 'https://mexausafg.com/tpl-'+slug+'.html';
+    html += '<div class="pd-card" data-search="'+(t.industry+' '+t.name).toLowerCase()+'">'+
+      '<div class="pd-card-top" style="background:#1c2230"><span style="color:'+t.color+'">'+t.name+'</span></div>'+
+      '<div class="pd-card-body">'+
+      '<div style="font-size:9px;color:'+t.color+';font-weight:700;letter-spacing:1px;margin-bottom:4px">'+t.industry+'</div>'+
+      '<div class="pd-card-desc">'+t.desc+'</div>'+
+      '<div class="pd-pin-row"><span class="pd-pin-label">Status:</span><span class="pd-pin-val" style="font-size:10px;letter-spacing:0">Build on Request</span></div>'+
+      '<div class="pd-actions">'+
+      '<button class="pd-copy-btn" data-url="'+url+'" onclick="pdCopyLink(this)">COPY</button>'+
+      '<a href="tel:+18312513116" class="pd-open-btn">CALL</a>'+
+      '</div></div></div>';
+  });
+  html += '</div></div>';
+
+  container.innerHTML = html;
+  pdFilter();
+}
+
+// ── LIVE DEMOS — big tap targets, built for in-person client presentations ──
+function initDemos(){
+  var container = document.getElementById('demo-grid');
+  if(!container) return;
+  var html = '';
+  PORTAL_DATA.forEach(function(group){
+    var demoItems = group.items.filter(function(item){ return item.pin !== 'Private Access'; });
+    if(!demoItems.length) return;
+    html += '<div class="demo-group" data-industry="'+group.industry+'"><div class="demo-group-header"><span>'+group.icon+'</span> '+group.label+'</div><div class="demo-grid">';
+    demoItems.forEach(function(item){
+      html += '<div class="demo-card" data-search="'+(group.label+' '+item.name).toLowerCase()+'" onclick="window.open(&quot;'+item.url+'&quot;,&quot;_blank&quot;)">'+
+        '<div class="demo-card-top"><div class="demo-card-industry" style="color:'+item.color+'">'+group.label+'</div><div class="demo-card-name">'+item.name+'</div></div>'+
+        '<div class="demo-card-desc">'+item.desc+'</div>'+
+        '<div class="demo-pin-display"><span style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Demo PIN</span><span class="demo-pin-num">'+item.pin+'</span></div>'+
+        '<a href="'+item.url+'" target="_blank" class="demo-launch-btn" onclick="event.stopPropagation()">LAUNCH DEMO &#8594;</a>'+
+        '</div>';
+    });
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+  demoFilter();
+}
+function demoFilter(){
+  var q=(document.getElementById('demo-search').value||'').toLowerCase();
+  var totalVisible=0;
+  document.querySelectorAll('.demo-group').forEach(function(group){
+    var groupHasVisible=false;
+    group.querySelectorAll('.demo-card').forEach(function(card){
+      var searchText=(card.getAttribute('data-search')||'')+' '+card.textContent.toLowerCase();
+      var show=!q||searchText.indexOf(q)>-1;
+      card.style.display=show?'':'none';
+      if(show){groupHasVisible=true;totalVisible++;}
+    });
+    group.style.display=groupHasVisible?'':'none';
+  });
+  var cEl=document.getElementById('demo-results-count');
+  if(cEl)cEl.textContent=totalVisible+' live demo'+(totalVisible===1?'':'s')+' available';
+}
+
+function pdFilter(){
+  var q=(document.getElementById('pd-search').value||'').toLowerCase();
+  var industry=document.getElementById('pd-industry-filter').value;
+  var totalVisible=0;
+  document.querySelectorAll('.pd-group').forEach(function(group){
+    var groupIndustry=group.getAttribute('data-industry');
+    var groupMatchesIndustry=!industry||industry===groupIndustry;
+    var groupHasVisible=false;
+    group.querySelectorAll('.pd-card').forEach(function(card){
+      var searchText=(card.getAttribute('data-search')||'')+' '+card.textContent.toLowerCase();
+      var matchesSearch=!q||searchText.indexOf(q)>-1;
+      var show=groupMatchesIndustry&&matchesSearch;
+      card.style.display=show?'':'none';
+      if(show){groupHasVisible=true;totalVisible++;}
+    });
+    group.style.display=groupHasVisible?'':'none';
+  });
+  var cEl=document.getElementById('pd-results-count');
+  if(cEl)cEl.textContent=totalVisible+' portal'+(totalVisible===1?'':'s')+' shown';
+  var kp=document.getElementById('kpi-portals');
+  if(kp)kp.textContent=totalVisible;
+}
+
+function pdCopyLink(btn){
+  var url=btn.getAttribute('data-url');
+  pdCopyLinkRaw(url,btn);
+}
+function pdCopyLinkRaw(url,btn){
+  var orig=btn.textContent;
+  function done(ok){
+    btn.textContent=ok?'COPIED!':'FAILED';
+    btn.classList.toggle('copied',ok);
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('copied');},1600);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){done(true);}).catch(function(){pdFallbackCopy(url,done);});
+  } else { pdFallbackCopy(url,done); }
+}
+function pdFallbackCopy(text,cb){
+  var ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  var ok=false;try{ok=document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);cb(ok);
+}
+
+function emailThisPortal(key){
+  showSec('email',null);
+  document.getElementById('em-template-select').value=key;
+  loadEmailTemplate();
+}
+
+// ── EMAIL TEMPLATES ──────────────────────────────────────────────────
+var EMAIL_TEMPLATES = {
+  'plateguard': {label:'PlateGuard Pitch', subject:'Know Who Is On Your Property — PlateGuard', body:'Hi [Name],\\n\\nI wanted to introduce PlateGuard — an AI-powered license plate intelligence system built for HOAs, gated communities, and parking security.\\n\\nIt scans plates, cross-checks against your registered resident database, flags BOLO matches instantly, tracks patrol zones, and generates full incident reports.\\n\\nWould you like a live demo? I can have it set up for you in minutes.\\n\\nBest,\\n[Your Name]'},
+  'ledgervault': {label:'LedgerVault Pitch', subject:'Replace QuickBooks — LedgerVault Full Accounting Portal', body:'Hi [Name],\\n\\nLedgerVault is a complete financial operations portal that replaces QuickBooks for a flat monthly rate. GL, AR, AP, Payroll, Invoicing, Bank Reconciliation, P&L Reports, Tax Prep, and Client CRM — all in one PIN-secured system available 24/7 from any device.\\n\\nWorks across 15+ industries. I would love to show you a live demo.\\n\\nBest,\\n[Your Name]'},
+  'auditdna-recovery': {label:'AuditDNA Recovery Pitch', subject:'Audit Your Mortgage — You May Have Overpaid', body:'Hi [Name],\\n\\nLenders make mistakes, sometimes on purpose. AuditDNA Recovery uses 12 AI agents to audit your mortgage documents for overcharged interest, escrow miscalculations, RESPA/TILA violations, illegal prepayment penalties, and more.\\n\\nThe audit is completely free. If we find nothing, you pay nothing. If we recover money, we take a percentage of what we recover — you keep the rest.\\n\\nWould you like a free audit of your current mortgage?\\n\\nBest,\\n[Your Name]'},
+  'escrow': {label:'Escrow Operations Pitch', subject:'Full Escrow Operations Portal — First Rate Escrow', body:'Hi [Name],\\n\\nFirst Rate Escrow is a 9-tab operations portal built specifically for escrow companies. Dashboard, escrow services, title services, default/NOD pipeline, 1031 exchange tracker, agent CRM, and disclosure management.\\n\\nWould love to show you a live demo this week.\\n\\nBest,\\n[Your Name]'},
+  'titleops': {label:'TitleOps Pitch', subject:'Complete Title Company Operations — TitleOps', body:'Hi [Name],\\n\\nTitleOps is a 12-tab portal built for title companies: title search and prelim, clearance, ALTA policy issuance, escrow coordination, default/NOD tracking, agent CRM, and full CFPB/RESPA compliance documentation.\\n\\nHappy to set up a demo for your team.\\n\\nBest,\\n[Your Name]'},
+  'solardispatch': {label:'SolarDispatch Pro Pitch', subject:'Dispatch Command Center for Solar & Roofing', body:'Hi [Name],\\n\\nSolarDispatch Pro is a 9-tab dispatch command center built for solar and roofing companies. Call log with built-in CSR scripts, ServiceTitan and NetSuite integration, technician status board, and job tracker.\\n\\nWould you like a live demo? PIN is ready to go.\\n\\nBest,\\n[Your Name]'},
+  'hvac': {label:'HVAC Estimator Pitch', subject:'Stop Paying $200+/mo for Estimating Software', body:'Hi [Name],\\n\\nThis HVAC bid calculator replaces $200+/mo estimating software. Full takeoff sheet, labor cost calculator, materials markup, permit/crane/disposal line items, and auto-generated bid proposals with print/PDF export.\\n\\nWant to see it in action?\\n\\nBest,\\n[Your Name]'},
+  'contracting': {label:'General Contracting Pitch', subject:'Complete Operations Portal for Contractors', body:'Hi [Name],\\n\\nThis portal handles job tracking, subcontractor management, permit documentation, invoicing, and crew scheduling — all under your brand, live in 48 hours.\\n\\nLet me know if you would like a demo.\\n\\nBest,\\n[Your Name]'},
+  'pipeline': {label:'Pipeline & Utilities Pitch', subject:'Field Operations Portal for Pipeline & Utilities', body:'Hi [Name],\\n\\nBuilt for pipeline and utilities field crews. Job tracking, crew scheduling, compliance documentation, and reporting — all in one PIN-secured portal.\\n\\nHappy to walk you through a live demo.\\n\\nBest,\\n[Your Name]'},
+  'lowvolt': {label:'LowVolt Pro Pitch', subject:'Operations Portal for Low Voltage & Security Installers', body:'Hi [Name],\\n\\nLowVolt Pro handles job tracking, scheduling, inventory, and invoicing for low voltage and security installation companies.\\n\\nWould you like a live demo?\\n\\nBest,\\n[Your Name]'},
+  'msp': {label:'MSP Command Center Pitch', subject:'IT Managed Services Dispatch & Ticketing', body:'Hi [Name],\\n\\nMSP Command Center is built for IT managed service providers — client ticketing, dispatch, and service tracking in one portal.\\n\\nLet me set up a live demo for you.\\n\\nBest,\\n[Your Name]'},
+  'workcomp': {label:'WorkComp360 Pitch', subject:'Workers Comp & Insurance Compliance Made Simple', body:'Hi [Name],\\n\\nWorkComp360 tracks workers comp and insurance compliance documentation in one easy portal. Built for contractors, HR managers, and insurance brokers.\\n\\nWant a quick demo?\\n\\nBest,\\n[Your Name]'},
+  'sprinter': {label:'Sprinter HQ Pitch', subject:'Complete Business Portal for Transportation & Events', body:'Hi [Name],\\n\\nSprinter HQ is built for party bus and transportation companies. Booking calendar, auto-generated contracts with e-sign, Stripe payments, GPS tracking, and full P&L ledger. Bilingual EN/ES.\\n\\nWould love to show you a live demo.\\n\\nBest,\\n[Your Name]'},
+  'jemarket': {label:'JE Market Floor Manager Pitch', subject:'Retail Market Floor Operations Portal', body:'Hi [Name],\\n\\nBuilt for retail market floor operations — inventory, vendor tracking, and daily reporting in one PIN-secured portal.\\n\\nHappy to set up a demo.\\n\\nBest,\\n[Your Name]'},
+  'worxs': {label:'WORXS Haulers Pitch', subject:'Full Dealer Portal for Trailer Manufacturers', body:'Hi [Name],\\n\\nWORXS Haulers is a complete trailer manufacturer dealer portal. Full product specs across 8 models, OEM parts catalog, distribution territory map, and a 4-tier affiliate program with 3-10% commissions. Bilingual EN/ES.\\n\\nWould you like a live demo?\\n\\nBest,\\n[Your Name]'},
+  'manufops': {label:'Manufacture Ops Hub Pitch', subject:'Production Tracking & Operations Portal', body:'Hi [Name],\\n\\nManufacture Ops Hub tracks production, raw material AP, and warranty management in one portal built for manufacturing operations.\\n\\nLet me know if you want a demo.\\n\\nBest,\\n[Your Name]'},
+  'bordados': {label:'Old School Bordados Pitch', subject:'Bilingual Client Portal for Embroidery & Print Shops', body:'Hola [Name] / Hi [Name],\\n\\nThis bilingual portal is built for embroidery and print shops — services catalog with MXN pricing, WhatsApp order intake, order tracking by folio, and corporate uniform programs across 12 industries.\\n\\nWould love to show you a live demo.\\n\\nSaludos / Best,\\n[Your Name]'},
+  'xavier': {label:'Xavier Trainer Portal Pitch', subject:'A Portal Built for Personal Trainers', body:'Hi [Name],\\n\\nThis personal training studio portal handles client intake, session tracking, and program management — all under your brand.\\n\\nWould you like to see a live demo?\\n\\nBest,\\n[Your Name]'},
+  'dack': {label:'DACK Trading Pitch', subject:'Export Sales Intelligence Portal — DACK Trading', body:'Hi [Name],\\n\\nThis is a 14-tab export command center built for commodity trading: buyer network, pipeline, landed cost calculator, and seasonal program tracking across 60+ markets.\\n\\nWould love 15 minutes to walk you through it.\\n\\nBest,\\n[Your Name]'},
+  'ksservices': {label:'KS Services Pitch', subject:'Business Development Command Portal — KS Services', body:'Hi [Name],\\n\\nThis 10-tab BD command center handles prospect tracking, pipeline, team calendar, GPS check-in, and management reporting — built for security and building services companies.\\n\\nHappy to set up a walkthrough.\\n\\nBest,\\n[Your Name]'},
+  'general-intro': {label:'General Mini-Office Intro (Any Industry)', subject:'A Custom Operations Portal — Built for Your Business in 48 Hours', body:'Hi [Name],\\n\\nWe build fully custom, PIN-secured, AI-powered operational portals — deployed live in 48 hours under your brand. No code required. One flat monthly subscription, no per-seat fees.\\n\\nEvery portal includes client management, invoicing, scheduling, document upload with OCR, and a built-in AI assistant — bilingual EN/ES at no extra charge.\\n\\nWould you like to see a live demo built for your industry?\\n\\nBest,\\n[Your Name]'},
+  'followup': {label:'General Follow-Up', subject:'Following Up — Quick Question', body:'Hi [Name],\\n\\nJust following up on my previous message. I would love 10 minutes to show you what we have built — no obligation either way.\\n\\nLet me know what works for your schedule.\\n\\nBest,\\n[Your Name]'}
+};
+
+function initTemplates(){
+  var sel = document.getElementById('em-template-select');
+  Object.keys(EMAIL_TEMPLATES).forEach(function(key){
+    var opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = EMAIL_TEMPLATES[key].label;
+    sel.appendChild(opt);
+  });
+
+  var list = document.getElementById('tmpl-list');
+  var html = '';
+  Object.keys(EMAIL_TEMPLATES).forEach(function(key){
+    var t = EMAIL_TEMPLATES[key];
+    html += '<div class="tmpl-card" data-search="'+(t.label+' '+t.subject).toLowerCase()+'" data-key="'+key+'" onclick="useTemplate(this.getAttribute(&quot;data-key&quot;))">'+
+      '<div class="tmpl-title">'+t.label+'</div>'+
+      '<div class="tmpl-tag">EMAIL</div><div class="tmpl-tag">FLYER COPY</div>'+
+      '<div class="tmpl-preview" style="margin-top:8px">'+t.body.replace(/\\\\n/g,' ').substring(0,140)+'...</div>'+
+      '</div>';
+  });
+  list.innerHTML = html;
+
+  var kt = document.getElementById('kpi-templates');
+  if(kt) kt.textContent = Object.keys(EMAIL_TEMPLATES).length;
+}
+
+function tmplFilter(){
+  var q=(document.getElementById('tmpl-search').value||'').toLowerCase();
+  document.querySelectorAll('.tmpl-card').forEach(function(card){
+    var s=card.getAttribute('data-search')||'';
+    card.style.display=(!q||s.indexOf(q)>-1)?'':'none';
+  });
+}
+
+function useTemplate(key){
+  showSec('email',null);
+  document.getElementById('em-template-select').value=key;
+  loadEmailTemplate();
+}
+
+function loadEmailTemplate(){
+  var key = document.getElementById('em-template-select').value;
+  if(!key) return;
+  var t = EMAIL_TEMPLATES[key];
+  if(!t) return;
+  document.getElementById('em-subject').value = t.subject;
+  document.getElementById('em-body').value = t.body.split('\\n').join(String.fromCharCode(10));
+}
+
+// ── EMAIL SEND / ACTIONS ─────────────────────────────────────────────
+var sendHistory = [];
+try{ sendHistory = JSON.parse(localStorage.getItem('kat_send_history')||'[]'); }catch(e){}
+
+function sendComposedEmail(){
+  var to=document.getElementById('em-to').value.trim();
+  var subject=document.getElementById('em-subject').value.trim();
+  var msg=document.getElementById('em-msg');
+  if(!to){msg.style.color='#ef4444';msg.textContent='Enter a recipient email first.';return;}
+  if(!subject){msg.style.color='#ef4444';msg.textContent='Enter a subject line.';return;}
+  msg.style.color='#22c55e';
+  msg.textContent='Opening in your default mail app...';
+  openInMailApp();
+  sendHistory.unshift({date:new Date().toLocaleString(),to:to,subject:subject,status:'Opened in Mail'});
+  try{localStorage.setItem('kat_send_history',JSON.stringify(sendHistory));}catch(e){}
+  loadHistory();
+  updateKPIs();
+}
+
+function openInMailApp(){
+  var to=document.getElementById('em-to').value.trim();
+  var cc=document.getElementById('em-cc').value.trim();
+  var bcc=document.getElementById('em-bcc').value.trim();
+  var subject=encodeURIComponent(document.getElementById('em-subject').value.trim());
+  var body=encodeURIComponent(document.getElementById('em-body').value.trim());
+  var url='mailto:'+encodeURIComponent(to)+'?subject='+subject+'&body='+body;
+  if(cc) url+='&cc='+encodeURIComponent(cc);
+  if(bcc) url+='&bcc='+encodeURIComponent(bcc);
+  window.location.href=url;
+}
+
+function copyEmailBody(){
+  var body=document.getElementById('em-body').value;
+  var msg=document.getElementById('em-msg');
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(body).then(function(){
+      msg.style.color='#22c55e';msg.textContent='Body copied to clipboard.';
+      setTimeout(function(){msg.textContent='';},2500);
+    });
+  }
+}
+
+function clearComposer(){
+  ['em-to','em-cc','em-bcc','em-subject','em-body'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('em-template-select').value='';
+  document.getElementById('em-msg').textContent='';
+}
+
+function loadHistory(){
+  var tbody=document.getElementById('history-body');
+  if(!tbody)return;
+  if(!sendHistory.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">No emails sent yet.</td></tr>';return;}
+  tbody.innerHTML=sendHistory.slice(0,30).map(function(h){
+    return '<tr><td>'+h.date+'</td><td>'+h.to+'</td><td>'+h.subject+'</td><td><span style="color:#22c55e">'+h.status+'</span></td></tr>';
+  }).join('');
+}
+
+function updateKPIs(){
+  var ke=document.getElementById('kpi-emails');
+  if(ke)ke.textContent=sendHistory.length;
+  var ko=document.getElementById('kpi-ocr');
+  if(ko)ko.textContent=ocrHistory.length;
+}
+
+// ── OCR UPLOAD ────────────────────────────────────────────────────────
+var ocrFiles=[];
+var ocrHistory=[];
+try{ ocrHistory = JSON.parse(localStorage.getItem('kat_ocr_history')||'[]'); }catch(e){}
+
+var uploadZone=document.getElementById('upload-zone');
+uploadZone.addEventListener('dragover',function(e){e.preventDefault();uploadZone.classList.add('drag');});
+uploadZone.addEventListener('dragleave',function(){uploadZone.classList.remove('drag');});
+uploadZone.addEventListener('drop',function(e){e.preventDefault();uploadZone.classList.remove('drag');handleOcrFiles(e.dataTransfer.files);});
+
+function handleOcrFiles(files){
+  ocrFiles=Array.from(files);
+  var row=document.getElementById('ocr-preview-row');
+  row.innerHTML='';
+  ocrFiles.forEach(function(f){
+    if(f.type.indexOf('image')>-1){
+      var img=document.createElement('img');
+      img.src=URL.createObjectURL(f);
+      img.style.cssText='width:64px;height:64px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,0.1)';
+      row.appendChild(img);
+    } else {
+      var div=document.createElement('div');
+      div.style.cssText='width:64px;height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#1e2530;font-size:10px;color:#8b96a8';
+      div.textContent='PDF';
+      row.appendChild(div);
+    }
+  });
+  var btn=document.getElementById('ocr-analyze-btn');
+  if(ocrFiles.length>0){btn.disabled=false;btn.textContent='ANALYZE / EXTRACT TEXT';}
+}
+
+function fileToBase64(file){
+  return new Promise(function(resolve,reject){
+    var reader=new FileReader();
+    reader.onload=function(){resolve(reader.result.split(',')[1]);};
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function showOcrError(msg){
+  var el=document.getElementById('ocr-error');
+  el.textContent=msg;el.style.display='block';
+  setTimeout(function(){el.style.display='none';},6000);
+}
+
+async function analyzeOcr(){
+  if(!ocrFiles.length)return;
+  var btn=document.getElementById('ocr-analyze-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>EXTRACTING...';
+
+  try{
+    var contentBlocks=[];
+    for(var i=0;i<ocrFiles.length;i++){
+      var f=ocrFiles[i];
+      var b64=await fileToBase64(f);
+      if(f.type==='application/pdf'){
+        contentBlocks.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}});
+      } else {
+        contentBlocks.push({type:'image',source:{type:'base64',media_type:f.type,data:b64}});
+      }
+    }
+    contentBlocks.push({type:'text',text:'Extract and transcribe all text from this document/image. If it is a business card, organize it as Name / Title / Company / Phone / Email / Address. If it is a receipt or invoice, list vendor, date, line items, and total. Otherwise, transcribe the full text as accurately as possible, preserving structure. Respond with the extracted text only, no preamble.'});
+
+    var response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,messages:[{role:'user',content:contentBlocks}]})
+    });
+    var data=await response.json();
+    var textBlock=(data.content||[]).find(function(b){return b.type==='text';});
+    if(!textBlock) throw new Error('No response from analysis');
+
+    var resultEl=document.getElementById('ocr-result');
+    resultEl.textContent=textBlock.text;
+    resultEl.style.display='block';
+    document.getElementById('ocr-actions').style.display='flex';
+
+    ocrHistory.unshift({date:new Date().toLocaleString(),file:ocrFiles[0].name,preview:textBlock.text.substring(0,80)});
+    ocrHistory=ocrHistory.slice(0,20);
+    try{localStorage.setItem('kat_ocr_history',JSON.stringify(ocrHistory));}catch(e){}
+    loadOcrHistory();
+    updateKPIs();
+
+  }catch(e){
+    showOcrError('Could not extract text. Try a clearer photo. ('+e.message+')');
+  }finally{
+    btn.disabled=false;
+    btn.textContent='ANALYZE / EXTRACT TEXT';
+  }
+}
+
+function copyOcrText(){
+  var text=document.getElementById('ocr-result').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(text);}
+}
+
+function insertOcrIntoEmail(){
+  var text=document.getElementById('ocr-result').textContent;
+  showSec('email',null);
+  var body=document.getElementById('em-body');
+  body.value = body.value ? body.value+'\\n\\n'+text : text;
+}
+
+function loadOcrHistory(){
+  var tbody=document.getElementById('ocr-history-body');
+  if(!tbody)return;
+  if(!ocrHistory.length){tbody.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:20px">No scans yet.</td></tr>';return;}
+  tbody.innerHTML=ocrHistory.map(function(h){
+    return '<tr><td>'+h.date+'</td><td>'+h.file+'</td><td style="font-size:11px">'+h.preview+'...</td></tr>';
+  }).join('');
+}
+
+function saveSettings(){
+  document.getElementById('set-msg').textContent='Settings saved.';
+  setTimeout(function(){document.getElementById('set-msg').textContent='';},2000);
+}
+</script>
+<!-- ════════════════════════════════════════════════════════════════════
+     MFG FLOATING AI ASSISTANT — drop this block before 
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+ on any portal
+     Talks to Claude API, logs activity to /api/alerts/notify for owner alerts
+════════════════════════════════════════════════════════════════════ -->
+<div id="mfg-bot-bubble" onclick="mfgBotToggle()" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#C9A55C,#a8803a);box-shadow:0 4px 20px rgba(201,165,92,0.4);cursor:pointer;z-index:99990;display:flex;align-items:center;justify-content:center;transition:.2s">
+  <span id="mfg-bot-icon" style="font-size:24px;color:#0d1117">&#128172;</span>
+</div>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+</body>
+</html>

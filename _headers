@@ -1,0 +1,22 @@
+# Cache policy — HTML never cached (so OG tag edits propagate immediately)
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: index, follow
+
+/mfginc-loaf.html
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Logo + images — cache 1 hour so SMS scrapers get fresh OG image after updates
+/AuditDNALOGO.png
+  Cache-Control: public, max-age=3600, must-revalidate
+  Access-Control-Allow-Origin: *
+
+/auditdna-logo.png
+  Cache-Control: public, max-age=3600, must-revalidate
+  Access-Control-Allow-Origin: *
+
+# Static assets — long cache (these are fingerprinted by CRA)
+/static/*
+  Cache-Control: public, max-age=31536000, immutable

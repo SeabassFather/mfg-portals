@@ -123,6 +123,17 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--silver);color:#060810;padding:9px 20px;border-radius:8px;font-size:11px;font-weight:700;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw}
 .toast.show{opacity:1}
 </style>
+<style id="plp-css">
+#portal-login-panel{display:none;position:fixed;bottom:20px;right:20px;width:400px;max-height:300px;background:#0d1117;border:1px solid #C9A55C;border-radius:8px;z-index:9999;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+#portal-login-panel .plp-hdr{background:#161b22;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d}
+#portal-login-panel .plp-title{color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:2px}
+#portal-login-panel .plp-close{color:#64748b;cursor:pointer;font-size:13px;background:none;border:none;padding:0}
+#portal-login-panel table{width:100%;border-collapse:collapse;font-size:10px}
+#portal-login-panel th{color:#64748b;padding:3px 6px;text-align:left;border-bottom:1px solid #21262d}
+#portal-login-panel td{color:#e2e8f0;padding:3px 6px;border-bottom:1px solid #21262d}
+#portal-login-panel .plp-body{overflow-y:auto;max-height:240px;padding:6px}
+#plp-trigger{display:none;position:fixed;bottom:20px;right:20px;background:#161b22;border:1px solid #C9A55C;color:#C9A55C;font-size:9px;padding:5px 10px;border-radius:4px;cursor:pointer;z-index:9998;letter-spacing:1px;font-weight:700}
+</style>
 </head>
 <body>
 <script>/* bfcache-fix */
@@ -151,9 +162,9 @@ window.addEventListener("pageshow",function(e){if(e.persisted){localStorage.remo
     <div class="nb" onclick="np(&#39;7&#39;)">7</div>
     <div class="nb" onclick="np(&#39;8&#39;)">8</div>
     <div class="nb" onclick="np(&#39;9&#39;)">9</div>
-    <div class="nb nb-del" onclick="nd()">DEL</div>
+    <div class="nb nb-del" onclick="nd()" ontouchend="event.preventDefault();nd()">DEL</div>
     <div class="nb" onclick="np(&#39;0&#39;)">0</div>
-    <div class="nb nb-ok" onclick="nc()">OK</div>
+    <div class="nb nb-ok" onclick="nc()" ontouchend="event.preventDefault();nc()">OK</div>
   </div>
   <div class="g-err" id="g-err"></div>
 </div>
@@ -640,7 +651,20 @@ function abDatTab(t){
 function nc(){
   if(entered.length===0)return;
   if(entered===PIN){
-    document.getElementById('gate').style.display='none';
+    document.getElementById('gate').style.display='none'
+  try{
+    fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        portal:window.location.pathname.split('/').pop(),
+        username:typeof cu!=='undefined'?(cu&&cu.name?cu.name:(typeof cu==='string'?cu:'user')):'user',
+        role:typeof cu!=='undefined'&&cu&&cu.role?cu.role:'unknown',
+        pin:_lastPin||''
+      })
+    }).catch(function(){});
+  }catch(e){}
+
+  checkOwnerPin(_lastPin);;
     document.getElementById('app').style.display='block';
     buildTabs();renderEmb();setLang(lang);
     var lnav=document.getElementById('loaf-feature-nav');
@@ -669,44 +693,7 @@ function abCalcComm(){
     +'</div>';
 }
 
-var AB_STORES=[
-  {n:'Total Wine & More  El Cajon',a:'1910 Gillespie Way, El Cajon, CA 92020'},
-  {n:'BevMo! El Cajon',a:'1060 Fletcher Pkwy, El Cajon, CA 92020'},
-  {n:'Grossmont Liquor',a:'8887 Fletcher Pkwy, El Cajon, CA 92020'},
-  {n:'Costco El Cajon Spirits',a:'910 Arnele Ave, El Cajon, CA 92020'},
-  {n:'East County Spirits',a:'2200 Greenfield Dr, El Cajon, CA 92019'},
-  {n:'Ramirez Liquor & Grocery',a:'555 S Mollison Ave, El Cajon, CA 92020'},
-  {n:'Main Street Liquor',a:'788 W Main St, El Cajon, CA 92020'},
-  {n:'Casa de Vinos',a:'1600 E Main St, El Cajon, CA 92021'},
-  {n:'Vineyard Wine & Spirits',a:'2850 Jamacha Rd, El Cajon, CA 92019'},
-  {n:'Mission Liquor Santee',a:'1234 Mission Ave, Santee, CA 92071'},
-  {n:'Santee Liquor & Market',a:'9876 Mission Gorge Rd, Santee, CA 92071'},
-  {n:'Albertsons Wine  Santee',a:'10550 Woodside Ave, Santee, CA 92071'},
-  {n:'BevMo Grossmont Center',a:'5500 Grossmont Center Dr, La Mesa, CA 91943'},
-  {n:'La Mesa Wine & Cheese',a:'8302 La Mesa Blvd, La Mesa, CA 91942'},
-  {n:'Lemon Grove Liquor',a:'7712 Broadway, Lemon Grove, CA 91945'},
-  {n:'Ralphs Lemon Grove',a:'7823 Broadway, Lemon Grove, CA 91945'},
-  {n:'Spring Valley Wine & Spirits',a:'9924 Jamacha Blvd, Spring Valley, CA 91977'},
-  {n:'Rancho San Diego Liquor',a:'11810 Campo Rd, Spring Valley, CA 91978'},
-  {n:'Blossom Valley Liquor',a:'3580 Sweetwater Springs Blvd, Spring Valley, CA 91977'},
-  {n:'Sycuan Casino Spirits Bar',a:'5469 Casino Way, El Cajon, CA 92019'},
-  {n:'Del Cerro Liquor',a:'6690 Montezuma Rd, San Diego, CA 92115'},
-  {n:'Parkway Plaza Spirits',a:'415 Parkway Plaza, El Cajon, CA 92020'},
-  {n:'Magnolia Wine & Spirits',a:'1900 Magnolia Ave, El Cajon, CA 92020'},
-  {n:'Fletcher Hills Liquor',a:'2245 Fletcher Pkwy, El Cajon, CA 92020'},
-  {n:'Chaparral Spirits',a:'12345 Chaparral Blvd, Santee, CA 92071'},
-  {n:'Vons El Cajon Spirits',a:'1390 Broadway, El Cajon, CA 92021'},
-  {n:'El Super El Cajon',a:'1222 E Main St, El Cajon, CA 92021'},
-  {n:'Avocado Liquor',a:'1550 Avocado Ave, El Cajon, CA 92019'},
-  {n:'La Mesa Liquor Barn',a:'8380 Center Dr, La Mesa, CA 91942'},
-  {n:'Santee Lakes Market',a:'9310 Fanita Pkwy, Santee, CA 92071'},
-  {n:'Vons Santee Spirits',a:'9850 Mission Gorge Rd, Santee, CA 92071'},
-  {n:'Spring Valley Marketplace',a:'8690 Spring Valley Pkwy, Spring Valley, CA 91977'},
-  {n:'Hillside Liquor',a:'2400 Hillside Dr, El Cajon, CA 92020'},
-  {n:'Grossmont Plaza Liquor',a:'5500 Grossmont Center Dr, La Mesa, CA 91943'},
-  {n:'El Cajon Liquor',a:'345 E Main St, El Cajon, CA 92020'},
-  {n:'Parkway Spirits',a:'1023 Parkway Dr, El Cajon, CA 92020'},
-];
+var AB_STORES=[];
 
 function abLoadStores(){
   var list=document.getElementById('ab-store-list');
@@ -1026,7 +1013,8 @@ function abSetLang(l){
 }
 
 // PIN
-function np(d){
+var _npLk=false;
+function np(d){if(_npLk)return;_npLk=true;setTimeout(function(){_npLk=false;},150);
   if(entered.length>=PLEN)return;
   if(d==='del'){entered=entered.slice(0,-1);}
   else{entered+=d;}
@@ -2095,7 +2083,7 @@ function ttMktRefresh(){
 }
 ttMktRefresh();
 </script>
-<div id="loaf-feature-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:8px 10px;gap:5px;align-items:center">
+<div id="loaf-feature-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:8px 10px;gap:5px;align-items:center">
   <a href="/mfginc-loaf.html" style="flex:1;text-align:center;text-decoration:none"><div style="font-size:7px;font-weight:900;color:#C9A55C;letter-spacing:1px">LOAF</div></a>
   <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','welink')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(15,123,65,0.12);border:1px solid rgba(15,123,65,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#4ade80;line-height:1.4">WE<br>LINK</div></a>
   <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','wesource')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#C9A55C;line-height:1.4">WE<br>SOURCE</div></a>
@@ -2349,6 +2337,33 @@ tpRender();
 var HC_ENDPOINTS=[{name:'AuditDNA Backend',url:'https://auditdna-backend-1-production.up.railway.app/api/health',tag:'BE'},{name:'EnjoyBaja Backend',url:'https://auditdna-realestate-production.up.railway.app/api/health',tag:'EB'},{name:'FinanceLend Railway',url:'https://smpcd0qi.up.railway.app/api/health',tag:'FL'},{name:'mexausafg.com',url:'https://mexausafg.com',tag:'MFG'},{name:'enjoybaja.com',url:'https://enjoybaja.com',tag:'EBF'},{name:'financelend.me',url:'https://financelend.me',tag:'FLF'},{name:'AuditDNA DB /contacts',url:'https://auditdna-backend-1-production.up.railway.app/api/contacts?limit=1',tag:'DB'},{name:'LOAF /listings',url:'https://auditdna-backend-1-production.up.railway.app/api/loaf/listings?limit=1',tag:'LOAF'},{name:'Brain Events API',url:'https://auditdna-backend-1-production.up.railway.app/api/brain/events',tag:'BRAIN'},{name:'EnjoyBaja /properties',url:'https://auditdna-realestate-production.up.railway.app/api/properties?limit=1',tag:'REPR'}];
 function hcRun(){var grid=document.getElementById('hc-grid');if(!grid)return;grid.innerHTML='';var ts=document.getElementById('hc-ts');if(ts)ts.textContent='Last check: '+new Date().toLocaleTimeString();var ok=0,fail=0;HC_ENDPOINTS.forEach(function(ep){var card=document.createElement('div');card.style.cssText='background:#0d1117;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:10px;';card.innerHTML='<div id="hcd-'+ep.tag+'" style="width:10px;height:10px;border-radius:50%;background:#374151;flex-shrink:0"></div><div style="flex:1"><div style="font-size:10px;font-weight:700;color:#e2e8f0">'+ep.name+'</div><div style="font-size:9px;color:#64748b">'+ep.url.replace('https://','').split('/')[0]+'</div></div><div id="hcm-'+ep.tag+'" style="font-size:9px;color:#64748b;font-weight:700">...</div><div id="hcs-'+ep.tag+'" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;background:rgba(55,65,81,0.4);color:#64748b">...</div>';grid.appendChild(card);var t0=Date.now();fetch(ep.url,{method:'GET',signal:AbortSignal.timeout(8000)}).then(function(r){var ms=Date.now()-t0;var dot=document.getElementById('hcd-'+ep.tag),st=document.getElementById('hcs-'+ep.tag),msEl=document.getElementById('hcm-'+ep.tag);if(r.ok||r.status===401||r.status===403){if(dot)dot.style.background='#22c55e';if(st){st.textContent='UP';st.style.background='rgba(34,197,94,0.12)';st.style.color='#22c55e';}ok++;}else{if(dot)dot.style.background='#f97316';if(st){st.textContent=r.status;st.style.background='rgba(249,115,22,0.12)';st.style.color='#f97316';}fail++;}if(msEl)msEl.textContent=ms+'ms';hcSum(ok,fail);}).catch(function(){var dot=document.getElementById('hcd-'+ep.tag),st=document.getElementById('hcs-'+ep.tag),msEl=document.getElementById('hcm-'+ep.tag);if(dot)dot.style.background='#ef4444';if(st){st.textContent='DOWN';st.style.background='rgba(239,68,68,0.12)';st.style.color='#ef4444';}if(msEl)msEl.textContent='timeout';fail++;hcSum(ok,fail);});});}
 function hcSum(ok,fail){var el=document.getElementById('hc-summary');if(!el)return;var pct=Math.round((ok/(ok+fail||1))*100);el.textContent=ok+'/'+HC_ENDPOINTS.length+' UP — '+pct+'% healthy';el.style.color=pct===100?'#22c55e':pct>=70?'#f97316':'#ef4444';}
+
+var _lastPin='';
+function loadPlpData(){
+  var portal=window.location.pathname.split('/').pop();
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/logins?portal='+encodeURIComponent(portal))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var tb=document.getElementById('plp-tbody');
+      if(!tb)return;
+      if(!d.logins||!d.logins.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No logins yet.</td></tr>';return;}
+      tb.innerHTML=d.logins.slice(0,50).map(function(l){
+        var dt=new Date(l.logged_in_at);
+        var ts=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        return '<tr><td style="color:#e2e8f0;font-weight:700">'+l.username+'</td><td style="color:#C9A55C">'+l.role+'</td><td style="color:#64748b;font-size:9px">'+l.ip_address+'</td><td style="color:#64748b">'+ts+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+function showPlpPanel(){
+  var p=document.getElementById('portal-login-panel');
+  var t=document.getElementById('plp-trigger');
+  if(p){p.style.display='block';if(t)t.style.display='none';loadPlpData();}
+}
+function checkOwnerPin(pin){
+  _lastPin=pin;
+  if(pin==='0609'){var t=document.getElementById('plp-trigger');if(t)t.style.display='block';}
+}
+
 </script>
 </div>
 
@@ -2363,5 +2378,304 @@ function hcSum(ok,fail){var el=document.getElementById('hc-summary');if(!el)retu
 </div>
 
 <div id="mfg-footer" style="position:fixed;bottom:0;left:0;right:0;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:6px 16px;display:flex;align-items:center;justify-content:space-between;z-index:9000;flex-wrap:wrap;gap:6px"><div style="display:flex;align-items:center;gap:8px"><img src="data:image/png;base64,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" style="width:24px;height:24px;border-radius:4px;object-fit:cover"/><span style="font-size:8px;font-weight:700;color:#C9A55C;letter-spacing:1px">Powered by AuditDNA Intelligence by MFG, Inc.</span></div><div style="display:flex;gap:12px;align-items:center"><a href="https://mexausafg.com" target="_blank" style="font-size:8px;color:#64748b;text-decoration:none;font-weight:600">mexausafg.com</a><a href="https://financelend.me" target="_blank" style="font-size:8px;color:#64748b;text-decoration:none;font-weight:600">financelend.me</a><a href="https://loaf.mexausafg.com" target="_blank" style="font-size:8px;color:#64748b;text-decoration:none;font-weight:600">loaf.mexausafg.com</a><a href="https://enjoybaja.com" target="_blank" style="font-size:8px;color:#64748b;text-decoration:none;font-weight:600">enjoybaja.com</a></div></div><div style="height:38px"></div>
+<div id="portal-login-panel"><div class="plp-hdr"><span class="plp-title">LOGIN ACTIVITY</span><button class="plp-close" onclick="document.getElementById('portal-login-panel').style.display='none';document.getElementById('plp-trigger').style.display='block'">x</button></div><div class="plp-body"><table><thead><tr><th>USER</th><th>ROLE</th><th>IP</th><th>TIME</th></tr></thead><tbody id="plp-tbody"><tr><td colspan="4" style="text-align:center;color:#64748b">Loading...</td></tr></tbody></table></div></div><button id="plp-trigger" onclick="showPlpPanel()">LOGIN LOG</button>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
 </body>
+
 </html>

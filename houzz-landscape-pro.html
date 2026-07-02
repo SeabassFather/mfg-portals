@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>SD Trades Pro Network — Command Center</title>
+<style>
+:root{
+  --bg:#020a04;--bg2:#061008;--card:#0d1f10;--card2:#142818;
+  --green:#22c55e;--lime:#84cc16;--gold:#C9A55C;--white:#f0faf0;
+  --dim:#6b8f6b;--muted:#3d5c3d;--bord:rgba(34,197,94,.2);--borddim:rgba(34,197,94,.07);
+  --red:#ef4444;--blue:#3b82f6;--orange:#f59e0b;--teal:#14b8a6
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,'Segoe UI',sans-serif;min-height:100vh}
+#gate{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gc{background:var(--card);border:1px solid var(--bord);border-radius:20px;padding:40px 30px;width:340px;text-align:center}
+.glogo{width:64px;height:64px;background:linear-gradient(135deg,#22c55e,#15803d);border-radius:16px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.gtitle{font-size:16px;font-weight:900;color:var(--green);letter-spacing:.5px;margin-bottom:2px}
+.gsub{font-size:11px;color:var(--dim);margin-bottom:22px}
+.dots{display:flex;gap:12px;justify-content:center;margin-bottom:22px}
+.dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--green);transition:.2s}
+.dot.on{background:var(--green)}
+.np{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:230px;margin:0 auto}
+.npb{background:var(--card2);border:1px solid var(--borddim);border-radius:10px;color:var(--white);font-size:20px;font-weight:600;padding:14px;cursor:pointer;touch-action:manipulation;transition:.15s}
+.npb:active{background:rgba(34,197,94,.15);color:var(--green)}
+.gerr{color:var(--red);font-size:12px;margin-top:10px;min-height:16px}
+#app{display:none}
+#tb{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(2,10,4,.97);border-bottom:1px solid var(--bord);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:200;backdrop-filter:blur(12px)}
+.tb-logo{width:34px;height:34px;background:linear-gradient(135deg,#22c55e,#15803d);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.tb-name{font-size:13px;font-weight:800;color:var(--green)}
+.tb-sub{font-size:9px;color:var(--dim)}
+.tb-btn{background:none;border:1px solid var(--borddim);color:var(--dim);border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer}
+.mob-fab{position:fixed;top:58px;left:8px;z-index:201;background:var(--green);border:none;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;color:#0a0a0a;display:none}
+#sb{position:fixed;top:54px;left:0;bottom:0;width:200px;background:var(--bg2);border-right:1px solid var(--borddim);z-index:199;overflow-y:auto;transform:translateX(-100%);transition:.25s}
+#sb.open{transform:translateX(0)}
+#sb-ov{display:none;position:fixed;inset:0;top:54px;background:rgba(0,0,0,.6);z-index:198}
+.sb-sec{padding:10px 14px 4px;font-size:9px;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:12px;font-weight:600;color:var(--dim);cursor:pointer;transition:.15s}
+.sb-item:hover,.sb-item.act{background:rgba(34,197,94,.08);color:var(--green)}
+.sb-item .ico{font-size:15px;width:20px;text-align:center}
+#mn{padding:72px 16px 100px;max-width:900px;margin:0 auto}
+@media(min-width:680px){#mn{margin-left:200px}#sb{transform:translateX(0)}#sb-ov{display:none!important}.mob-fab{display:none!important}}
+@media(max-width:679px){.mob-fab{display:block!important}}
+.sec{display:none}.sec.act{display:block}
+.sech{font-size:20px;font-weight:800;color:var(--green);margin-bottom:4px;border-bottom:1px solid var(--bord);padding-bottom:8px}
+.sech-sub{font-size:12px;color:var(--dim);margin-bottom:18px;margin-top:4px}
+.card{background:var(--card);border:1px solid var(--borddim);border-radius:14px;padding:18px;margin-bottom:14px}
+.ct{font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:10px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.fld input,.fld select,.fld textarea{background:var(--card2);border:1px solid var(--borddim);border-radius:8px;color:var(--white);font-size:12.5px;padding:9px 11px;outline:none;width:100%;font-family:inherit;transition:.15s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--green)}
+.fld select option{background:var(--card)}
+.btn{border:none;border-radius:9px;padding:11px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;width:100%}
+.btn-g{background:linear-gradient(135deg,#22c55e,#15803d);color:#0a0a0a}
+.btn-d{background:var(--card2);color:var(--white);border:1px solid var(--borddim)}
+.btn-gold{background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0a0a0a}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+@media(min-width:600px){.stat-grid{grid-template-columns:repeat(6,1fr)}}
+.stat{background:var(--card);border:1px solid var(--borddim);border-radius:10px;padding:12px;text-align:center}
+.stat-v{font-size:18px;font-weight:800;color:var(--green);margin-bottom:2px}
+.stat-l{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.3px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--borddim);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.row-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.row-main{flex:1;min-width:0}
+.row-title{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-sub{font-size:10px;color:var(--dim);margin-top:2px}
+.row-right{text-align:right;flex-shrink:0}
+.tag{display:inline-block;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+.stage-bar{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px}
+.stage{flex-shrink:0;background:var(--card2);border:1px solid var(--borddim);border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;color:var(--dim);cursor:pointer;white-space:nowrap}
+.stage.act{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green)}
+.proj-card{background:var(--card);border:1px solid var(--borddim);border-radius:12px;padding:16px;margin-bottom:10px}
+.proj-title{font-size:15px;font-weight:800;color:var(--white);margin-bottom:4px}
+.proj-sub{font-size:11px;color:var(--dim);margin-bottom:10px}
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pstat{background:var(--card2);border-radius:8px;padding:8px;text-align:center}
+.pstat-v{font-size:14px;font-weight:800;color:var(--green)}
+.pstat-l{font-size:9px;color:var(--dim);margin-top:2px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gc">
+    <div class="glogo">🌿</div>
+    <div class="gtitle">SD TRADES PRO NETWORK</div>
+    <div class="gsub">Private Command Center — Powered by MFGINC<br>Enter access PIN</div>
+    <div class="dots"><div class="dot" id="d0"></div><div class="dot" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div></div>
+    <div class="np">
+      <button class="npb" ontouchstart="np('1');event.preventDefault()" onclick="np('1')">1</button>
+      <button class="npb" ontouchstart="np('2');event.preventDefault()" onclick="np('2')">2</button>
+      <button class="npb" ontouchstart="np('3');event.preventDefault()" onclick="np('3')">3</button>
+      <button class="npb" ontouchstart="np('4');event.preventDefault()" onclick="np('4')">4</button>
+      <button class="npb" ontouchstart="np('5');event.preventDefault()" onclick="np('5')">5</button>
+      <button class="npb" ontouchstart="np('6');event.preventDefault()" onclick="np('6')">6</button>
+      <button class="npb" ontouchstart="np('7');event.preventDefault()" onclick="np('7')">7</button>
+      <button class="npb" ontouchstart="np('8');event.preventDefault()" onclick="np('8')">8</button>
+      <button class="npb" ontouchstart="np('9');event.preventDefault()" onclick="np('9')">9</button>
+      <button class="npb" style="font-size:11px" ontouchstart="np('C');event.preventDefault()" onclick="np('C')">CLR</button>
+      <button class="npb" ontouchstart="np('0');event.preventDefault()" onclick="np('0')">0</button>
+      <button class="npb" style="font-size:11px" ontouchstart="np('D');event.preventDefault()" onclick="np('D')">DEL</button>
+    </div>
+    <div class="gerr" id="gerr"></div>
+  </div>
+  <div style="margin-top:14px;font-size:10px;color:var(--muted);text-align:center">SD Landscape Network — MFGINC © 2026</div>
+</div>
+
+<div id="app">
+  <div id="tb">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="tb-logo">🌿</div>
+      <div><div class="tb-name" id="co-name">LANDSCAPE PRO</div><div class="tb-sub" id="role-lbl">Command Center</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:10px;color:var(--dim)" id="tb-date"></span>
+      <button class="tb-btn" onclick="doLock()">LOCK</button>
+    </div>
+  </div>
+  <button class="mob-fab" ontouchstart="toggleSB();event.preventDefault()" onclick="toggleSB()">☰</button>
+  <div id="sb-ov" onclick="closeSB()"></div>
+  <div id="sb">
+    <div style="padding:14px 18px 10px;border-bottom:1px solid var(--borddim)">
+      <div style="font-size:13px;font-weight:800;color:var(--green)">🌿 SD TRADES NETWORK</div>
+      <div style="font-size:9px;color:var(--dim);margin-top:2px">Verdeworks Network</div>
+    </div>
+    <div class="sb-sec">OVERVIEW</div>
+    <div class="sb-item act" onclick="showSec('dashboard')"><span class="ico">📊</span>Dashboard</div>
+    <div class="sb-item" onclick="showSec('pipeline')"><span class="ico">🔄</span>Project Pipeline</div>
+    <div class="sb-item" onclick="showSec('clients')"><span class="ico">👤</span>Clients</div>
+    <div class="sb-sec">OPERATIONS</div>
+    <div class="sb-item" onclick="showSec('estimates')"><span class="ico">📋</span>Estimates</div>
+    <div class="sb-item" onclick="showSec('proposals')"><span class="ico">📄</span>Proposals</div>
+    <div class="sb-item" onclick="showSec('changeorders')"><span class="ico">🔁</span>Change Orders</div>
+    <div class="sb-item" onclick="showSec('invoices')"><span class="ico">💳</span>Invoices</div>
+    <div class="sb-sec">FIELD</div>
+    <div class="sb-item" onclick="showSec('crew')"><span class="ico">👷</span>Crew Management</div>
+    <div class="sb-item" onclick="showSec('schedule')"><span class="ico">📅</span>Schedule</div>
+    <div class="sb-item" onclick="showSec('materials')"><span class="ico">🌱</span>Materials Log</div>
+    <div class="sb-sec">FINANCE</div>
+    <div class="sb-item" onclick="showSec('finance')"><span class="ico">💰</span>Finance & Loans</div>
+    <div class="sb-item" onclick="showSec('pnl')"><span class="ico">📈</span>P&amp;L Summary</div>
+  </div>
+
+  <div id="mn">
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="sec act">
+      <div class="sech">Dashboard</div>
+      <div class="sech-sub" id="dash-co-name">Your private command center — clients, projects, estimates, crew, invoices.</div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-v" id="st-clients">0</div><div class="stat-l">Clients</div></div>
+        <div class="stat"><div class="stat-v" id="st-projects">0</div><div class="stat-l">Projects</div></div>
+        <div class="stat"><div class="stat-v" id="st-pending">$0</div><div class="stat-l">Pending</div></div>
+        <div class="stat"><div class="stat-v" id="st-billed">$0</div><div class="stat-l">Billed</div></div>
+        <div class="stat"><div class="stat-v" id="st-collected">$0</div><div class="stat-l">Collected</div></div>
+        <div class="stat"><div class="stat-v" id="st-crew">0</div><div class="stat-l">Crew</div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Active Projects</div>
+        <div id="active-proj-list"><div class="empty">No active projects. Add your first project.</div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Quick Actions</div>
+        <div class="grid2" style="margin-bottom:0">
+          <button class="btn btn-g" onclick="showSec('estimates')">+ NEW ESTIMATE</button>
+          <button class="btn btn-d" onclick="showSec('clients')">+ ADD CLIENT</button>
+          <button class="btn btn-d" onclick="showSec('invoices')">+ CREATE INVOICE</button>
+          <button class="btn btn-gold" onclick="showSec('finance')">EQUIPMENT LOAN</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIPELINE -->
+    <div id="sec-pipeline" class="sec">
+      <div class="sech">Project Pipeline</div>
+      <div class="sech-sub">Track every project from lead to closeout</div>
+      <div class="stage-bar">
+        <div class="stage act" onclick="filterProj('all',this)">All</div>
+        <div class="stage" onclick="filterProj('Lead',this)">Lead</div>
+        <div class="stage" onclick="filterProj('Proposal Sent',this)">Proposal Sent</div>
+        <div class="stage" onclick="filterProj('Approved',this)">Approved</div>
+        <div class="stage" onclick="filterProj('In Progress',this)">In Progress</div>
+        <div class="stage" onclick="filterProj('Punch List',this)">Punch List</div>
+        <div class="stage" onclick="filterProj('Complete',this)">Complete</div>
+        <div class="stage" onclick="filterProj('Invoiced',this)">Invoiced</div>
+        <div class="stage" onclick="filterProj('Paid',this)">Paid</div>
+      </div>
+      <div class="card">
+        <div class="ct">Add Project</div>
+        <div class="grid2">
+          <div class="fld"><label>Project Name</label><input id="pj-name" placeholder="Smith Backyard Renovation"/></div>
+          <div class="fld"><label>Client</label><select id="pj-client"><option value="">Select client</option></select></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Contract Value ($)</label><input id="pj-value" type="number" placeholder="15000"/></div>
+          <div class="fld"><label>Stage</label>
+            <select id="pj-stage">
+              <option>Lead</option><option>Proposal Sent</option><option>Approved</option>
+              <option>In Progress</option><option>Punch List</option><option>Complete</option><option>Invoiced</option><option>Paid</option>
+            </select></div>
+          <div class="fld"><label>Start Date</label><input id="pj-start" type="date"/></div>
+        </div>
+        <div class="grid2" style="margin-bottom:10px">
+          <div class="fld"><label>Project Type</label>
+            <select id="pj-type">
+              <option>Full Landscape Renovation</option><option>Hardscape / Pavers</option><option>Pool & Spa Landscape</option>
+              <option>Outdoor Kitchen/BBQ</option><option>Irrigation System</option><option>Artificial Turf</option>
+              <option>Retaining Wall</option><option>Lighting Design</option><option>HOA Community</option><option>Commercial</option>
+            </select></div>
+          <div class="fld"><label>Notes</label><input id="pj-notes" placeholder="Key details, access, HOA..."/></div>
+        </div>
+        <button class="btn btn-g" onclick="addProject()">+ ADD PROJECT</button>
+      </div>
+      <div id="pipeline-list"><div class="empty">No projects yet.</div></div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div id="sec-clients" class="sec">
+      <div class="sech">Client CRM</div>
+      <div class="sech-sub">Every client — contact, project history, notes</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">
+        <button class="stage act" id="cf-all" onclick="setClientFilter('all',this)">All</button>
+        <button class="stage" onclick="setClientFilter('CL',this)">🌿 Landscape CL</button>
+        <button class="stage" onclick="setClientFilter('Houzz',this)">⭐ Landscape Houzz</button>
+        <button class="stage" onclick="setClientFilter('CL-HVAC',this)">❄️ HVAC CL</button>
+        <button class="stage" onclick="setClientFilter('Houzz-HVAC',this)">❄️ HVAC Houzz</button>
+        <button class="stage" onclick="setClientFilter('CL-GC',this)">🔨 GC CL</button>
+        <button class="stage" onclick="setClientFilter('Houzz-GC',this)">🔨 GC Houzz</button>
+      </div>
+      <div class="card">
+        <div class="ct">Add Client</div>
+        <div class="grid2">
+          <div class="fld"><label>Full Name</label><input id="cl-name" placeholder="John Smith"/></div>
+          <div class="fld"><label>Phone</label><input id="cl-phone" type="tel"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Email</label><input id="cl-email" type="email"/></div>
+          <div class="fld"><label>Address</label><input id="cl-addr" placeholder="La Jolla, CA"/></div>
+        </div>
+        <div class="grid2" style="margin-bottom:10px">
+          <div class="fld"><label>Source</label>
+            <select id="cl-source"><option>Houzz</option><option>Referral</option><option>Google</option><option>Yelp</option><option>Repeat Client</option><option>Other</option></select></div>
+          <div class="fld"><label>Notes</label><input id="cl-notes" placeholder="HOA, style preferences..."/></div>
+        </div>
+        <button class="btn btn-g" onclick="addClient()">+ ADD CLIENT</button>
+      </div>
+      <div class="card">
+        <div class="ct">Client List</div>
+        <div id="client-list"><div class="empty">No clients yet.</div></div>
+      </div>
+    </div>
+
+    <!-- ESTIMATES -->
+    <div id="sec-estimates" class="sec">
+      <div class="sech">Estimate Builder</div>
+      <div class="sech-sub">Build detailed estimates with line items — design, materials, labor, equipment</div>
+      <div class="card">
+        <div class="ct">New Estimate</div>
+        <div class="grid2">
+          <div class="fld"><label>Client</label><select id="est-client"><option value="">Select client</option></select></div>
+          <div class="fld"><label>Project Description</label><input id="est-desc" placeholder="Backyard hardscape + turf..."/></div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="ct">Line Items</div>
+          <div id="est-lines"></div>
+          <button class="btn btn-d" onclick="addEstLine()" style="margin-top:8px">+ ADD LINE ITEM</button>
+        </div>
+        <div style="background:var(--card2);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;color:var(--dim)">Subtotal</span>
+          <span style="font-size:18px;font-weight:800;color:var(--green)" id="est-total">$0</span>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Markup %</label><input id="est-markup" type="number" value="30" oninput="calcEstTotal()"/></div>
+          <div style="background:var(--card2);border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px;color:var(--dim)">Total with Markup</span>
+            <span style="font-size:16px;font-weight:800;color:var(--gold)" id="est-total-markup">$0</span>
+          </div>
+        </div>
+        <button class="btn btn-g" onclick="saveEstimate()" style="margin-top:10px">SAVE ESTIMATE</button>
+      </div>
+      <div class="card">
+        <div class="ct">Saved Estimates</div>
+        <div id="estimate-list"><div class="empty">No estimates saved.</div></div>
+      </div>
+    </div>
+
+    <!-- PROPOSALS -->
+    <div id="sec-proposals" class="sec">
+      <div class="sech">Proposal Tracker</div>
+      <div class="sech-sub">Track every proposal — sent, viewed, approved, declined</div>
+      <div class="card">
+        <div class="ct">Log Proposal</div>
+        <div class="grid2">
+          <div class="fld"><label>Client</label><select id="pr-client"><option value="">Select client</option></select></div>
+          <div class="fld"><label>Project</label><input id="pr-project" placeholder="Backyard Renovation — La Jolla"/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Amount ($)</label><input id="pr-amount" type="number" placeholder="18500"/></div>
+          <div class="fld"><label>Sent Date</label><input id="pr-sent" type="date"/></div>
+          <div class="fld"><label>Status</label>
+            <select id="pr-status"><option>Sent</option><option>Viewed</option><option>Approved</option><option>Declined</option><option>Negotiating</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Follow-up Date</label><input id="pr-follow" type="date"/></div>
+        <button class="btn btn-g" onclick="addProposal()">SAVE PROPOSAL</button>
+      </div>
+      <div class="card">
+        <div class="ct">Proposal Log</div>
+        <div id="proposal-list"><div class="empty">No proposals logged.</div></div>
+      </div>
+    </div>
+
+    <!-- CHANGE ORDERS -->
+    <div id="sec-changeorders" class="sec">
+      <div class="sech">Change Orders</div>
+      <div class="sech-sub">Document every change — protect your margin</div>
+      <div class="card">
+        <div class="ct">New Change Order</div>
+        <div class="grid2">
+          <div class="fld"><label>Project / Client</label><input id="co-proj" placeholder="Smith Backyard — La Jolla"/></div>
+          <div class="fld"><label>Change Order #</label><input id="co-num" placeholder="CO-001"/></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Description of Change</label><textarea id="co-desc" rows="3" placeholder="Client requested additional pavers along north fence line..."></textarea></div>
+        <div class="grid3">
+          <div class="fld"><label>Original Contract ($)</label><input id="co-orig" type="number"/></div>
+          <div class="fld"><label>Change Amount (+/-$)</label><input id="co-delta" type="number"/></div>
+          <div class="fld"><label>Status</label>
+            <select id="co-status"><option>Draft</option><option>Sent to Client</option><option>Approved</option><option>Declined</option></select></div>
+        </div>
+        <button class="btn btn-g" onclick="addCO()" style="margin-top:8px">SAVE CHANGE ORDER</button>
+      </div>
+      <div class="card">
+        <div class="ct">Change Order Log</div>
+        <div id="co-list"><div class="empty">No change orders.</div></div>
+      </div>
+    </div>
+
+    <!-- INVOICES -->
+    <div id="sec-invoices" class="sec">
+      <div class="sech">Invoice Manager</div>
+      <div class="sech-sub">Create, track, and log all client invoices</div>
+      <div class="card">
+        <div class="ct">Create Invoice</div>
+        <div class="grid2">
+          <div class="fld"><label>Client</label><select id="inv-client"><option value="">Select client</option></select></div>
+          <div class="fld"><label>Invoice #</label><input id="inv-num" placeholder="INV-001"/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Amount ($)</label><input id="inv-amount" type="number"/></div>
+          <div class="fld"><label>Due Date</label><input id="inv-due" type="date"/></div>
+          <div class="fld"><label>Status</label>
+            <select id="inv-status"><option>Draft</option><option>Sent</option><option>Partial</option><option>Paid</option><option>Overdue</option></select></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Description</label><input id="inv-desc" placeholder="50% deposit — Smith Backyard Renovation"/></div>
+        <button class="btn btn-g" onclick="addInvoice()">SAVE INVOICE</button>
+      </div>
+      <div class="card">
+        <div class="ct">Invoice Log</div>
+        <div id="invoice-list"><div class="empty">No invoices yet.</div></div>
+      </div>
+    </div>
+
+    <!-- CREW -->
+    <div id="sec-crew" class="sec">
+      <div class="sech">Crew Management</div>
+      <div class="sech-sub">Manage your field team — assignments, hours, pay rates</div>
+      <div class="card">
+        <div class="ct">Add Crew Member</div>
+        <div class="grid2">
+          <div class="fld"><label>Name</label><input id="cr-name" placeholder="Miguel Rodriguez"/></div>
+          <div class="fld"><label>Phone</label><input id="cr-phone" type="tel"/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Role</label>
+            <select id="cr-role"><option>Foreman</option><option>Installer</option><option>Irrigator</option><option>Operator</option><option>General Labor</option></select></div>
+          <div class="fld"><label>Rate ($/hr)</label><input id="cr-rate" type="number" placeholder="25"/></div>
+          <div class="fld"><label>Status</label>
+            <select id="cr-status"><option>Active</option><option>Part-Time</option><option>Sub-Contractor</option><option>Inactive</option></select></div>
+        </div>
+        <button class="btn btn-g" onclick="addCrew()" style="margin-top:8px">+ ADD CREW MEMBER</button>
+      </div>
+      <div class="card">
+        <div class="ct">Crew Roster</div>
+        <div id="crew-list"><div class="empty">No crew added.</div></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div id="sec-schedule" class="sec">
+      <div class="sech">Schedule</div>
+      <div class="sech-sub">Assign jobs by date — who goes where and when</div>
+      <div class="card">
+        <div class="ct">Add Schedule Entry</div>
+        <div class="grid2">
+          <div class="fld"><label>Date</label><input id="sch-date" type="date"/></div>
+          <div class="fld"><label>Project / Job</label><input id="sch-job" placeholder="Smith Backyard — Day 3 Pavers"/></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>Crew Assigned</label><input id="sch-crew" placeholder="Miguel + Jose + Team"/></div>
+          <div class="fld"><label>Start Time</label><input id="sch-time" type="time" value="07:00"/></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Task / Notes</label><input id="sch-task" placeholder="Install pavers section A, finish by 3pm"/></div>
+        <button class="btn btn-g" onclick="addSchedule()">+ ADD TO SCHEDULE</button>
+      </div>
+      <div class="card">
+        <div class="ct">Upcoming Schedule</div>
+        <div id="schedule-list"><div class="empty">Nothing scheduled yet.</div></div>
+      </div>
+    </div>
+
+    <!-- MATERIALS -->
+    <div id="sec-materials" class="sec">
+      <div class="sech">Materials Log</div>
+      <div class="sech-sub">Track every material purchase by project — protect your margins</div>
+      <div class="card">
+        <div class="ct">Log Material Purchase</div>
+        <div class="grid2">
+          <div class="fld"><label>Project</label><input id="mat-proj" placeholder="Smith Backyard"/></div>
+          <div class="fld"><label>Vendor</label><input id="mat-vendor" placeholder="Home Depot, Horizon, Western Nursery..."/></div>
+        </div>
+        <div class="grid3">
+          <div class="fld"><label>Material</label><input id="mat-item" placeholder="Pavers, Mulch, Plants..."/></div>
+          <div class="fld"><label>Qty / Units</label><input id="mat-qty" placeholder="200 sq ft"/></div>
+          <div class="fld"><label>Cost ($)</label><input id="mat-cost" type="number"/></div>
+        </div>
+        <button class="btn btn-g" onclick="addMaterial()" style="margin-top:8px">LOG PURCHASE</button>
+      </div>
+      <div class="card">
+        <div class="ct">Materials Log</div>
+        <div id="material-list"><div class="empty">No materials logged.</div></div>
+      </div>
+    </div>
+
+    <!-- FINANCE -->
+    <div id="sec-finance" class="sec">
+      <div class="sech">Finance & Equipment Loans</div>
+      <div class="sech-sub">Fund equipment, vehicles, tools — quick approvals through MFGINC partners</div>
+      <div class="card">
+        <div class="ct">Equipment & Business Financing</div>
+        <div style="display:grid;gap:10px">
+          <a href="https://financelend.me" target="_blank" style="background:var(--card2);border:1px solid var(--bord);border-radius:12px;padding:16px;text-decoration:none;display:block">
+            <div style="font-size:14px;font-weight:800;color:var(--white);margin-bottom:4px">Equipment & Vehicle Loans</div>
+            <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.7">Trucks, trailers, skid steers, excavators, bobcats. SBA 7(a) up to $5M. Equipment is the collateral — no real estate required. 24–84 month terms.</div>
+            <div style="font-size:13px;font-weight:800;color:var(--green)">APPLY → financelend.me</div>
+          </a>
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" style="background:var(--card2);border:1px solid var(--bord);border-radius:12px;padding:16px;text-decoration:none;display:block">
+            <div style="font-size:14px;font-weight:800;color:var(--white);margin-bottom:4px">Personal / Bridge Loan — Up to $50K</div>
+            <div style="font-size:11px;color:var(--dim);margin-bottom:8px">Quick capital for materials, payroll, or between project gaps. Fast process. Funds available as soon as next business day.</div>
+            <div style="font-size:13px;font-weight:800;color:var(--green)">APPLY → honestloans.net</div>
+          </a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" style="background:var(--card2);border:1px solid rgba(34,197,94,.25);border-radius:12px;padding:16px;text-decoration:none;display:block">
+            <div style="font-size:14px;font-weight:800;color:var(--white);margin-bottom:4px">🇲🇽 Préstamo Personal — Hasta $50K</div>
+            <div style="font-size:11px;color:var(--dim);margin-bottom:8px">Para dueños que prefieren español. Proceso rápido, fondos disponibles pronto.</div>
+            <div style="font-size:13px;font-weight:800;color:var(--green)">SOLICITAR → dinerodinero.net</div>
+          </a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Working Capital Calculator</div>
+        <div class="grid3">
+          <div class="fld"><label>Monthly Materials ($)</label><input id="wc-mat" type="number" placeholder="8000" oninput="calcWC()"/></div>
+          <div class="fld"><label>Monthly Payroll ($)</label><input id="wc-pay" type="number" placeholder="12000" oninput="calcWC()"/></div>
+          <div class="fld"><label>Overhead ($)</label><input id="wc-oh" type="number" placeholder="3000" oninput="calcWC()"/></div>
+        </div>
+        <div id="wc-result" style="display:none;background:rgba(34,197,94,.08);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center;margin-top:10px">
+          <div style="font-size:24px;font-weight:800;color:var(--green)" id="wc-total">$0</div>
+          <div style="font-size:11px;color:var(--dim);margin-top:3px">Monthly burn — recommended working capital cushion: <span id="wc-cushion" style="color:var(--gold);font-weight:800"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P&L -->
+    <div id="sec-pnl" class="sec">
+      <div class="sech">P&L Summary</div>
+      <div class="sech-sub">Revenue vs. costs — live from your data</div>
+      <div class="card">
+        <div class="ct">This Month</div>
+        <div class="grid2">
+          <div class="stat" style="background:var(--card2)"><div class="stat-v" id="pnl-billed" style="color:var(--green)">$0</div><div class="stat-l">Invoiced</div></div>
+          <div class="stat" style="background:var(--card2)"><div class="stat-v" id="pnl-collected" style="color:var(--lime)">$0</div><div class="stat-l">Collected</div></div>
+          <div class="stat" style="background:var(--card2)"><div class="stat-v" id="pnl-materials" style="color:var(--orange)">$0</div><div class="stat-l">Materials Cost</div></div>
+          <div class="stat" style="background:var(--card2)"><div class="stat-v" id="pnl-profit">$0</div><div class="stat-l">Est. Gross Profit</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Pipeline Value by Stage</div>
+        <div id="pnl-stages"><div class="empty">No projects yet.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+'use strict';
+var _p='',_plock=false;
+var PINS={'0609':'MFGINC OWNER','7700':'COMPANY OWNER','3300':'OFFICE ADMIN','4321':'DEMO'};
+var ROLE_NAMES={'0609':'MFGINC OWNER','7700':'COMPANY OWNER','3300':'OFFICE ADMIN','4321':'DEMO'};
+
+function np(v){
+  if(_plock)return;_plock=true;setTimeout(function(){_plock=false;},80);
+  if(v==='C'){_p='';upd();document.getElementById('gerr').textContent='';return;}
+  if(v==='D'){_p=_p.slice(0,-1);upd();return;}
+  if(_p.length<4)_p+=v;
+  upd();if(_p.length===4)setTimeout(ck,100);
+}
+function upd(){for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='dot'+(_p.length>i?' on':'');}}
+function ck(){
+  if(PINS[_p]){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('role-lbl').textContent=ROLE_NAMES[_p];
+    initApp();
+  } else {
+    document.getElementById('gerr').textContent='Invalid PIN';
+    _p='';upd();setTimeout(function(){document.getElementById('gerr').textContent='';},1500);
+  }
+}
+function doLock(){document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';_p='';upd();}
+function toggleSB(){var o=document.getElementById('sb').classList.toggle('open');document.getElementById('sb-ov').style.display=o?'block':'none';}
+function closeSB(){document.getElementById('sb').classList.remove('open');document.getElementById('sb-ov').style.display='none';}
+function showSec(id){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('act');});
+  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('act');});
+  var sec=document.getElementById('sec-'+id);if(sec)sec.classList.add('act');
+  document.querySelectorAll('.sb-item').forEach(function(i){if(i.getAttribute('onclick')&&i.getAttribute('onclick').indexOf("'"+id+"'")!==-1)i.classList.add('act');});
+  closeSB();window.scrollTo(0,0);
+}
+
+var DB={company:'Landscape Pro',clients:[],projects:[],estimates:[],proposals:[],cos:[],invoices:[],crew:[],schedule:[],materials:[]};
+function save(){try{localStorage.setItem('sdlpn_db',JSON.stringify(DB));}catch(e){}}
+function load(){try{var d=localStorage.getItem('sdlpn_db');if(d)DB=JSON.parse(d);}catch(e){}}
+function today(){return new Date().toISOString().split('T')[0];}
+function num(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});}
+function money(n){return '$'+num(n);}
+
+
+// ── PRE-SEED ALL SD LANDSCAPERS ON FIRST LOAD ─────────────────────────────
+var CL_LANDSCAPERS = [
+  {id:'CL001',name:"Calderon's Landscaping & Tree",phone:'',email:'',addr:'All San Diego',source:'Craigslist SD',notes:'Landscaping + Tree. CL lead.',spec:'Landscaping/Tree',tier:'CL'},
+  {id:'CL002',name:"Sotelo's Tree Service",phone:'',email:'',addr:'SD/North/East/South',source:'Craigslist SD',notes:'Tree Service. CL lead.',spec:'Tree Service',tier:'CL'},
+  {id:'CL003',name:"Esteban's Landscaping",phone:'',email:'',addr:'North San Diego',source:'Craigslist SD',notes:'Landscaping/gardening/tree. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL004',name:"Jose's Landscaping & Tree",phone:'',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Landscaping + tree trimming. CL lead.',spec:'Landscaping/Tree',tier:'CL'},
+  {id:'CL005',name:"Carrillo's Landscape & Garden",phone:'',email:'',addr:'North San Diego',source:'Craigslist SD',notes:'Garden + tree. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL006',name:"Mendoza Landscaping",phone:'',email:'',addr:'SD/North/East/South',source:'Craigslist SD',notes:'Gardening, concrete, trees. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL007',name:"EF PRO Landscaping",phone:'',email:'',addr:'North SD County',source:'Craigslist SD',notes:'Fences, pavers, trees. CL lead.',spec:'Landscaping/Hardscape',tier:'CL'},
+  {id:'CL008',name:"Victor's Landscaping & Garden",phone:'(858) 333-9010',email:'',addr:'North SD',source:'Craigslist SD',notes:'CALL FIRST. Phone confirmed.',spec:'Landscaping',tier:'CL'},
+  {id:'CL009',name:"SM PRO Landscaping",phone:'',email:'',addr:'North SD/City/East/South',source:'Craigslist SD',notes:'Gardening, concrete, trees. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL010',name:"Bautista Landscaping",phone:'',email:'',addr:'SD/North/East/South',source:'Craigslist SD',notes:'Turf, pavers, cleanups. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL011',name:"Garcia's Landscaping",phone:'',email:'',addr:'SD East/North/South',source:'Craigslist SD',notes:'Cement, fences, trees. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL012',name:"JH PRO Landscaping",phone:'',email:'',addr:'SD/North/East/South',source:'Craigslist SD',notes:'Trees, fences, hardscape. CL lead.',spec:'Landscaping/Hardscape',tier:'CL'},
+  {id:'CL013',name:"Machado's Landscape",phone:'',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Yard maintenance and irrigation. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL014',name:"Villamar Landscape",phone:'',email:'',addr:'East/North SD',source:'Craigslist SD',notes:'Premium gardening and outdoor maintenance. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL015',name:"Ramirez Landscaping",phone:'',email:'',addr:'North SD/City/East/South',source:'Craigslist SD',notes:'Maintenance, lawn, tree trimming. CL lead.',spec:'Landscaping',tier:'CL'},
+  {id:'CL016',name:"Pedro's Gardening",phone:'',email:'',addr:'North SD/East/South',source:'Craigslist SD',notes:'Maintenance, clean up. CL lead.',spec:'Gardening',tier:'CL'},
+  {id:'CL017',name:"Pablito's Gardening",phone:'',email:'',addr:'SD/North/East/South',source:'Craigslist SD',notes:'Lawn, yard care. Affordable. CL lead.',spec:'Gardening',tier:'CL'},
+  {id:'HZ001',name:"Landscape Logic",phone:'',email:'',addr:'La Jolla/Del Mar/Coronado',source:'Houzz',notes:'Tony Vitale — owner. Architecture degree. Design-build. Pool+landscape.',spec:'Design-Build',tier:'Houzz'},
+  {id:'HZ002',name:"Landscape Assistance",phone:'',email:'',addr:'Escondido — All SD County',source:'Houzz',notes:'Jeff Smith — owner. 40+ years. Full renovation. Horticulturist.',spec:'Full Renovation',tier:'Houzz'},
+  {id:'HZ003',name:"San Diego Landscaping Inc",phone:'(619) 780-6145',email:'',addr:'All San Diego County',source:'Houzz',notes:'PHONE CONFIRMED. Commercial + residential. Full service.',spec:'Full Service',tier:'Houzz'},
+  {id:'HZ004',name:"AM Landscape Construction",phone:'',email:'',addr:'Del Mar/La Jolla/Carmel Valley',source:'Houzz',notes:'Full design+build. Pavers, masonry, turf, lighting.',spec:'Design-Build',tier:'Houzz'},
+  {id:'HZ005',name:"Best Landscaping",phone:'',email:'',addr:'All San Diego County',source:'Houzz',notes:'20+ years. Commercial + residential. 7 days/week.',spec:'Full Service',tier:'Houzz'},
+  {id:'HZ006',name:"Encanto Landscape Contractor",phone:'',email:'',addr:'All San Diego County',source:'Houzz',notes:'25+ years. City of San Diego base.',spec:'General Landscape',tier:'Houzz'},
+  {id:'HZ007',name:"Gravel To Gold Inc",phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Licensed design-build firm. Jose leads team.',spec:'Design-Build',tier:'Houzz'},
+  {id:'HZ008',name:"Proscape of San Diego",phone:'',email:'',addr:'San Diego',source:'Houzz',notes:"Ross Chambers — owner. Since 2005. SD native.",spec:'Landscaping',tier:'Houzz'},
+  {id:'HZ009',name:"Nature's Elements Landscaping",phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Since 2004. Award-winning. Design, build, maintain.',spec:'Full Service',tier:'Houzz'},
+  {id:'HZ010',name:"Green Land Co",phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'30+ years. Most sought-after. Residential.',spec:'Full Service',tier:'Houzz'},
+  {id:'HZ011',name:"Juniper Landscape Company",phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Residential + commercial. Design, build, maintain.',spec:'Full Service',tier:'Houzz'},
+  {id:'HZ012',name:"Las Palmas Landscape Maintenance",phone:'',email:'',addr:'North San Diego',source:'Houzz',notes:'Since 1980. North SD County base.',spec:'Maintenance',tier:'Houzz'},
+  {id:'HZ013',name:"San Diego Landscape Solutions",phone:'',email:'',addr:'Chula Vista/South Bay',source:'Houzz',notes:"BBB Accredited. Angie's List Super Service. South Bay.",spec:'Design-Build',tier:'Houzz'},
+  {id:'HZ014',name:"Landscape Logic",phone:'',email:'',addr:'All SD County',source:'Houzz',notes:'5.0 rated. Tony Vitale.',spec:'Design-Build',tier:'Houzz'},
+  {id:'HZ015',name:"Western Outdoor Design & Build",phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'8X Best of Houzz. Harry and Lei. Award-winning.',spec:'Design-Build',tier:'Houzz'},
+
+  // CL HVAC / PLUMBING
+  {id:'CLHV01',name:'ACS / American Comfort Services',phone:'(619) 501-2636',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Owner-operated HVAC. 5-star Houzz too. Also on Houzz.',spec:'HVAC',tier:'CL-HVAC'},
+  {id:'CLHV02',name:'FR Heating & Cooling',phone:'',email:'',addr:'El Cajon',source:'Craigslist SD',notes:'Licensed HVAC contractor. All San Diego.',spec:'HVAC',tier:'CL-HVAC'},
+  {id:'CLHV03',name:'CoolVolt Electrician & HVAC',phone:'',email:'',addr:'All SD County',source:'Craigslist SD',notes:'EV Charger, AC, Heater. Owner-operated.',spec:'HVAC/Electrical',tier:'CL-HVAC'},
+  {id:'CLHV04',name:'24/7 Plumbing-Cooling-AC',phone:'(619) 762-3195',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Same day. Multiple trades. HVAC + plumbing.',spec:'HVAC/Plumbing',tier:'CL-HVAC'},
+  {id:'CLHV05',name:'Plumbing Contractor 40 Years',phone:'',email:'',addr:'SD to North County',source:'Craigslist SD',notes:'New construction + ADU specialist.',spec:'Plumbing',tier:'CL-HVAC'},
+  {id:'CLHV06',name:'Handyman Martinez',phone:'(619) 586-3387',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Electrical, plumbing. Solo operator.',spec:'Handyman',tier:'CL-HVAC'},
+  {id:'CLHV07',name:'Same Day Plumbing (858)',phone:'(619) 837-7733',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Fast response. No callbacks.',spec:'Plumbing',tier:'CL-HVAC'},
+  {id:'CLHV08',name:'24/7 Plumbing Service (619)',phone:'(619) 332-5233',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Same day real results.',spec:'Plumbing',tier:'CL-HVAC'},
+  {id:'CLHV09',name:'North County Plumbing',phone:'(760) 828-5200',email:'',addr:'North San Diego',source:'Craigslist SD',notes:'Same day service.',spec:'Plumbing',tier:'CL-HVAC'},
+  {id:'CLHV10',name:'Affordable Plumber/HVAC/Electric',phone:'(619) 614-7816',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Same day. Upfront pricing.',spec:'Multi-Trade',tier:'CL-HVAC'},
+  {id:'CLHV11',name:'Honest Plumber SD',phone:'(858) 649-1103',email:'',addr:'San Diego/North',source:'Craigslist SD',notes:'Fast response. Professional pricing.',spec:'Plumbing',tier:'CL-HVAC'},
+  // CL CONSTRUCTION / GC
+  {id:'CLGC01',name:'Urbatect Development LLC',phone:'(559) 412-8841',email:'info@urbatect.com',addr:'All Imperial County + SoCal',source:'Craigslist IV',notes:'DIRECT EMAIL: info@urbatect.com. Full GC + architect + engineer. ADU, remodels.',spec:'GC/Design-Build',tier:'CL-GC'},
+  {id:'CLGC02',name:'Triple D Construction',phone:'(888) 270-8355',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Handyman, demolition, hauling. Same day.',spec:'Demo/Hauling',tier:'CL-GC'},
+  {id:'CLGC03',name:'Kitchen & Bath Remodeling 20yr',phone:'(888) 270-8355',email:'',addr:'San Diego',source:'Craigslist SD',notes:'20+ years exp. Free quote.',spec:'Remodeling',tier:'CL-GC'},
+  {id:'CLGC04',name:'SoCal Painters',phone:'',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Free paint, free estimates, same day.',spec:'Painting',tier:'CL-GC'},
+  {id:'CLGC05',name:'Bathroom Remodeling Licensed',phone:'',email:'',addr:'La Jolla',source:'Craigslist SD',notes:'Licensed contractor. Free estimate.',spec:'Remodeling',tier:'CL-GC'},
+  {id:'CLGC06',name:'Vince Handyman',phone:'',email:'',addr:'North SD County',source:'Craigslist SD',notes:'North county handyman services.',spec:'Handyman',tier:'CL-GC'},
+  {id:'CLGC07',name:'Water Damage Remediation SD',phone:'',email:'',addr:'San Diego',source:'Craigslist SD',notes:'Certified/licensed. Water damage restoration.',spec:'Remediation',tier:'CL-GC'},
+  {id:'CLGC08',name:'Galaxy Concrete',phone:'',email:'',addr:'El Centro',source:'Craigslist IV',notes:'Concrete work. Active contractor.',spec:'Concrete',tier:'CL-GC'},
+  {id:'CLGC09',name:'Junk Removal & Hauling (619)',phone:'(619) 519-4197',email:'',addr:'SD/Chula Vista/El Cajon',source:'Craigslist SD',notes:'$49 junk removal. Full hauling service.',spec:'Hauling',tier:'CL-GC'},
+  // HOUZZ HVAC
+  {id:'HZHV01',name:'Bloom Air Conditioning SD',phone:'',email:'',addr:'Poway — All SD',source:'Houzz',notes:'24/7 HVAC. All brands. 5-star Houzz.',spec:'HVAC',tier:'Houzz-HVAC'},
+  {id:'HZHV02',name:'Green Tree Heating & Cooling',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Full HVAC service. Winter/summer specialty.',spec:'HVAC',tier:'Houzz-HVAC'},
+  {id:'HZHV03',name:'Nest One HVAC',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Industry leader. Heating/cooling solutions, installation, repair.',spec:'HVAC',tier:'Houzz-HVAC'},
+  {id:'HZHV04',name:'Carini Heating Air & Plumbing',phone:'',email:'',addr:'San Diego County',source:'Houzz',notes:'Commercial + residential. HVAC + plumbing.',spec:'HVAC/Plumbing',tier:'Houzz-HVAC'},
+  {id:'HZHV05',name:'Bob Jenson Air Conditioning',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Family owned since 1977. Mini-split specialist. Highly reviewed.',spec:'HVAC',tier:'Houzz-HVAC'},
+  {id:'HZHV06',name:'Great Northern Heating & Air',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'5-star Houzz. Family owned. Residential + commercial.',spec:'HVAC',tier:'Houzz-HVAC'},
+  {id:'HZHV07',name:'Caspian Air Conditioning',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'5-star Houzz. Maintenance + emergency repair.',spec:'HVAC',tier:'Houzz-HVAC'},
+  // HOUZZ GC
+  {id:'HZGC01',name:'D&L Builders',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Gonen and Oded — owners. High-end remodels. Very reviewed.',spec:'GC/Remodeling',tier:'Houzz-GC'},
+  {id:'HZGC02',name:'Eco Home Builders',phone:'',email:'',addr:'San Diego — All County',source:'Houzz',notes:'Premier GC. On-time, on-budget reputation.',spec:'GC/Design-Build',tier:'Houzz-GC'},
+  {id:'HZGC03',name:'Restoration Plus',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Daniel Roys — founder. Restoration + construction. Emergency.',spec:'Restoration/GC',tier:'Houzz-GC'},
+  {id:'HZGC04',name:'Victor Lund GC Inc',phone:'',email:'',addr:'Point Loma/Ocean Beach/Mission Hills',source:'Houzz',notes:'Coastal renovations specialist. Point Loma peninsula.',spec:'GC/Coastal',tier:'Houzz-GC'},
+  {id:'HZGC05',name:'US Pacifica Builders',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Trusted local contractor. New construction + remodeling.',spec:'GC',tier:'Houzz-GC'},
+  {id:'HZGC06',name:'San Diego Master Craftsmen',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Jon Hammer — owner. Repeat client base. High-end craftsmanship.',spec:'GC/Custom',tier:'Houzz-GC'},
+  {id:'HZGC07',name:'Rancho Bernardo Construction',phone:'858-229-5072',email:'rbconst@gmail.com',addr:'Escondido/Poway/Rancho Bernardo',source:'Houzz',notes:'DIRECT CONTACT: rbconst@gmail.com | 858-229-5072. 25 years. Family owned.',spec:'GC/Design-Build',tier:'Houzz-GC'},
+  {id:'HZGC08',name:'All American Remodeling',phone:'',email:'',addr:'San Diego — All County',source:'Houzz',notes:'Residential + commercial. Full service remodeling + GC.',spec:'GC/Remodeling',tier:'Houzz-GC'},
+  {id:'HZGC09',name:'JPI Development Group',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'30+ years experience. Open shop. Construction + development.',spec:'GC/Development',tier:'Houzz-GC'},
+  {id:'HZGC10',name:'Rocha Construction Services',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Exceptional spaces. Client vision focus.',spec:'GC/Remodeling',tier:'Houzz-GC'},
+  {id:'HZGC11',name:'Falcon Builders Group',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Remodeling specialist. Exceeds client expectations.',spec:'GC/Remodeling',tier:'Houzz-GC'},
+  {id:'HZGC12',name:'Blue Stone Construction',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Tom Hewitt — founder. 25 years experience.',spec:'GC',tier:'Houzz-GC'},
+  {id:'HZGC13',name:'Marrokal Design & Remodeling',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Beach house renovations. Large scope projects.',spec:'GC/Design-Build',tier:'Houzz-GC'},
+  {id:'HZGC14',name:'Creative Designs & Build',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Founded after experience at biggest SoCal construction firms.',spec:'GC/Design-Build',tier:'Houzz-GC'},
+  {id:'HZGC15',name:'Groysman Construction',phone:'',email:'',addr:'San Diego',source:'Houzz',notes:'Serving San Diego since 1994. Established.',spec:'GC',tier:'Houzz-GC'},
+
+];
+
+function seedClients(){
+  if(localStorage.getItem('ldb_seeded')) return;
+  var t=Date.now();
+  CL_LANDSCAPERS.forEach(function(co,i){
+    if(!DB.clients.find(function(c){return c.id===co.id;})){
+      DB.clients.push({
+        id:co.id,name:co.name,phone:co.phone,email:co.email,addr:co.addr,
+        source:co.source,notes:co.notes,spec:co.spec||'',tier:co.tier||'CL',added:'2026-07-01'
+      });
+    }
+  });
+  save();
+  localStorage.setItem('ldb_seeded','1');
+}
+
+function initApp(){
+  seedClients();
+  load();
+  document.getElementById('tb-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  document.getElementById('pj-start').value=today();
+  document.getElementById('pr-sent').value=today();
+  document.getElementById('pr-follow').value=today();
+  document.getElementById('inv-due').value=today();
+  document.getElementById('sch-date').value=today();
+  populateClientSelects();renderAll();
+}
+function populateClientSelects(){
+  var opts='<option value="">Select client</option>';
+  DB.clients.forEach(function(c){opts+='<option value="'+c.id+'">'+c.name+'</option>';});
+  ['pj-client','est-client','pr-client','inv-client'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+function renderAll(){renderDash();renderClients();renderPipeline('all');renderEstimates();renderProposals();renderCOs();renderInvoices();renderCrew();renderSchedule();renderMaterials();renderPNL();}
+
+function renderDash(){
+  var totalBilled=DB.invoices.reduce(function(a,i){return a+Number(i.amount||0);},0);
+  var totalPaid=DB.invoices.filter(function(i){return i.status==='Paid';}).reduce(function(a,i){return a+Number(i.amount||0);},0);
+  var pending=DB.projects.filter(function(p){return p.stage==='In Progress'||p.stage==='Approved';}).reduce(function(a,p){return a+Number(p.value||0);},0);
+  document.getElementById('st-clients').textContent=DB.clients.length;
+  document.getElementById('st-projects').textContent=DB.projects.length;
+  document.getElementById('st-pending').textContent=money(pending);
+  document.getElementById('st-billed').textContent=money(totalBilled);
+  document.getElementById('st-collected').textContent=money(totalPaid);
+  document.getElementById('st-crew').textContent=DB.crew.filter(function(c){return c.status==='Active';}).length;
+  var active=DB.projects.filter(function(p){return p.stage==='In Progress'||p.stage==='Approved';});
+  var h=active.map(function(p){
+    return '<div class="proj-card"><div class="proj-title">'+p.name+'</div><div class="proj-sub">'+p.type+' | '+p.stage+'</div><div class="proj-grid"><div class="pstat"><div class="pstat-v">'+money(p.value)+'</div><div class="pstat-l">Contract</div></div><div class="pstat"><div class="pstat-v" style="color:var(--orange)">'+p.type+'</div><div class="pstat-l">Type</div></div><div class="pstat"><div class="pstat-v" style="font-size:11px">'+p.start+'</div><div class="pstat-l">Start</div></div></div></div>';
+  }).join('');
+  document.getElementById('active-proj-list').innerHTML=h||'<div class="empty">No active projects.</div>';
+}
+
+var _projFilter='all';
+function filterProj(stage,btn){
+  _projFilter=stage;
+  document.querySelectorAll('.stage').forEach(function(s){s.classList.remove('act');});
+  if(btn)btn.classList.add('act');
+  renderPipeline(stage);
+}
+function addProject(){
+  var name=document.getElementById('pj-name').value.trim();if(!name)return;
+  var clientId=document.getElementById('pj-client').value;
+  var clientName=clientId?DB.clients.find(function(c){return c.id===clientId;})||{name:'Unknown'}:{name:'Unknown'};
+  DB.projects.push({id:'P'+Date.now(),name:name,clientId:clientId,clientName:clientName.name,
+    value:document.getElementById('pj-value').value,stage:document.getElementById('pj-stage').value,
+    type:document.getElementById('pj-type').value,start:document.getElementById('pj-start').value,
+    notes:document.getElementById('pj-notes').value,created:today()});
+  ['pj-name','pj-value','pj-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();populateClientSelects();renderAll();
+}
+function updateProjectStage(id,stage){
+  var p=DB.projects.find(function(x){return x.id===id;});if(p){p.stage=stage;save();renderAll();}
+}
+function renderPipeline(filter){
+  var STAGES=['Lead','Proposal Sent','Approved','In Progress','Punch List','Complete','Invoiced','Paid'];
+  var STAGE_C={'Lead':'var(--dim)','Proposal Sent':'var(--blue)','Approved':'var(--lime)','In Progress':'var(--green)',
+    'Punch List':'var(--orange)','Complete':'var(--teal)','Invoiced':'var(--gold)','Paid':'var(--green)'};
+  var projs=filter==='all'?DB.projects:DB.projects.filter(function(p){return p.stage===filter;});
+  var h=projs.slice().reverse().map(function(p){
+    var nxt=STAGES[STAGES.indexOf(p.stage)+1];
+    var btn=nxt?'<button onclick="updateProjectStage(\''+p.id+'\',\''+nxt+'\')" class="btn btn-d" style="padding:5px 10px;font-size:10px;width:auto">→ '+nxt+'</button>':'';
+    return '<div class="proj-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px"><div><div class="proj-title">'+p.name+'</div><div class="proj-sub">'+p.clientName+' | '+p.type+'</div></div>'+btn+'</div><div style="display:flex;align-items:center;gap:10px;margin-top:10px"><span class="tag" style="background:rgba(255,255,255,.07);color:'+(STAGE_C[p.stage]||'var(--dim)')+'">'+p.stage+'</span><span style="font-size:13px;font-weight:800;color:var(--green)">'+money(p.value)+'</span><span style="font-size:10px;color:var(--dim)">Start: '+p.start+'</span></div></div>';
+  }).join('');
+  document.getElementById('pipeline-list').innerHTML=h||'<div class="empty">No projects'+(filter!=='all'?' in this stage':'')+'.</div>';
+}
+
+function addClient(){
+  var name=document.getElementById('cl-name').value.trim();if(!name)return;
+  DB.clients.push({id:'C'+Date.now(),name:name,phone:document.getElementById('cl-phone').value,
+    email:document.getElementById('cl-email').value,addr:document.getElementById('cl-addr').value,
+    source:document.getElementById('cl-source').value,notes:document.getElementById('cl-notes').value,added:today()});
+  ['cl-name','cl-phone','cl-email','cl-addr','cl-notes'].forEach(function(id){document.getElementById(id).value='';});
+  save();populateClientSelects();renderAll();
+}
+function renderClients(){
+  var filter=_clientFilter||'all';
+  var list=filter==='all'?DB.clients:DB.clients.filter(function(c){return (c.tier||'CL')===filter;});
+  var h=list.map(function(c){
+    var tc=c.tier==='Houzz'?'var(--gold)':c.tier==='CL'?'var(--green)':
+      c.tier==='Houzz-HVAC'?'var(--blue)':c.tier==='CL-HVAC'?'var(--teal)':
+      c.tier==='Houzz-GC'?'var(--orange)':c.tier==='CL-GC'?'var(--red)':'var(--dim)';
+    var jobs=DB.projects.filter(function(p){return p.clientId===c.id;}).length;
+    return '<div class="row"><div class="row-dot" style="background:'+tc+'"></div>'
+      +'<div class="row-main"><div class="row-title">'+c.name+(c.spec?' <span style="font-size:9px;color:var(--dim)">— '+c.spec+'</span>':'')+'</div>'
+      +'<div class="row-sub">'+c.addr+(c.phone?' | 📞 '+c.phone:'')+(c.email?' | ✉ '+c.email:'')+'</div></div>'
+      +'<div class="row-right"><span class="tag" style="background:rgba(255,255,255,.07);color:'+tc+'">'+( c.tier||'CL')+'</span>'
+      +(jobs?'<div style="font-size:10px;color:var(--green);margin-top:3px">'+jobs+' jobs</div>':'')+'</div></div>';
+  }).join('');
+  document.getElementById('client-list').innerHTML=h||'<div class="empty">No clients yet.</div>';
+  document.getElementById('st-clients').textContent=DB.clients.length;
+}
+var _clientFilter='all';
+function setClientFilter(f,btn){
+  _clientFilter=f;
+  document.querySelectorAll('.stage').forEach(function(s){s.classList.remove('act');});
+  if(btn)btn.classList.add('act');
+  renderClients();
+}
+
+function addCrew(){
+  var name=document.getElementById('cr-name').value.trim();if(!name)return;
+  DB.crew.push({id:'CR'+Date.now(),name:name,phone:document.getElementById('cr-phone').value,
+    role:document.getElementById('cr-role').value,rate:document.getElementById('cr-rate').value,
+    status:document.getElementById('cr-status').value});
+  ['cr-name','cr-phone','cr-rate'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderCrew();renderDash();
+}
+function renderCrew(){
+  var h=DB.crew.map(function(c){
+    var sc=c.status==='Active'?'var(--green)':c.status==='Sub-Contractor'?'var(--gold)':'var(--dim)';
+    return '<div class="row"><div class="row-dot" style="background:'+sc+'"></div><div class="row-main"><div class="row-title">'+c.name+'</div><div class="row-sub">'+c.role+(c.phone?' | '+c.phone:'')+'</div></div><div class="row-right"><div style="font-size:13px;font-weight:800;color:var(--green)">$'+c.rate+'/hr</div><div style="font-size:9px;color:var(--dim)">'+c.status+'</div></div></div>';
+  }).join('');
+  document.getElementById('crew-list').innerHTML=h||'<div class="empty">No crew added.</div>';
+}
+
+function addSchedule(){
+  var job=document.getElementById('sch-job').value.trim();if(!job)return;
+  DB.schedule.push({id:'S'+Date.now(),date:document.getElementById('sch-date').value,
+    job:job,crew:document.getElementById('sch-crew').value,
+    time:document.getElementById('sch-time').value,task:document.getElementById('sch-task').value});
+  ['sch-job','sch-crew','sch-task'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderSchedule();
+}
+function renderSchedule(){
+  var h=DB.schedule.slice().sort(function(a,b){return a.date>b.date?1:-1;}).map(function(s){
+    return '<div class="row"><div class="row-dot" style="background:var(--teal)"></div><div class="row-main"><div class="row-title">'+s.date+' '+s.time+' — '+s.job+'</div><div class="row-sub">'+s.crew+(s.task?' | '+s.task:'')+'</div></div></div>';
+  }).join('');
+  document.getElementById('schedule-list').innerHTML=h||'<div class="empty">Nothing scheduled.</div>';
+}
+
+function addMaterial(){
+  var item=document.getElementById('mat-item').value.trim();if(!item)return;
+  DB.materials.push({id:'MAT'+Date.now(),proj:document.getElementById('mat-proj').value,
+    vendor:document.getElementById('mat-vendor').value,item:item,
+    qty:document.getElementById('mat-qty').value,cost:document.getElementById('mat-cost').value,date:today()});
+  ['mat-proj','mat-vendor','mat-item','mat-qty','mat-cost'].forEach(function(id){document.getElementById(id).value='';});
+  save();renderMaterials();renderPNL();
+}
+function renderMaterials(){
+  var total=DB.materials.reduce(function(a,m){return a+Number(m.cost||0);},0);
+  var h=DB.materials.slice().reverse().map(function(m){
+    return '<div class="row"><div class="row-dot" style="background:var(--lime)"></div><div class="row-main"><div class="row-title">'+m.item+' — '+m.proj+'</div><div class="row-sub">'+m.vendor+(m.qty?' | '+m.qty:'')+'</div></div><div class="row-right"><div class="money" style="color:var(--red)">'+money(m.cost)+'</div></div></div>';
+  }).join('');
+  var header=DB.materials.length?'<div style="background:rgba(239,68,68,.08);border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--dim)">Total Materials Cost</span><span style="font-size:16px;font-weight:800;color:var(--red)">'+money(total)+'</span></div>':'';
+  document.getElementById('material-list').innerHTML=header+(h||'<div class="empty">No materials logged.</div>');
+}
+
+function calcWC(){
+  var mat=Number(document.getElementById('wc-mat').value||0);
+  var pay=Number(document.getElementById('wc-pay').value||0);
+  var oh=Number(document.getElementById('wc-oh').value||0);
+  var total=mat+pay+oh;
+  if(!total)return;
+  document.getElementById('wc-result').style.display='block';
+  document.getElementById('wc-total').textContent=money(total);
+  document.getElementById('wc-cushion').textContent=money(total*2)+' (2-month cushion)';
+}
+
+function renderPNL(){
+  var billed=DB.invoices.reduce(function(a,i){return a+Number(i.amount||0);},0);
+  var collected=DB.invoices.filter(function(i){return i.status==='Paid';}).reduce(function(a,i){return a+Number(i.amount||0);},0);
+  var matCost=DB.materials.reduce(function(a,m){return a+Number(m.cost||0);},0);
+  var profit=collected-matCost;
+  document.getElementById('pnl-billed').textContent=money(billed);
+  document.getElementById('pnl-collected').textContent=money(collected);
+  document.getElementById('pnl-materials').textContent=money(matCost);
+  var pe=document.getElementById('pnl-profit');
+  pe.textContent=money(profit);
+  pe.style.color=profit>=0?'var(--green)':'var(--red)';
+
+  var STAGES=['Lead','Proposal Sent','Approved','In Progress','Punch List','Complete','Invoiced','Paid'];
+  var h=STAGES.map(function(st){
+    var projs=DB.projects.filter(function(p){return p.stage===st;});
+    var val=projs.reduce(function(a,p){return a+Number(p.value||0);},0);
+    if(!projs.length)return '';
+    return '<div class="row"><div class="row-dot" style="background:var(--green)"></div><div class="row-main"><div class="row-title">'+st+'</div><div class="row-sub">'+projs.length+' project'+(projs.length>1?'s':'')+'</div></div><div class="row-right"><div class="money">'+money(val)+'</div></div></div>';
+  }).join('');
+  document.getElementById('pnl-stages').innerHTML=h||'<div class="empty">No projects yet.</div>';
+}
+
+window.addEventListener('resize',function(){if(window.innerWidth<680)document.getElementById('sb').classList.remove('open');});
+</script>
+</body>
+</html>

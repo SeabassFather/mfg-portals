@@ -10,7 +10,7 @@
   body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
 
   /* LOGIN */
-  #login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+  #login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999}
   .login-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:44px 38px;width:340px;text-align:center}
   .login-logo{font-size:10px;letter-spacing:4px;color:var(--gold);margin-bottom:4px;text-transform:uppercase}
   .login-title{font-size:26px;font-weight:900;color:var(--gold2);letter-spacing:2px;margin-bottom:2px}
@@ -106,6 +106,17 @@
   .calc-box{background:rgba(201,165,92,0.06);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px}
   .calc-res{font-size:15px;font-weight:900;color:var(--gold2);margin-top:8px}
 </style>
+<style id="plp-css">
+#portal-login-panel{display:none;position:fixed;bottom:20px;right:20px;width:400px;max-height:300px;background:#0d1117;border:1px solid #C9A55C;border-radius:8px;z-index:9999;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+#portal-login-panel .plp-hdr{background:#161b22;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d}
+#portal-login-panel .plp-title{color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:2px}
+#portal-login-panel .plp-close{color:#64748b;cursor:pointer;font-size:13px;background:none;border:none;padding:0}
+#portal-login-panel table{width:100%;border-collapse:collapse;font-size:10px}
+#portal-login-panel th{color:#64748b;padding:3px 6px;text-align:left;border-bottom:1px solid #21262d}
+#portal-login-panel td{color:#e2e8f0;padding:3px 6px;border-bottom:1px solid #21262d}
+#portal-login-panel .plp-body{overflow-y:auto;max-height:240px;padding:6px}
+#plp-trigger{display:none;position:fixed;bottom:20px;right:20px;background:#161b22;border:1px solid #C9A55C;color:#C9A55C;font-size:9px;padding:5px 10px;border-radius:4px;cursor:pointer;z-index:9998;letter-spacing:1px;font-weight:700}
+</style>
 </head>
 <body>
 
@@ -126,11 +137,11 @@
 </div>
 
 <!-- APP -->
-<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:28px;text-align:center;">
+<div id="gate" style="position:fixed;inset:0;background:#020912;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;padding:28px;text-align:center;">
   <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:6px;">COACH SALAZAR</div>
   <div style="font-size:11px;color:#64748b;margin-bottom:28px;letter-spacing:1px;">SECURE ACCESS — ENTER PIN</div>
   <div id="pdots" style="display:flex;gap:10px;margin-bottom:20px;"><div class="pd" id="d0" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div><div class="pd" id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(201,165,92,0.3);background:transparent;transition:all .15s;"></div></div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><button onclick="np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</button><button onclick="np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</button><button onclick="np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</button><button onclick="np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</button><button onclick="np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</button><button onclick="np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</button><button onclick="np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</button><button onclick="np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</button><button onclick="np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</button><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><button onclick="np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</button><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:180px;"><div onclick="np('1')" ontouchend="event.preventDefault();np('1')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">1</div><div onclick="np('2')" ontouchend="event.preventDefault();np('2')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">2</div><div onclick="np('3')" ontouchend="event.preventDefault();np('3')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">3</div><div onclick="np('4')" ontouchend="event.preventDefault();np('4')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">4</div><div onclick="np('5')" ontouchend="event.preventDefault();np('5')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">5</div><div onclick="np('6')" ontouchend="event.preventDefault();np('6')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">6</div><div onclick="np('7')" ontouchend="event.preventDefault();np('7')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">7</div><div onclick="np('8')" ontouchend="event.preventDefault();np('8')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">8</div><div onclick="np('9')" ontouchend="event.preventDefault();np('9')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">9</div><button onclick="np('del')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">⌫</button><div onclick="np('0')" ontouchend="event.preventDefault();np('0')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.2);background:rgba(201,165,92,0.05);color:#e2e8f0;font-size:16px;font-weight:700;cursor:pointer;user-select:none;touch-action:manipulation;">0</div><button onclick="np('ok')" ontouchend="this.click()" style="padding:14px;border-radius:8px;border:1px solid rgba(201,165,92,0.4);background:linear-gradient(135deg,#C9A55C,#8a6930);color:#020912;font-size:13px;font-weight:800;cursor:pointer;user-select:none;">OK</button></div>
   <div id="g-err" style="font-size:11px;color:#ef4444;height:16px;margin-top:14px;font-weight:600;"></div>
   <div style="font-size:9px;color:#1e3a4a;margin-top:20px;">Powered by AuditDNA Intelligence</div>
 </div>
@@ -455,8 +466,22 @@ I have samples right here — can I leave a few for you and your team to try?
 <script>
 var PIN='4321',PLEN=4,entered='';
 function updDots(){for(var i=0;i<PLEN;i++){var el=document.getElementById('d'+i);if(!el)return;el.style.background=i<entered.length?'#C9A55C':'transparent';el.style.borderColor=i<entered.length?'#C9A55C':'rgba(201,165,92,0.3)';}}
-function np(d){if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
-function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
+var _npLk=false;
+function np(d){if(_npLk)return;_npLk=true;setTimeout(function(){_npLk=false;},150);if(d==='del')entered=entered.slice(0,-1);else if(d==='ok'){checkPin();return;}else if(entered.length<PLEN)entered+=d;updDots();if(entered.length===PLEN)setTimeout(checkPin,120);}
+function checkPin(){if(entered===PIN){document.getElementById('gate').style.display='none'
+  try{
+    fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        portal:window.location.pathname.split('/').pop(),
+        username:typeof cu!=='undefined'?(cu&&cu.name?cu.name:(typeof cu==='string'?cu:'user')):'user',
+        role:typeof cu!=='undefined'&&cu&&cu.role?cu.role:'unknown',
+        pin:_lastPin||''
+      })
+    }).catch(function(){});
+  }catch(e){}
+
+  checkOwnerPin(_lastPin);;document.getElementById('app').style.display='block';goTab('dashboard');}else{var e=document.getElementById('g-err');if(e)e.textContent='Incorrect PIN';entered='';updDots();setTimeout(function(){if(e)e.textContent='';},2000);}}
 function lock(){var g=document.getElementById('gate'),a=document.getElementById('app');if(g)g.style.display='flex';if(a)a.style.display='none';entered='';updDots();}
 
 const PIN='3301', ID='DAT-04', NAME='Israel Salazar', TITLE='Sales Agent — Coach';
@@ -968,9 +993,36 @@ function copyAllEmb(){
     navigator.clipboard.writeText(emails.join(', ')).then(function(){alert('Copied '+emails.length+' emails!');}).catch(function(){prompt('Emails:',emails.join(', '));});
   },300);
 }
+
+var _lastPin='';
+function loadPlpData(){
+  var portal=window.location.pathname.split('/').pop();
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/logins?portal='+encodeURIComponent(portal))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var tb=document.getElementById('plp-tbody');
+      if(!tb)return;
+      if(!d.logins||!d.logins.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No logins yet.</td></tr>';return;}
+      tb.innerHTML=d.logins.slice(0,50).map(function(l){
+        var dt=new Date(l.logged_in_at);
+        var ts=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        return '<tr><td style="color:#e2e8f0;font-weight:700">'+l.username+'</td><td style="color:#C9A55C">'+l.role+'</td><td style="color:#64748b;font-size:9px">'+l.ip_address+'</td><td style="color:#64748b">'+ts+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+function showPlpPanel(){
+  var p=document.getElementById('portal-login-panel');
+  var t=document.getElementById('plp-trigger');
+  if(p){p.style.display='block';if(t)t.style.display='none';loadPlpData();}
+}
+function checkOwnerPin(pin){
+  _lastPin=pin;
+  if(pin==='0609'){var t=document.getElementById('plp-trigger');if(t)t.style.display='block';}
+}
+
 </script>
 
-<div id="loaf-feature-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:8px 10px;display:flex;gap:5px;align-items:center">
+<div id="loaf-feature-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:99999;background:rgba(2,9,18,0.97);border-top:1px solid rgba(201,165,92,0.2);padding:8px 10px;display:flex;gap:5px;align-items:center">
   <a href="/mfginc-loaf.html" style="flex:1;text-align:center;text-decoration:none"><div style="font-size:7px;font-weight:900;color:#C9A55C;letter-spacing:1px">LOAF</div></a>
   <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','welink')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(15,123,65,0.12);border:1px solid rgba(15,123,65,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#4ade80;line-height:1.4">WE<br>LINK</div></a>
   <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','wesource')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#C9A55C;line-height:1.4">WE<br>SOURCE</div></a>
@@ -978,5 +1030,195 @@ function copyAllEmb(){
   <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','factor')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#a78bfa;line-height:1.4">FACTOR<br>PO</div></a>
   <a href="/mfginc-loaf.html" onclick="sessionStorage.setItem('loaf_goto','aiagents')" style="flex:1;text-align:center;text-decoration:none;padding:5px 2px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:6px"><div style="font-size:7px;font-weight:700;color:#fbbf24;line-height:1.4">AI<br>AGENTS</div></a>
 </div>
+<div id="portal-login-panel"><div class="plp-hdr"><span class="plp-title">LOGIN ACTIVITY</span><button class="plp-close" onclick="document.getElementById('portal-login-panel').style.display='none';document.getElementById('plp-trigger').style.display='block'">x</button></div><div class="plp-body"><table><thead><tr><th>USER</th><th>ROLE</th><th>IP</th><th>TIME</th></tr></thead><tbody id="plp-tbody"><tr><td colspan="4" style="text-align:center;color:#64748b">Loading...</td></tr></tbody></table></div></div><button id="plp-trigger" onclick="showPlpPanel()">LOGIN LOG</button>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
 </body>
+
 </html>

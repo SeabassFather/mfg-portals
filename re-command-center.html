@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>EnjoyBaja RE Command Center — Saul Garcia NMLS #337526</title>
+<style>
+:root{
+  --bg:#020912;--bg2:#0d1117;--card:#161b22;--card2:#1c2333;
+  --gold:#C9A55C;--blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--orange:#f59e0b;
+  --txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;--bord:rgba(201,165,92,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+/* GATE */
+#gate{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.gc{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:38px 30px;width:100%;max-width:340px;text-align:center}
+.gl{font-size:20px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:3px}
+.gs{font-size:10px;color:var(--dim);margin-bottom:5px}
+.gn{font-size:9px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.dots{display:flex;gap:12px;justify-content:center;margin-bottom:22px}
+.dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--gold);transition:.2s}
+.dot.on{background:var(--gold)}
+.np{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:230px;margin:0 auto}
+.npb{background:var(--card2);border:none;border-radius:10px;color:var(--txt);font-size:20px;font-weight:600;padding:14px;cursor:pointer;transition:.15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.npb:active{background:rgba(201,165,92,.2)}
+.npe{background:var(--gold);color:#0d1117;font-size:13px;font-weight:800}
+.npc{font-size:13px}
+.gerr{color:var(--red);font-size:12px;margin-top:12px;min-height:16px}
+/* APP */
+#app{display:none}
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:52px;background:var(--bg2);border-bottom:1px solid var(--bord);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:200}
+.tl{font-size:14px;font-weight:800;color:var(--gold)}
+.ts{font-size:9px;color:var(--dim);margin-top:1px}
+.lock-btn{background:none;border:1px solid var(--bord);color:var(--dim);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer}
+/* MODULE TABS */
+.modtabs{position:fixed;top:52px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--bord);display:flex;z-index:199;overflow-x:auto}
+.mt{flex:1;min-width:80px;padding:10px 6px;text-align:center;font-size:11px;font-weight:700;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
+.mt.act{color:var(--gold);border-bottom-color:var(--gold)}
+/* CONTENT AREA */
+.main{padding-top:104px;padding-bottom:80px;max-width:900px;margin:0 auto;padding-left:14px;padding-right:14px}
+/* SECTION BASE */
+.sec{display:none}.sec.act{display:block}
+.sech{font-size:17px;font-weight:800;color:var(--gold);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--bord)}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:18px;margin-bottom:14px}
+.ct{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+/* FORMS */
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:10px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.fld input,.fld select,.fld textarea{background:var(--bg2);border:1px solid var(--bord);border-radius:7px;color:var(--txt);font-size:12.5px;padding:8px 10px;outline:none;width:100%;transition:.15s}
+.fld input:focus,.fld select:focus{border-color:var(--gold)}
+.fld input.ai{border-color:var(--green);background:rgba(34,197,94,.04)}
+.fld select option{background:var(--card)}
+/* BUTTONS */
+.btn{width:100%;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:800;cursor:pointer;transition:.15s;margin-top:6px}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#a87c30);color:#0d1117}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:linear-gradient(135deg,#1a6b2e,var(--green));color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* PROGRAM CARDS */
+.prog-grid{display:grid;gap:12px}
+.prog-card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:16px;cursor:pointer;transition:.2s}
+.prog-card:hover{border-color:var(--gold)}
+.prog-card.best{border-color:var(--green);background:rgba(34,197,94,.04)}
+.prog-card.sel{border-color:var(--gold);background:rgba(201,165,92,.06)}
+.prog-card.inelig{opacity:.4;pointer-events:none}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pn{font-size:14px;font-weight:800}
+.pbadge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
+.badge-best{background:rgba(34,197,94,.15);color:var(--green)}
+.badge-ok{background:rgba(74,143,212,.15);color:var(--blue)}
+.badge-no{background:rgba(239,68,68,.15);color:var(--red)}
+.pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.pst{background:var(--bg2);border-radius:8px;padding:8px;text-align:center}
+.pst-l{font-size:9px;color:var(--dim);margin-bottom:2px}
+.pst-v{font-size:13px;font-weight:800;color:var(--gold)}
+.preqs{font-size:11px;color:var(--dim);line-height:1.8}
+.req-ok{color:var(--green)}.req-no{color:var(--red)}
+/* SCAN */
+.upload-zone{border:2px dashed var(--bord);border-radius:12px;padding:28px 18px;text-align:center;cursor:pointer;background:var(--bg2);transition:.2s}
+.upload-zone:hover{border-color:var(--gold)}
+.prog-bar{height:4px;background:var(--bord);border-radius:2px;overflow:hidden;display:none;margin-top:10px}
+.prog-fill{height:100%;background:var(--gold);width:0%;transition:width .3s;border-radius:2px}
+/* USDA */
+.usda-stat{background:var(--card2);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center}
+.usda-stat-val{font-size:22px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.usda-stat-lbl{font-size:10px;color:var(--dim)}
+.usda-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.utb{background:var(--card2);border:1px solid var(--bord);border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;color:var(--dim);cursor:pointer;transition:.15s}
+.utb.act{background:var(--gold);color:#0d1117;border-color:var(--gold)}
+.usec{display:none}.usec.act{display:block}
+/* AGENT */
+.prog-list-item{background:var(--card2);border:1px solid var(--bord);border-radius:10px;padding:14px;margin-bottom:10px}
+.pli-name{font-size:13px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.pli-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{font-size:10px;background:rgba(74,143,212,.12);color:var(--blue);border-radius:12px;padding:2px 8px;font-weight:600}
+/* PIPELINE */
+.pipe-row{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--bord);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.pipe-status{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pipe-name{font-size:13px;font-weight:700;flex:1}
+.pipe-meta{font-size:10px;color:var(--dim)}
+/* RESULT CARDS */
+.result-card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:16px;margin-bottom:12px;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* EXPORT */
+.exp-block{background:var(--bg2);border:1px solid var(--bord);border-radius:10px;padding:14px;font-family:monospace;font-size:11px;white-space:pre-wrap;max-height:280px;overflow-y:auto;line-height:1.7;margin-bottom:12px}
+.exp-btn{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bord);border-radius:9px;padding:11px 14px;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer;margin-bottom:8px;width:100%;transition:.15s}
+.exp-btn:hover{border-color:var(--gold);color:var(--gold)}
+/* NMLS FOOTER */
+.nmls{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:12px;margin-top:16px;font-size:9.5px;color:var(--muted);line-height:1.6}
+/* DIVIDER */
+.div{height:1px;background:var(--bord);margin:14px 0}
+/* SECTION TITLE */
+.stitle{font-size:10px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;padding:5px 10px;background:rgba(74,143,212,.08);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;margin-bottom:10px}
+/* CHIP */
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--green);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--green);margin:3px}
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+/* SNAP */
+.snap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.snap-item{background:var(--bg2);border-radius:8px;padding:10px;text-align:center}
+.snap-l{font-size:9px;color:var(--dim);margin-bottom:3px}
+.snap-v{font-size:14px;font-weight:800;color:var(--gold)}
+/* AI BANNER */
+.ai-banner{background:rgba(34,197,94,.08);border:1px solid var(--green);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--green);margin-bottom:14px}
+@media(max-width:500px){
+  .frow3{grid-template-columns:1fr 1fr}
+  .pstats{grid-template-columns:repeat(2,1fr)}
+  .snap-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="gate">
+  <div class="gc">
+    <div class="gl">ENJOYBAJA</div>
+    <div class="gs">Real Estate &amp; Mortgage Command Center</div>
+    <div class="gn">Saul Garcia — NMLS #337526<br>American 1st Partners NMLS #1773303<br>15615 Alton Pkwy Ste 450, Irvine CA 92618</div>
+    <div class="dots" id="dots">
+      <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+    </div>
+    <div class="np">
+      <button class="npb" ontouchend="np('1');event.preventDefault()" onclick="np('1')">1</button>
+      <button class="npb" ontouchend="np('2');event.preventDefault()" onclick="np('2')">2</button>
+      <button class="npb" ontouchend="np('3');event.preventDefault()" onclick="np('3')">3</button>
+      <button class="npb" ontouchend="np('4');event.preventDefault()" onclick="np('4')">4</button>
+      <button class="npb" ontouchend="np('5');event.preventDefault()" onclick="np('5')">5</button>
+      <button class="npb" ontouchend="np('6');event.preventDefault()" onclick="np('6')">6</button>
+      <button class="npb" ontouchend="np('7');event.preventDefault()" onclick="np('7')">7</button>
+      <button class="npb" ontouchend="np('8');event.preventDefault()" onclick="np('8')">8</button>
+      <button class="npb" ontouchend="np('9');event.preventDefault()" onclick="np('9')">9</button>
+      <button class="npb npc" ontouchend="np('C');event.preventDefault()" onclick="np('C')">CLR</button>
+      <button class="npb" ontouchend="np('0');event.preventDefault()" onclick="np('0')">0</button>
+      <button class="npb npe" ontouchend="checkPin();event.preventDefault()" onclick="checkPin()">GO</button>
+    </div>
+    <div class="gerr" id="gerr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div><div class="tl">RE &amp; MORTGAGE COMMAND</div><div class="ts">EnjoyBaja.com — NMLS #337526 — American 1st Partners</div></div>
+    <button class="lock-btn" onclick="doLock()">LOCK</button>
+  </div>
+  <div class="modtabs">
+    <div class="mt act" data-m="finder" onclick="showMod('finder')">🔍 Loan Finder</div>
+    <div class="mt" data-m="scanner" onclick="showMod('scanner')">📷 Doc Scanner</div>
+    <div class="mt" data-m="agent" onclick="showMod('agent')">👤 Agent Portal</div>
+    <div class="mt" data-m="usda" onclick="showMod('usda')">🌾 USDA 504</div>
+    <div class="mt" data-m="pipeline" onclick="showMod('pipeline')">📂 Pipeline</div>
+    <div class="mt" data-m="affiliate" onclick="showMod('affiliate')">💰 Affiliate Lenders</div>
+  </div>
+  <div class="main">
+
+    <!-- ═══ LOAN FINDER ═══ -->
+    <div id="sec-finder" class="sec act">
+      <div class="sech">Mortgage &amp; Loan Program Finder</div>
+      <div class="card">
+        <div class="ct">Client Search Parameters</div>
+        <div class="frow2">
+          <div class="fld"><label>Loan Purpose</label>
+            <select id="f-type">
+              <option value="">Select Purpose</option>
+              <option value="purchase_us">Purchase — US</option>
+              <option value="purchase_mx">Purchase — Mexico / Baja</option>
+              <option value="refi_us">Refinance</option>
+              <option value="cashout_us">Cash-Out Refinance</option>
+              <option value="jumbo">Jumbo (&gt;$806K)</option>
+              <option value="fha">FHA</option>
+              <option value="va">VA Loan</option>
+              <option value="usda">USDA Rural</option>
+              <option value="bank_stmt">Bank Statement / Non-QM</option>
+              <option value="sba">SBA 7(a) Business</option>
+              <option value="audit">Mortgage Audit &amp; Recovery</option>
+            </select></div>
+          <div class="fld"><label>Nationality</label>
+            <select id="f-nat">
+              <option value="us_citizen">US Citizen / PR</option>
+              <option value="foreign">Foreign National</option>
+              <option value="itin">ITIN Borrower</option>
+              <option value="investor">Investor (Entity)</option>
+            </select></div>
+        </div>
+        <div class="frow3">
+          <div class="fld"><label>Property Value / Loan ($)</label><input type="number" id="f-price" placeholder="450000"/></div>
+          <div class="fld"><label>Down Payment ($)</label><input type="number" id="f-down" placeholder="45000"/></div>
+          <div class="fld"><label>Credit Score</label>
+            <select id="f-credit">
+              <option value="760+">760+</option><option value="740-759">740–759</option>
+              <option value="720-739">720–739</option><option value="700-719">700–719</option>
+              <option value="680-699">680–699</option><option value="660-679">660–679</option>
+              <option value="640-659">640–659</option><option value="620-639">620–639</option>
+              <option value="580-619">580–619</option><option value="below580">Below 580</option>
+            </select></div>
+        </div>
+        <div class="frow3">
+          <div class="fld"><label>Annual Income ($)</label><input type="number" id="f-income" placeholder="85000"/></div>
+          <div class="fld"><label>Loan Term</label>
+            <select id="f-term">
+              <option value="30">30 Years Fixed</option><option value="20">20 Years Fixed</option>
+              <option value="15">15 Years Fixed</option><option value="10">10 Years Fixed</option>
+              <option value="arm5">5/1 ARM</option><option value="arm7">7/1 ARM</option>
+            </select></div>
+          <div class="fld"><label>Property Type</label>
+            <select id="f-prop">
+              <option value="sfr">SFR</option><option value="condo">Condo</option>
+              <option value="multi">2-4 Unit</option><option value="manufactured">Manufactured</option>
+              <option value="commercial">Commercial</option><option value="land">Land</option>
+            </select></div>
+        </div>
+        <button class="btn btn-gold" onclick="runFinder()">🔍 FIND MATCHING PROGRAMS</button>
+      </div>
+      <div id="finder-results"></div>
+      <div class="nmls">
+        Saul Garcia NMLS #337526 | American 1st Partners NMLS #1773303 | 15615 Alton Pkwy Ste 450, Irvine CA 92618<br>
+        Rates shown are estimates only. Not a commitment to lend. All programs subject to credit approval and property eligibility. Equal Housing Lender.
+      </div>
+    </div>
+
+    <!-- ═══ DOC SCANNER / 1003 ═══ -->
+    <div id="sec-scanner" class="sec">
+      <div class="sech">Document Scanner — 1003 Auto-Fill &amp; Calyx Export</div>
+      <!-- DOC TYPE -->
+      <div class="card">
+        <div class="ct">Document Type</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+          <div id="dt-AUTO" class="utb act" onclick="setDT('AUTO')">Auto Detect</div>
+          <div id="dt-GFE" class="utb" onclick="setDT('GFE')">GFE</div>
+          <div id="dt-TRID_LE" class="utb" onclick="setDT('TRID_LE')">TRID Loan Est.</div>
+          <div id="dt-TRID_CD" class="utb" onclick="setDT('TRID_CD')">TRID Closing</div>
+          <div id="dt-HUD1" class="utb" onclick="setDT('HUD1')">HUD-1</div>
+          <div id="dt-W2" class="utb" onclick="setDT('W2')">W-2</div>
+          <div id="dt-PAYSTUB" class="utb" onclick="setDT('PAYSTUB')">Pay Stub</div>
+          <div id="dt-BANK_STMT" class="utb" onclick="setDT('BANK_STMT')">Bank Statement</div>
+          <div id="dt-1003" class="utb" onclick="setDT('1003')">1003 Form</div>
+        </div>
+      </div>
+      <!-- UPLOAD -->
+      <div class="card">
+        <div class="ct">Upload or Capture</div>
+        <div id="scan-preview-wrap" style="display:none;position:relative;margin-bottom:12px">
+          <img id="scan-preview" src="" style="width:100%;border-radius:8px;max-height:260px;object-fit:contain;background:#000"/>
+          <button onclick="clearScan()" style="position:absolute;top:8px;right:8px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer">✕</button>
+        </div>
+        <div class="upload-zone" id="scan-upload-zone" onclick="document.getElementById('scan-file').click()">
+          <div style="font-size:36px;margin-bottom:8px">📄</div>
+          <div style="font-size:13px;color:var(--dim)">Tap to upload or take photo</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">GFE · TRID · HUD-1 · W-2 · Pay Stub · Bank Statement · 1003</div>
+          <div style="font-size:11px;color:var(--blue);margin-top:6px">Works with CamScanner exports, photos, PDF screenshots</div>
+        </div>
+        <input type="file" id="scan-file" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="onScanFile(this)"/>
+        <button class="btn btn-gold" id="scan-parse-btn" onclick="parseScanDoc()" disabled style="opacity:.5">🔍 EXTRACT 1003 DATA WITH AI</button>
+        <div class="prog-bar" id="scan-prog-bar"><div class="prog-fill" id="scan-prog-fill"></div></div>
+        <div id="scan-log" style="margin-top:10px;font-size:11px;color:var(--dim);text-align:center"></div>
+      </div>
+      <!-- SCANNED LIST -->
+      <div class="card" id="scan-doc-list" style="display:none">
+        <div class="ct">Scanned Documents <span style="font-size:10px;background:rgba(74,143,212,.15);color:var(--blue);border-radius:10px;padding:2px 8px;font-weight:700;margin-left:6px">AI PARSED</span></div>
+        <div id="scan-chips"></div>
+        <div style="margin-top:10px;font-size:11px;color:var(--dim)">Multiple documents merge automatically into the 1003 below.</div>
+      </div>
+      <!-- 1003 TABS -->
+      <div class="card">
+        <div class="ct">1003 — Uniform Residential Loan Application</div>
+        <div class="usda-tabs">
+          <div class="utb act" onclick="show1003('loan-prop')">Loan &amp; Property</div>
+          <div class="utb" onclick="show1003('borrower')">Borrower</div>
+          <div class="utb" onclick="show1003('employment')">Employment</div>
+          <div class="utb" onclick="show1003('assets')">Assets &amp; Liabilities</div>
+          <div class="utb" onclick="show1003('costs')">Closing Costs</div>
+          <div class="utb" onclick="show1003('ratios')">Ratios</div>
+        </div>
+        <div id="aibanner" class="ai-banner" style="display:none">✅ Green fields auto-filled by AI. Review and correct as needed.</div>
+        <!-- Loan & Property -->
+        <div id="sec1003-loan-prop" class="usec act">
+          <div class="stitle">Loan</div>
+          <div class="frow2"><div class="fld"><label>Loan Purpose</label><select id="f1_loan_purpose"><option value="">Select</option><option>Purchase</option><option>Refinance</option><option>Cash-Out Refinance</option></select></div><div class="fld"><label>Loan Type</label><select id="f1_loan_type"><option value="">Select</option><option>Conventional</option><option>FHA</option><option>VA</option><option>USDA</option><option>Jumbo</option><option>Non-QM</option></select></div></div>
+          <div class="frow3"><div class="fld"><label>Loan Amount ($)</label><input type="text" id="f1_loan_amount"/></div><div class="fld"><label>Rate (%)</label><input type="text" id="f1_interest_rate"/></div><div class="fld"><label>Term (mo)</label><input type="text" id="f1_term_months"/></div></div>
+          <div class="frow3"><div class="fld"><label>Amortization</label><select id="f1_amort_type"><option>Fixed</option><option>ARM</option></select></div><div class="fld"><label>Monthly P&amp;I ($)</label><input type="text" id="f1_monthly_pi"/></div><div class="fld"><label>APR (%)</label><input type="text" id="f1_apr"/></div></div>
+          <div class="stitle" style="margin-top:14px">Property</div>
+          <div class="fld" style="margin-bottom:10px"><label>Property Address</label><input type="text" id="f1_prop_address"/></div>
+          <div class="frow3"><div class="fld"><label>City</label><input type="text" id="f1_prop_city"/></div><div class="fld"><label>State</label><input type="text" id="f1_prop_state"/></div><div class="fld"><label>ZIP</label><input type="text" id="f1_prop_zip"/></div></div>
+          <div class="frow3"><div class="fld"><label>County</label><input type="text" id="f1_prop_county"/></div><div class="fld"><label>Type</label><select id="f1_prop_type"><option>SFR</option><option>Condo</option><option>Townhome</option><option>2-4 Unit</option><option>Manufactured</option></select></div><div class="fld"><label>Occupancy</label><select id="f1_occupancy"><option>Primary</option><option>Secondary</option><option>Investment</option></select></div></div>
+          <div class="frow2"><div class="fld"><label>Purchase Price ($)</label><input type="text" id="f1_purchase_price"/></div><div class="fld"><label>Appraised Value ($)</label><input type="text" id="f1_appraised_value"/></div></div>
+        </div>
+        <!-- Borrower -->
+        <div id="sec1003-borrower" class="usec">
+          <div class="stitle">Borrower</div>
+          <div class="frow3"><div class="fld"><label>First Name</label><input type="text" id="f1_first_name"/></div><div class="fld"><label>Middle</label><input type="text" id="f1_middle_name"/></div><div class="fld"><label>Last Name</label><input type="text" id="f1_last_name"/></div></div>
+          <div class="frow3"><div class="fld"><label>SSN Last 4</label><input type="text" id="f1_ssn_masked" maxlength="4"/></div><div class="fld"><label>DOB</label><input type="text" id="f1_dob"/></div><div class="fld"><label>Marital Status</label><select id="f1_marital_status"><option value="">Select</option><option>Married</option><option>Unmarried</option><option>Separated</option></select></div></div>
+          <div class="frow2"><div class="fld"><label>Phone</label><input type="text" id="f1_phone"/></div><div class="fld"><label>Email</label><input type="text" id="f1_email"/></div></div>
+          <div class="fld" style="margin-bottom:10px"><label>Current Address</label><input type="text" id="f1_address"/></div>
+          <div class="frow3"><div class="fld"><label>City</label><input type="text" id="f1_city"/></div><div class="fld"><label>State</label><input type="text" id="f1_state"/></div><div class="fld"><label>ZIP</label><input type="text" id="f1_zip"/></div></div>
+          <div class="frow3"><div class="fld"><label>Own/Rent</label><select id="f1_own_rent"><option>Own</option><option>Rent</option><option>Rent-Free</option></select></div><div class="fld"><label>Years There</label><input type="text" id="f1_years_there"/></div><div class="fld"><label>Dependents</label><input type="text" id="f1_dependents"/></div></div>
+          <div class="stitle" style="margin-top:12px">Co-Borrower</div>
+          <div class="frow3"><div class="fld"><label>First Name</label><input type="text" id="f1_co_first_name"/></div><div class="fld"><label>Last Name</label><input type="text" id="f1_co_last_name"/></div><div class="fld"><label>SSN Last 4</label><input type="text" id="f1_co_ssn_masked" maxlength="4"/></div></div>
+          <div class="frow2"><div class="fld"><label>Phone</label><input type="text" id="f1_co_phone"/></div><div class="fld"><label>Email</label><input type="text" id="f1_co_email"/></div></div>
+        </div>
+        <!-- Employment -->
+        <div id="sec1003-employment" class="usec">
+          <div class="stitle">Employment &amp; Income</div>
+          <div class="frow2"><div class="fld"><label>Employer</label><input type="text" id="f1_employer_name"/></div><div class="fld"><label>Position</label><input type="text" id="f1_position_title"/></div></div>
+          <div class="fld" style="margin-bottom:10px"><label>Employer Address</label><input type="text" id="f1_employer_address"/></div>
+          <div class="frow3"><div class="fld"><label>Years Employed</label><input type="text" id="f1_years_employed"/></div><div class="fld"><label>Self-Employed?</label><select id="f1_self_employed"><option>No</option><option>Yes</option></select></div><div class="fld"><label>Base Monthly ($)</label><input type="text" id="f1_base_monthly"/></div></div>
+          <div class="frow3"><div class="fld"><label>Overtime/Mo ($)</label><input type="text" id="f1_overtime_monthly"/></div><div class="fld"><label>Bonus/Mo ($)</label><input type="text" id="f1_bonus_monthly"/></div><div class="fld"><label>Commission/Mo ($)</label><input type="text" id="f1_commission_monthly"/></div></div>
+          <div class="frow2"><div class="fld"><label>Other Income/Mo ($)</label><input type="text" id="f1_other_monthly"/></div><div class="fld"><label>TOTAL Monthly ($)</label><input type="text" id="f1_total_monthly" style="border-color:var(--gold);font-weight:700"/></div></div>
+        </div>
+        <!-- Assets -->
+        <div id="sec1003-assets" class="usec">
+          <div class="stitle">Assets</div>
+          <div class="frow3"><div class="fld"><label>Checking ($)</label><input type="text" id="f1_checking"/></div><div class="fld"><label>Savings ($)</label><input type="text" id="f1_savings"/></div><div class="fld"><label>401k ($)</label><input type="text" id="f1_retirement_401k"/></div></div>
+          <div class="frow3"><div class="fld"><label>Stocks/Bonds ($)</label><input type="text" id="f1_stocks_bonds"/></div><div class="fld"><label>Gift Funds ($)</label><input type="text" id="f1_gift_funds"/></div><div class="fld"><label>Total Assets ($)</label><input type="text" id="f1_total_assets" style="border-color:var(--gold);font-weight:700"/></div></div>
+          <div class="stitle" style="margin-top:12px">Monthly Liabilities</div>
+          <div class="frow3"><div class="fld"><label>Credit Card Min ($)</label><input type="text" id="f1_credit_card_min"/></div><div class="fld"><label>Auto Payment ($)</label><input type="text" id="f1_auto_payment"/></div><div class="fld"><label>Student Loan ($)</label><input type="text" id="f1_student_loan"/></div></div>
+          <div class="frow2"><div class="fld"><label>Other Monthly Debt ($)</label><input type="text" id="f1_other_monthly_debt"/></div><div class="fld"><label>TOTAL Monthly Debt ($)</label><input type="text" id="f1_total_monthly_debt" style="border-color:var(--red);font-weight:700"/></div></div>
+        </div>
+        <!-- Costs -->
+        <div id="sec1003-costs" class="usec">
+          <div class="stitle">Closing Costs</div>
+          <div class="frow3"><div class="fld"><label>Origination Fee ($)</label><input type="text" id="f1_origination_amt"/></div><div class="fld"><label>Discount Points</label><input type="text" id="f1_discount_pts"/></div><div class="fld"><label>Appraisal ($)</label><input type="text" id="f1_appraisal"/></div></div>
+          <div class="frow3"><div class="fld"><label>Title Insurance ($)</label><input type="text" id="f1_title_insurance"/></div><div class="fld"><label>Escrow Fee ($)</label><input type="text" id="f1_escrow_fee"/></div><div class="fld"><label>Seller Concessions ($)</label><input type="text" id="f1_seller_concessions"/></div></div>
+          <div class="frow3"><div class="fld"><label>Lender Credits ($)</label><input type="text" id="f1_lender_credits"/></div><div class="fld"><label>Total Closing Costs ($)</label><input type="text" id="f1_total_closing_costs" style="border-color:var(--gold);font-weight:700"/></div><div class="fld"><label>CASH TO CLOSE ($)</label><input type="text" id="f1_cash_to_close" style="border-color:var(--green);font-weight:800"/></div></div>
+        </div>
+        <!-- Ratios -->
+        <div id="sec1003-ratios" class="usec">
+          <div class="stitle">Qualifying Ratios</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <div class="fld"><label>LTV (%)</label><input type="text" id="f1_ltv" style="font-weight:800"/></div>
+            <div class="fld"><label>CLTV (%)</label><input type="text" id="f1_cltv"/></div>
+            <div class="fld"><label>Front DTI (%)</label><input type="text" id="f1_front_dti"/></div>
+            <div class="fld"><label>Back DTI (%)</label><input type="text" id="f1_back_dti" style="font-weight:800"/></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-blue" onclick="save1003AndAnalyze()">SAVE 1003 &amp; RUN LOAN ANALYSIS →</button>
+      <!-- ANALYSIS RESULTS -->
+      <div id="analysis-out" style="display:none;margin-top:16px">
+        <div class="sech" style="margin-top:16px">Loan Analysis</div>
+        <div class="snap-grid" id="snap-grid"></div>
+        <div id="prog-cards-out"></div>
+        <button class="btn btn-green" id="calyx-btn" style="display:none" onclick="showExport()">GENERATE CALYX EXPORT →</button>
+      </div>
+      <!-- CALYX EXPORT -->
+      <div id="calyx-out" style="display:none;margin-top:16px">
+        <div class="sech">Calyx Point Export</div>
+        <div id="sel-prog-summary" class="card" style="font-size:13px"></div>
+        <button class="exp-btn" onclick="copyCalyxData()"><span style="font-size:18px">📋</span><div><div>Copy Fannie Mae Flat File</div><div style="font-size:10px;color:var(--dim);font-weight:400">Paste into Calyx → Import → Fannie Mae 3.2</div></div></button>
+        <button class="exp-btn" onclick="copyAllFields()"><span style="font-size:18px">🗒</span><div><div>Copy All 1003 Fields</div><div style="font-size:10px;color:var(--dim);font-weight:400">Manual Calyx entry reference</div></div></button>
+        <button class="exp-btn" onclick="downloadMISMO()"><span style="font-size:18px">📥</span><div><div>Download MISMO XML</div><div style="font-size:10px;color:var(--dim);font-weight:400">Calyx → File → Import → MISMO 2.x</div></div></button>
+        <div class="card"><div class="ct">Fannie Mae 3.2 Preview</div><div class="exp-block" id="calyx-preview"></div></div>
+        <div class="nmls">Saul Garcia NMLS #337526 | American 1st Partners NMLS #1773303 | 15615 Alton Pkwy Ste 450, Irvine CA 92618 | EnjoyBaja.com<br>Not a commitment to lend. All terms subject to credit approval and underwriting. Equal Housing Lender.</div>
+      </div>
+    </div>
+
+    <!-- ═══ AGENT PORTAL ═══ -->
+    <div id="sec-agent" class="sec">
+      <div class="sech">Agent Mortgage Center</div>
+      <div class="card">
+        <div class="ct">Pre-Qualification Intake</div>
+        <div class="frow2">
+          <div class="fld"><label>Client Full Name</label><input type="text" id="ag_name" placeholder="John Smith"/></div>
+          <div class="fld"><label>Phone</label><input type="text" id="ag_phone"/></div>
+        </div>
+        <div class="frow2">
+          <div class="fld"><label>Email</label><input type="text" id="ag_email"/></div>
+          <div class="fld"><label>Referring Agent</label><input type="text" id="ag_agent" placeholder="Agent name or DRE #"/></div>
+        </div>
+        <div class="frow2">
+          <div class="fld"><label>Loan Purpose</label>
+            <select id="ag_purpose"><option>Purchase</option><option>Refinance</option><option>Cash-Out Refinance</option></select></div>
+          <div class="fld"><label>Target Area</label>
+            <select id="ag_area"><option>Ensenada</option><option>Rosarito</option><option>Tijuana</option><option>Valle de Guadalupe</option><option>Los Cabos</option><option>San Diego, CA</option><option>Los Angeles, CA</option><option>Other</option></select></div>
+        </div>
+        <div class="frow3">
+          <div class="fld"><label>Purchase Price ($)</label><input type="number" id="ag_price" placeholder="350000"/></div>
+          <div class="fld"><label>Down Payment ($)</label><input type="number" id="ag_down" placeholder="35000"/></div>
+          <div class="fld"><label>Annual Income ($)</label><input type="number" id="ag_income" placeholder="90000"/></div>
+        </div>
+        <div class="frow3">
+          <div class="fld"><label>Credit Score</label>
+            <select id="ag_credit"><option>760+</option><option>740-759</option><option>720-739</option><option>700-719</option><option>680-699</option><option>660-679</option><option>640-659</option><option>620-639</option><option>580-619</option><option>Below 580</option></select></div>
+          <div class="fld"><label>Citizenship</label>
+            <select id="ag_nat"><option>US Citizen / PR</option><option>Foreign National</option><option>ITIN Borrower</option></select></div>
+          <div class="fld"><label>Monthly Debt ($)</label><input type="number" id="ag_debt" placeholder="500"/></div>
+        </div>
+        <button class="btn btn-gold" onclick="runAgentPrequal()">▶ RUN PRE-QUALIFICATION</button>
+      </div>
+      <div id="ag-result"></div>
+      <!-- LOAN PROGRAMS LIST -->
+      <div class="card" style="margin-top:14px">
+        <div class="ct">Available Programs — EnjoyBaja / American 1st Partners</div>
+        <div id="ag-programs-list"></div>
+      </div>
+      <div class="nmls">Saul Garcia NMLS #337526 | American 1st Partners NMLS #1773303 | Not a commitment to lend. Equal Housing Lender.</div>
+    </div>
+
+    <!-- ═══ USDA 504 ═══ -->
+    <div id="sec-usda" class="sec">
+      <div class="sech">USDA Section 504 — Home Repair Program</div>
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+        <div class="usda-stat"><div class="usda-stat-val">$40,000</div><div class="usda-stat-lbl">Max Loan</div></div>
+        <div class="usda-stat"><div class="usda-stat-val">1%</div><div class="usda-stat-lbl">Fixed Rate</div></div>
+        <div class="usda-stat"><div class="usda-stat-val">20 Yr</div><div class="usda-stat-lbl">Loan Term</div></div>
+        <div class="usda-stat"><div class="usda-stat-val">$10,000</div><div class="usda-stat-lbl">Grant (62+)</div></div>
+        <div class="usda-stat"><div class="usda-stat-val">$0</div><div class="usda-stat-lbl">Down Payment</div></div>
+        <div class="usda-stat"><div class="usda-stat-val">$50K</div><div class="usda-stat-lbl">Max Combined</div></div>
+      </div>
+      <div class="usda-tabs">
+        <div class="utb act" onclick="showUSDA('overview')">Overview</div>
+        <div class="utb" onclick="showUSDA('requirements')">Requirements</div>
+        <div class="utb" onclick="showUSDA('calculator')">Calculator</div>
+        <div class="utb" onclick="showUSDA('application')">Application</div>
+        <div class="utb" onclick="showUSDA('checklist')">Checklist</div>
+        <div class="utb" onclick="showUSDA('contacts')">Contacts</div>
+      </div>
+      <!-- Overview -->
+      <div id="usda-overview" class="usec act card">
+        <div class="ct">USDA Section 504 — SHE Channel</div>
+        <p style="font-size:13px;line-height:1.7;color:var(--dim);margin-bottom:12px">Self-Help Enterprises (SHE) administers USDA Section 504 Home Repair loans and grants in partnership with USDA Rural Development. The program assists very low-income rural homeowners in repairing, improving, or modernizing their homes and removing health and safety hazards.</p>
+        <div style="display:grid;gap:8px">
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--green)"></div><div class="pipe-name">Loans: up to $40,000 at 1% fixed interest, 20-year term</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--green)"></div><div class="pipe-name">Grants: up to $10,000 for homeowners age 62+</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--green)"></div><div class="pipe-name">Combined loan + grant: up to $50,000</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--blue)"></div><div class="pipe-name">Must be owner-occupied primary residence in rural area</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--blue)"></div><div class="pipe-name">Servicer: Self-Help Enterprises — Central Valley &amp; Rural CA</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--gold)"></div><div class="pipe-name">LO: Saul Garcia NMLS #337526 | American 1st Partners</div></div>
+        </div>
+      </div>
+      <!-- Requirements -->
+      <div id="usda-requirements" class="usec card">
+        <div class="ct">Eligibility Requirements</div>
+        <div class="stitle">Borrower</div>
+        <div style="display:grid;gap:6px;margin-bottom:12px">
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--green)"></div><div class="pipe-name" style="font-size:12px">Must be the homeowner and primary occupant</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--green)"></div><div class="pipe-name" style="font-size:12px">Must be very low-income (50% or below area median)</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--green)"></div><div class="pipe-name" style="font-size:12px">Must be unable to obtain affordable credit elsewhere</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--green)"></div><div class="pipe-name" style="font-size:12px">US citizen or qualified alien</div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--green)"></div><div class="pipe-name" style="font-size:12px">Property must be in USDA-eligible rural area</div></div>
+        </div>
+        <div class="stitle">Property Use of Funds</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="usda-stat" style="text-align:left;padding:10px 12px"><div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:4px">Health &amp; Safety</div><div style="font-size:11px;color:var(--dim)">Roof, plumbing, electrical, mold remediation, structural repairs</div></div>
+          <div class="usda-stat" style="text-align:left;padding:10px 12px"><div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:4px">Accessibility</div><div style="font-size:11px;color:var(--dim)">Ramps, grab bars, widened doorways, bathroom modifications</div></div>
+          <div class="usda-stat" style="text-align:left;padding:10px 12px"><div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:4px">General Repair</div><div style="font-size:11px;color:var(--dim)">Windows, insulation, HVAC, water heater</div></div>
+          <div class="usda-stat" style="text-align:left;padding:10px 12px"><div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:4px">504 Loan Terms</div><div style="font-size:11px;color:var(--dim)">1% fixed, 20 years, no down payment, no prepayment penalty</div></div>
+        </div>
+      </div>
+      <!-- Calculator -->
+      <div id="usda-calculator" class="usec card">
+        <div class="ct">504 Loan Calculator</div>
+        <div class="frow2">
+          <div class="fld"><label>Loan Amount ($)</label><input type="number" id="u_loan" value="25000" oninput="calcUSDA()"/></div>
+          <div class="fld"><label>Grant Amount ($)</label><input type="number" id="u_grant" value="0" oninput="calcUSDA()"/></div>
+        </div>
+        <div class="frow2">
+          <div class="fld"><label>Rate (%)</label><input type="number" id="u_rate" value="1" step="0.125" oninput="calcUSDA()"/></div>
+          <div class="fld"><label>Term (years)</label><input type="number" id="u_term" value="20" oninput="calcUSDA()"/></div>
+        </div>
+        <div id="usda-calc-result" style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
+      </div>
+      <!-- Application -->
+      <div id="usda-application" class="usec card">
+        <div class="ct">504 Application Intake</div>
+        <div class="frow2"><div class="fld"><label>Applicant Full Name</label><input type="text" id="ua_name"/></div><div class="fld"><label>Phone</label><input type="text" id="ua_phone"/></div></div>
+        <div class="frow2"><div class="fld"><label>Email</label><input type="text" id="ua_email"/></div><div class="fld"><label>Date of Birth</label><input type="text" id="ua_dob" placeholder="MM/DD/YYYY"/></div></div>
+        <div class="fld" style="margin-bottom:10px"><label>Property Address</label><input type="text" id="ua_address"/></div>
+        <div class="frow3"><div class="fld"><label>City</label><input type="text" id="ua_city"/></div><div class="fld"><label>State</label><input type="text" id="ua_state" placeholder="CA"/></div><div class="fld"><label>ZIP</label><input type="text" id="ua_zip"/></div></div>
+        <div class="frow2"><div class="fld"><label>Annual Household Income ($)</label><input type="number" id="ua_income"/></div><div class="fld"><label>Household Size</label><input type="number" id="ua_hh_size" value="2"/></div></div>
+        <div class="fld" style="margin-bottom:12px"><label>Describe Repairs Needed</label><textarea id="ua_repairs" rows="3" style="background:var(--bg2);border:1px solid var(--bord);border-radius:7px;color:var(--txt);font-size:12.5px;padding:8px 10px;outline:none;width:100%;resize:vertical"></textarea></div>
+        <div class="frow2">
+          <div class="fld"><label>Requested Loan ($)</label><input type="number" id="ua_loan_amt" max="40000"/></div>
+          <div class="fld"><label>Grant Request (if 62+) ($)</label><input type="number" id="ua_grant_amt" max="10000"/></div>
+        </div>
+        <button class="btn btn-gold" onclick="submitUSDAApp()">SUBMIT 504 INTAKE APPLICATION</button>
+        <div id="usda-app-result" style="margin-top:10px;font-size:12px;min-height:20px"></div>
+      </div>
+      <!-- Checklist -->
+      <div id="usda-checklist" class="usec card">
+        <div class="ct">Document Checklist — Print or Share</div>
+        <div id="checklist-items" style="display:grid;gap:8px"></div>
+        <button class="btn btn-blue" style="margin-top:12px" onclick="printChecklist()">PRINT CHECKLIST</button>
+      </div>
+      <!-- Contacts -->
+      <div id="usda-contacts" class="usec card">
+        <div class="ct">Program Contacts</div>
+        <div style="display:grid;gap:8px">
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--gold)"></div><div><div class="pipe-name">Saul Garcia — Loan Officer</div><div class="pipe-meta">NMLS #337526 | American 1st Partners | +1 (831) 251-3116</div></div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--blue)"></div><div><div class="pipe-name">Self-Help Enterprises (SHE)</div><div class="pipe-meta">USDA 504 Program Servicer | Visalia, CA | (559) 651-1000</div></div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--blue)"></div><div><div class="pipe-name">Rick Gonzales — SHE Director</div><div class="pipe-meta">rgonzales@selfhelpenterprises.org</div></div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--blue)"></div><div><div class="pipe-name">Sintia Puckett — SHE LO</div><div class="pipe-meta">spuckett@selfhelpenterprises.org</div></div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--blue)"></div><div><div class="pipe-name">Grace Carrasco — SHE LO</div><div class="pipe-meta">gcarrasco@selfhelpenterprises.org</div></div></div>
+          <div class="pipe-row"><div class="pipe-status" style="background:var(--dim)"></div><div><div class="pipe-name">USDA Rural Development — CA State Office</div><div class="pipe-meta">(916) 857-3600 | rd.usda.gov/ca</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PIPELINE ═══ -->
+    <div id="sec-pipeline" class="sec">
+      <div class="sech">Loan Pipeline</div>
+      <div class="card">
+        <div class="ct">Add File to Pipeline</div>
+        <div class="frow3">
+          <div class="fld"><label>Borrower Name</label><input type="text" id="pp_name"/></div>
+          <div class="fld"><label>Loan Amount ($)</label><input type="text" id="pp_loan"/></div>
+          <div class="fld"><label>Program</label><select id="pp_prog"><option>Conventional</option><option>FHA</option><option>VA</option><option>USDA</option><option>Jumbo</option><option>Non-QM</option><option>USDA 504</option><option>SBA 7(a)</option></select></div>
+        </div>
+        <div class="frow3">
+          <div class="fld"><label>Status</label><select id="pp_status"><option>Pre-Qual</option><option>Application</option><option>Processing</option><option>Underwriting</option><option>Conditional Approval</option><option>Clear to Close</option><option>Funded</option><option>On Hold</option><option>Declined</option></select></div>
+          <div class="fld"><label>LO</label><input type="text" id="pp_lo" value="Saul Garcia"/></div>
+          <div class="fld"><label>Notes</label><input type="text" id="pp_notes" placeholder="Optional"/></div>
+        </div>
+        <button class="btn btn-gold" onclick="addPipelineFile()">+ ADD TO PIPELINE</button>
+      </div>
+      <div id="pipeline-list"></div>
+      <div class="card" style="margin-top:4px">
+        <div class="ct">Pipeline Summary</div>
+        <div id="pipeline-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
+      </div>
+      <button class="btn btn-blue" onclick="exportPipeline()" style="margin-top:8px">COPY PIPELINE EXPORT</button>
+    </div>
+
+
+    <!-- AFFILIATE LENDERS -->
+    <div id="sec-affiliate" class="sec">
+      <div class="sech">Affiliate Lending Partners</div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="ct">Round Sky — Live Loan Application <span style="font-size:10px;background:rgba(34,197,94,.15);color:var(--green);border-radius:10px;padding:2px 8px;margin-left:8px;font-weight:700">UP TO $250/LEAD</span></div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6">50+ lenders. Clients apply directly below and get matched in real time. You earn up to $250 per submitted lead. Tap SET MY AFFILIATE ID to activate your tracking.</p>
+        <div style="background:var(--bg2);border:1px solid var(--bord);border-radius:10px;overflow:hidden;min-height:520px">
+          <div style="padding:24px;text-align:center;background:rgba(0,0,0,.3);border-radius:10px">
+            <div style="font-size:32px;margin-bottom:10px">💰</div>
+            <div style="font-size:15px;font-weight:800;color:var(--gold);margin-bottom:6px">Round Sky — 50+ Lenders, Real Time</div>
+            <div style="font-size:11px;color:var(--dim);margin-bottom:18px;line-height:1.6">Get matched instantly. No impact to credit score. Up to $50K. Opens in new tab with your affiliate tracking active.</div>
+            <button onclick="openRoundSkyAffiliate()" style="background:var(--gold);color:#0d1117;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:800;cursor:pointer;width:100%">APPLY NOW — SEE YOUR OFFERS →</button>
+            <div style="font-size:10px;color:var(--muted);margin-top:10px">Set your Round Sky affiliate ID above to activate commission tracking on every click.</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <button onclick="window.open('https://www.roundsky.com/affiliate','_blank')" style="background:var(--gold);color:#0d1117;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:800;cursor:pointer">SIGN UP — ROUND SKY</button>
+          <button onclick="updateRoundSkyID()" style="background:var(--card2);color:var(--txt);border:1px solid var(--bord);border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer">SET MY AFFILIATE ID</button>
+        </div>
+      </div>
+      <div class="sech" style="font-size:13px">Top Programs</div>
+      <div id="aff-cards"></div>
+      <div class="card" style="margin-top:6px">
+        <div class="ct">Commission Tracker</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+          <div class="usda-stat"><div class="usda-stat-val" id="aff-leads">0</div><div class="usda-stat-lbl">Leads Logged</div></div>
+          <div class="usda-stat"><div class="usda-stat-val" id="aff-est">$0</div><div class="usda-stat-lbl">Est. Commissions</div></div>
+          <div class="usda-stat"><div class="usda-stat-val" id="aff-programs">0</div><div class="usda-stat-lbl">Programs Active</div></div>
+        </div>
+        <div class="frow3">
+          <div class="fld"><label>Program</label>
+            <select id="aff-prog-sel">
+              <option value="250">Round Sky ($250/lead)</option>
+              <option value="300">Lead Stack Media ($300/lead)</option>
+              <option value="240">Credible ($240/sale)</option>
+              <option value="300">SoFi ($300/personal)</option>
+              <option value="100">LendingClub ($100/referral)</option>
+              <option value="70">LendingTree ($70/lead)</option>
+              <option value="120">Upstart ($120/sale)</option>
+              <option value="100">OppLoans ($100/funded)</option>
+            </select></div>
+          <div class="fld"><label>Leads This Month</label><input type="number" id="aff-lead-in" placeholder="0" oninput="calcAffComm()"/></div>
+          <div class="fld"><label>Est. Commission</label><input type="text" id="aff-comm-out" readonly style="border-color:var(--green);font-weight:800;color:var(--green)"/></div>
+        </div>
+        <button class="btn btn-gold" onclick="logAffLead()" style="margin-top:6px">+ LOG LEAD</button>
+        <div id="aff-log" style="margin-top:12px;max-height:160px;overflow-y:auto"></div>
+      </div>
+      <div class="nmls">Affiliate disclosures: Commission rates approximate and subject to change. Saul Garcia NMLS #337526 | American 1st Partners NMLS #1773303. All referrals subject to lender approval. Equal Housing Lender.</div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+var API='https://auditdna-backend-1-production.up.railway.app';
+var CONF_LIMIT=806500;
+
+// ── PIN GATE ─────────────────────────────────────────────────────────────────
+var pin='';
+function np(v){
+  if(v==='C'){pin='';updateDots();document.getElementById('gerr').textContent='';return;}
+  if(pin.length<4) pin+=v;
+  updateDots();
+  if(pin.length===4) setTimeout(checkPin,100);
+}
+function updateDots(){for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='dot'+(i<pin.length?' on':'');}}
+function checkPin(){
+  if(pin==='0609'){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    initAgentPrograms();calcUSDA();renderChecklist();initAffCards();
+  }else{document.getElementById('gerr').textContent='Invalid PIN';pin='';updateDots();}
+}
+function doLock(){pin='';updateDots();document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';}
+
+// ── MODULE TABS ──────────────────────────────────────────────────────────────
+function showMod(id){
+  document.querySelectorAll('.mt').forEach(function(t){t.classList.toggle('act',t.dataset.m===id);});
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.toggle('act',s.id==='sec-'+id);});
+}
+
+// ── LOAN FINDER ──────────────────────────────────────────────────────────────
+var PROGRAMS=[
+  {id:'conv30',name:'Conventional 30-Year Fixed',icon:'🏠',types:['purchase_us','refi_us','cashout_us'],
+    minCredit:'620',maxLtv:97,minDown:'3%',mi:'PMI if LTV>80%',
+    desc:'Standard Fannie Mae / Freddie Mac. Best rates for 740+ FICO. No MI above 20% down.',
+    tags:['740+ Best Rate','No MI w/ 20% Down','DU/LP Approval','Up to $806K']},
+  {id:'fha',name:'FHA 30-Year Fixed',icon:'🏛',types:['purchase_us','refi_us','fha'],
+    minCredit:'580',maxLtv:96.5,minDown:'3.5%',mi:'MIP Required',
+    desc:'3.5% down with 580+ FICO. Flexible DTI up to 50% with AUS. Best for lower credit scores.',
+    tags:['3.5% Down','580+ FICO','High DTI OK','First-Time Buyer']},
+  {id:'va',name:'VA Loan — 0% Down',icon:'🎖',types:['purchase_us','refi_us','va'],
+    minCredit:'580',maxLtv:100,minDown:'0%',mi:'VA Funding Fee Only',
+    desc:'Eligible veterans and active duty. No down payment, no monthly MI, competitive rates.',
+    tags:['0% Down','No PMI','580+ FICO','Veterans Only']},
+  {id:'usda_rh',name:'USDA Rural Housing — 0% Down',icon:'🌾',types:['purchase_us','usda'],
+    minCredit:'640',maxLtv:100,minDown:'0%',mi:'Guarantee Fee + Annual',
+    desc:'Rural and suburban eligible areas. 0% down, below-market rates, income limits apply.',
+    tags:['0% Down','Rural Areas','Income Limits','640+ FICO']},
+  {id:'jumbo',name:'Jumbo — Above $806K',icon:'🏙',types:['purchase_us','refi_us','jumbo'],
+    minCredit:'700',maxLtv:90,minDown:'10%',mi:'No PMI (lender dep.)',
+    desc:'Loans above the $806,500 conforming limit. Portfolio and investor products. 12-24 mo reserves.',
+    tags:['$806K+','10% Min Down','700+ FICO','12-24 Mo Reserves']},
+  {id:'bank_stmt',name:'Bank Statement / Non-QM',icon:'📊',types:['purchase_us','refi_us','cashout_us','bank_stmt'],
+    minCredit:'600',maxLtv:85,minDown:'15%',mi:'PMI varies',
+    desc:'12-24 month bank statements in lieu of W2. Self-employed, investors, foreign nationals.',
+    tags:['Bank Stmt OK','Self-Employed','Foreign National','DSCR Available']},
+  {id:'mx_purchase',name:'Mexico / Baja California Purchase',icon:'🇲🇽',types:['purchase_mx'],
+    minCredit:'600',maxLtv:70,minDown:'30%',mi:'Varies',
+    desc:'Cross-border financing for Ensenada, Rosarito, Tijuana, Valle de Guadalupe, Los Cabos. US citizens, PR, and foreign nationals.',
+    tags:['Cross-Border','Baja CA','US Citizens OK','Foreign Nationals']},
+  {id:'cashout',name:'Cash-Out Refinance',icon:'💰',types:['cashout_us','refi_us'],
+    minCredit:'620',maxLtv:80,minDown:'N/A',mi:'If LTV>80%',
+    desc:'Access equity up to 80% LTV. Pay off debt, invest, or fund renovations.',
+    tags:['Up to 80% LTV','Debt Payoff','Investment','Primary & Investment']},
+  {id:'sba',name:'SBA 7(a) Business Loan',icon:'🏢',types:['sba'],
+    minCredit:'640',maxLtv:null,minDown:'10%',mi:'SBA Guarantee Fee',
+    desc:'Up to $5M for business purchase, expansion, or commercial real estate. 25-year terms.',
+    tags:['Up to $5M','25-Year Term','Commercial RE','Working Capital']},
+  {id:'audit',name:'Mortgage Audit & Recovery',icon:'🔍',types:['audit'],
+    minCredit:null,maxLtv:null,minDown:null,mi:'No Recovery = No Fee',
+    desc:'AI audit analyzes your existing loan for overcharges, servicer errors, and CFPB violations.',
+    tags:['CFPB Complaint','QWR Deadline','Servicer Errors','No Fee If No Recovery']},
+];
+
+function numFmt(n){return n?parseFloat(n).toLocaleString():'0';}
+
+function runFinder(){
+  var ltype=document.getElementById('f-type').value;
+  var price=parseFloat(document.getElementById('f-price').value)||0;
+  var down=parseFloat(document.getElementById('f-down').value)||0;
+  var credit=document.getElementById('f-credit').value;
+  var nat=document.getElementById('f-nat').value;
+  var income=parseFloat(document.getElementById('f-income').value)||0;
+  var termVal=document.getElementById('f-term').value;
+  if(!ltype){alert('Please select a loan purpose.');return;}
+  var loanAmt=ltype.startsWith('purchase')?Math.max(price-down,0):price;
+  var ltv=price>0?Math.round((loanAmt/price)*100):0;
+  var termYears=termVal.startsWith('arm')?30:parseInt(termVal)||30;
+  var rates={'conventional':6.875,'fha':6.625,'va':6.375,'usda':6.5,'jumbo':7.25,'nonqm':8.5,'mx':7.75};
+  function getRate(id){
+    if(id.includes('va'))return rates.va;
+    if(id.includes('fha'))return rates.fha;
+    if(id.includes('usda'))return rates.usda;
+    if(id.includes('jumbo'))return rates.jumbo;
+    if(id.includes('bank')||id.includes('nonqm'))return rates.nonqm;
+    if(id.includes('mx'))return rates.mx;
+    return rates.conventional;
+  }
+  function calcPmt(p,r,n){var mr=r/100/12;return p*(mr*Math.pow(1+mr,n))/(Math.pow(1+mr,n)-1);}
+
+  var matches=PROGRAMS.filter(function(p){return p.types.indexOf(ltype)>=0;});
+  if(!matches.length) matches=PROGRAMS.slice(0,4);
+
+  var html='';
+  matches.forEach(function(p){
+    var rate=getRate(p.id);
+    var pmt=loanAmt&&rate?calcPmt(loanAmt,rate,termYears*12):0;
+    html+='<div class="result-card">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html+='<div style="font-size:14px;font-weight:800">'+p.icon+' '+p.name+'</div>';
+    if(p.id==='audit'||p.id==='mx_purchase') html+='<span class="pbadge badge-best">FEATURED</span>';
+    html+='</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">';
+    if(pmt) html+='<div class="pst"><div class="pst-l">Est. Payment</div><div class="pst-v">$'+Math.round(pmt).toLocaleString()+'/mo</div></div>';
+    html+='<div class="pst"><div class="pst-l">Rate (Est.)</div><div class="pst-v">'+rate.toFixed(3)+'%</div></div>';
+    html+='<div class="pst"><div class="pst-l">Min Down</div><div class="pst-v">'+p.minDown+'</div></div>';
+    html+='</div>';
+    html+='<div style="font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:8px">'+p.desc+'</div>';
+    html+='<div class="pli-tags">';
+    p.tags.forEach(function(t){html+='<span class="tag">'+t+'</span>';});
+    html+='</div>';
+    html+='<div style="display:flex;gap:8px;margin-top:10px">';
+    html+='<button onclick="window.open(\'https://financelend.me\',\'_blank\')" style="flex:1;background:var(--gold);color:#0d1117;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:800;cursor:pointer">Apply Now</button>';
+    html+='<button onclick="copyShareLink(\''+p.id+'\')" style="flex:1;background:var(--card2);color:var(--dim);border:1px solid var(--bord);border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer">Copy Link</button>';
+    html+='</div></div>';
+  });
+  document.getElementById('finder-results').innerHTML=html;
+}
+
+function copyShareLink(progId){
+  var url='https://financelend.me?program='+progId;
+  navigator.clipboard?navigator.clipboard.writeText(url).then(function(){alert('Link copied!');})
+  :prompt('Copy:',url);
+}
+
+// ── DOC SCANNER / 1003 ───────────────────────────────────────────────────────
+var scanImageData=null,scanImageType='image/jpeg',scanDocType='AUTO';
+var scan1003Form={},scan1003AI={},selectedProgId=null;
+
+function setDT(dt){
+  document.querySelectorAll('[id^="dt-"]').forEach(function(b){b.classList.remove('act');});
+  document.getElementById('dt-'+dt).classList.add('act');
+  scanDocType=dt;
+}
+function show1003(sec){
+  document.querySelectorAll('.usec').forEach(function(s){s.classList.remove('act');});
+  document.getElementById('sec1003-'+sec).classList.add('act');
+  document.querySelectorAll('.usda-tabs .utb').forEach(function(b,i){
+    var secs=['loan-prop','borrower','employment','assets','costs','ratios'];
+    b.classList.toggle('act',secs[i]===sec);
+  });
+}
+
+function onScanFile(inp){
+  var file=inp.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    scanImageData=ev.target.result.split(',')[1];
+    scanImageType=file.type||'image/jpeg';
+    document.getElementById('scan-preview').src=ev.target.result;
+    document.getElementById('scan-preview-wrap').style.display='block';
+    document.getElementById('scan-upload-zone').style.display='none';
+    var btn=document.getElementById('scan-parse-btn');
+    btn.disabled=false;btn.style.opacity='1';
+    document.getElementById('scan-log').textContent='Document loaded. Tap Extract to parse.';
+  };
+  reader.readAsDataURL(file);
+}
+function clearScan(){
+  scanImageData=null;
+  document.getElementById('scan-preview-wrap').style.display='none';
+  document.getElementById('scan-upload-zone').style.display='block';
+  var btn=document.getElementById('scan-parse-btn');
+  btn.disabled=true;btn.style.opacity='.5';
+  document.getElementById('scan-log').textContent='';
+  document.getElementById('scan-file').value='';
+}
+
+function parseScanDoc(){
+  if(!scanImageData){alert('Upload a document first.');return;}
+  var btn=document.getElementById('scan-parse-btn');
+  var log=document.getElementById('scan-log');
+  var bar=document.getElementById('scan-prog-bar');
+  var fill=document.getElementById('scan-prog-fill');
+  btn.disabled=true;btn.style.opacity='.5';
+  bar.style.display='block';fill.style.width='15%';
+  log.textContent='Sending to AI parser...';
+  setTimeout(function(){fill.style.width='45%';},600);
+  setTimeout(function(){fill.style.width='72%';log.textContent='Extracting 1003 fields...';},1500);
+  fetch(API+'/api/mortgage/parse-doc',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({image:scanImageData,mediaType:scanImageType,docType:scanDocType==='AUTO'?null:scanDocType})
+  }).then(function(r){return r.json();}).then(function(result){
+    fill.style.width='100%';
+    if(result.ok&&result.data){
+      var data=result.data;
+      mergeScan1003(data);
+      populate1003Fields();
+      var cnt=Object.values(scan1003Form).filter(Boolean).length;
+      log.innerHTML='<span style="color:var(--green)">✅ '+cnt+' fields extracted. Review in 1003 tabs above.</span>';
+      var wrap=document.getElementById('scan-doc-list');
+      var chips=document.getElementById('scan-chips');
+      wrap.style.display='block';
+      var chip=document.createElement('span');
+      chip.className='chip';chip.textContent=(data.doc_type||scanDocType)+' — '+new Date().toLocaleTimeString();
+      chips.appendChild(chip);
+    }else{
+      log.innerHTML='<span style="color:var(--red)">⚠ '+(result.error||'Parse error')+'</span>';
+    }
+    btn.disabled=false;btn.style.opacity='1';
+    setTimeout(function(){fill.style.width='0%';bar.style.display='none';},1200);
+  }).catch(function(e){
+    log.innerHTML='<span style="color:var(--red)">⚠ '+e.message+'</span>';
+    btn.disabled=false;btn.style.opacity='1';
+    fill.style.width='0%';bar.style.display='none';
+  });
+}
+
+function mergeScan1003(data){
+  var b=data.borrower||{},cb=data.co_borrower||{},emp=data.employment||{};
+  var loan=data.loan||{},prop=data.property||{},assets=data.assets||{};
+  var liab=data.liabilities||{},costs=data.costs||{},ratios=data.ratios||{};
+  function m(k,v){if(v!==null&&v!==undefined&&v!==''){scan1003Form[k]=v;scan1003AI[k]=true;}}
+  m('first_name',b.first_name);m('last_name',b.last_name);m('middle_name',b.middle_name);
+  m('ssn_masked',b.ssn_masked);m('dob',b.dob);m('phone',b.phone);m('email',b.email);
+  m('address',b.address);m('city',b.city);m('state',b.state);m('zip',b.zip);
+  m('own_rent',b.own_rent);m('years_there',b.years_there);m('marital_status',b.marital_status);m('dependents',b.dependents);
+  m('co_first_name',cb.first_name);m('co_last_name',cb.last_name);m('co_ssn_masked',cb.ssn_masked);m('co_phone',cb.phone);m('co_email',cb.email);
+  m('employer_name',emp.employer_name);m('employer_address',emp.employer_address);m('position_title',emp.position_title);
+  m('years_employed',emp.years_employed);m('self_employed',emp.self_employed);
+  m('base_monthly',emp.base_monthly);m('overtime_monthly',emp.overtime_monthly);m('bonus_monthly',emp.bonus_monthly);
+  m('commission_monthly',emp.commission_monthly);m('other_monthly',emp.other_monthly);m('total_monthly',emp.total_monthly);
+  m('loan_purpose',loan.purpose);m('loan_type',loan.loan_type);m('loan_amount',loan.loan_amount);
+  m('interest_rate',loan.interest_rate);m('term_months',loan.term_months);m('amort_type',loan.amort_type);
+  m('monthly_pi',loan.monthly_pi);m('apr',loan.apr);
+  m('prop_address',prop.address);m('prop_city',prop.city);m('prop_state',prop.state);m('prop_zip',prop.zip);
+  m('prop_county',prop.county);m('prop_type',prop.property_type);m('occupancy',prop.occupancy);
+  m('purchase_price',prop.purchase_price);m('appraised_value',prop.appraised_value);
+  m('checking',assets.checking);m('savings',assets.savings);m('retirement_401k',assets.retirement_401k);
+  m('stocks_bonds',assets.stocks_bonds);m('gift_funds',assets.gift_funds);m('total_assets',assets.total_assets);
+  m('credit_card_min',liab.credit_card_min);m('auto_payment',liab.auto_payment);m('student_loan',liab.student_loan);
+  m('other_monthly_debt',liab.other_monthly_debt);m('total_monthly_debt',liab.total_monthly_debt);
+  m('origination_amt',costs.origination_amt);m('discount_pts',costs.discount_pts);m('appraisal',costs.appraisal);
+  m('title_insurance',costs.title_insurance);m('escrow_fee',costs.escrow_fee);
+  m('seller_concessions',costs.seller_concessions);m('lender_credits',costs.lender_credits);
+  m('total_closing_costs',costs.total_closing_costs);m('cash_to_close',costs.cash_to_close);
+  m('ltv',ratios.ltv);m('cltv',ratios.cltv);m('front_dti',ratios.front_dti);m('back_dti',ratios.back_dti);
+}
+
+function populate1003Fields(){
+  document.getElementById('aibanner').style.display='block';
+  for(var k in scan1003Form){
+    var el=document.getElementById('f1_'+k);
+    if(el&&scan1003Form[k]){
+      if(el.tagName==='SELECT'){
+        for(var i=0;i<el.options.length;i++){
+          if(el.options[i].value===scan1003Form[k]||el.options[i].text===scan1003Form[k]){el.selectedIndex=i;break;}
+        }
+      }else{el.value=scan1003Form[k];if(scan1003AI[k])el.classList.add('ai');}
+    }
+  }
+  autoCalcRatios();
+}
+
+function getF(id){return parseFloat((document.getElementById(id)||{}).value)||0;}
+function getV(id){return ((document.getElementById(id)||{}).value)||'';}
+
+function autoCalcRatios(){
+  var la=getF('f1_loan_amount'),price=getF('f1_purchase_price')||getF('f1_appraised_value');
+  var income=getF('f1_total_monthly'),debt=getF('f1_total_monthly_debt');
+  var rate=getF('f1_interest_rate')/100/12,n=getF('f1_term_months')||360;
+  var pi=getF('f1_monthly_pi');
+  if(la&&rate&&n&&!pi){
+    pi=la*(rate*Math.pow(1+rate,n))/(Math.pow(1+rate,n)-1);
+    document.getElementById('f1_monthly_pi').value=pi.toFixed(2);
+  }
+  if(la&&price){document.getElementById('f1_ltv').value=(la/price*100).toFixed(1);}
+  if(pi&&income){
+    document.getElementById('f1_front_dti').value=(pi/income*100).toFixed(1);
+    document.getElementById('f1_back_dti').value=((pi+debt)/income*100).toFixed(1);
+  }
+}
+
+function read1003(){
+  var keys=['loan_purpose','loan_type','loan_amount','interest_rate','term_months','amort_type','monthly_pi','apr',
+    'prop_address','prop_city','prop_state','prop_zip','prop_county','prop_type','occupancy','purchase_price','appraised_value',
+    'first_name','middle_name','last_name','ssn_masked','dob','phone','email','address','city','state','zip',
+    'own_rent','years_there','marital_status','dependents','co_first_name','co_last_name','co_ssn_masked','co_phone','co_email',
+    'employer_name','position_title','employer_address','years_employed','self_employed',
+    'base_monthly','overtime_monthly','bonus_monthly','commission_monthly','other_monthly','total_monthly',
+    'checking','savings','retirement_401k','stocks_bonds','gift_funds','total_assets',
+    'credit_card_min','auto_payment','student_loan','other_monthly_debt','total_monthly_debt',
+    'origination_amt','discount_pts','appraisal','title_insurance','escrow_fee',
+    'seller_concessions','lender_credits','total_closing_costs','cash_to_close','ltv','cltv','front_dti','back_dti'];
+  var out={};
+  keys.forEach(function(k){var el=document.getElementById('f1_'+k);if(el)out[k]=el.value||'';});
+  return out;
+}
+
+function save1003AndAnalyze(){
+  autoCalcRatios();
+  var d=read1003();
+  var la=parseFloat(d.loan_amount)||0,price=parseFloat(d.purchase_price)||parseFloat(d.appraised_value)||0;
+  var ltv=price?la/price*100:parseFloat(d.ltv)||0;
+  var backDti=parseFloat(d.back_dti)||0,income=parseFloat(d.total_monthly)||0;
+  var pi=parseFloat(d.monthly_pi)||0,isJumbo=la>CONF_LIMIT;
+  // Snapshot
+  document.getElementById('analysis-out').style.display='block';
+  var snapHtml=[
+    {l:'Loan Amount',v:'$'+numFmt(la)},{l:'LTV',v:ltv.toFixed(1)+'%'},{l:'Back DTI',v:backDti.toFixed(1)+'%'},
+    {l:'Monthly P&I',v:'$'+numFmt(pi)},{l:'Income',v:'$'+numFmt(income)+'/mo'},{l:'Type',v:isJumbo?'JUMBO':'CONFORMING'}
+  ].map(function(x){return '<div class="snap-item"><div class="snap-l">'+x.l+'</div><div class="snap-v">'+x.v+'</div></div>';}).join('');
+  document.getElementById('snap-grid').innerHTML=snapHtml;
+  // Programs
+  var progs=[
+    {id:'conventional',n:'Conventional',elig:ltv<=97&&!isJumbo,best:ltv<=80&&!isJumbo,
+      chk:[{ok:ltv<=97,t:'LTV '+ltv.toFixed(1)+'% ≤ 97%'},{ok:backDti<=45||!backDti,t:'DTI '+backDti.toFixed(1)+'% ≤ 45%'},{ok:!isJumbo,t:'Conforming limit $'+numFmt(CONF_LIMIT)}]},
+    {id:'fha',n:'FHA',elig:ltv<=96.5&&!isJumbo,best:ltv>80&&ltv<=96.5&&!isJumbo,
+      chk:[{ok:ltv<=96.5,t:'LTV '+ltv.toFixed(1)+'% ≤ 96.5%'},{ok:backDti<=50||!backDti,t:'DTI '+backDti.toFixed(1)+'% ≤ 50%'},{ok:true,t:'Min FICO 580'}]},
+    {id:'va',n:'VA',elig:ltv<=100,best:false,
+      chk:[{ok:ltv<=100,t:'0% down allowed'},{ok:backDti<=41||!backDti,t:'DTI '+backDti.toFixed(1)+'% guideline 41%'},{ok:true,t:'COE required'}]},
+    {id:'usda',n:'USDA Rural',elig:ltv<=100&&backDti<=41,best:false,
+      chk:[{ok:true,t:'Rural eligible area required'},{ok:backDti<=41||!backDti,t:'DTI '+backDti.toFixed(1)+'% ≤ 41%'},{ok:true,t:'Income ≤115% AMI'}]},
+    {id:'jumbo',n:'Jumbo',elig:isJumbo,best:isJumbo,
+      chk:[{ok:isJumbo,t:'Loan $'+numFmt(la)+' above $'+numFmt(CONF_LIMIT)},{ok:ltv<=90,t:'LTV '+ltv.toFixed(1)+'% ≤ 90%'},{ok:true,t:'Min FICO 700'}]},
+    {id:'nonqm',n:'Non-QM / Bank Stmt',elig:true,best:false,
+      chk:[{ok:true,t:'Alt. docs accepted'},{ok:ltv<=85,t:'LTV '+ltv.toFixed(1)+'% ≤ 85%'},{ok:true,t:'Self-employed / foreign national friendly'}]},
+  ];
+  var bestSet=false,pHtml='';
+  progs.forEach(function(p){
+    var isBest=p.best&&!bestSet&&p.elig;if(isBest)bestSet=true;
+    var isSel=selectedProgId===p.id;
+    pHtml+='<div class="prog-card'+(isBest?' best':'')+(isSel?' sel':'')+(p.elig?'':' inelig')+'" onclick="pickProg(\''+p.id+'\')">';
+    pHtml+='<div class="ph"><div class="pn">'+p.n+'</div><span class="pbadge '+(isBest?'badge-best':p.elig?'badge-ok':'badge-no')+'">'+(isBest?'BEST FIT':p.elig?'ELIGIBLE':'REVIEW')+'</span></div>';
+    pHtml+='<div class="preqs">';
+    p.chk.forEach(function(c){pHtml+='<span class="'+(c.ok?'req-ok':'req-no')+'">'+(c.ok?'✓ ':'✗ ')+c.t+'</span><br/>';});
+    pHtml+='</div>';
+    if(p.elig) pHtml+='<button onclick="pickProg(\''+p.id+'\');event.stopPropagation()" style="width:100%;margin-top:8px;background:'+(isSel?'var(--green)':'var(--gold)')+';color:#0d1117;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:800;cursor:pointer">'+(isSel?'✓ SELECTED':'SELECT PROGRAM')+'</button>';
+    pHtml+='</div>';
+  });
+  document.getElementById('prog-cards-out').innerHTML=pHtml;
+}
+
+function pickProg(id){
+  selectedProgId=id;
+  document.getElementById('calyx-btn').style.display='block';
+  save1003AndAnalyze();
+}
+
+function showExport(){
+  var d=read1003();
+  var progNames={conventional:'Conventional',fha:'FHA',va:'VA',usda:'USDA Rural',jumbo:'Jumbo',nonqm:'Non-QM / Bank Statement'};
+  document.getElementById('calyx-out').style.display='block';
+  document.getElementById('sel-prog-summary').innerHTML='<span style="color:var(--gold);font-weight:800">'+(progNames[selectedProgId]||selectedProgId)+'</span> | Borrower: '+(d.first_name||'—')+' '+(d.last_name||'')+' | Loan: $'+numFmt(d.loan_amount)+' | Rate: '+(d.interest_rate||'—')+'%';
+  var today=new Date().toLocaleDateString();
+  var lines=['[Borrower]','FirstName='+d.first_name,'LastName='+d.last_name,'MiddleName='+d.middle_name,
+    'SSN='+(d.ssn_masked?'***-**-'+d.ssn_masked:''),'DOB='+d.dob,'Phone='+d.phone,'Email='+d.email,
+    'MaritalStatus='+d.marital_status,'PresentAddressStreet='+d.address,'PresentAddressCity='+d.city,
+    'PresentAddressState='+d.state,'PresentAddressZip='+d.zip,'OwnRent='+d.own_rent,
+    '','[CoBorrower]','FirstName='+d.co_first_name,'LastName='+d.co_last_name,
+    'SSN='+(d.co_ssn_masked?'***-**-'+d.co_ssn_masked:''),
+    '','[Employment]','EmployerName='+d.employer_name,'Position='+d.position_title,
+    'YrsEmployed='+d.years_employed,'SelfEmployed='+d.self_employed,
+    'BaseMonthly='+d.base_monthly,'OvertimeMonthly='+d.overtime_monthly,
+    'BonusMonthly='+d.bonus_monthly,'TotalGrossMonthly='+d.total_monthly,
+    '','[LoanInfo]','LoanAmount='+d.loan_amount,'LoanPurpose='+d.loan_purpose,
+    'LoanType='+d.loan_type,'SelectedProgram='+(progNames[selectedProgId]||selectedProgId),
+    'AmortType='+d.amort_type,'TermMonths='+d.term_months,
+    'InterestRate='+d.interest_rate,'APR='+d.apr,'MonthlyPI='+d.monthly_pi,
+    'LTV='+d.ltv,'FrontDTI='+d.front_dti,'BackDTI='+d.back_dti,
+    '','[Property]','PropertyAddress='+d.prop_address,'City='+d.prop_city,
+    'State='+d.prop_state,'Zip='+d.prop_zip,'County='+d.prop_county,
+    'PropertyType='+d.prop_type,'Occupancy='+d.occupancy,
+    'PurchasePrice='+d.purchase_price,'AppraisedValue='+d.appraised_value,
+    '','[Assets]','Checking='+d.checking,'Savings='+d.savings,'Retirement='+d.retirement_401k,
+    'TotalAssets='+d.total_assets,
+    '','[Liabilities]','CreditCardMin='+d.credit_card_min,'AutoPayment='+d.auto_payment,
+    'StudentLoan='+d.student_loan,'TotalMonthlyDebt='+d.total_monthly_debt,
+    '','[ClosingCosts]','OriginationFee='+d.origination_amt,'TotalClosingCosts='+d.total_closing_costs,
+    'CashToClose='+d.cash_to_close,
+    '','[LoanOfficer]','LoName=Saul Garcia','LoNMLS=337526',
+    'BrokerName=American 1st Partners','BrokerNMLS=1773303','PreparedDate='+today];
+  document.getElementById('calyx-preview').textContent=lines.join('\n');
+  document.getElementById('calyx-out').scrollIntoView({behavior:'smooth'});
+}
+function copyCalyxData(){var t=document.getElementById('calyx-preview').textContent;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){alert('Copied! Paste into Calyx Import Fannie Mae 3.2');});} else {prompt('Copy:',t)};}
+function copyAllFields(){var d=read1003();var t=Object.entries(d).filter(function(e){return e[1];}).map(function(e){return e[0].replace(/_/g,' ').toUpperCase()+': '+e[1];}).join('\n');if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){alert('1003 fields copied!');});} else {prompt('Copy:',t)};}
+function downloadMISMO(){var d=read1003();var xml='<?xml version="1.0" encoding="UTF-8"?>\n<MESSAGE xmlns="http://www.mismo.org/residential/2009/schemas">\n  <LOANS><LOAN>\n    <LOAN_DETAIL><LoanMaturityPeriodCount>'+d.term_months+'</LoanMaturityPeriodCount><NoteRatePercent>'+d.interest_rate+'</NoteRatePercent><BaseLoanAmount>'+d.loan_amount+'</BaseLoanAmount></LOAN_DETAIL>\n  </LOAN></LOANS>\n  <PARTIES><PARTY><INDIVIDUAL><NAME><FirstName>'+d.first_name+'</FirstName><LastName>'+d.last_name+'</LastName></NAME></INDIVIDUAL></PARTY></PARTIES>\n  <COLLATERALS><COLLATERAL><SUBJECT_PROPERTY><ADDRESS><AddressLineText>'+d.prop_address+'</AddressLineText><CityName>'+d.prop_city+'</CityName><StateCode>'+d.prop_state+'</StateCode><PostalCode>'+d.prop_zip+'</PostalCode></ADDRESS></SUBJECT_PROPERTY></COLLATERAL></COLLATERALS>\n</MESSAGE>';var blob=new Blob([xml],{type:'application/xml'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='loan_mismo_'+(d.last_name||'export')+'.xml';a.click();}
+
+// ── AGENT PORTAL ─────────────────────────────────────────────────────────────
+function initAgentPrograms(){
+  var html='';
+  PROGRAMS.slice(0,8).forEach(function(p){
+    html+='<div class="prog-list-item">';
+    html+='<div class="pli-name">'+p.icon+' '+p.name+'</div>';
+    html+='<div style="font-size:11px;color:var(--dim)">'+p.desc+'</div>';
+    html+='<div class="pli-tags">';
+    p.tags.forEach(function(t){html+='<span class="tag">'+t+'</span>';});
+    html+='</div></div>';
+  });
+  document.getElementById('ag-programs-list').innerHTML=html;
+}
+
+function runAgentPrequal(){
+  var name=document.getElementById('ag_name').value;
+  var price=parseFloat(document.getElementById('ag_price').value)||0;
+  var down=parseFloat(document.getElementById('ag_down').value)||0;
+  var income=parseFloat(document.getElementById('ag_income').value)||0;
+  var debt=parseFloat(document.getElementById('ag_debt').value)||0;
+  var credit=document.getElementById('ag_credit').value;
+  var purpose=document.getElementById('ag_purpose').value;
+  var area=document.getElementById('ag_area').value;
+  var nat=document.getElementById('ag_nat').value;
+  if(!name||!price){alert('Enter borrower name and purchase price.');return;}
+  var loanAmt=price-down;
+  var ltv=(loanAmt/price*100);
+  var monthlyIncome=income/12;
+  var rate=6.875/100/12,n=360;
+  var pi=loanAmt*(rate*Math.pow(1+rate,n))/(Math.pow(1+rate,n)-1);
+  var frontDti=(pi/monthlyIncome*100);
+  var backDti=((pi+debt)/monthlyIncome*100);
+  var creditNum=parseInt(credit.replace('+','').split('-')[0])||700;
+  var eligible=[];
+  if(ltv<=97&&!area.includes('Mexico')&&creditNum>=620) eligible.push('Conventional');
+  if(ltv<=96.5&&!area.includes('Mexico')&&creditNum>=580) eligible.push('FHA');
+  if(ltv<=100) eligible.push('VA (if eligible)');
+  if(ltv<=100&&backDti<=41) eligible.push('USDA Rural');
+  if(loanAmt>CONF_LIMIT) eligible.push('Jumbo');
+  if(area.includes('Ensenada')||area.includes('Rosarito')||area.includes('Tijuana')||area.includes('Valle')||area.includes('Los Cabos')) eligible.push('Mexico / Baja Cross-Border');
+  if(nat==='Foreign National'||nat==='ITIN Borrower') eligible.push('Non-QM / ITIN / Foreign National');
+  var statusColor=backDti<43?'var(--green)':backDti<50?'var(--orange)':'var(--red)';
+  var html='<div class="result-card">';
+  html+='<div class="ct">Pre-Qualification Summary — '+name+'</div>';
+  html+='<div class="snap-grid">';
+  html+='<div class="snap-item"><div class="snap-l">Loan Amount</div><div class="snap-v">$'+numFmt(loanAmt)+'</div></div>';
+  html+='<div class="snap-item"><div class="snap-l">LTV</div><div class="snap-v">'+ltv.toFixed(1)+'%</div></div>';
+  html+='<div class="snap-item"><div class="snap-l">Est. P&I</div><div class="snap-v">$'+Math.round(pi).toLocaleString()+'</div></div>';
+  html+='<div class="snap-item"><div class="snap-l">Front DTI</div><div class="snap-v">'+frontDti.toFixed(1)+'%</div></div>';
+  html+='<div class="snap-item"><div class="snap-l">Back DTI</div><div class="snap-v" style="color:'+statusColor+'">'+backDti.toFixed(1)+'%</div></div>';
+  html+='<div class="snap-item"><div class="snap-l">Area</div><div class="snap-v" style="font-size:11px">'+area+'</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:12px"><div class="stitle">Eligible Programs</div>';
+  eligible.forEach(function(e){html+='<span class="chip">'+e+'</span>';});
+  if(!eligible.length) html+='<span style="color:var(--red);font-size:12px">⚠ Review with LO — additional programs may apply</span>';
+  html+='</div>';
+  html+='<button onclick="window.open(\'https://financelend.me\',\'_blank\')" style="width:100%;margin-top:12px;background:var(--gold);color:#0d1117;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:800;cursor:pointer">SEND CLIENT TO PREQUALIFY ON ENJOYBAJA.COM</button>';
+  html+='</div>';
+  document.getElementById('ag-result').innerHTML=html;
+}
+
+// ── USDA 504 ──────────────────────────────────────────────────────────────────
+function showUSDA(sec){
+  document.querySelectorAll('.usec').forEach(function(s){
+    if(s.id.startsWith('usda-')) s.classList.remove('act');
+  });
+  document.getElementById('usda-'+sec).classList.add('act');
+  document.querySelectorAll('#sec-usda .usda-tabs .utb').forEach(function(b,i){
+    var secs=['overview','requirements','calculator','application','checklist','contacts'];
+    b.classList.toggle('act',secs[i]===sec);
+  });
+}
+
+function calcUSDA(){
+  var loan=parseFloat(document.getElementById('u_loan').value)||0;
+  var grant=parseFloat(document.getElementById('u_grant').value)||0;
+  var rate=(parseFloat(document.getElementById('u_rate').value)||1)/100/12;
+  var term=(parseFloat(document.getElementById('u_term').value)||20)*12;
+  var pmt=loan&&rate&&term?loan*(rate*Math.pow(1+rate,term))/(Math.pow(1+rate,term)-1):0;
+  var total=pmt*term;var interest=total-loan;
+  document.getElementById('usda-calc-result').innerHTML=
+    '<div class="usda-stat"><div class="usda-stat-val">$'+Math.round(pmt).toLocaleString()+'</div><div class="usda-stat-lbl">Monthly Payment</div></div>'+
+    '<div class="usda-stat"><div class="usda-stat-val">$'+(loan+grant).toLocaleString()+'</div><div class="usda-stat-lbl">Total Assistance</div></div>'+
+    '<div class="usda-stat"><div class="usda-stat-val">$'+Math.round(interest).toLocaleString()+'</div><div class="usda-stat-lbl">Total Interest</div></div>';
+}
+
+function submitUSDAApp(){
+  var name=document.getElementById('ua_name').value;
+  var addr=document.getElementById('ua_address').value;
+  var loan=document.getElementById('ua_loan_amt').value;
+  if(!name||!addr){alert('Name and property address required.');return;}
+  var res=document.getElementById('usda-app-result');
+  res.style.color='var(--green)';
+  res.textContent='✅ Intake received for '+name+'. Contact Saul Garcia at +1 (831) 251-3116 or sgarcia1911@gmail.com to proceed. USDA 504 loan up to $40,000 requested.';
+}
+
+var CHECKLIST_ITEMS=[
+  'Government-issued photo ID (passport or driver license)',
+  'Social Security card or ITIN documentation',
+  'Proof of homeownership (deed or property tax statement)',
+  'Proof of occupancy (utility bill showing property address)',
+  'Most recent 2 years federal tax returns (all pages)',
+  'Most recent 3 months bank statements',
+  'Proof of all income sources (SSI, pension, wages)',
+  'Most recent 2 pay stubs (if employed)',
+  'Property tax bill showing current assessed value',
+  'Homeowner insurance declaration page',
+  'Documentation of any existing liens or mortgages',
+  'Contractor bids/estimates for proposed repairs',
+  'Completed USDA Rural Development application form',
+];
+
+function renderChecklist(){
+  var html='';
+  CHECKLIST_ITEMS.forEach(function(item){
+    html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bord)">';
+    html+='<input type="checkbox" style="width:16px;height:16px;accent-color:var(--gold)"/>';
+    html+='<span style="font-size:12px;color:var(--txt)">'+item+'</span></div>';
+  });
+  document.getElementById('checklist-items').innerHTML=html;
+}
+
+function printChecklist(){
+  var w=window.open('','_blank');
+  w.document.write('<html><head><title>USDA 504 Document Checklist</title><style>body{font-family:Arial,sans-serif;padding:30px;max-width:600px}h2{color:#0a1628}li{padding:8px 0;border-bottom:1px solid #eee}.footer{margin-top:30px;font-size:9px;color:#888}</style></head><body>');
+  w.document.write('<h2>USDA Section 504 — Document Checklist</h2><p>Saul Garcia NMLS #337526 | American 1st Partners NMLS #1773303</p><ol>');
+  CHECKLIST_ITEMS.forEach(function(i){w.document.write('<li>'+i+'</li>');});
+  w.document.write('</ol><div class="footer">Not a commitment to lend. Subject to program eligibility. Equal Housing Lender.</div>
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body></html>');
+  w.document.close();w.print();
+}
+
+// ── PIPELINE ─────────────────────────────────────────────────────────────────
+var pipeline=JSON.parse(localStorage.getItem('mfg_re_pipeline')||'[]');
+
+function renderPipeline(){
+  var STATUS_COLORS={
+    'Pre-Qual':'var(--muted)','Application':'var(--blue)','Processing':'var(--orange)',
+    'Underwriting':'var(--gold)','Conditional Approval':'var(--blue)','Clear to Close':'var(--green)',
+    'Funded':'var(--green)','On Hold':'var(--orange)','Declined':'var(--red)'
+  };
+  var html='';
+  pipeline.forEach(function(f,i){
+    html+='<div class="pipe-row">';
+    html+='<div class="pipe-status" style="background:'+(STATUS_COLORS[f.status]||'var(--dim)')+'"></div>';
+    html+='<div style="flex:1"><div class="pipe-name">'+f.name+' — $'+numFmt(f.loan)+' '+f.prog+'</div>';
+    html+='<div class="pipe-meta">'+f.status+' | LO: '+f.lo+(f.notes?' | '+f.notes:'')+'</div></div>';
+    html+='<button onclick="removePipelineFile('+i+')" style="background:none;border:1px solid var(--bord);color:var(--dim);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer">✕</button>';
+    html+='</div>';
+  });
+  document.getElementById('pipeline-list').innerHTML=html||'<div class="empty">No files in pipeline yet.</div>';
+  var summary={};
+  pipeline.forEach(function(f){summary[f.status]=(summary[f.status]||0)+1;});
+  var summHtml=Object.entries(summary).map(function(e){
+    return '<div class="snap-item"><div class="snap-l">'+e[0]+'</div><div class="snap-v">'+e[1]+'</div></div>';
+  }).join('');
+  document.getElementById('pipeline-summary').innerHTML=summHtml||'<div style="color:var(--muted);font-size:12px;grid-column:1/-1">No files yet.</div>';
+}
+
+function addPipelineFile(){
+  var name=document.getElementById('pp_name').value;
+  var loan=document.getElementById('pp_loan').value;
+  if(!name||!loan){alert('Borrower name and loan amount required.');return;}
+  pipeline.push({name:name,loan:loan,prog:document.getElementById('pp_prog').value,
+    status:document.getElementById('pp_status').value,
+    lo:document.getElementById('pp_lo').value,
+    notes:document.getElementById('pp_notes').value,
+    added:new Date().toLocaleDateString()});
+  localStorage.setItem('mfg_re_pipeline',JSON.stringify(pipeline));
+  renderPipeline();
+  document.getElementById('pp_name').value='';document.getElementById('pp_loan').value='';document.getElementById('pp_notes').value='';
+}
+function removePipelineFile(i){pipeline.splice(i,1);localStorage.setItem('mfg_re_pipeline',JSON.stringify(pipeline));renderPipeline();}
+function exportPipeline(){
+  var txt=pipeline.map(function(f){return [f.name,f.loan,f.prog,f.status,f.lo,f.notes,f.added].join(' | ');}).join('\n');
+  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){alert('Pipeline copied!');});} else {prompt('Copy:',txt)};
+}
+
+// AFFILIATE LENDERS
+var AFF_PROGRAMS = [
+  {name:'Lead Stack Media', comm:'Up to $300/lead', structure:'90% rev-share', badge:'HIGHEST PAYOUT', bc:'var(--green)', desc:'Best overall payouts. Weekly payouts after $500 threshold. Payday, personal, installment.', url:'https://www.leadstackmedia.com', tags:['90% Rev-Share','Weekly Payouts','All Credit','50 States']},
+  {name:'Round Sky', comm:'Up to $250/lead', structure:'No cap', badge:'IFRAME EMBED', bc:'var(--blue)', desc:'50+ lenders. Embed loan form directly on your site via iframe. Real-time reporting.', url:'https://www.roundsky.com/affiliate', tags:['Iframe Widget','API Available','Real-Time Reports','50+ Lenders']},
+  {name:'Credible', comm:'$240/sale', structure:'Per funded loan', badge:'TOP RATE', bc:'var(--gold)', desc:'Personal loans, student loans, mortgages. Flat-rate commission via Impact Radius.', url:'https://www.credible.com/affiliate-partner', tags:['$240 Flat','Multiple Products','Impact Radius','High Conversion']},
+  {name:'SoFi', comm:'$300/personal loan', structure:'$500/student loan', badge:'PREMIUM', bc:'var(--gold)', desc:'Premium brand. $300 personal loans, up to $500 student loans via CJ Affiliate.', url:'https://www.sofi.com/affiliates', tags:['$300 Personal','$500 Student','CJ Affiliate','Premium Brand']},
+  {name:'LendingTree', comm:'Up to $70/lead', structure:'Per lead', badge:'HIGH VOLUME', bc:'var(--blue)', desc:'Massive marketplace. Every lead matched to multiple lenders. Great for broad audiences.', url:'https://partner.lendingtree.com', tags:['$70/Lead','Broad Audience','High Volume','US Wide']},
+  {name:'LendingClub', comm:'$100/referral', structure:'Per funded loan', badge:'TRUSTED', bc:'var(--blue)', desc:'$1K-$40K personal and business loans. Via CJ Affiliate. Finance content required.', url:'https://www.lendingclub.com/company/affiliates', tags:['$100 Flat','CJ Affiliate','Personal+Business','Strong Brand']},
+  {name:'Upstart', comm:'$100-$120/sale', structure:'1% funded loan', badge:'AI LENDER', bc:'var(--blue)', desc:'AI-based lending. 15-30 day cookie. Via Impact Radius. Good for 580-700 FICO borrowers.', url:'https://www.upstart.com/affiliates', tags:['AI Approval','580+ FICO','Impact Radius','30-Day Cookie']},
+  {name:'BadCreditLoans', comm:'76% rev-share', structure:'Per lead/funding', badge:'BAD CREDIT', bc:'var(--orange)', desc:'Best for poor credit borrowers. 45-day cookie. ACH, PayPal, check payouts.', url:'https://www.badcreditloans.com/affiliate', tags:['76% Rev-Share','45-Day Cookie','Bad Credit OK','Multiple Payouts']},
+  {name:'Big Buck Loans', comm:'$250-$300/lead', structure:'Rev-share option', badge:'WIDE COVERAGE', bc:'var(--blue)', desc:'$500-$5,000 loans. Wide state coverage including restricted states. Tribal lender options.', url:'https://bigbuckloans.com', tags:['$250-300/Lead','All Scores','Tribal Lenders','Rev-Share']},
+  {name:'OppLoans', comm:'$100/funded loan', structure:'Via Impact', badge:'INSTALLMENT', bc:'var(--dim)', desc:'Installment loans for bad credit. $100 per funded loan. Open to personal finance affiliates.', url:'https://www.opploans.com/affiliate', tags:['$100 Flat','Bad Credit','Impact Network','Installment']},
+];
+var affLeads = JSON.parse(localStorage.getItem('mfg_aff_leads') || '[]');
+function initAffCards() {
+  var html = '';
+  AFF_PROGRAMS.forEach(function(p) {
+    html += '<div class="prog-list-item" style="margin-bottom:10px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    html += '<div class="pli-name">' + p.name + '</div>';
+    html += '<span style="font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;background:rgba(0,0,0,.3);color:' + p.bc + '">' + p.badge + '</span>';
+    html += '</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">';
+    html += '<div class="usda-stat" style="padding:8px"><div style="font-size:9px;color:var(--dim);margin-bottom:2px">COMMISSION</div><div style="font-size:12px;font-weight:800;color:var(--gold)">' + p.comm + '</div></div>';
+    html += '<div class="usda-stat" style="padding:8px"><div style="font-size:9px;color:var(--dim);margin-bottom:2px">STRUCTURE</div><div style="font-size:12px;font-weight:800;color:var(--txt)">' + p.structure + '</div></div>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.6">' + p.desc + '</div>';
+    html += '<div class="pli-tags">';
+    p.tags.forEach(function(t) { html += '<span class="tag">' + t + '</span>'; });
+    html += '</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">';
+    var signupUrl = p.url;
+    html += '<button data-url="' + signupUrl + '" onclick="window.open(this.getAttribute(\'data-url\'),\'_blank\')" style="background:var(--gold);color:#0d1117;border:none;border-radius:8px;padding:9px;font-size:11px;font-weight:800;cursor:pointer">SIGN UP / APPLY</button>';
+    html += '<button data-copy="' + signupUrl + '" onclick="copyAffLink(this.getAttribute(\'data-copy\'))" style="background:var(--card2);color:var(--dim);border:1px solid var(--bord);border-radius:8px;padding:9px;font-size:11px;font-weight:700;cursor:pointer">COPY LINK</button>';
+    html += '</div></div>';
+  });
+  document.getElementById('aff-cards').innerHTML = html;
+  updateAffStats();
+  renderAffLog();
+}
+function copyAffLink(url) {
+  if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){ alert('Affiliate signup link copied!'); }); }
+  else { prompt('Copy:', url); }
+}
+function openRoundSkyAffiliate(){var id=localStorage.getItem('mfg_rs_aff_id');window.open(id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com','_blank');}
+function updateRoundSkyID() {
+  var id = prompt('Enter your Round Sky Affiliate ID from your Round Sky dashboard:');
+  if(!id) return;
+  var frame = document.getElementById('roundsky-frame');
+  if(frame) frame.src = 'https://www.roundsky.com/lp/' + id;
+  localStorage.setItem('mfg_roundsky_id', id);
+  alert('Round Sky ID set: ' + id);
+}
+function calcAffComm() {
+  var rate = parseFloat(document.getElementById('aff-prog-sel').value) || 0;
+  var leads = parseInt(document.getElementById('aff-lead-in').value) || 0;
+  document.getElementById('aff-comm-out').value = '$' + (rate * leads).toLocaleString();
+}
+function logAffLead() {
+  var sel = document.getElementById('aff-prog-sel');
+  var prog = sel.options[sel.selectedIndex].text;
+  var leads = parseInt(document.getElementById('aff-lead-in').value) || 1;
+  var rate = parseFloat(sel.value) || 0;
+  affLeads.push({ prog:prog, leads:leads, comm:rate*leads, date:new Date().toLocaleDateString() });
+  localStorage.setItem('mfg_aff_leads', JSON.stringify(affLeads));
+  updateAffStats(); renderAffLog();
+  document.getElementById('aff-lead-in').value = '';
+  document.getElementById('aff-comm-out').value = '';
+}
+function updateAffStats() {
+  var tl = affLeads.reduce(function(a,b){ return a+b.leads; }, 0);
+  var tc = affLeads.reduce(function(a,b){ return a+b.comm; }, 0);
+  document.getElementById('aff-leads').textContent = tl;
+  document.getElementById('aff-est').textContent = '$' + tc.toLocaleString();
+  document.getElementById('aff-programs').textContent = new Set(affLeads.map(function(l){ return l.prog; })).size;
+}
+function renderAffLog() {
+  if(!affLeads.length){ document.getElementById('aff-log').innerHTML='<div style="font-size:11px;color:var(--muted);text-align:center;padding:12px">No leads logged yet.</div>'; return; }
+  var html = '';
+  affLeads.slice().reverse().forEach(function(l) {
+    html += '<div class="pipe-row" style="margin-bottom:6px"><div class="pipe-status" style="background:var(--green)"></div>';
+    html += '<div style="flex:1"><div class="pipe-name" style="font-size:12px">' + l.prog + '</div>';
+    html += '<div class="pipe-meta">' + l.leads + ' lead(s) — Est. $' + l.comm.toLocaleString() + ' — ' + l.date + '</div></div></div>';
+  });
+  document.getElementById('aff-log').innerHTML = html;
+}
+(function(){
+  var sid = localStorage.getItem('mfg_roundsky_id');
+  if(sid){ var f=document.getElementById('roundsky-frame'); if(f) f.src='https://www.roundsky.com/lp/'+sid; }
+})();
+
+</script>
+</body>
+</html>

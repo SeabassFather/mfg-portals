@@ -1,0 +1,2410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alta Mirada Tree & Land Care Inc</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#2d6a2d;--green2:#3d8b3d;--green3:#4caf50;--greenlt:#e8f5e9;
+  --brown:#5d4037;--brown2:#795548;--earth:#8d6e63;
+  --gold:#f9a825;--red:#c62828;--blue:#1565c0;
+  --bg:#0a0f0a;--surface:#111811;--card:#182018;--card2:#1e2a1e;
+  --border:#2a3d2a;--text:#e8f5e9;--dim:#81c784;--muted:#4a6741;
+}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+
+/* PIN GATE */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:20px}
+.gate-logo{display:flex;flex-direction:column;align-items:center;gap:10px}
+.gate-logo svg{filter:drop-shadow(0 0 12px rgba(76,175,80,0.4))}
+.gate-co{font-size:13px;font-weight:800;letter-spacing:3px;color:var(--green3);text-transform:uppercase}
+.gate-sub{font-size:10px;color:var(--muted);letter-spacing:2px}
+.gate-lang{display:flex;gap:6px;margin-top:4px}
+.glbtn{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);letter-spacing:1px}
+.glbtn.active{background:var(--green3);color:#000;border-color:var(--green3)}
+.pin-dots{display:flex;gap:10px}
+.pin-dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--green3);background:transparent;transition:background .15s}
+.pin-dot.filled{background:var(--green3)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,60px);gap:8px}
+.pin-btn{touch-action:manipulation;-webkit-tap-highlight-color:rgba(0,0,0,0);width:60px;height:60px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:17px;font-weight:600;cursor:pointer;transition:all .15s}
+.pin-btn:hover{border-color:var(--green3);color:var(--green3)}
+.pin-err{color:var(--red);font-size:11px;height:16px;letter-spacing:1px}
+
+/* MAIN APP */
+#app{display:none}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.hdr-logo{display:flex;align-items:center;gap:10px}
+.hdr-co{display:flex;flex-direction:column}
+.hdr-name{font-size:13px;font-weight:800;color:var(--green3);letter-spacing:1px}
+.hdr-corp{font-size:9px;color:var(--muted);letter-spacing:1px}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.lang-toggle{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.ltbtn{padding:5px 10px;font-size:10px;font-weight:700;border:none;cursor:pointer;background:transparent;color:var(--muted);letter-spacing:1px}
+.ltbtn.active{background:var(--green3);color:#000}
+.hdr-clock{font-size:10px;color:var(--muted);font-family:Consolas,monospace}
+.sos-badge{padding:4px 10px;background:var(--red);color:#fff;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:1px;cursor:pointer;animation:pulse-red 2s infinite}
+@keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* STATUS ALERT */
+.sos-alert{background:rgba(198,40,40,0.12);border:1px solid rgba(198,40,40,0.4);border-radius:6px;padding:10px 16px;margin:12px 20px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#ef9a9a}
+.sos-alert strong{color:#ef5350}
+
+/* NAV */
+nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 8px}
+.ntab{padding:11px 14px;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;text-transform:uppercase;background:none;border-top:none;border-left:none;border-right:none}
+.ntab:hover{color:var(--text)}
+.ntab.active{color:var(--green3);border-bottom-color:var(--green3)}
+.ntab .badge{background:var(--red);color:#fff;border-radius:10px;padding:1px 5px;font-size:8px;margin-left:4px;vertical-align:middle}
+
+main{padding:20px;max-width:1400px;margin:0 auto}
+.panel{display:none}
+.panel.active{display:block}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.card-title{font-size:9px;letter-spacing:2px;color:var(--green3);font-weight:700;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+/* STAT BLOCKS */
+.stat{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.stat-num{font-size:24px;font-weight:800;color:var(--green3);font-family:Consolas,monospace}
+.stat-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
+
+/* FORM ELEMENTS */
+label{display:block;font-size:10px;color:var(--dim);font-weight:600;margin-bottom:5px;letter-spacing:.5px}
+input,textarea,select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;padding:8px 11px;outline:none;transition:border .15s;font-family:inherit}
+input:focus,textarea:focus,select:focus{border-color:var(--green3)}
+textarea{resize:vertical;min-height:70px}
+.fg{margin-bottom:12px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-green{background:var(--green3);color:#000}
+.btn-green:hover{background:var(--green2)}
+.btn-gold{background:var(--gold);color:#000}
+.btn-red{background:var(--red);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--dim)}
+.btn-outline:hover{border-color:var(--green3);color:var(--green3)}
+.btn-full{width:100%;justify-content:center}
+.btn-sm{padding:5px 10px;font-size:10px}
+
+/* PILLS */
+.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:700;letter-spacing:.5px}
+.pill-green{background:rgba(76,175,80,.15);color:var(--green3);border:1px solid rgba(76,175,80,.3)}
+.pill-red{background:rgba(198,40,40,.15);color:#ef5350;border:1px solid rgba(198,40,40,.3)}
+.pill-gold{background:rgba(249,168,37,.15);color:var(--gold);border:1px solid rgba(249,168,37,.3)}
+.pill-blue{background:rgba(21,101,192,.15);color:#64b5f6;border:1px solid rgba(21,101,192,.3)}
+
+/* ROWS */
+.row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(42,61,42,.5)}
+.row:last-child{border-bottom:none}
+.row-key{font-size:11px;color:var(--muted)}
+.row-val{font-size:12px;font-weight:600;color:var(--text)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;padding:8px 10px;font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--border);font-weight:700}
+td{padding:9px 10px;border-bottom:1px solid rgba(42,61,42,.4);color:var(--dim)}
+tr:hover td{background:rgba(255,255,255,.02);color:var(--text)}
+
+/* PHOTO ZONE */
+.photo-zone{border:2px dashed var(--border);border-radius:8px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
+.photo-zone:hover{border-color:var(--green3);background:rgba(76,175,80,.04)}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px}
+.photo-thumb{aspect-ratio:1;object-fit:cover;border-radius:6px;border:1px solid var(--border)}
+
+/* PAYROLL */
+.emp-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:10px}
+.emp-name{font-size:13px;font-weight:700;color:var(--green3);margin-bottom:10px}
+.deduction-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(42,61,42,.3);font-size:11px}
+.deduction-row:last-child{border-bottom:none}
+.deduction-label{color:var(--muted)}
+.deduction-val{color:var(--text);font-family:Consolas,monospace;font-weight:600}
+.net-pay{background:rgba(76,175,80,.1);border:1px solid rgba(76,175,80,.3);border-radius:6px;padding:10px;text-align:center;margin-top:10px}
+.net-pay .amount{font-size:22px;font-weight:800;color:var(--green3);font-family:Consolas,monospace}
+.net-pay .label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+
+/* GPS */
+.gps-box{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;font-family:Consolas,monospace;font-size:11px;color:var(--green3)}
+
+/* LOG */
+.log-box{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px;font-family:Consolas,monospace;font-size:10px;color:var(--muted);max-height:120px;overflow-y:auto;line-height:1.7}
+
+/* TAX FORM SECTION */
+.tax-form-card{background:var(--card2);border:1px solid rgba(21,101,192,.3);border-radius:8px;padding:16px;margin-bottom:10px}
+.tax-form-title{font-size:11px;font-weight:700;color:#64b5f6;letter-spacing:1px;margin-bottom:6px}
+.tax-form-desc{font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.tax-due{font-size:10px;color:var(--gold)}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:11px;color:var(--text);z-index:99999;opacity:0;transform:translateY(4px);transition:all .2s;pointer-events:none;max-width:300px}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* SPINNER */
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;border-radius:50%;animation:s .7s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+
+/* OCR / UPLOAD ENHANCEMENTS */
+.ocr-zone{border:2px dashed var(--blue);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(21,101,192,.04)}
+.ocr-zone:hover{border-color:#64b5f6;background:rgba(21,101,192,.08)}
+.ocr-scanning{border-color:var(--gold)!important;background:rgba(249,168,37,.05)!important;animation:scan-pulse 1s infinite}
+@keyframes scan-pulse{0%,100%{border-color:var(--gold)}50%{border-color:transparent}}
+.ocr-result{background:rgba(21,101,192,.1);border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px;margin-top:8px;font-size:10px;color:#64b5f6}
+.attach-chip{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;font-size:10px;color:var(--dim);margin:2px}
+.attach-chip button{background:none;border:none;color:#ef5350;cursor:pointer;font-size:10px;padding:0 2px}
+.pdf-preview{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:Consolas,monospace;font-size:10px;color:var(--text);white-space:pre;max-height:300px;overflow-y:auto;line-height:1.6}
+.upload-area{border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s}
+.upload-area:hover{border-color:var(--green3)}
+.upload-area input[type=file]{display:none}
+/* EMAIL MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;padding:24px;position:relative}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:50%;cursor:pointer;color:var(--dim);font-size:14px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{border-color:var(--green3);color:var(--green3)}
+
+@media(max-width:768px){.g2,.g3,.g4,.frow,.frow3{grid-template-columns:1fr}main{padding:12px}}
+</style>
+<style id="plp-css">
+#portal-login-panel{display:none;position:fixed;bottom:20px;right:20px;width:400px;max-height:300px;background:#0d1117;border:1px solid #C9A55C;border-radius:8px;z-index:9999;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+#portal-login-panel .plp-hdr{background:#161b22;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d}
+#portal-login-panel .plp-title{color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:2px}
+#portal-login-panel .plp-close{color:#64748b;cursor:pointer;font-size:13px;background:none;border:none;padding:0}
+#portal-login-panel table{width:100%;border-collapse:collapse;font-size:10px}
+#portal-login-panel th{color:#64748b;padding:3px 6px;text-align:left;border-bottom:1px solid #21262d}
+#portal-login-panel td{color:#e2e8f0;padding:3px 6px;border-bottom:1px solid #21262d}
+#portal-login-panel .plp-body{overflow-y:auto;max-height:240px;padding:6px}
+#plp-trigger{display:none;position:fixed;bottom:20px;right:20px;background:#161b22;border:1px solid #C9A55C;color:#C9A55C;font-size:9px;padding:5px 10px;border-radius:4px;cursor:pointer;z-index:9998;letter-spacing:1px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- SVG LOGO DEF (reusable) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="amtl-logo" viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="29" fill="#182018" stroke="#2d6a2d" stroke-width="2"/>
+      <polygon points="30,8 20,28 25,28 18,42 42,42 35,28 40,28" fill="#4caf50"/>
+      <rect x="27" y="42" width="6" height="8" fill="#5d4037"/>
+      <line x1="10" y1="50" x2="50" y2="50" stroke="#2d6a2d" stroke-width="1.5"/>
+      <text x="30" y="57" text-anchor="middle" fill="#81c784" font-size="5" font-family="Arial" font-weight="700">AMTL</text>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- PIN GATE -->
+<div id="gate">
+  <div class="gate-logo">
+    <svg width="80" height="80"><use href="#amtl-logo"/></svg>
+    <div class="gate-co" id="g-company">Alta Mirada Tree & Land Care Inc</div>
+    <div class="gate-sub" id="g-sub" data-en="Enter your PIN to access" data-es="Ingrese su PIN para acceder">Enter your PIN to access</div>
+    <div class="gate-lang">
+      <button class="glbtn active" onclick="setLang('en',this)">EN</button>
+      <button class="glbtn" onclick="setLang('es',this)">ES</button>
+    </div>
+  </div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="pin-err" id="pin-err"></div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="pp('1')">1</button>
+    <button class="pin-btn" onclick="pp('2')">2</button>
+    <button class="pin-btn" onclick="pp('3')">3</button>
+    <button class="pin-btn" onclick="pp('4')">4</button>
+    <button class="pin-btn" onclick="pp('5')">5</button>
+    <button class="pin-btn" onclick="pp('6')">6</button>
+    <button class="pin-btn" onclick="pp('7')">7</button>
+    <button class="pin-btn" onclick="pp('8')">8</button>
+    <button class="pin-btn" onclick="pp('9')">9</button>
+    <button class="pin-btn" style="font-size:11px" onclick="pc()">CLR</button>
+    <button class="pin-btn" onclick="pp('0')">0</button>
+    <button class="pin-btn" style="font-size:11px" onclick="pb()">DEL</button>
+    <div style="margin-top:8px;font-size:9px;color:#2d6a2d;letter-spacing:.5px;text-align:center;max-width:220px;line-height:1.8">
+    <div style="color:#4caf50;font-weight:700;letter-spacing:1px;margin-bottom:4px" data-en="EMPLOYEE PINs" data-es="PINs DE EMPLEADOS">EMPLOYEE PINs</div>
+    1101 · 1102 · 1103 · 1104 · 1105<br>
+    1106 · 1107 · 1108 · 1109 · 1110<br>
+    <div style="color:#2d6a2d;margin-top:4px" data-en="Owner: contact Giovanni for your PIN" data-es="Dueño: contacte a Giovanni para su PIN">Contact Giovanni for your PIN</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+<header>
+  <div class="hdr-logo">
+    <svg width="44" height="44"><use href="#amtl-logo"/></svg>
+    <div class="hdr-co">
+      <div class="hdr-name">Alta Mirada Tree & Land Care Inc</div>
+      <div class="hdr-corp">Entity #5494718 &bull; Oceanside, CA 92054 &bull; <span id="hdr-role" style="color:var(--gold)">OWNER</span></div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="lang-toggle">
+      <button class="ltbtn active" id="lt-en" onclick="setLang('en',null)">EN</button>
+      <button class="ltbtn" id="lt-es" onclick="setLang('es',null)">ES</button>
+    </div>
+    <div class="hdr-clock" id="clock">--:--</div>
+    <button onclick="lockApp()" style="padding:4px 12px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--dim);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer" title="Lock / Logout">🔒 LOCK</button>
+    <button class="sos-badge" onclick="triggerSOS()">SOS</button>
+  </div>
+</header>
+
+<!-- SOS ALERT OVERDUE -->
+<div class="sos-alert">
+  <span><strong>⚠ STATEMENT OF INFO OVERDUE</strong> — CA SOS Due Date: 02/28/2026 — File immediately at bizfile.sos.ca.gov</span>
+  <a href="https://bizfile.sos.ca.gov" target="_blank" class="btn btn-red btn-sm">FILE NOW</a>
+</div>
+
+<nav>
+  <button class="ntab active" onclick="sw('dashboard')">📊 <span data-en="Dashboard" data-es="Panel"></span></button>
+  <button class="ntab" onclick="sw('workorders')">🌳 <span data-en="Work Orders" data-es="Órdenes"></span></button>
+  <button class="ntab" onclick="sw('clients')">👥 <span data-en="Clients" data-es="Clientes"></span></button>
+  <button class="ntab" onclick="sw('invoices')">🧾 <span data-en="Invoices" data-es="Facturas"></span></button>
+  <button class="ntab" onclick="sw('quotes')">📋 <span data-en="Quotes" data-es="Cotizaciones"></span></button>
+  <button class="ntab" onclick="sw('receipts')"><span data-en="Receipts" data-es="Recibos"></span></button>
+  <button class="ntab" onclick="sw('payroll')" ><span data-en="Payroll" data-es="Nómina"></span></button>
+  <button class="ntab" onclick="sw('employees')">👷 <span data-en="Employees" data-es="Empleados"></span></button>
+  <button class="ntab" onclick="sw('expenses')">📉 <span data-en="Expenses" data-es="Gastos"></span></button>
+  <button class="ntab" onclick="sw('fieldlog')">📍 <span data-en="Field Log" data-es="Campo"></span></button>
+  <button class="ntab" onclick="sw('reports')">📈 <span data-en="Reports & Taxes" data-es="Reportes & Impuestos"></span></button>
+  <button class="ntab" onclick="sw('bookkeeper')">🤖 <span data-en="AI Bookkeeper" data-es="Contador IA"></span></button>
+</nav>
+
+<main>
+<!-- DASHBOARD -->
+<div class="panel active" id="panel-dashboard">
+  <div class="g4" style="margin-bottom:16px">
+    <div class="stat"><div class="stat-num" id="dash-revenue">$0</div><div class="stat-lbl" data-en="This Month Revenue" data-es="Ingresos del Mes"></div></div>
+    <div class="stat"><div class="stat-num" id="dash-open">0</div><div class="stat-lbl" data-en="Open Work Orders" data-es="Órdenes Abiertas"></div></div>
+    <div class="stat"><div class="stat-num" id="dash-unpaid">$0</div><div class="stat-lbl" data-en="Unpaid Invoices" data-es="Facturas Sin Pagar"></div></div>
+    <div class="stat"><div class="stat-num" id="dash-payroll">$0</div><div class="stat-lbl" data-en="Payroll This Week" data-es="Nómina Esta Semana"></div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title" data-en="Company Info" data-es="Información de la Empresa"></div>
+      <div class="row"><span class="row-key">Entity #</span><span class="row-val">5494718</span></div>
+      <div class="row"><span class="row-key" data-en="Type" data-es="Tipo"></span><span class="row-val">Stock Corporation - CA</span></div>
+      <div class="row"><span class="row-key" data-en="Incorporated" data-es="Incorporada"></span><span class="row-val">02/07/2023</span></div>
+      <div class="row"><span class="row-key" data-en="Status" data-es="Estado"></span><span class="row-val"><span class="pill pill-green">Active / Good</span></span></div>
+      <div class="row"><span class="row-key" data-en="Address" data-es="Dirección"></span><span class="row-val">2307 Skylark Dr Apt A, Oceanside CA 92054</span></div>
+      <div class="row"><span class="row-key" data-en="Agent" data-es="Agente"></span><span class="row-val">Giovanni Mendoza</span></div>
+      <div class="row" style="border:none"><span class="row-key">EIN</span><span class="row-val" id="dash-ein" style="cursor:pointer;color:var(--green3)" onclick="showToast('EIN stored securely')">Click to View</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title" data-en="Quick Actions" data-es="Acciones Rápidas"></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-green btn-full" onclick="sw('workorders');openNewWO()">+ <span data-en="New Work Order" data-es="Nueva Orden"></span></button>
+        <button class="btn btn-gold btn-full" onclick="sw('invoices');openNewInv()">+ <span data-en="New Invoice" data-es="Nueva Factura"></span></button>
+        <button class="btn btn-outline btn-full" onclick="sw('quotes');openNewQuote()">+ <span data-en="New Quote" data-es="Nueva Cotización"></span></button>
+        <button class="btn btn-blue btn-full" onclick="sw('payroll')">💰 <span data-en="Run Payroll" data-es="Calcular Nómina"></span></button>
+        <button class="btn btn-outline btn-full" onclick="sw('fieldlog');getGPS()">📍 <span data-en="Field Check-In" data-es="Registro de Campo"></span></button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" data-en="Bookkeeping Services Provided" data-es="Servicios de Contabilidad Provistos"></div>
+    <div class="g3">
+      <div style="font-size:11px;color:var(--dim);line-height:2">
+        ✅ Weekly Transaction Categorization<br>
+        ✅ Monthly P&L Statement<br>
+        ✅ Accounts Receivable Tracking<br>
+        ✅ Accounts Payable / Vendor Bills<br>
+        ✅ Job Costing Per Work Order (Tree, Lawn, Land, Hardscape)
+      </div>
+      <div style="font-size:11px;color:var(--dim);line-height:2">
+        ✅ Weekly Payroll (5 Employees)<br>
+        ✅ Quarterly Payroll Tax Deposits<br>
+        ✅ W-2 / 1099 Annual Prep<br>
+        ✅ Equipment Depreciation Schedule<br>
+        ✅ Receipt Digitization & Filing
+      </div>
+      <div style="font-size:11px;color:var(--dim);line-height:2">
+        ✅ Year-End CPA Tax Package<br>
+        ✅ Cash Flow Forecasting<br>
+        ✅ Workers Comp Audit Support<br>
+        ✅ Fed & State Tax Form Prep<br>
+        ✅ Statement of Info Tracking
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);border-radius:6px;text-align:center">
+      <span style="font-size:13px;font-weight:700;color:var(--green3)">Monthly Bookkeeping Plan: $750/mo</span>
+      <span style="font-size:10px;color:var(--muted);margin-left:10px">Provided by Mexausa Food Group / AuditDNA</span>
+    </div>
+  </div>
+</div>
+
+<!-- WORK ORDERS -->
+<div class="panel" id="panel-workorders">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700;color:var(--text)" data-en="Work Orders" data-es="Órdenes de Trabajo"></div>
+    <button class="btn btn-green" onclick="openNewWO()" id="new-wo-btn">+ <span data-en="New Work Order" data-es="Nueva Orden"></span></button>
+  </div>
+  <!-- NEW WO FORM -->
+  <div class="card" id="wo-form" style="display:none">
+    <div class="card-title" data-en="New Work Order" data-es="Nueva Orden de Trabajo"></div>
+    <div class="frow">
+      <div class="fg"><label data-en="Client Name" data-es="Cliente"></label><input id="wo-client" type="text" placeholder="Client name"></div>
+      <div class="fg"><label data-en="Job Date" data-es="Fecha"></label><input id="wo-date" type="date"></div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label data-en="Service Type" data-es="Tipo de Servicio"></label>
+        <select id="wo-service">
+          <optgroup label="Tree Care / Cuidado de Árboles">
+          <option>Tree Trimming & Pruning / Poda de Árboles</option>
+          <option>Tree Removal / Remoción de Árbol</option>
+          <option>Stump Grinding & Removal / Molienda de Tocón</option>
+          <option>Crown Reduction & Thinning / Reducción de Copa</option>
+          <option>Palm Tree Trimming / Poda de Palmas</option>
+          <option>Dead Branch Removal / Remoción de Ramas Muertas</option>
+          <option>Tree Planting & Staking / Plantación de Árboles</option>
+          <option>Tree Hazard Assessment / Evaluación de Riesgo</option>
+          </optgroup>
+          <optgroup label="Lawn & Garden / Césped y Jardín">
+          <option>Lawn Mowing & Edging / Corte y Bordes de Césped</option>
+          <option>Sod Installation / Instalación de Pasto</option>
+          <option>Garden Design & Planting / Diseño y Siembra</option>
+          <option>Shrub & Hedge Trimming / Poda de Arbustos</option>
+          <option>Weed Control / Control de Maleza</option>
+          <option>Mulching & Soil Amendment / Abono y Mantillo</option>
+          <option>Xeriscaping / Paisajismo de Bajo Consumo</option>
+          <option>Seasonal Cleanup / Limpieza de Temporada</option>
+          </optgroup>
+          <optgroup label="Land & Site / Terreno y Sitio">
+          <option>Land Clearing / Limpieza de Terreno</option>
+          <option>Lot Clearing & Grading / Nivelación de Lote</option>
+          <option>Brush & Brush Removal / Remoción de Maleza</option>
+          <option>Erosion Control / Control de Erosión</option>
+          <option>Irrigation Install & Repair / Instalación de Riego</option>
+          </optgroup>
+          <optgroup label="Hardscape / Construcción">
+          <option>Patio & Walkway / Patio y Camino</option>
+          <option>Retaining Wall / Muro de Contención</option>
+          <option>Concrete Work / Trabajo de Concreto</option>
+          <option>Fence Installation / Instalación de Cerca</option>
+          </optgroup>
+          <optgroup label="Other / Otro">
+          <option>Storm Damage Cleanup / Limpieza Tormenta</option>
+          <option>Emergency Service / Servicio de Emergencia</option>
+          <option>Commercial Property Maintenance</option>
+          <option>HOA / Property Management Service</option>
+          <option>Other / Otro</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg">
+        <label data-en="Assigned Crew" data-es="Cuadrilla Asignada"></label>
+        <select id="wo-crew">
+          <option>Employee 1</option><option>Employee 2</option><option>Employee 3</option><option>Employee 4</option><option>Employee 5</option><option>Full Crew</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label data-en="Job Address" data-es="Dirección del Trabajo"></label><input id="wo-address" type="text" placeholder="Job site address"></div>
+    <div class="frow">
+      <div class="fg"><label data-en="Estimated Hours" data-es="Horas Estimadas"></label><input id="wo-hours" type="number" placeholder="0"></div>
+      <div class="fg"><label data-en="Job Price ($)" data-es="Precio ($)"></label><input id="wo-price" type="number" placeholder="0.00"></div>
+    </div>
+    <div class="fg"><label data-en="Notes" data-es="Notas"></label><textarea id="wo-notes" placeholder="Job description, access instructions, special requirements..."></textarea></div>
+    <!-- GPS -->
+    <div class="fg">
+      <label data-en="GPS Stamp Job Site" data-es="GPS del Sitio"></label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-outline btn-sm" onclick="stampGPS('wo-gps')">📍 <span data-en="Get GPS" data-es="Obtener GPS"></span></button>
+        <div class="gps-box" id="wo-gps" style="flex:1;font-size:10px;padding:6px 10px" data-en="No GPS yet" data-es="Sin GPS"></div>
+      </div>
+    </div>
+    <!-- PHOTO UPLOAD -->
+    <div class="fg">
+      <label data-en="Before Photos" data-es="Fotos Antes"></label>
+      <div class="photo-zone" onclick="document.getElementById('wo-photos').click()">
+        <div style="font-size:11px;color:var(--muted)" data-en="Tap to upload before photos" data-es="Toca para subir fotos antes"></div>
+        <input type="file" id="wo-photos" accept="image/*" multiple style="display:none" onchange="showPhotos(this,'wo-photo-grid')">
+      </div>
+      <div class="photo-grid" id="wo-photo-grid"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-green" onclick="saveWO()"><span data-en="Save Work Order" data-es="Guardar Orden"></span></button>
+      <button class="btn btn-gold" onclick="saveWOandInvoice()">🧾 <span data-en="Save & Create Invoice" data-es="Guardar y Facturar"></span></button>
+      <button class="btn btn-outline" onclick="document.getElementById('wo-form').style.display='none'">✕</button>
+    </div>
+  </div>
+  <!-- WO LIST -->
+  <div class="card">
+    <div class="card-title" data-en="Active Work Orders" data-es="Órdenes Activas"></div>
+    <table>
+      <thead><tr>
+        <th data-en="Date" data-es="Fecha"></th>
+        <th data-en="Client" data-es="Cliente"></th>
+        <th data-en="Service" data-es="Servicio"></th>
+        <th data-en="Crew" data-es="Cuadrilla"></th>
+        <th data-en="Price" data-es="Precio"></th>
+        <th data-en="Status" data-es="Estado"></th>
+        <th></th>
+      </tr></thead>
+      <tbody id="wo-list"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px" data-en="No work orders yet" data-es="Sin órdenes aún"></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CLIENTS -->
+<div class="panel" id="panel-clients">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700" data-en="Client Directory" data-es="Directorio de Clientes"></div>
+    <button class="btn btn-green" onclick="openNewClient()">+ <span data-en="New Client" data-es="Nuevo Cliente"></span></button>
+  </div>
+  <div class="card" id="client-form" style="display:none">
+    <div class="card-title" data-en="New Client" data-es="Nuevo Cliente"></div>
+    <div class="frow">
+      <div class="fg"><label data-en="Full Name" data-es="Nombre Completo"></label><input id="cl-name" type="text"></div>
+      <div class="fg"><label data-en="Company" data-es="Empresa"></label><input id="cl-company" type="text"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Email</label><input id="cl-email" type="email"></div>
+      <div class="fg"><label data-en="Phone" data-es="Teléfono"></label><input id="cl-phone" type="tel"></div>
+    </div>
+    <div class="fg"><label data-en="Address" data-es="Dirección"></label><input id="cl-address" type="text"></div>
+    <div class="frow">
+      <div class="fg"><label data-en="Client Type" data-es="Tipo"></label>
+        <select id="cl-type"><option>Residential / Residencial</option><option>Commercial / Comercial</option><option>Property Management / Administración</option><option>HOA</option></select>
+      </div>
+      <div class="fg"><label data-en="Preferred Contact" data-es="Contacto Preferido"></label>
+        <select id="cl-contact"><option>Email</option><option>Phone / Teléfono</option><option>Text / Texto</option></select>
+      </div>
+    </div>
+    <div class="fg"><label data-en="Notes" data-es="Notas"></label><textarea id="cl-notes" placeholder="Property access, gate code, preferences..."></textarea></div>
+    <button class="btn btn-green" onclick="saveClient()"><span data-en="Save Client" data-es="Guardar Cliente"></span></button>
+    <button class="btn btn-outline" style="margin-left:8px" onclick="document.getElementById('client-form').style.display='none'">✕</button>
+  </div>
+  <div class="card">
+    <input type="text" placeholder="Search clients... / Buscar clientes..." oninput="filterClients(this.value)" style="margin-bottom:12px">
+    <table>
+      <thead><tr>
+        <th data-en="Name" data-es="Nombre"></th>
+        <th>Email</th>
+        <th data-en="Phone" data-es="Teléfono"></th>
+        <th data-en="Type" data-es="Tipo"></th>
+        <th data-en="Jobs" data-es="Trabajos"></th>
+        <th></th>
+      </tr></thead>
+      <tbody id="client-list"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px" data-en="No clients yet" data-es="Sin clientes aún"></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- INVOICES -->
+<div class="panel" id="panel-invoices">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700" data-en="Invoices" data-es="Facturas"></div>
+    <button class="btn btn-green" onclick="openNewInv()">+ <span data-en="New Invoice" data-es="Nueva Factura"></span></button>
+  </div>
+  <div class="card" id="inv-form" style="display:none">
+    <div class="card-title" data-en="Create Invoice" data-es="Crear Factura"></div>
+    <div class="frow">
+      <div class="fg"><label data-en="Invoice #" data-es="Factura #"></label><input id="inv-num" type="text" id="inv-num"></div>
+      <div class="fg"><label data-en="Date" data-es="Fecha"></label><input id="inv-date" type="date"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label data-en="Client" data-es="Cliente"></label><input id="inv-client" type="text" placeholder="Client name"></div>
+      <div class="fg"><label>Email</label><input id="inv-email" type="email" placeholder="client@email.com"></div>
+    </div>
+    <div class="fg"><label data-en="Service Description" data-es="Descripción del Servicio"></label><textarea id="inv-desc" placeholder="Tree trimming, removal, land clearing..."></textarea></div>
+    <div class="frow3">
+      <div class="fg"><label data-en="Labor ($)" data-es="Mano de Obra ($)"></label><input id="inv-labor" type="number" placeholder="0.00" oninput="calcInv()"></div>
+      <div class="fg"><label data-en="Materials ($)" data-es="Materiales ($)"></label><input id="inv-mats" type="number" placeholder="0.00" oninput="calcInv()"></div>
+      <div class="fg"><label data-en="Dump/Disposal ($)" data-es="Desecho ($)"></label><input id="inv-dump" type="number" placeholder="0.00" oninput="calcInv()"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>CA Sales Tax % (materials)</label><input id="inv-tax" type="number" value="10.25" oninput="calcInv()"></div>
+      <div class="fg"><label data-en="Due Date" data-es="Fecha de Vencimiento"></label><input id="inv-due" type="date"></div>
+    </div>
+    <!-- TOTALS -->
+    <div style="background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);border-radius:8px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px"><span style="color:var(--muted)" data-en="Subtotal" data-es="Subtotal"></span><span id="inv-subtotal" style="color:var(--text);font-family:Consolas,monospace">$0.00</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px"><span style="color:var(--muted)">CA Sales Tax</span><span id="inv-taxamt" style="color:var(--text);font-family:Consolas,monospace">$0.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;border-top:1px solid rgba(76,175,80,.2);padding-top:8px"><span style="color:var(--green3)" data-en="TOTAL DUE" data-es="TOTAL A PAGAR"></span><span id="inv-total" style="color:var(--green3);font-family:Consolas,monospace;font-size:18px">$0.00</span></div>
+    </div>
+    <!-- PHOTO ATTACH -->
+    <div class="fg">
+      <label data-en="Attach Job Photos" data-es="Adjuntar Fotos del Trabajo"></label>
+      <div class="photo-zone" onclick="document.getElementById('inv-photos').click()">
+        <div style="font-size:11px;color:var(--muted)" data-en="Tap to attach photos" data-es="Toca para adjuntar fotos"></div>
+        <input type="file" id="inv-photos" accept="image/*,application/pdf" multiple style="display:none" onchange="showPhotos(this,'inv-photo-grid')">
+      </div>
+      <div class="photo-grid" id="inv-photo-grid"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-green" onclick="saveInvoice()"><span data-en="Save Invoice" data-es="Guardar Factura"></span></button>
+      <button class="btn btn-gold" onclick="emailInvoice()"><span data-en="Email Invoice" data-es="Enviar por Email"></span></button>
+      <button class="btn btn-blue" onclick="printInvoice()"><span data-en="Print" data-es="Imprimir"></span></button>
+      <button class="btn btn-outline" onclick="document.getElementById('inv-form').style.display='none'">✕</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" data-en="Invoice History" data-es="Historial de Facturas"></div>
+    <table>
+      <thead><tr>
+        <th>INV #</th>
+        <th data-en="Client" data-es="Cliente"></th>
+        <th data-en="Date" data-es="Fecha"></th>
+        <th data-en="Total" data-es="Total"></th>
+        <th data-en="Status" data-es="Estado"></th>
+        <th></th>
+      </tr></thead>
+      <tbody id="inv-list"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px" data-en="No invoices yet" data-es="Sin facturas aún"></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- QUOTES -->
+<div class="panel" id="panel-quotes">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700" data-en="Quotes / Estimates" data-es="Cotizaciones / Presupuestos"></div>
+    <button class="btn btn-green" onclick="openNewQuote()">+ <span data-en="New Quote" data-es="Nueva Cotización"></span></button>
+  </div>
+  <div class="card" id="quote-form" style="display:none">
+    <div class="card-title" data-en="Create Quote" data-es="Crear Cotización"></div>
+    <div class="frow">
+      <div class="fg"><label data-en="Prospect / Client" data-es="Prospecto / Cliente"></label><input id="qt-client" type="text"></div>
+      <div class="fg"><label>Email</label><input id="qt-email" type="email"></div>
+    </div>
+    <div class="fg"><label data-en="Phone" data-es="Teléfono"></label><input id="qt-phone" type="tel"></div>
+    <div class="fg"><label data-en="Job Address" data-es="Dirección"></label><input id="qt-address" type="text"></div>
+    <div class="fg">
+      <label data-en="Services Requested" data-es="Servicios Solicitados"></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;font-size:11px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="qt-trim"> Tree Trimming / Poda</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="qt-remove"> Tree Removal / Remoción</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="qt-stump"> Stump Grinding / Tocón</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="qt-clear"> Land Clearing / Limpieza</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="qt-lawn"> Lawn Care / Césped</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="qt-irr"> Irrigation / Irrigación</label>
+      </div>
+    </div>
+    <div class="frow3">
+      <div class="fg"><label data-en="Labor Est. ($)" data-es="Mano de Obra ($)"></label><input id="qt-labor" type="number" placeholder="0.00" oninput="calcQt()"></div>
+      <div class="fg"><label data-en="Materials Est. ($)" data-es="Materiales ($)"></label><input id="qt-mats" type="number" placeholder="0.00" oninput="calcQt()"></div>
+      <div class="fg"><label data-en="Disposal ($)" data-es="Desecho ($)"></label><input id="qt-dump" type="number" placeholder="0.00" oninput="calcQt()"></div>
+    </div>
+    <div style="background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);border-radius:8px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700"><span style="color:var(--green3)" data-en="QUOTE TOTAL" data-es="TOTAL COTIZACIÓN"></span><span id="qt-total" style="color:var(--green3);font-family:Consolas,monospace">$0.00</span></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px" data-en="Valid for 30 days" data-es="Válido por 30 días"></div>
+    </div>
+    <div class="fg"><label data-en="Notes / Scope" data-es="Notas / Alcance"></label><textarea id="qt-notes"></textarea></div>
+    <!-- SITE PHOTOS -->
+    <div class="fg">
+      <label data-en="Site Photos" data-es="Fotos del Sitio"></label>
+      <div class="photo-zone" onclick="document.getElementById('qt-photos').click()">
+        <div style="font-size:11px;color:var(--muted)" data-en="Tap to upload site photos" data-es="Toca para subir fotos del sitio"></div>
+        <input type="file" id="qt-photos" accept="image/*" multiple style="display:none" onchange="showPhotos(this,'qt-photo-grid')">
+      </div>
+      <div class="photo-grid" id="qt-photo-grid"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-green" onclick="saveQuote()"><span data-en="Save Quote" data-es="Guardar Cotización"></span></button>
+      <button class="btn btn-gold" onclick="emailQuote()"><span data-en="Email Quote" data-es="Enviar Cotización"></span></button>
+      <button class="btn btn-blue" onclick="convertQuoteToInvoice()">→ <span data-en="Convert to Invoice" data-es="Convertir a Factura"></span></button>
+      <button class="btn btn-outline" onclick="document.getElementById('quote-form').style.display='none'">✕</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" data-en="Quote History" data-es="Historial de Cotizaciones"></div>
+    <table>
+      <thead><tr>
+        <th data-en="Client" data-es="Cliente"></th>
+        <th data-en="Date" data-es="Fecha"></th>
+        <th data-en="Services" data-es="Servicios"></th>
+        <th data-en="Total" data-es="Total"></th>
+        <th data-en="Status" data-es="Estado"></th>
+        <th></th>
+      </tr></thead>
+      <tbody id="quote-list"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px" data-en="No quotes yet" data-es="Sin cotizaciones aún"></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RECEIPTS -->
+<div class="panel" id="panel-receipts">
+  <div class="card">
+    <div class="card-title" data-en="Upload Receipts & Documents" data-es="Subir Recibos y Documentos"></div>
+    <div class="g2">
+      <div>
+        <div class="fg"><label data-en="Date" data-es="Fecha"></label><input id="rec-date" type="date"></div>
+        <div class="fg">
+          <label data-en="Category" data-es="Categoría"></label>
+          <select id="rec-cat">
+            <option>Fuel / Combustible</option>
+            <option>Equipment / Equipo</option>
+            <option>Materials / Materiales</option>
+            <option>Tools / Herramientas</option>
+            <option>Dump Fees / Desecho</option>
+            <option>Vehicle / Vehículo</option>
+            <option>Insurance / Seguro</option>
+            <option>Permits / Permisos</option>
+            <option>Office / Oficina</option>
+            <option>Subcontractor / Subcontratista</option>
+            <option>Other / Otro</option>
+          </select>
+        </div>
+        <div class="fg"><label data-en="Vendor" data-es="Proveedor"></label><input id="rec-vendor" type="text" placeholder="Home Depot, Shell, etc."></div>
+        <div class="fg"><label data-en="Amount ($)" data-es="Monto ($)"></label><input id="rec-amount" type="number" placeholder="0.00"></div>
+        <div class="fg"><label data-en="Notes" data-es="Notas"></label><textarea id="rec-notes" style="min-height:50px" placeholder="Description..."></textarea></div>
+        <button class="btn btn-green" onclick="saveReceipt()"><span data-en="Save Receipt" data-es="Guardar Recibo"></span></button>
+      </div>
+      <div>
+        <div class="fg">
+          <label>Upload Receipt — AI Auto-Fill</label>
+          <div class="ocr-zone" id="rec-ocr-zone" onclick="document.getElementById('rec-file').click()">
+            <div style="font-size:11px;color:var(--blue);font-weight:700;letter-spacing:1px;margin-bottom:6px">SCAN RECEIPT</div>
+            <div style="font-size:11px;color:var(--muted)">Upload receipt image — AI reads vendor, amount, date, category</div>
+            <div style="font-size:9px;color:var(--muted);margin-top:4px">JPG / PNG / PDF / HEIC</div>
+            <input type="file" id="rec-file" accept="image/*,application/pdf" style="display:none" onchange="ocrReceipt(this)">
+          </div>
+          <div id="rec-ocr-result" style="display:none" class="ocr-result"></div>
+          <div class="photo-grid" id="rec-preview" style="margin-top:8px"></div>
+        </div>
+        <div class="fg" style="margin-top:8px">
+          <label>Batch Upload Receipt Files</label>
+          <div class="upload-area" onclick="document.getElementById('rec-multi').click()">
+            <div style="font-size:11px;color:var(--muted)">Upload multiple receipts — store for email or export</div>
+            <input type="file" id="rec-multi" accept="image/*,application/pdf" multiple style="display:none" onchange="showPhotos(this,'rec-multi-preview')">
+          </div>
+          <div class="photo-grid" id="rec-multi-preview" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">FINANCIAL DOCUMENT UPLOAD CENTER</div>
+    <div class="g2">
+      <div>
+        <div style="font-size:10px;color:var(--dim);margin-bottom:8px;letter-spacing:.5px">VENDOR INVOICES / BILLS RECEIVED</div>
+        <div class="upload-area" onclick="document.getElementById('fin-invoices').click()">
+          <div style="font-size:11px;color:var(--muted)">Upload vendor invoices, bills, statements</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:4px">PDF / JPG / PNG</div>
+          <input type="file" id="fin-invoices" accept="image/*,application/pdf" multiple style="display:none" onchange="handleFinUpload(this,'fin-invoices-list','Invoice/Bill')">
+        </div>
+        <div id="fin-invoices-list" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--dim);margin-bottom:8px;letter-spacing:.5px">BANK STATEMENTS / TAX DOCUMENTS</div>
+        <div class="upload-area" onclick="document.getElementById('fin-statements').click()">
+          <div style="font-size:11px;color:var(--muted)">Bank statements, W-2s, 1099s, financial reports</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:4px">PDF / JPG / PNG</div>
+          <input type="file" id="fin-statements" accept="image/*,application/pdf" multiple style="display:none" onchange="handleFinUpload(this,'fin-statements-list','Statement')">
+        </div>
+        <div id="fin-statements-list" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:8px;letter-spacing:.5px">CONTRACTS / PERMITS / LICENSES / COI</div>
+      <div class="upload-area" onclick="document.getElementById('fin-contracts').click()">
+        <div style="font-size:11px;color:var(--muted)">Contracts, signed proposals, permits, licenses, certificates of insurance</div>
+        <input type="file" id="fin-contracts" accept="image/*,application/pdf" multiple style="display:none" onchange="handleFinUpload(this,'fin-contracts-list','Contract')">
+      </div>
+      <div id="fin-contracts-list" style="margin-top:8px"></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-gold btn-sm" onclick="emailAllFinDocs()">EMAIL ALL DOCS TO ACCOUNTANT</button>
+      <button class="btn btn-outline btn-sm" onclick="clearFinDocs()">CLEAR ALL</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">RECEIPT LOG</div>
+    <table>
+      <thead><tr>
+        <th data-en="Date" data-es="Fecha"></th>
+        <th data-en="Vendor" data-es="Proveedor"></th>
+        <th data-en="Category" data-es="Categoría"></th>
+        <th data-en="Amount" data-es="Monto"></th>
+        <th></th>
+      </tr></thead>
+      <tbody id="receipt-list"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px" data-en="No receipts yet" data-es="Sin recibos aún"></td></tr></tbody>
+    </table>
+  </div>
+</div>
+<!-- PAYROLL -->
+<div class="panel" id="panel-payroll">
+  <div class="card" style="background:linear-gradient(135deg,#0a1a0a,#111811);border-color:rgba(76,175,80,.3)">
+    <div class="card-title" data-en="Payroll Calculator — 5 Employees" data-es="Calculadora de Nómina — 5 Empleados"></div>
+    <div class="frow" style="margin-bottom:16px">
+      <div class="fg"><label data-en="Pay Period Start" data-es="Inicio del Período"></label><input id="pay-start" type="date"></div>
+      <div class="fg"><label data-en="Pay Period End" data-es="Fin del Período"></label><input id="pay-end" type="date"></div>
+    </div>
+    <div id="emp-payroll-cards"></div>
+    <div style="background:rgba(76,175,80,.1);border:1px solid rgba(76,175,80,.3);border-radius:8px;padding:14px;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+        <span style="color:var(--muted)" data-en="Total Gross Pay" data-es="Pago Bruto Total"></span>
+        <span id="total-gross" style="color:var(--text);font-family:Consolas,monospace;font-weight:700">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+        <span style="color:var(--muted)" data-en="Total Employee Deductions" data-es="Deducciones Totales"></span>
+        <span id="total-deductions" style="color:#ef5350;font-family:Consolas,monospace;font-weight:700">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+        <span style="color:var(--muted)">Employer FICA (6.2% SS + 1.45% Med)</span>
+        <span id="total-employer" style="color:var(--gold);font-family:Consolas,monospace;font-weight:700">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+        <span style="color:var(--muted)">CA SUI / ETT (Employer)</span>
+        <span id="total-sui" style="color:var(--gold);font-family:Consolas,monospace;font-weight:700">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;border-top:1px solid rgba(76,175,80,.2);padding-top:10px">
+        <span style="color:var(--green3)" data-en="TOTAL NET PAYROLL" data-es="NÓMINA NETA TOTAL"></span>
+        <span id="total-net" style="color:var(--green3);font-family:Consolas,monospace;font-size:20px">$0.00</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-green" onclick="calcAllPayroll()">🔄 <span data-en="Calculate All" data-es="Calcular Todo"></span></button>
+      <button class="btn btn-gold" onclick="emailPayroll()"><span data-en="Email Pay Stubs" data-es="Enviar Recibos de Pago"></span></button>
+      <button class="btn btn-blue" onclick="exportPayrollCSV()">📊 <span data-en="Export CSV" data-es="Exportar CSV"></span></button>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:rgba(21,101,192,.08);border:1px solid rgba(21,101,192,.2);border-radius:6px;font-size:10px;color:#64b5f6;line-height:1.8">
+      <strong>CA 2026 Rates:</strong> SDI 0.9% (no wage limit) | SS 6.2% (up to $176,100) | Medicare 1.45% (no limit) | CA SUI 3.4% (employer, up to $7,000) | CA ETT 0.1% (employer, up to $7,000)<br>
+      Federal withholding based on W-4 Single/0 allowances. State withholding based on DE4.
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEES -->
+<div class="panel" id="panel-employees">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700" data-en="Employee Profiles" data-es="Perfiles de Empleados"></div>
+    <button class="btn btn-green" onclick="openEmpForm()">+ <span data-en="Add Employee" data-es="Agregar Empleado"></span></button>
+  </div>
+  <div class="card" id="emp-form" style="display:none">
+    <div class="card-title" data-en="Employee Profile" data-es="Perfil de Empleado"></div>
+    <div class="frow">
+      <div class="fg"><label data-en="Full Name" data-es="Nombre Completo"></label><input id="ef-name" type="text"></div>
+      <div class="fg"><label data-en="Employee #" data-es="Número"></label><input id="ef-num" type="text" placeholder="EMP-001"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label data-en="Hourly Wage ($)" data-es="Salario por Hora ($)"></label><input id="ef-wage" type="number" placeholder="18.00"></div>
+      <div class="fg"><label data-en="Position" data-es="Puesto"></label>
+        <select id="ef-pos"><option>Tree Climber / Trepador</option><option>Ground Crew / Cuadrilla</option><option>Driver / Conductor</option><option>Foreman / Capataz</option><option>Laborer / Obrero</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label data-en="Hire Date" data-es="Fecha de Contratación"></label><input id="ef-hire" type="date"></div>
+      <div class="fg"><label data-en="Phone" data-es="Teléfono"></label><input id="ef-phone" type="tel"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Email (for pay stubs)</label><input id="ef-email" type="email"></div>
+      <div class="fg"><label data-en="Filing Status (W-4)" data-es="Estado Civil (W-4)"></label>
+        <select id="ef-w4"><option>Single</option><option>Married</option><option>Head of Household</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label data-en="CA Filing Status (DE4)" data-es="Estado CA (DE4)"></label>
+        <select id="ef-de4"><option>Single</option><option>Married (0 exemptions)</option><option>Married (1 exemption)</option></select>
+      </div>
+      <div class="fg"><label data-en="Additional Withholding ($)" data-es="Retención Adicional ($)"></label><input id="ef-addl" type="number" placeholder="0.00"></div>
+    </div>
+    <div class="fg">
+      <label data-en="Certifications / Licencias" data-es="Certificaciones / Licencias"></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;font-size:11px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="ef-arb"> ISA Arborist Certified</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="ef-dl"> CA Driver License</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="ef-pest"> CA Pesticide License</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)"><input type="checkbox" id="ef-osha"> OSHA 10</label>
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="saveEmployee()"><span data-en="Save Employee" data-es="Guardar Empleado"></span></button>
+    <button class="btn btn-outline" style="margin-left:8px" onclick="document.getElementById('emp-form').style.display='none'">✕</button>
+  </div>
+  <div id="emp-profile-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+    <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px;font-size:12px" data-en="No employees added yet. Click + Add Employee." data-es="Sin empleados aún. Haga clic en + Agregar Empleado."></div>
+  </div>
+</div>
+
+<!-- EXPENSES -->
+<div class="panel" id="panel-expenses">
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title" data-en="Log Expense" data-es="Registrar Gasto"></div>
+      <div class="fg"><label data-en="Date" data-es="Fecha"></label><input id="ex-date" type="date"></div>
+      <div class="fg">
+        <label data-en="Category" data-es="Categoría"></label>
+        <select id="ex-cat">
+          <option>Fuel / Combustible</option><option>Equipment Rental / Renta de Equipo</option>
+          <option>Equipment Purchase / Compra de Equipo</option><option>Materials / Materiales</option>
+          <option>Dump Fees / Cuotas de Desecho</option><option>Vehicle Maintenance / Mantenimiento</option>
+          <option>Insurance / Seguro</option><option>Workers Comp / Comp de Trabajadores</option>
+          <option>Licenses & Permits / Licencias</option><option>Marketing / Mercadotecnia</option>
+          <option>Office Supplies / Suministros</option><option>Subcontractors / Subcontratistas</option>
+          <option>Uniforms / Uniformes</option><option>Phone / Teléfono</option>
+          <option>Other / Otro</option>
+        </select>
+      </div>
+      <div class="fg"><label data-en="Vendor / Description" data-es="Proveedor / Descripción"></label><input id="ex-vendor" type="text"></div>
+      <div class="fg"><label data-en="Amount ($)" data-es="Monto ($)"></label><input id="ex-amount" type="number" placeholder="0.00"></div>
+      <div class="fg"><label data-en="Payment Method" data-es="Método de Pago"></label>
+        <select id="ex-method"><option>Cash / Efectivo</option><option>Check / Cheque</option><option>Debit Card</option><option>Credit Card</option><option>Zelle</option><option>Other</option></select>
+      </div>
+      <button class="btn btn-green btn-full" onclick="saveExpense()"><span data-en="Save Expense" data-es="Guardar Gasto"></span></button>
+    </div>
+    <div class="card">
+      <div class="card-title" data-en="Monthly Summary" data-es="Resumen Mensual"></div>
+      <div id="expense-summary">
+        <div style="text-align:center;color:var(--muted);font-size:11px;padding:20px" data-en="Add expenses to see summary" data-es="Agregue gastos para ver el resumen"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" data-en="Expense Log" data-es="Registro de Gastos"></div>
+    <table>
+      <thead><tr>
+        <th data-en="Date" data-es="Fecha"></th>
+        <th data-en="Category" data-es="Categoría"></th>
+        <th data-en="Vendor" data-es="Proveedor"></th>
+        <th data-en="Method" data-es="Método"></th>
+        <th data-en="Amount" data-es="Monto"></th>
+        <th></th>
+      </tr></thead>
+      <tbody id="expense-list"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px" data-en="No expenses yet" data-es="Sin gastos aún"></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FIELD LOG -->
+<div class="panel" id="panel-fieldlog">
+  <div class="g2">
+    <div class="card">
+      <div class="card-title" data-en="Field Check-In / Job Site Log" data-es="Registro de Campo / Sitio de Trabajo"></div>
+      <div class="fg">
+        <label data-en="Employee Checking In" data-es="Empleado Registrándose"></label>
+        <select id="fl-emp"><option>Employee 1</option><option>Employee 2</option><option>Employee 3</option><option>Employee 4</option><option>Employee 5</option></select>
+      </div>
+      <div class="fg"><label data-en="Job / Work Order" data-es="Trabajo / Orden"></label><input id="fl-job" type="text" placeholder="Client name or WO#"></div>
+      <div class="fg">
+        <label>GPS Location</label>
+        <button class="btn btn-green btn-full" onclick="stampGPS('fl-gps')">📍 <span data-en="Get Current GPS Location" data-es="Obtener Ubicación GPS"></span></button>
+        <div class="gps-box" id="fl-gps" style="margin-top:8px" data-en="Press button to capture GPS" data-es="Presione para capturar GPS"></div>
+      </div>
+      <div class="fg">
+        <label data-en="Check-In Type" data-es="Tipo de Registro"></label>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-green" style="flex:1" onclick="fieldCheckIn('in')">✅ <span data-en="CHECK IN" data-es="ENTRADA"></span></button>
+          <button class="btn btn-red" style="flex:1" onclick="fieldCheckIn('out')">🔴 <span data-en="CHECK OUT" data-es="SALIDA"></span></button>
+        </div>
+      </div>
+      <!-- JOB SITE PHOTOS -->
+      <div class="fg">
+        <label data-en="Job Site Photos" data-es="Fotos del Sitio"></label>
+        <div class="photo-zone" onclick="document.getElementById('fl-photos').click()">
+          <div style="font-size:28px;margin-bottom:6px">📸</div>
+          <div style="font-size:11px;color:var(--muted)" data-en="Before / During / After photos" data-es="Fotos antes / durante / después"></div>
+          <input type="file" id="fl-photos" accept="image/*" capture="environment" multiple style="display:none" onchange="showPhotos(this,'fl-photo-grid')">
+        </div>
+        <div class="photo-grid" id="fl-photo-grid"></div>
+      </div>
+      <div class="fg"><label data-en="Field Notes" data-es="Notas de Campo"></label><textarea id="fl-notes" placeholder="Conditions, issues, materials used..."></textarea></div>
+      <button class="btn btn-gold btn-full" onclick="saveFieldEntry()"><span data-en="Save Field Entry" data-es="Guardar Registro de Campo"></span></button>
+    </div>
+    <div class="card">
+      <div class="card-title" data-en="Today's Field Activity" data-es="Actividad de Campo de Hoy"></div>
+      <div id="field-log-list" style="font-size:11px;color:var(--muted)">
+        <div style="text-align:center;padding:20px" data-en="No check-ins today" data-es="Sin registros hoy"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- REPORTS & TAXES -->
+<div class="panel" id="panel-reports">
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title" data-en="Financial Reports" data-es="Reportes Financieros"></div>
+    <div class="g3">
+      <div class="tax-form-card" style="border-color:rgba(76,175,80,.3)">
+        <div class="tax-form-title" style="color:var(--green3)" data-en="Profit & Loss Statement" data-es="Estado de Pérdidas y Ganancias"></div>
+        <div class="tax-form-desc" data-en="Monthly and YTD revenue vs. expenses breakdown by category" data-es="Ingresos vs. gastos por categoría mensual y anual"></div>
+        <button class="btn btn-green btn-sm" onclick="genPL()">📊 <span data-en="Generate P&L" data-es="Generar P&G"></span></button>
+        <button class="btn btn-outline btn-sm" onclick="emailReport('pl')">Email</button>
+      </div>
+      <div class="tax-form-card" style="border-color:rgba(76,175,80,.3)">
+        <div class="tax-form-title" style="color:var(--green3)" data-en="Job Cost Report" data-es="Reporte de Costo por Trabajo"></div>
+        <div class="tax-form-desc" data-en="Revenue, labor, materials per job — identifies most profitable services" data-es="Ingresos, mano de obra, materiales por trabajo"></div>
+        <button class="btn btn-green btn-sm" onclick="genJobCost()">📊 <span data-en="Generate" data-es="Generar"></span></button>
+        <button class="btn btn-outline btn-sm" onclick="emailReport('jobcost')">Email</button>
+      </div>
+      <div class="tax-form-card" style="border-color:rgba(76,175,80,.3)">
+        <div class="tax-form-title" style="color:var(--green3)" data-en="Payroll Summary" data-es="Resumen de Nómina"></div>
+        <div class="tax-form-desc" data-en="All employee wages, deductions, and employer taxes for the period" data-es="Salarios, deducciones e impuestos del empleador"></div>
+        <button class="btn btn-green btn-sm" onclick="genPayrollSummary()">📊 <span data-en="Generate" data-es="Generar"></span></button>
+        <button class="btn btn-outline btn-sm" onclick="emailReport('payroll')">Email</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEDERAL TAX FORMS -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title" data-en="Federal Tax Forms — IRS" data-es="Formularios Federales — IRS"></div>
+    <div class="g2">
+      <div class="tax-form-card">
+        <div class="tax-form-title">Form 941 — Employer's Quarterly Federal Tax Return</div>
+        <div class="tax-form-desc" data-en="Report wages, federal income tax withheld, Social Security, and Medicare taxes. Due: April 30, July 31, Oct 31, Jan 31." data-es="Reporte de salarios, retenciones federales, Seguro Social y Medicare. Vence: 30 abr, 31 jul, 31 oct, 31 ene."></div>
+        <div class="tax-due">⏰ <span data-en="Next Due: Oct 31, 2026" data-es="Próximo Vencimiento: 31 oct 2026"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-blue btn-sm" onclick="prep941()">📋 <span data-en="Prep Data" data-es="Preparar Datos"></span></button>
+          <button class="btn btn-outline btn-sm" onclick="emailReport('941')"><span data-en="Send to Bookkeeper" data-es="Enviar a Contador"></span></button>
+          <a href="https://www.irs.gov/pub/irs-pdf/f941.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 IRS Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card">
+        <div class="tax-form-title">Form 940 — FUTA Employer's Annual Federal Unemployment Tax</div>
+        <div class="tax-form-desc" data-en="Annual federal unemployment tax return. 6% on first $7,000 per employee (net 0.6% after SUTA credit). Due January 31." data-es="Impuesto federal anual de desempleo. 6% sobre primeros $7,000 por empleado. Vence 31 de enero."></div>
+        <div class="tax-due">⏰ <span data-en="Due: January 31, 2027" data-es="Vencimiento: 31 enero 2027"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-blue btn-sm" onclick="prep940()">📋 <span data-en="Prep Data" data-es="Preparar Datos"></span></button>
+          <a href="https://www.irs.gov/pub/irs-pdf/f940.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 IRS Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card">
+        <div class="tax-form-title">Form W-2 — Wage and Tax Statement (All Employees)</div>
+        <div class="tax-form-desc" data-en="Annual statement of wages and withholdings for each employee. Must be issued by January 31. File Copy A with SSA by January 31." data-es="Estado anual de salarios y retenciones por empleado. Emitir antes del 31 de enero."></div>
+        <div class="tax-due">⏰ <span data-en="Due: January 31, 2027" data-es="Vencimiento: 31 enero 2027"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-blue btn-sm" onclick="prepW2()">📋 <span data-en="Prep All W-2s" data-es="Preparar W-2s"></span></button>
+          <button class="btn btn-outline btn-sm" onclick="emailReport('w2')"><span data-en="Email to Employees" data-es="Enviar a Empleados"></span></button>
+          <a href="https://www.irs.gov/pub/irs-pdf/fw2.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 IRS Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card">
+        <div class="tax-form-title">Form 1099-NEC — Nonemployee Compensation</div>
+        <div class="tax-form-desc" data-en="Issue to any subcontractor paid $600+ in a year. File Copy A with IRS. Due January 31." data-es="Emitir a subcontratistas pagados $600+ en el año. Vence 31 de enero."></div>
+        <div class="tax-due">⏰ <span data-en="Due: January 31, 2027" data-es="Vencimiento: 31 enero 2027"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-blue btn-sm" onclick="prep1099()">📋 <span data-en="Prep 1099s" data-es="Preparar 1099s"></span></button>
+          <a href="https://www.irs.gov/pub/irs-pdf/f1099nec.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 IRS Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card">
+        <div class="tax-form-title">Form 1120-S — S Corporation Tax Return</div>
+        <div class="tax-form-desc" data-en="Annual corporate income tax return for S-Corp (if elected). Due March 15. Must match payroll records, officer wages, distributions." data-es="Declaración anual de impuestos corporativos S-Corp. Vence 15 de marzo. Debe coincidir con nómina y distribuciones."></div>
+        <div class="tax-due">⏰ <span data-en="Due: March 15, 2027" data-es="Vencimiento: 15 marzo 2027"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-blue btn-sm" onclick="prep1120s()">📋 <span data-en="Prep Package" data-es="Preparar Paquete"></span></button>
+          <button class="btn btn-outline btn-sm" onclick="emailReport('1120s')"><span data-en="Send to CPA" data-es="Enviar a CPA"></span></button>
+          <a href="https://www.irs.gov/pub/irs-pdf/f1120s.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 IRS Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card">
+        <div class="tax-form-title">Form W-3 — Transmittal of Wage and Tax Statements</div>
+        <div class="tax-form-desc" data-en="Filed with SSA along with W-2 Copy A. Summarizes all employee W-2s. Due January 31." data-es="Presentado con SSA junto con W-2 Copia A. Resume todos los W-2. Vence 31 de enero."></div>
+        <div class="tax-due">⏰ <span data-en="Due: January 31, 2027" data-es="Vencimiento: 31 enero 2027"></span></div>
+        <div style="margin-top:10px">
+          <a href="https://www.irs.gov/pub/irs-pdf/fw3.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 IRS Form</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALIFORNIA STATE TAX FORMS -->
+  <div class="card">
+    <div class="card-title" data-en="California State Tax Forms — EDD / FTB" data-es="Formularios del Estado de California — EDD / FTB"></div>
+    <div class="g2">
+      <div class="tax-form-card" style="border-color:rgba(249,168,37,.2)">
+        <div class="tax-form-title" style="color:var(--gold)">DE 9 — Quarterly Contribution Return (EDD)</div>
+        <div class="tax-form-desc" data-en="CA quarterly payroll tax return — SUI, SDI, ETT, and CA income tax withheld. File with EDD. Due: April 30, July 31, Oct 31, Jan 31." data-es="Declaración trimestral de nómina CA — SUI, SDI, ETT e impuesto de ingresos CA. Vence: 30 abr, 31 jul, 31 oct, 31 ene."></div>
+        <div class="tax-due">⏰ <span data-en="Next Due: Oct 31, 2026" data-es="Próximo Vencimiento: 31 oct 2026"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-gold btn-sm" onclick="prepDE9()">📋 <span data-en="Prep Data" data-es="Preparar Datos"></span></button>
+          <a href="https://www.edd.ca.gov/pdf_pub_ctr/de9.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 EDD Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card" style="border-color:rgba(249,168,37,.2)">
+        <div class="tax-form-title" style="color:var(--gold)">DE 9C — Quarterly Wage and Withholding Report (EDD)</div>
+        <div class="tax-form-desc" data-en="Reports individual employee wages and CA income tax withheld per quarter. Filed with DE 9. Same due dates as DE 9." data-es="Reporta salarios individuales e impuesto retenido por trimestre. Se presenta con DE 9. Mismas fechas de vencimiento."></div>
+        <div class="tax-due">⏰ <span data-en="Next Due: Oct 31, 2026" data-es="Próximo Vencimiento: 31 oct 2026"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-gold btn-sm" onclick="prepDE9C()">📋 <span data-en="Prep Employee Data" data-es="Preparar Datos de Empleados"></span></button>
+          <a href="https://www.edd.ca.gov/pdf_pub_ctr/de9c.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 EDD Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card" style="border-color:rgba(249,168,37,.2)">
+        <div class="tax-form-title" style="color:var(--gold)">CA 100S — California S Corporation Franchise Tax Return (FTB)</div>
+        <div class="tax-form-desc" data-en="Annual CA state corporate income tax return. Minimum franchise tax $800. Due March 15 (or 2.5 months after fiscal year end)." data-es="Declaración anual CA de impuestos corporativos. Impuesto mínimo de franquicia $800. Vence 15 de marzo."></div>
+        <div class="tax-due">⏰ <span data-en="Due: March 15, 2027" data-es="Vencimiento: 15 marzo 2027"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-gold btn-sm" onclick="prep100S()">📋 <span data-en="Prep Package" data-es="Preparar Paquete"></span></button>
+          <a href="https://www.ftb.ca.gov/forms/2025/2025-100s.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 FTB Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card" style="border-color:rgba(249,168,37,.2)">
+        <div class="tax-form-title" style="color:var(--gold)">DE 542 — Report of Independent Contractor(s) (EDD)</div>
+        <div class="tax-form-desc" data-en="File within 20 days of paying a subcontractor $600+ or entering a contract. One-time per vendor per year." data-es="Presentar dentro de 20 días de pagar a un subcontratista $600+. Una vez por proveedor por año."></div>
+        <div class="tax-due">⏰ <span data-en="Within 20 days of payment" data-es="Dentro de 20 días del pago"></span></div>
+        <div style="margin-top:10px">
+          <a href="https://www.edd.ca.gov/pdf_pub_ctr/de542.pdf" target="_blank" class="btn btn-outline btn-sm">🔗 EDD Form</a>
+        </div>
+      </div>
+      <div class="tax-form-card" style="border-color:rgba(249,168,37,.2)">
+        <div class="tax-form-title" style="color:var(--gold)">CA Statement of Information (SOS — Si 100)</div>
+        <div class="tax-form-desc" data-en="Annual filing with CA Secretary of State. $25 fee. CURRENTLY OVERDUE — was due 02/28/2026. File immediately at bizfile.sos.ca.gov" data-es="Presentación anual con el Secretario de Estado de CA. Cuota $25. ACTUALMENTE VENCIDA — venció 02/28/2026."></div>
+        <div class="tax-due" style="color:#ef5350">🚨 <span data-en="OVERDUE — FILE NOW" data-es="VENCIDA — PRESENTAR AHORA"></span></div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <a href="https://bizfile.sos.ca.gov" target="_blank" class="btn btn-red btn-sm">🚨 <span data-en="File Now at SOS" data-es="Presentar Ahora en SOS"></span></a>
+        </div>
+      </div>
+      <div class="tax-form-card" style="border-color:rgba(249,168,37,.2)">
+        <div class="tax-form-title" style="color:var(--gold)">CDTFA-401-A — CA Sales & Use Tax Return</div>
+        <div class="tax-form-desc" data-en="If selling taxable materials to clients, report and remit CA sales tax (rates vary by county — approx 10.25% San Diego). File quarterly or annually." data-es="Si vende materiales gravables, reporte y remita el impuesto sobre ventas de CA. Presentar trimestral o anualmente."></div>
+        <div class="tax-due">⏰ <span data-en="Quarterly" data-es="Trimestral"></span></div>
+        <div style="margin-top:10px">
+          <a href="https://www.cdtfa.ca.gov" target="_blank" class="btn btn-outline btn-sm">🔗 CDTFA</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORT OUTPUT -->
+    <div id="report-output" style="display:none;margin-top:16px">
+      <div class="card-title" data-en="Report Output" data-es="Resultado del Reporte"></div>
+      <div id="report-content" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:11px;color:var(--text);white-space:pre-wrap;line-height:1.8;font-family:Consolas,monospace;min-height:200px;max-height:500px;overflow-y:auto"></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-gold" onclick="emailReport('current')"><span data-en="Email Report to Bookkeeper" data-es="Enviar Reporte al Contador"></span></button>
+        <button class="btn btn-outline" onclick="document.getElementById('report-output').style.display='none'">✕</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI BOOKKEEPER -->
+<div class="panel" id="panel-bookkeeper">
+  <div class="card">
+    <div class="card-title" data-en="AI Bookkeeper — Alta Mirada Tree & Land Care" data-es="Contador IA — Alta Mirada Tree & Land Care"></div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:14px" data-en="Ask anything: tax deadlines, payroll, deductions, job costing, CA compliance, SBA loans, quarterly filings." data-es="Pregunte lo que sea: fechas de impuestos, nómina, deducciones, costo por trabajo, cumplimiento CA, préstamos SBA."></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="btn btn-outline btn-sm" onclick="askAI('What CA taxes does Alta Mirada Tree & Land Care need to file quarterly?')">CA Quarterly Taxes</button>
+      <button class="btn btn-outline btn-sm" onclick="askAI('How do I calculate CA SDI deduction for an employee earning $18/hr?')">SDI Calculation</button>
+      <button class="btn btn-outline btn-sm" onclick="askAI('What deductions can a landscaping S-Corp take in California?')">S-Corp Deductions</button>
+      <button class="btn btn-outline btn-sm" onclick="askAI('When is the next 941 payroll tax deposit due for a small employer?')">941 Deadline</button>
+      <button class="btn btn-outline btn-sm" onclick="askAI('What is the SBA 7a loan current rate for a landscaping company?')">SBA Loan Rate</button>
+      <button class="btn btn-outline btn-sm" onclick="askAI('How do I handle 1099s for tree removal subcontractors in California?')">1099 Subcontractors</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input id="ai-question" type="text" placeholder="Ask your bookkeeping question... / Haga su pregunta contable..." style="flex:1" onkeydown="if(event.key==='Enter')askAI()">
+      <button class="btn btn-green" id="ai-btn" onclick="askAI()">
+        <span class="spin" id="ai-spin" style="display:none"></span>
+        <span data-en="Ask" data-es="Preguntar"></span>
+      </button>
+    </div>
+    <div id="ai-output" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:12px;color:var(--dim);min-height:160px;line-height:1.8;white-space:pre-wrap" data-en="Your AI bookkeeper is ready. Ask about taxes, payroll, deductions, CA compliance, or any accounting question." data-es="Su contador IA está listo. Pregunte sobre impuestos, nómina, deducciones, cumplimiento CA o cualquier pregunta contable."></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-outline btn-sm" onclick="copyAI()">📋 <span data-en="Copy" data-es="Copiar"></span></button>
+      <button class="btn btn-gold btn-sm" onclick="emailAI()"><span data-en="Email Response" data-es="Enviar Respuesta"></span></button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('ai-output').textContent=document.getElementById('ai-output').getAttribute('data-'+lang)">DEL <span data-en="Clear" data-es="Limpiar"></span></button>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="modal-overlay" id="email-modal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-close" onclick="closeEmail()">X</div>
+    <div style="font-size:13px;font-weight:700;color:var(--green3);margin-bottom:16px">SEND EMAIL</div>
+    <div class="frow">
+      <div class="fg"><label>To</label><input id="em-to" type="email" placeholder="client@email.com"></div>
+      <div class="fg"><label>CC</label><input id="em-cc" type="email" placeholder="optional"></div>
+    </div>
+    <div class="fg"><label>Subject</label><input id="em-subject" type="text"></div>
+    <div class="fg"><label>Message</label><textarea id="em-body" style="min-height:140px"></textarea></div>
+    <div class="fg">
+      <label>Attach Files — Images, PDFs, Invoices, Receipts, Documents</label>
+      <div class="upload-area" onclick="document.getElementById('em-attach').click()">
+        <div style="font-size:11px;color:var(--muted)">Click to attach — JPG / PNG / PDF / HEIC / WEBP</div>
+        <input type="file" id="em-attach" multiple accept="image/*,application/pdf,.heic,.webp" onchange="addEmailAttachments(this)" style="display:none">
+      </div>
+      <div id="em-attach-chips" style="margin-top:6px;min-height:20px"></div>
+    </div>
+    <div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:6px;padding:10px;font-size:10px;color:var(--muted);margin-bottom:12px">
+      <strong style="color:var(--green3)">From:</strong> Alta Mirada Tree &amp; Land Care Inc &lt;sgarcia1911@gmail.com&gt;<br>
+      <strong style="color:var(--green3)">Entity:</strong> #5494718 | 2307 Skylark Dr Apt A, Oceanside CA 92054<br>
+      Delivered via SMTP. Attachments encoded as base64.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-green" onclick="sendEmail()">SEND</button>
+      <button class="btn btn-outline" onclick="closeEmail()">CANCEL</button>
+    </div>
+    <div id="email-status" style="margin-top:8px;font-size:11px;color:var(--green3)"></div>
+  </div>
+</div>
+
+
+
+<div id="toast"></div>
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+var lang='en', pinBuf='', role='';
+var DATA={workOrders:[],clients:[],invoices:[],quotes:[],receipts:[],expenses:[],employees:[],fieldLog:[]};
+var invNum=1001, emailCtx={};
+
+// ── PIN ────────────────────────────────────────────────────────────────────
+function pp(d){if(pinBuf.length>=4)return;pinBuf+=d;updDots();if(pinBuf.length===4)setTimeout(chkPin,100);}
+function pb(){pinBuf=pinBuf.slice(0,-1);updDots();document.getElementById('pin-err').textContent='';}
+function pc(){pinBuf='';updDots();document.getElementById('pin-err').textContent='';}
+function updDots(){for(var i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<pinBuf.length);}
+// PINS: owner=0609 | demo=4321 | employees E1-E10 have own PINs
+var EMPLOYEE_PINS = {
+  '1101':'Employee 1','1102':'Employee 2','1103':'Employee 3',
+  '1104':'Employee 4','1105':'Employee 5','1106':'Employee 6',
+  '1107':'Employee 7','1108':'Employee 8','1109':'Employee 9','1110':'Employee 10'
+};
+function chkPin(){
+  if(pinBuf==='0609'){role='owner';launch('OWNER');}
+  else if(pinBuf==='4321'){role='demo';launch('DEMO');}
+  else if(EMPLOYEE_PINS[pinBuf]){role='employee';empName=EMPLOYEE_PINS[pinBuf];launch(empName.toUpperCase());}
+  else{document.getElementById('pin-err').textContent=lang==='en'?'Invalid PIN':'PIN incorrecto';pinBuf='';updDots();setTimeout(()=>document.getElementById('pin-err').textContent='',2000);}
+}
+var empName='';
+function launch(roleLabel){
+  document.getElementById('gate').style.display='none'
+  try{
+    fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/login',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        portal:window.location.pathname.split('/').pop(),
+        username:typeof cu!=='undefined'?(cu&&cu.name?cu.name:(typeof cu==='string'?cu:'user')):'user',
+        role:typeof cu!=='undefined'&&cu&&cu.role?cu.role:'unknown',
+        pin:_lastPin||''
+      })
+    }).catch(function(){});
+  }catch(e){}
+
+  checkOwnerPin(_lastPin);;
+  document.getElementById('app').style.display='block';
+  document.getElementById('hdr-role').textContent=roleLabel||role.toUpperCase();
+  applyRoleTabs();
+  
+// ATTACHMENT STORE
+var emAttachFiles = [];
+var finDocStore = [];
+
+function addEmailAttachments(input){
+  Array.from(input.files).forEach(function(file){
+    var r=new FileReader();
+    r.onload=function(e){emAttachFiles.push({name:file.name,base64:e.target.result.split(",")[1],type:file.type});renderAttachChips();};
+    r.readAsDataURL(file);
+  });
+  input.value="";
+}
+function renderAttachChips(){
+  var el=document.getElementById("em-attach-chips"); if(!el) return;
+  el.innerHTML=emAttachFiles.map(function(f,i){
+    return "<span class=\"attach-chip\">"+f.name+"<button onclick=\"emAttachFiles.splice("+i+",1);renderAttachChips()\">x</button></span>";
+  }).join("");
+}
+function showAttachNames(input){addEmailAttachments(input);}
+
+async function ocrReceipt(input){
+  var file=input.files[0]; if(!file) return;
+  var zone=document.getElementById("rec-ocr-zone");
+  var res=document.getElementById("rec-ocr-result");
+  zone.classList.add("ocr-scanning");
+  res.style.display="block"; res.textContent="Scanning receipt with AI...";
+  if(file.type.startsWith("image/")){
+    var r2=new FileReader();
+    r2.onload=function(e){
+      var img=document.createElement("img"); img.src=e.target.result; img.className="photo-thumb";
+      var g=document.getElementById("rec-preview"); if(g){g.innerHTML="";g.appendChild(img);}
+    };
+    r2.readAsDataURL(file);
+  }
+  var reader=new FileReader();
+  reader.onload=async function(e){
+    var b64=e.target.result.split(",")[1];
+    var mt=file.type||"image/jpeg";
+    try{
+      var resp=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:400,messages:[{role:"user",content:[
+          {type:"image",source:{type:"base64",media_type:mt,data:b64}},
+          {type:"text",text:"Extract from this receipt: vendor name, total amount, date, and category (Fuel/Equipment/Materials/Tools/Dump Fees/Vehicle/Insurance/Other). Return ONLY raw JSON, no markdown, example: {\"vendor\":\"\",\"amount\":\"\",\"date\":\"YYYY-MM-DD\",\"category\":\"\",\"notes\":\"\"}"}
+        ]}]})
+      });
+      var d=await resp.json();
+      var txt=d.content?d.content.map(function(b){return b.text||"";}).join(""):"";
+      txt=txt.replace(/`{3}[a-z]*/g,"").replace(/`{3}/g,"").trim();
+      var data=JSON.parse(txt);
+      if(data.vendor)document.getElementById("rec-vendor").value=data.vendor;
+      if(data.amount)document.getElementById("rec-amount").value=data.amount.replace(/[^0-9.]/g,"");
+      if(data.date)document.getElementById("rec-date").value=data.date;
+      if(data.notes)document.getElementById("rec-notes").value=data.notes;
+      if(data.category){var sel=document.getElementById("rec-cat");for(var i=0;i<sel.options.length;i++){if(sel.options[i].text.toLowerCase().includes(data.category.toLowerCase())){sel.selectedIndex=i;break;}}}
+      res.textContent="AI Read: "+(data.vendor||"?")+" | $"+(data.amount||"0")+" | "+(data.date||"")+" | "+(data.category||"");
+      res.style.color="#64b5f6";
+      showToast("Receipt scanned! Review and save.");
+    }catch(err){
+      res.textContent="Fill fields manually. ("+err.message+")";
+      res.style.color="var(--gold)";
+    }
+    zone.classList.remove("ocr-scanning");
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleFinUpload(input,listId,category){
+  Array.from(input.files).forEach(function(file){
+    var r=new FileReader();
+    r.onload=function(e){finDocStore.push({name:file.name,base64:e.target.result.split(",")[1],type:file.type,category:category,date:new Date().toLocaleDateString()});renderFinList(listId,category);};
+    r.readAsDataURL(file);
+  });
+}
+function renderFinList(listId,category){
+  var el=document.getElementById(listId); if(!el) return;
+  var docs=finDocStore.filter(function(d){return d.category===category;});
+  el.innerHTML=docs.length?docs.map(function(d){
+    return "<div style=\"display:flex;justify-content:space-between;padding:5px 8px;background:var(--card2);border-radius:4px;margin:2px 0;font-size:10px\"><span style=\"color:var(--text)\">"+d.name+"</span><span style=\"color:var(--muted)\">"+d.date+"</span></div>";
+  }).join(""):"<div style=\"font-size:10px;color:var(--muted);padding:6px\">No files uploaded</div>";
+}
+function emailAllFinDocs(){
+  if(!finDocStore.length){showToast("No documents uploaded",false);return;}
+  emAttachFiles=finDocStore.map(function(d){return {name:d.name,base64:d.base64,type:d.type};});
+  renderAttachChips();
+  var docList=finDocStore.map(function(d){return "- "+d.name+" ("+d.category+")";}).join("\n");
+  openEmail({
+    to:"sgarcia1911@gmail.com",
+    subject:"Financial Documents - Alta Mirada Tree & Land Care - "+new Date().toLocaleDateString(),
+    body:"Financial documents attached:\n\n"+docList+"\n\nAlta Mirada Tree & Land Care Inc\nEntity #5494718 | 2307 Skylark Dr Apt A, Oceanside CA 92054"
+  });
+}
+function clearFinDocs(){
+  if(!confirm("Clear all uploaded financial documents?")) return;
+  finDocStore=[];
+  ["fin-invoices-list","fin-statements-list","fin-contracts-list"].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML="<div style=\"font-size:10px;color:var(--muted);padding:6px\">No files uploaded</div>";});
+  showToast("Cleared");
+}
+
+function generateInvoicePDF(){
+  var num=document.getElementById("inv-num").value;
+  var client=document.getElementById("inv-client").value;
+  var email=document.getElementById("inv-email").value;
+  var date=document.getElementById("inv-date").value;
+  var due=document.getElementById("inv-due").value;
+  var desc=document.getElementById("inv-desc").value;
+  var labor=parseFloat(document.getElementById("inv-labor").value)||0;
+  var mats=parseFloat(document.getElementById("inv-mats").value)||0;
+  var dump=parseFloat(document.getElementById("inv-dump").value)||0;
+  var taxAmt=parseFloat((document.getElementById("inv-taxamt").textContent||"").replace("$","").replace(",",""))||0;
+  var total=document.getElementById("inv-total").textContent;
+  var L=[];
+  L.push("============================================================");
+  L.push("       ALTA MIRADA TREE & LAND CARE INC");
+  L.push("       2307 Skylark Dr Apt A, Oceanside CA 92054");
+  L.push("       (760) 450-8821  |  altamiradatreecare@gmail.com");
+  L.push("       CA Entity #5494718  |  CSLB License C27");
+  L.push("============================================================");
+  L.push("");
+  L.push("INVOICE: "+num);
+  L.push("Invoice Date: "+date+"      Due Date: "+due);
+  L.push("");
+  L.push("BILL TO:");
+  L.push("  "+client);
+  if(email) L.push("  "+email);
+  L.push("");
+  L.push("------------------------------------------------------------");
+  L.push("DESCRIPTION OF SERVICES:");
+  L.push("------------------------------------------------------------");
+  L.push(desc||"");
+  L.push("");
+  L.push("CHARGES:");
+  L.push("------------------------------------------------------------");
+  if(labor>0) L.push("  Labor .....................................  $"+labor.toFixed(2));
+  if(mats>0)  L.push("  Materials ..................................  $"+mats.toFixed(2));
+  if(dump>0)  L.push("  Dump / Disposal ............................  $"+dump.toFixed(2));
+  if(taxAmt>0) L.push("  CA Sales Tax (10.25% on materials) ..........  $"+taxAmt.toFixed(2));
+  L.push("");
+  L.push("============================================================");
+  L.push("  TOTAL DUE:                              "+total);
+  L.push("============================================================");
+  L.push("");
+  L.push("PAYMENT METHODS:");
+  L.push("  Check payable to: Alta Mirada Tree & Land Care Inc");
+  L.push("  Zelle: sgarcia1911@gmail.com");
+  L.push("  Cash");
+  L.push("");
+  L.push("Thank you for your business!");
+  L.push("Giovanni Mendoza | Owner");
+  L.push("Alta Mirada Tree & Land Care Inc");
+  document.getElementById("inv-pdf-content").textContent = L.join("\n");
+  document.getElementById("inv-pdf-preview").style.display = "block";
+  showToast("Invoice generated");
+}
+
+function downloadInvoicePDF(){
+  var c=document.getElementById("inv-pdf-content").textContent;
+  var n=document.getElementById("inv-num").value||"invoice";
+  var a=document.createElement("a");
+  a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(c);
+  a.download=n+"-alta-mirada-invoice.txt"; a.click();
+  showToast("Downloaded: "+a.download);
+}
+function emailInvoiceWithPDF(){
+  var c=document.getElementById("inv-pdf-content").textContent;
+  var n=document.getElementById("inv-num").value;
+  emAttachFiles=[{name:n+"-alta-mirada-invoice.txt",base64:btoa(unescape(encodeURIComponent(c))),type:"text/plain"}];
+  renderAttachChips();
+  emailInvoice();
+}
+
+function generateQuotePDF(){
+  var client=document.getElementById("qt-client").value;
+  var email=document.getElementById("qt-email").value;
+  var phone=document.getElementById("qt-phone").value;
+  var address=document.getElementById("qt-address").value;
+  var total=document.getElementById("qt-total").textContent;
+  var notes=document.getElementById("qt-notes").value;
+  var labor=parseFloat(document.getElementById("qt-labor").value)||0;
+  var mats=parseFloat(document.getElementById("qt-mats").value)||0;
+  var dump=parseFloat(document.getElementById("qt-dump").value)||0;
+  var svcs=[];
+  ["qt-trim","qt-remove","qt-stump","qt-clear","qt-lawn","qt-irr"].forEach(function(id){
+    if(document.getElementById(id).checked) svcs.push(document.getElementById(id).parentElement.textContent.trim());
+  });
+  var today=new Date().toLocaleDateString();
+  var exp=new Date(); exp.setDate(exp.getDate()+30);
+  var qn="QT-"+new Date().toISOString().slice(0,10).replace(/-/g,"")+"-"+Math.floor(Math.random()*100);
+  var L=[];
+  L.push("============================================================");
+  L.push("       ALTA MIRADA TREE & LAND CARE INC");
+  L.push("       2307 Skylark Dr Apt A, Oceanside CA 92054");
+  L.push("       (760) 450-8821  |  altamiradatreecare@gmail.com");
+  L.push("       CA Entity #5494718  |  CSLB License C27");
+  L.push("============================================================");
+  L.push("");
+  L.push("FREE ESTIMATE: "+qn);
+  L.push("Date: "+today+"      Valid Until: "+exp.toLocaleDateString());
+  L.push("");
+  L.push("CLIENT:");
+  L.push("  "+client);
+  if(email) L.push("  Email: "+email);
+  if(phone) L.push("  Phone: "+phone);
+  if(address) L.push("  Site:  "+address);
+  L.push("");
+  L.push("------------------------------------------------------------");
+  L.push("SERVICES INCLUDED IN THIS ESTIMATE:");
+  L.push("------------------------------------------------------------");
+  svcs.forEach(function(s){L.push("  * "+s);});
+  if(!svcs.length) L.push("  (See notes below)");
+  L.push("");
+  if(labor>0) L.push("  Labor .....................................  $"+labor.toFixed(2));
+  if(mats>0)  L.push("  Materials ..................................  $"+mats.toFixed(2));
+  if(dump>0)  L.push("  Disposal ...................................  $"+dump.toFixed(2));
+  L.push("");
+  L.push("============================================================");
+  L.push("  ESTIMATED TOTAL:                        "+total);
+  L.push("============================================================");
+  L.push("");
+  if(notes){L.push("SCOPE / NOTES:");L.push(notes);L.push("");}
+  L.push("* Final price may vary based on actual site conditions.");
+  L.push("* Valid 30 days from date above.");
+  L.push("* No work begins without signed authorization.");
+  L.push("");
+  L.push("CLIENT AUTHORIZATION:");
+  L.push("");
+  L.push("Signature: _______________________________  Date: __________");
+  L.push("Printed Name: ___________________________");
+  L.push("");
+  L.push("Giovanni Mendoza | Owner");
+  L.push("Alta Mirada Tree & Land Care Inc");
+  document.getElementById("qt-pdf-content").textContent = L.join("\n");
+  document.getElementById("qt-pdf-preview").style.display = "block";
+  showToast("Estimate generated");
+}
+
+function downloadQuotePDF(){
+  var c=document.getElementById("qt-pdf-content").textContent;
+  var a=document.createElement("a");
+  a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(c);
+  a.download="estimate-alta-mirada.txt"; a.click();
+  showToast("Estimate downloaded");
+}
+function emailQuoteWithPDF(){
+  var c=document.getElementById("qt-pdf-content").textContent;
+  var client=document.getElementById("qt-client").value;
+  var email=document.getElementById("qt-email").value;
+  var total=document.getElementById("qt-total").textContent;
+  emAttachFiles=[{name:"estimate-alta-mirada.txt",base64:btoa(unescape(encodeURIComponent(c))),type:"text/plain"}];
+  renderAttachChips();
+  openEmail({
+    to:email,
+    subject:"Free Estimate - Alta Mirada Tree & Land Care - "+total,
+    body:"Dear "+client+",\n\nThank you for the opportunity. Your estimate is attached.\n\nEstimated Total: "+total+"\nValid 30 days\n\nTo schedule, reply or call (760) 450-8821.\n\nGiovanni Mendoza\nAlta Mirada Tree & Land Care Inc\n2307 Skylark Dr Apt A, Oceanside CA 92054\nEntity #5494718 | CSLB C27"
+  });
+}
+
+async function sendEmail(){
+  var to=document.getElementById("em-to").value.trim();
+  if(!to){showToast("Recipient required",false);return;}
+  var statusEl=document.getElementById("email-status");
+  statusEl.textContent="Sending..."; statusEl.style.color="var(--muted)";
+  var attachments=emAttachFiles.map(function(f){return {filename:f.name,content:f.base64,encoding:"base64",contentType:f.type};});
+  try{
+    var r=await fetch("https://auditdna-backend-1-production.up.railway.app/api/email/send",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        to:to,cc:document.getElementById("em-cc").value,
+        subject:document.getElementById("em-subject").value,
+        body:document.getElementById("em-body").value,
+        from:"Alta Mirada Tree & Land Care Inc <sgarcia1911@gmail.com>",
+        attachments:attachments
+      })
+    });
+    var d=await r.json().catch(function(){return {};});
+    if(r.ok){
+      statusEl.textContent="Email sent"+(attachments.length?" with "+attachments.length+" file(s)":"")+".";
+      statusEl.style.color="var(--green3)";
+      showToast("Email sent!");
+      emAttachFiles=[]; renderAttachChips();
+      setTimeout(closeEmail,2500);
+    }else{
+      statusEl.textContent="Error: "+(d.message||r.status);
+      statusEl.style.color="#ef5350";
+    }
+  }catch(e){
+    statusEl.textContent="SMTP not reachable. Copy and send from Gmail directly.";
+    statusEl.style.color="var(--gold)";
+  }
+}
+
+initPayrollCards();startClock();setLang(lang,null);
+  var welcome = role==='owner'?'Welcome, Giovanni!':role==='employee'?'Welcome, '+empName+'!':'Demo Mode';
+  var welcomeEs = role==='owner'?'¡Bienvenido, Giovanni!':role==='employee'?'¡Bienvenido, '+empName+'!':'Modo Demo';
+  showToast(lang==='en'?welcome:welcomeEs);
+}
+
+// OWNER sees all 12 tabs
+// EMPLOYEE sees: Work Orders, Clients, Field Log, Receipts only
+// DEMO sees: Dashboard, Work Orders, Clients, Invoices, Quotes, Receipts, Field Log
+var OWNER_TABS    = ['dashboard','workorders','clients','invoices','quotes','receipts','payroll','employees','expenses','fieldlog','reports','bookkeeper'];
+var EMPLOYEE_TABS = ['workorders','clients','fieldlog','receipts'];
+var DEMO_TABS     = ['dashboard','workorders','clients','invoices','quotes','receipts','fieldlog'];
+
+function applyRoleTabs(){
+  var allowed = role==='owner' ? OWNER_TABS : role==='employee' ? EMPLOYEE_TABS : DEMO_TABS;
+  var tabs = document.querySelectorAll('.ntab');
+  var tabIds = ['dashboard','workorders','clients','invoices','quotes','receipts','payroll','employees','expenses','fieldlog','reports','bookkeeper'];
+  tabs.forEach(function(t,i){
+    var id = tabIds[i];
+    if(!id) return;
+    t.style.display = allowed.indexOf(id)>=0 ? '' : 'none';
+  });
+  // default tab for role
+  var defaultTab = role==='employee' ? 'workorders' : 'dashboard';
+  sw(defaultTab);
+  // Show role notice for employees
+  if(role==='employee'){
+    var notice = document.getElementById('emp-notice');
+    if(!notice){
+      notice = document.createElement('div');
+      notice.id = 'emp-notice';
+      notice.style.cssText='background:rgba(76,175,80,.1);border:1px solid rgba(76,175,80,.25);border-radius:6px;padding:10px 16px;margin:10px 20px 0;font-size:11px;color:#81c784;display:flex;align-items:center;gap:8px';
+      notice.innerHTML='<span style="font-size:16px">👷</span> <span data-en="Employee access: Work Orders, Clients, Field Log, Receipts only. Contact owner for full access." data-es="Acceso de empleado: Órdenes, Clientes, Registro de Campo y Recibos únicamente. Contacte al dueño para acceso completo.">Employee access: Work Orders, Clients, Field Log, Receipts only.</span>';
+      document.querySelector('header').after(notice);
+    }
+    notice.style.display='flex';
+  } else {
+    var en2 = document.getElementById('emp-notice');
+    if(en2) en2.style.display='none';
+  }
+}
+
+// ── LANGUAGE ───────────────────────────────────────────────────────────────
+function setLang(l,btn){
+  lang=l;
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    var txt=el.getAttribute('data-'+l);
+    if(txt)el.textContent=txt;
+  });
+  document.querySelectorAll('.glbtn,.ltbtn').forEach(b=>b.classList.remove('active'));
+  var gate=document.getElementById('gate');
+  if(gate&&gate.style.display!=='none'){
+    document.querySelectorAll('.glbtn').forEach(b=>{if(b.textContent===l.toUpperCase())b.classList.add('active');});
+  }
+  var ltEn=document.getElementById('lt-en'), ltEs=document.getElementById('lt-es');
+  if(ltEn)ltEn.classList.toggle('active',l==='en');
+  if(ltEs)ltEs.classList.toggle('active',l==='es');
+}
+
+// ── CLOCK ──────────────────────────────────────────────────────────────────
+function startClock(){
+  var el=document.getElementById('clock');
+  function tick(){if(el)el.textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+  tick();setInterval(tick,1000);
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function sw(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  var panel=document.getElementById('panel-'+id);
+  if(panel)panel.classList.add('active');
+  var tabs=['dashboard','workorders','clients','invoices','quotes','receipts','payroll','employees','expenses','fieldlog','reports','bookkeeper'];
+  var idx=tabs.indexOf(id);
+  var ntabs=document.querySelectorAll('.ntab');
+  if(ntabs[idx])ntabs[idx].classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='dashboard')updateDashStats();
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+var toastTimer;
+function showToast(msg,ok){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.borderColor=ok===false?'#c62828':'#4caf50';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── GPS ────────────────────────────────────────────────────────────────────
+function stampGPS(elId){
+  var el=document.getElementById(elId);
+  if(!el)return;
+  el.textContent=lang==='en'?'Acquiring GPS...':'Obteniendo GPS...';
+  navigator.geolocation.getCurrentPosition(
+    function(pos){el.textContent=pos.coords.latitude.toFixed(6)+'N, '+Math.abs(pos.coords.longitude).toFixed(6)+'W | Acc: '+Math.round(pos.coords.accuracy)+'m | '+new Date().toLocaleTimeString();},
+    function(e){el.textContent='GPS error: '+e.message;}
+  );
+}
+
+// ── PHOTOS ─────────────────────────────────────────────────────────────────
+function showPhotos(input,gridId){
+  var grid=document.getElementById(gridId);
+  if(!grid)return;
+  Array.from(input.files).forEach(function(file){
+    if(!file.type.startsWith('image/'))return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var img=document.createElement('img');
+      img.src=e.target.result;img.className='photo-thumb';
+      grid.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── WORK ORDERS ────────────────────────────────────────────────────────────
+function openNewWO(){document.getElementById('wo-form').style.display='block';document.getElementById('wo-date').value=new Date().toISOString().slice(0,10);}
+function saveWO(){
+  var client=document.getElementById('wo-client').value.trim();
+  if(!client){showToast(lang==='en'?'Client name required':'Se requiere nombre del cliente',false);return;}
+  var wo={id:'WO-'+(1000+DATA.workOrders.length+1),client,date:document.getElementById('wo-date').value,service:document.getElementById('wo-service').value,crew:document.getElementById('wo-crew').value,address:document.getElementById('wo-address').value,hours:document.getElementById('wo-hours').value,price:parseFloat(document.getElementById('wo-price').value)||0,notes:document.getElementById('wo-notes').value,status:'Open',gps:document.getElementById('wo-gps').textContent};
+  DATA.workOrders.push(wo);
+  renderWOList();
+  document.getElementById('wo-form').style.display='none';
+  showToast(lang==='en'?'Work order saved!':'¡Orden guardada!');
+  updateDashStats();
+}
+function saveWOandInvoice(){
+  saveWO();
+  var last=DATA.workOrders[DATA.workOrders.length-1];
+  if(last){
+    sw('invoices');openNewInv();
+    document.getElementById('inv-client').value=last.client;
+    document.getElementById('inv-desc').value=last.service+' at '+last.address;
+    document.getElementById('inv-labor').value=last.price;
+    calcInv();
+  }
+}
+function renderWOList(){
+  var tb=document.getElementById('wo-list');
+  if(!DATA.workOrders.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">'+(lang==='en'?'No work orders yet':'Sin órdenes aún')+'</td></tr>';return;}
+  tb.innerHTML=DATA.workOrders.map(function(wo){
+    return '<tr><td>'+wo.date+'</td><td style="color:var(--text);font-weight:600">'+wo.client+'</td><td style="font-size:10px">'+wo.service+'</td><td>'+wo.crew+'</td><td style="color:var(--green3);font-family:Consolas,monospace">$'+wo.price.toFixed(2)+'</td><td><span class="pill '+(wo.status==='Open'?'pill-blue':'pill-green')+'">'+wo.status+'</span></td><td><button class="btn btn-outline btn-sm" onclick="markWODone('+DATA.workOrders.indexOf(wo)+')">✓</button></td></tr>';
+  }).join('');
+}
+function markWODone(i){DATA.workOrders[i].status='Complete';renderWOList();showToast('Marked complete!');}
+
+// ── CLIENTS ────────────────────────────────────────────────────────────────
+function openNewClient(){document.getElementById('client-form').style.display='block';}
+function saveClient(){
+  var name=document.getElementById('cl-name').value.trim();
+  if(!name){showToast('Name required',false);return;}
+  DATA.clients.push({name,company:document.getElementById('cl-company').value,email:document.getElementById('cl-email').value,phone:document.getElementById('cl-phone').value,address:document.getElementById('cl-address').value,type:document.getElementById('cl-type').value,notes:document.getElementById('cl-notes').value});
+  renderClientList();
+  document.getElementById('client-form').style.display='none';
+  showToast(lang==='en'?'Client saved!':'¡Cliente guardado!');
+}
+function renderClientList(){
+  var tb=document.getElementById('client-list');
+  if(!DATA.clients.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">'+(lang==='en'?'No clients yet':'Sin clientes aún')+'</td></tr>';return;}
+  tb.innerHTML=DATA.clients.map(function(c,i){
+    var jobs=DATA.workOrders.filter(w=>w.client===c.name).length;
+    return '<tr><td style="color:var(--text);font-weight:600">'+c.name+'</td><td>'+c.email+'</td><td>'+c.phone+'</td><td><span class="pill pill-blue" style="font-size:8px">'+c.type.split('/')[0].trim()+'</span></td><td style="color:var(--green3)">'+jobs+'</td><td><button class="btn btn-outline btn-sm" onclick="emailClient('+i+')">📧</button></td></tr>';
+  }).join('');
+}
+function filterClients(q){
+  document.querySelectorAll('#client-list tr').forEach(function(row){
+    row.style.display=row.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';
+  });
+}
+function emailClient(i){
+  var c=DATA.clients[i];
+  openEmail({to:c.email,subject:'Alta Mirada Tree & Land Care — Service Follow-Up',body:'Dear '+c.name+',\n\nThank you for your business. Please don\'t hesitate to reach out for any tree care, trimming, or landscaping needs.\n\nBest regards,\nGiovanni Mendoza\nAlta Mirada Tree & Land Care Inc\n(760) 000-0000\n2307 Skylark Dr Apt A, Oceanside CA 92054'});
+}
+
+// ── INVOICES ───────────────────────────────────────────────────────────────
+function openNewInv(){
+  document.getElementById('inv-form').style.display='block';
+  document.getElementById('inv-num').value='INV-'+(invNum++);
+  document.getElementById('inv-date').value=new Date().toISOString().slice(0,10);
+  var due=new Date();due.setDate(due.getDate()+30);
+  document.getElementById('inv-due').value=due.toISOString().slice(0,10);
+}
+function calcInv(){
+  var labor=parseFloat(document.getElementById('inv-labor').value)||0;
+  var mats=parseFloat(document.getElementById('inv-mats').value)||0;
+  var dump=parseFloat(document.getElementById('inv-dump').value)||0;
+  var taxPct=parseFloat(document.getElementById('inv-tax').value)||0;
+  var sub=labor+mats+dump;
+  var tax=mats*(taxPct/100);
+  var total=sub+tax;
+  document.getElementById('inv-subtotal').textContent='$'+sub.toFixed(2);
+  document.getElementById('inv-taxamt').textContent='$'+tax.toFixed(2);
+  document.getElementById('inv-total').textContent='$'+total.toFixed(2);
+}
+function saveInvoice(){
+  var client=document.getElementById('inv-client').value.trim();
+  if(!client){showToast('Client required',false);return;}
+  var total=document.getElementById('inv-total').textContent;
+  var inv={num:document.getElementById('inv-num').value,client,email:document.getElementById('inv-email').value,date:document.getElementById('inv-date').value,due:document.getElementById('inv-due').value,desc:document.getElementById('inv-desc').value,total,status:'Unpaid'};
+  DATA.invoices.push(inv);renderInvList();
+  document.getElementById('inv-form').style.display='none';
+  showToast(lang==='en'?'Invoice saved!':'¡Factura guardada!');
+  updateDashStats();
+}
+function renderInvList(){
+  var tb=document.getElementById('inv-list');
+  if(!DATA.invoices.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">'+(lang==='en'?'No invoices yet':'Sin facturas aún')+'</td></tr>';return;}
+  tb.innerHTML=DATA.invoices.map(function(inv,i){
+    return '<tr><td style="color:var(--green3);font-family:Consolas,monospace;font-size:10px">'+inv.num+'</td><td style="color:var(--text);font-weight:600">'+inv.client+'</td><td>'+inv.date+'</td><td style="color:var(--green3);font-weight:700;font-family:Consolas,monospace">'+inv.total+'</td><td><span class="pill '+(inv.status==='Paid'?'pill-green':'pill-red')+'">'+inv.status+'</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="emailInvDirect('+i+')">📧</button><button class="btn btn-outline btn-sm" onclick="DATA.invoices['+i+'].status=\'Paid\';renderInvList();updateDashStats();showToast(\'Marked Paid!\')">✓ Paid</button></td></tr>';
+  }).join('');
+}
+function emailInvoice(){
+  var client=document.getElementById('inv-client').value;
+  var email=document.getElementById('inv-email').value;
+  var num=document.getElementById('inv-num').value;
+  var total=document.getElementById('inv-total').textContent;
+  var due=document.getElementById('inv-due').value;
+  openEmail({to:email,subject:num+' — Alta Mirada Tree & Land Care Inc — '+total+' Due '+due,body:'Dear '+client+',\n\nPlease find attached your invoice '+num+' for '+total+'.\n\nPayment is due by '+due+'.\n\nService: '+document.getElementById('inv-desc').value+'\n\nPayment Methods: Check, Zelle, Cash\n\nThank you for your business!\n\nGiovanni Mendoza\nAlta Mirada Tree & Land Care Inc\n2307 Skylark Dr Apt A, Oceanside CA 92054\nEntity #5494718'});
+}
+function emailInvDirect(i){
+  var inv=DATA.invoices[i];
+  openEmail({to:inv.email||'',subject:inv.num+' — Alta Mirada Tree & Land Care — '+inv.total,body:'Dear '+inv.client+',\n\nInvoice '+inv.num+' for '+inv.total+' is due '+inv.due+'.\n\nThank you!\nGiovanni Mendoza\nAlta Mirada Tree & Land Care Inc'});
+}
+function printInvoice(){window.print();}
+
+// ── QUOTES ─────────────────────────────────────────────────────────────────
+function openNewQuote(){document.getElementById('quote-form').style.display='block';}
+function calcQt(){
+  var labor=parseFloat(document.getElementById('qt-labor').value)||0;
+  var mats=parseFloat(document.getElementById('qt-mats').value)||0;
+  var dump=parseFloat(document.getElementById('qt-dump').value)||0;
+  document.getElementById('qt-total').textContent='$'+(labor+mats+dump).toFixed(2);
+}
+function saveQuote(){
+  var client=document.getElementById('qt-client').value.trim();
+  if(!client){showToast('Client required',false);return;}
+  var svcs=[];
+  ['qt-trim','qt-remove','qt-stump','qt-clear','qt-lawn','qt-irr'].forEach(function(id){if(document.getElementById(id).checked)svcs.push(document.getElementById(id).nextSibling.textContent.trim());});
+  DATA.quotes.push({client,email:document.getElementById('qt-email').value,phone:document.getElementById('qt-phone').value,address:document.getElementById('qt-address').value,services:svcs.join(', '),total:document.getElementById('qt-total').textContent,date:new Date().toISOString().slice(0,10),status:'Pending'});
+  renderQuoteList();
+  document.getElementById('quote-form').style.display='none';
+  showToast(lang==='en'?'Quote saved!':'¡Cotización guardada!');
+}
+function renderQuoteList(){
+  var tb=document.getElementById('quote-list');
+  if(!DATA.quotes.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">'+(lang==='en'?'No quotes yet':'Sin cotizaciones aún')+'</td></tr>';return;}
+  tb.innerHTML=DATA.quotes.map(function(q,i){
+    return '<tr><td style="color:var(--text);font-weight:600">'+q.client+'</td><td>'+q.date+'</td><td style="font-size:10px;color:var(--muted)">'+q.services+'</td><td style="color:var(--green3);font-weight:700">'+q.total+'</td><td><span class="pill pill-gold">'+q.status+'</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="emailQuoteDirect('+i+')">📧</button><button class="btn btn-outline btn-sm" onclick="convertQuoteDirect('+i+')">→ Inv</button></td></tr>';
+  }).join('');
+}
+function emailQuote(){
+  var client=document.getElementById('qt-client').value;
+  var email=document.getElementById('qt-email').value;
+  var total=document.getElementById('qt-total').textContent;
+  var svcs=[];
+  ['qt-trim','qt-remove','qt-stump','qt-clear','qt-lawn','qt-irr'].forEach(function(id){if(document.getElementById(id).checked)svcs.push(document.getElementById(id).parentElement.textContent.trim());});
+  openEmail({to:email,subject:'Free Estimate — Alta Mirada Tree & Land Care Inc — '+total,body:'Dear '+client+',\n\nThank you for the opportunity to serve you. Please find your estimate below:\n\nServices: '+svcs.join(', ')+'\nEstimated Total: '+total+'\nValid for: 30 days\n\nThis is a free estimate. Final price may vary based on site conditions.\n\nTo schedule, reply to this email or call us!\n\nGiovanni Mendoza\nAlta Mirada Tree & Land Care Inc\n2307 Skylark Dr Apt A, Oceanside CA 92054\nCA Entity #5494718 | License C27'});
+}
+function emailQuoteDirect(i){var q=DATA.quotes[i];openEmail({to:q.email,subject:'Estimate — Alta Mirada — '+q.total,body:'Dear '+q.client+',\n\nYour estimate for '+q.services+' is '+q.total+'.\n\nValid 30 days.\n\nGiovanni Mendoza\nAlta Mirada Tree & Land Care Inc'});}
+function convertQuoteToInvoice(){
+  var client=document.getElementById('qt-client').value;var email=document.getElementById('qt-email').value;
+  sw('invoices');openNewInv();
+  document.getElementById('inv-client').value=client;document.getElementById('inv-email').value=email;
+  document.getElementById('inv-labor').value=document.getElementById('qt-labor').value;
+  document.getElementById('inv-mats').value=document.getElementById('qt-mats').value;
+  document.getElementById('inv-dump').value=document.getElementById('qt-dump').value;
+  calcInv();showToast('Converted to invoice!');
+}
+function convertQuoteDirect(i){
+  var q=DATA.quotes[i];sw('invoices');openNewInv();
+  document.getElementById('inv-client').value=q.client;document.getElementById('inv-email').value=q.email;
+  document.getElementById('inv-desc').value=q.services;
+  document.getElementById('inv-labor').value=parseFloat(q.total.replace('$',''))||0;
+  calcInv();showToast('Converted!');
+}
+
+// ── RECEIPTS ───────────────────────────────────────────────────────────────
+function saveReceipt(){
+  var vendor=document.getElementById('rec-vendor').value.trim();
+  if(!vendor){showToast('Vendor required',false);return;}
+  DATA.receipts.push({date:document.getElementById('rec-date').value,vendor,cat:document.getElementById('rec-cat').value,amount:parseFloat(document.getElementById('rec-amount').value)||0,notes:document.getElementById('rec-notes').value});
+  renderReceiptList();showToast(lang==='en'?'Receipt saved!':'¡Recibo guardado!');
+}
+function renderReceiptList(){
+  var tb=document.getElementById('receipt-list');
+  if(!DATA.receipts.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">'+(lang==='en'?'No receipts yet':'Sin recibos aún')+'</td></tr>';return;}
+  tb.innerHTML=DATA.receipts.map(function(r,i){
+    return '<tr><td>'+r.date+'</td><td style="color:var(--text)">'+r.vendor+'</td><td style="font-size:10px">'+r.cat+'</td><td style="color:#ef5350;font-family:Consolas,monospace">$'+r.amount.toFixed(2)+'</td><td><button class="btn btn-outline btn-sm" onclick="DATA.receipts.splice('+i+',1);renderReceiptList()">🗑️</button></td></tr>';
+  }).join('');
+}
+
+// ── EXPENSES ───────────────────────────────────────────────────────────────
+function saveExpense(){
+  var vendor=document.getElementById('ex-vendor').value.trim();
+  if(!vendor){showToast('Vendor required',false);return;}
+  DATA.expenses.push({date:document.getElementById('ex-date').value,cat:document.getElementById('ex-cat').value,vendor,amount:parseFloat(document.getElementById('ex-amount').value)||0,method:document.getElementById('ex-method').value});
+  renderExpenseList();updateExpenseSummary();showToast(lang==='en'?'Expense saved!':'¡Gasto guardado!');
+}
+function renderExpenseList(){
+  var tb=document.getElementById('expense-list');
+  if(!DATA.expenses.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">'+(lang==='en'?'No expenses yet':'Sin gastos aún')+'</td></tr>';return;}
+  tb.innerHTML=DATA.expenses.map(function(e,i){
+    return '<tr><td>'+e.date+'</td><td style="font-size:10px">'+e.cat+'</td><td style="color:var(--text)">'+e.vendor+'</td><td style="font-size:10px">'+e.method+'</td><td style="color:#ef5350;font-family:Consolas,monospace">$'+e.amount.toFixed(2)+'</td><td><button class="btn btn-outline btn-sm" onclick="DATA.expenses.splice('+i+',1);renderExpenseList();updateExpenseSummary()">🗑️</button></td></tr>';
+  }).join('');
+}
+function updateExpenseSummary(){
+  var totals={};
+  DATA.expenses.forEach(function(e){
+    var cat=e.cat.split('/')[0].trim();
+    totals[cat]=(totals[cat]||0)+e.amount;
+  });
+  var total=DATA.expenses.reduce(function(a,b){return a+b.amount;},0);
+  var html='';
+  Object.entries(totals).sort(function(a,b){return b[1]-a[1];}).forEach(function([cat,amt]){
+    html+='<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(42,61,42,.3);font-size:11px"><span style="color:var(--muted)">'+cat+'</span><span style="color:#ef5350;font-family:Consolas,monospace">$'+amt.toFixed(2)+'</span></div>';
+  });
+  html+='<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;font-weight:700"><span style="color:var(--text)">TOTAL</span><span style="color:#ef5350;font-family:Consolas,monospace">$'+total.toFixed(2)+'</span></div>';
+  document.getElementById('expense-summary').innerHTML=html||'<div style="text-align:center;color:var(--muted);font-size:11px;padding:20px">Add expenses to see summary</div>';
+}
+
+// ── EMPLOYEES ──────────────────────────────────────────────────────────────
+function openEmpForm(){document.getElementById('emp-form').style.display='block';}
+function saveEmployee(){
+  var name=document.getElementById('ef-name').value.trim();
+  if(!name){showToast('Name required',false);return;}
+  var emp={id:'EMP-'+(100+DATA.employees.length+1),name,num:document.getElementById('ef-num').value,wage:parseFloat(document.getElementById('ef-wage').value)||18,pos:document.getElementById('ef-pos').value,hire:document.getElementById('ef-hire').value,phone:document.getElementById('ef-phone').value,email:document.getElementById('ef-email').value,w4:document.getElementById('ef-w4').value,de4:document.getElementById('ef-de4').value,addl:parseFloat(document.getElementById('ef-addl').value)||0};
+  DATA.employees.push(emp);
+  renderEmpProfiles();initPayrollCards();
+  document.getElementById('emp-form').style.display='none';
+  showToast(lang==='en'?'Employee saved!':'¡Empleado guardado!');
+}
+function renderEmpProfiles(){
+  var el=document.getElementById('emp-profile-list');
+  if(!DATA.employees.length){el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px;font-size:12px">'+(lang==='en'?'No employees added yet. Click + Add Employee.':'Sin empleados aún.')+'</div>';return;}
+  el.innerHTML=DATA.employees.map(function(e,i){
+    return '<div class="emp-card"><div class="emp-name">'+e.name+' <span style="font-size:9px;color:var(--muted)">'+e.id+'</span></div><div class="row"><span class="row-key">Position</span><span class="row-val">'+e.pos+'</span></div><div class="row"><span class="row-key">Wage</span><span class="row-val" style="color:var(--green3);font-family:Consolas,monospace">$'+e.wage.toFixed(2)+'/hr</span></div><div class="row"><span class="row-key">Hire Date</span><span class="row-val">'+e.hire+'</span></div><div class="row" style="border:none"><span class="row-key">Contact</span><span class="row-val">'+e.phone+'</span></div></div>';
+  }).join('');
+}
+
+// ── PAYROLL ────────────────────────────────────────────────────────────────
+var defaultEmps=[
+  {id:'EMP-101',name:'Employee 1',wage:18.00,w4:'Single',de4:'Single',addl:0},
+  {id:'EMP-102',name:'Employee 2',wage:17.50,w4:'Single',de4:'Single',addl:0},
+  {id:'EMP-103',name:'Employee 3',wage:18.50,w4:'Married',de4:'Married (0 exemptions)',addl:0},
+  {id:'EMP-104',name:'Employee 4',wage:20.00,w4:'Single',de4:'Single',addl:0},
+  {id:'EMP-105',name:'Employee 5 (Foreman)',wage:24.00,w4:'Married',de4:'Married (1 exemption)',addl:0}
+];
+function initPayrollCards(){
+  var emps=DATA.employees.length?DATA.employees:defaultEmps;
+  var html='';
+  emps.forEach(function(emp,i){
+    html+='<div class="emp-card" id="payroll-card-'+i+'"><div class="emp-name">'+emp.name+' <span style="font-size:9px;color:var(--muted)">'+emp.id+' | $'+emp.wage.toFixed(2)+'/hr</span></div>';
+    html+='<div class="frow" style="margin-bottom:10px"><div><label style="font-size:9px">Regular Hours</label><input type="number" id="py-reg-'+i+'" value="40" min="0" max="80" oninput="calcEmpPay('+i+')" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;padding:5px 8px;width:100%;outline:none"></div><div><label style="font-size:9px">OT Hours (1.5x)</label><input type="number" id="py-ot-'+i+'" value="0" min="0" oninput="calcEmpPay('+i+')" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;padding:5px 8px;width:100%;outline:none"></div></div>';
+    html+='<div id="py-breakdown-'+i+'"></div></div>';
+  });
+  var el=document.getElementById('emp-payroll-cards');
+  if(el){el.innerHTML=html;emps.forEach(function(_,i){calcEmpPay(i);});}
+}
+function calcEmpPay(i){
+  var emps=DATA.employees.length?DATA.employees:defaultEmps;
+  var emp=emps[i];
+  if(!emp)return;
+  var reg=parseFloat(document.getElementById('py-reg-'+i).value)||0;
+  var ot=parseFloat(document.getElementById('py-ot-'+i).value)||0;
+  var gross=reg*emp.wage+ot*emp.wage*1.5;
+  // Fed withholding — simplified single/married bracket for 2026 biweekly approx
+  var fedRate=emp.w4==='Married'?0.12:0.15;
+  var fedWH=Math.max(0,gross*fedRate-emp.addl);
+  var ss=Math.min(gross*0.062,176100*0.062/52);
+  var med=gross*0.0145;
+  var sdi=gross*0.009;
+  var caRate=emp.de4.includes('Married')?0.04:0.06;
+  var caWH=Math.max(0,gross*caRate);
+  var totalDed=fedWH+ss+med+sdi+caWH;
+  var net=gross-totalDed;
+  var el=document.getElementById('py-breakdown-'+i);
+  if(!el)return;
+  el.innerHTML='<div class="deduction-row"><span class="deduction-label">Gross Pay ('+reg+'h reg + '+ot+'h OT)</span><span class="deduction-val">$'+gross.toFixed(2)+'</span></div>'+
+    '<div class="deduction-row"><span class="deduction-label">Federal Income Tax (est. '+Math.round(fedRate*100)+'%)</span><span class="deduction-val" style="color:#ef5350">-$'+fedWH.toFixed(2)+'</span></div>'+
+    '<div class="deduction-row"><span class="deduction-label">Social Security (6.2%)</span><span class="deduction-val" style="color:#ef5350">-$'+ss.toFixed(2)+'</span></div>'+
+    '<div class="deduction-row"><span class="deduction-label">Medicare (1.45%)</span><span class="deduction-val" style="color:#ef5350">-$'+med.toFixed(2)+'</span></div>'+
+    '<div class="deduction-row"><span class="deduction-label">CA SDI (0.9%)</span><span class="deduction-val" style="color:#ef5350">-$'+sdi.toFixed(2)+'</span></div>'+
+    '<div class="deduction-row"><span class="deduction-label">CA State Income Tax (est. '+Math.round(caRate*100)+'%)</span><span class="deduction-val" style="color:#ef5350">-$'+caWH.toFixed(2)+'</span></div>'+
+    '<div class="net-pay"><div class="label">NET PAY</div><div class="amount">$'+net.toFixed(2)+'</div></div>';
+  calcAllPayroll();
+}
+function calcAllPayroll(){
+  var emps=DATA.employees.length?DATA.employees:defaultEmps;
+  var totalGross=0,totalDed=0,totalEmp=0,totalSUI=0,totalNet=0;
+  emps.forEach(function(emp,i){
+    var reg=parseFloat((document.getElementById('py-reg-'+i)||{}).value)||0;
+    var ot=parseFloat((document.getElementById('py-ot-'+i)||{}).value)||0;
+    var gross=reg*emp.wage+ot*emp.wage*1.5;
+    var fedRate=emp.w4==='Married'?0.12:0.15;
+    var fedWH=Math.max(0,gross*fedRate);
+    var ss=gross*0.062;var med=gross*0.0145;var sdi=gross*0.009;
+    var caRate=emp.de4&&emp.de4.includes('Married')?0.04:0.06;
+    var caWH=Math.max(0,gross*caRate);
+    var ded=fedWH+ss+med+sdi+caWH;
+    totalGross+=gross;totalDed+=ded;
+    totalEmp+=gross*0.062+gross*0.0145;
+    totalSUI+=Math.min(gross,7000/52)*0.034;
+    totalNet+=gross-ded;
+  });
+  var s=function(id,v){var el=document.getElementById(id);if(el)el.textContent='$'+v.toFixed(2);};
+  s('total-gross',totalGross);s('total-deductions',totalDed);
+  s('total-employer',totalEmp);s('total-sui',totalSUI);s('total-net',totalNet);
+}
+function emailPayroll(){openEmail({to:'giovanni@altamiradatree.com',subject:'Payroll Summary — Alta Mirada Tree & Land Care — '+new Date().toLocaleDateString(),body:'Payroll summary attached. Net payroll: '+document.getElementById('total-net').textContent+'\n\nGross: '+document.getElementById('total-gross').textContent+'\nTotal deductions: '+document.getElementById('total-deductions').textContent+'\n\nPrepared by: AuditDNA Bookkeeping Services\nMexausa Food Group | sgarcia1911@gmail.com'});}
+function exportPayrollCSV(){
+  var emps=DATA.employees.length?DATA.employees:defaultEmps;
+  var rows=[['Employee','ID','Wage','Reg Hrs','OT Hrs','Gross','Fed Tax','SS','Medicare','SDI','CA Tax','Net Pay']];
+  emps.forEach(function(emp,i){
+    var reg=parseFloat((document.getElementById('py-reg-'+i)||{}).value)||0;
+    var ot=parseFloat((document.getElementById('py-ot-'+i)||{}).value)||0;
+    var gross=reg*emp.wage+ot*emp.wage*1.5;
+    var fed=gross*(emp.w4==='Married'?0.12:0.15);
+    var ss=gross*0.062;var med=gross*0.0145;var sdi=gross*0.009;
+    var ca=gross*(emp.de4&&emp.de4.includes('Married')?0.04:0.06);
+    var net=gross-fed-ss-med-sdi-ca;
+    rows.push([emp.name,emp.id,'$'+emp.wage.toFixed(2),reg,ot,'$'+gross.toFixed(2),'$'+fed.toFixed(2),'$'+ss.toFixed(2),'$'+med.toFixed(2),'$'+sdi.toFixed(2),'$'+ca.toFixed(2),'$'+net.toFixed(2)]);
+  });
+  var csv=rows.map(function(r){return r.join(',');}).join('\n');
+  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='payroll-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  showToast('CSV exported!');
+}
+
+// ── FIELD LOG ──────────────────────────────────────────────────────────────
+function fieldCheckIn(type){
+  var emp=document.getElementById('fl-emp').value;
+  var job=document.getElementById('fl-job').value;
+  var gps=document.getElementById('fl-gps').textContent;
+  var entry={time:new Date().toLocaleTimeString(),emp,job,type:type==='in'?'CHECK-IN':'CHECK-OUT',gps,notes:document.getElementById('fl-notes').value,date:new Date().toLocaleDateString()};
+  DATA.fieldLog.push(entry);
+  renderFieldLog();
+  showToast(type==='in'?(lang==='en'?'Checked in!':'¡Entrada registrada!'):(lang==='en'?'Checked out!':'¡Salida registrada!'));
+}
+function saveFieldEntry(){
+  fieldCheckIn('log');
+  showToast(lang==='en'?'Field entry saved!':'¡Registro de campo guardado!');
+}
+function renderFieldLog(){
+  var el=document.getElementById('field-log-list');
+  var today=DATA.fieldLog.filter(function(e){return e.date===new Date().toLocaleDateString();});
+  if(!today.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">'+(lang==='en'?'No check-ins today':'Sin registros hoy')+'</div>';return;}
+  el.innerHTML=today.map(function(e){
+    var color=e.type==='CHECK-IN'?'var(--green3)':'#ef5350';
+    return '<div style="padding:10px;border-bottom:1px solid rgba(42,61,42,.4);margin-bottom:4px"><div style="display:flex;justify-content:space-between"><span style="color:'+color+';font-weight:700;font-size:11px">'+e.type+'</span><span style="font-size:10px;color:var(--muted)">'+e.time+'</span></div><div style="font-size:11px;color:var(--text);margin-top:2px">'+e.emp+' — '+e.job+'</div><div style="font-size:9px;color:var(--muted);margin-top:2px;font-family:Consolas,monospace">'+e.gps+'</div></div>';
+  }).join('');
+}
+
+// ── DASHBOARD STATS ────────────────────────────────────────────────────────
+function updateDashStats(){
+  var rev=DATA.invoices.filter(function(i){return i.status==='Paid';}).reduce(function(a,b){return a+parseFloat(b.total.replace('$',''));},0);
+  var unpaid=DATA.invoices.filter(function(i){return i.status==='Unpaid';}).reduce(function(a,b){return a+parseFloat(b.total.replace('$',''));},0);
+  var openWO=DATA.workOrders.filter(function(w){return w.status==='Open';}).length;
+  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  el('dash-revenue','$'+rev.toFixed(2));el('dash-open',openWO);
+  el('dash-unpaid','$'+unpaid.toFixed(2));el('dash-payroll',document.getElementById('total-net')?document.getElementById('total-net').textContent:'$0.00');
+}
+
+// ── REPORTS ────────────────────────────────────────────────────────────────
+function showReport(title,content){
+  document.getElementById('report-output').style.display='block';
+  document.getElementById('report-content').textContent=title+'\n'+'='.repeat(60)+'\n'+content;
+}
+function genPL(){
+  var revenue=DATA.invoices.reduce(function(a,b){return a+parseFloat(b.total.replace('$','')||0);},0);
+  var expenses=DATA.expenses.reduce(function(a,b){return a+b.amount;},0);
+  var pl=revenue-expenses;
+  showReport('PROFIT & LOSS — ALTA MIRADA TREE & LAND CARE INC\nEntity #5494718 | Period: '+new Date().toLocaleDateString(),
+    'REVENUE\n  Invoiced Services:      $'+revenue.toFixed(2)+'\n\nEXPENSES\n  Total Expenses:        $'+expenses.toFixed(2)+'\n'+
+    ['Fuel','Equipment','Materials','Dump Fees','Insurance','Other'].map(function(cat){
+      var amt=DATA.expenses.filter(function(e){return e.cat.includes(cat);}).reduce(function(a,b){return a+b.amount;},0);
+      return '    '+cat+':'+' '.repeat(Math.max(1,20-cat.length))+'$'+amt.toFixed(2);
+    }).join('\n')+
+    '\n\nNET PROFIT / LOSS:       $'+pl.toFixed(2)+'\n\nPrepared by: AuditDNA Bookkeeping Services\nMexausa Food Group Inc | sgarcia1911@gmail.com');
+}
+function genJobCost(){
+  showReport('JOB COST REPORT — ALTA MIRADA TREE & LAND CARE INC',
+    DATA.workOrders.length?DATA.workOrders.map(function(w){return w.id+' | '+w.client+' | '+w.service+' | $'+w.price.toFixed(2)+' | '+w.status;}).join('\n'):'No work orders recorded yet.');
+}
+function genPayrollSummary(){
+  var emps=DATA.employees.length?DATA.employees:defaultEmps;
+  var total=parseFloat((document.getElementById('total-gross')||{}).textContent||'0')||0;
+  showReport('PAYROLL SUMMARY — ALTA MIRADA TREE & LAND CARE INC\nEIN: 47-0000000 | '+new Date().toLocaleDateString(),
+    emps.map(function(e){return e.id+' | '+e.name+' | $'+e.wage.toFixed(2)+'/hr';}).join('\n')+
+    '\n\nGross Payroll: '+document.getElementById('total-gross').textContent+
+    '\nTotal Deductions: '+document.getElementById('total-deductions').textContent+
+    '\nNet Payroll: '+document.getElementById('total-net').textContent+
+    '\nEmployer FICA: '+document.getElementById('total-employer').textContent+
+    '\nCA SUI/ETT: '+document.getElementById('total-sui').textContent);
+}
+function prep941(){showReport('FORM 941 DATA PREP — Q'+Math.ceil((new Date().getMonth()+1)/3)+' '+new Date().getFullYear(),'Alta Mirada Tree and Landcare Inc\n\nLine 1 - Employees: '+(DATA.employees.length||5)+'\nLine 2 - Wages: '+document.getElementById('total-gross').textContent+'\nLine 3 - Federal Income Tax Withheld: (see payroll records)\nLine 5a - SS Wages x 6.2% = '+document.getElementById('total-employer').textContent+'\nLine 5c - Medicare Wages x 1.45%: (calculated above)\n\nDue Date: Next October 31, 2026\nFile at: IRS e-file or mail to IRS\n\n⚠ This is a data summary. Have your CPA or bookkeeper complete the official form.');}
+function prep940(){showReport('FORM 940 DATA PREP — FUTA '+new Date().getFullYear(),'Alta Mirada Tree and Landcare Inc\n\nFUTA Rate: 6.0% (net 0.6% after CA SUTA credit)\nWage Base: First $7,000 per employee\nEmployees: '+(DATA.employees.length||5)+'\nEstimated FUTA Liability: $'+(Math.min(7000,(DATA.employees.length||5)*7000)*0.006).toFixed(2)+'\n\nDue: January 31, 2027\n⚠ File with IRS. Consult your CPA.');}
+function prepW2(){var emps=DATA.employees.length?DATA.employees:defaultEmps;showReport('W-2 PREP PACKAGE — ALTA MIRADA TREE & LAND CARE INC\nDue: January 31, 2027',emps.map(function(e,i){var gross=parseFloat((document.getElementById('py-reg-'+i)||{}).value||40)*e.wage;return '\nEmployee: '+e.name+'\nBox 1 (Wages): $'+gross.toFixed(2)+'\nBox 4 (SS Withheld): $'+(gross*0.062).toFixed(2)+'\nBox 6 (Medicare Withheld): $'+(gross*0.0145).toFixed(2)+'\nBox 16 (CA Wages): $'+gross.toFixed(2)+'\nBox 17 (CA Tax Withheld): $'+(gross*0.05).toFixed(2)+'\nBox 18 (CA SDI): $'+(gross*0.009).toFixed(2);}).join('\n---'));}
+function prep1099(){showReport('1099-NEC PREP — ALTA MIRADA\nDue: January 31, 2027','List subcontractors paid $600+ in this year.\nCollect W-9 from each before payment.\n\nSub 1: [Name] — [Amount]\nSub 2: [Name] — [Amount]\n\n⚠ Add subcontractors in your expense log under "Subcontractors".');}
+function prep1120s(){showReport('FORM 1120-S PREP PACKAGE\nDue: March 15, 2027','Alta Mirada Tree and Landcare Inc | Entity #5494718\nCA Corp, Incorporated 02/07/2023\n\nRequired items for CPA:\n1. Total Revenue (from invoices)\n2. Total Expenses by category\n3. Officer/Shareholder wages (Giovanni Mendoza)\n4. Payroll tax records (941, DE9)\n5. Equipment purchased/depreciation schedule\n6. Vehicle log (mileage/business use %)\n7. Home office (if applicable)\n8. Distributions to shareholders\n\nNote: S-Corp must pay reasonable salary to officer-shareholders before distributions.\n⚠ Provide this package to your CPA.');}
+function prepDE9(){showReport('DE 9 PREP — CA EDD QUARTERLY\nNext Due: Oct 31, 2026','Alta Mirada Tree and Landcare Inc\n\nTotal CA Wages: '+document.getElementById('total-gross').textContent+'\nCA SDI (0.9% employee): '+document.getElementById('total-deductions').textContent+' (portion)\nCA SUI/ETT (employer): '+document.getElementById('total-sui').textContent+'\nCA Income Tax Withheld: (from payroll records)\n\nFile online at e-Services for Business: edd.ca.gov');}
+function prepDE9C(){showReport('DE 9C PREP — CA EDD QUARTERLY\nEmployee Wage Detail','Alta Mirada Tree and Landcare Inc\n\n'+(DATA.employees.length?DATA.employees:defaultEmps).map(function(e,i){var gross=parseFloat((document.getElementById('py-reg-'+i)||{}).value||40)*e.wage;return e.id+' | '+e.name+' | CA Wages: $'+gross.toFixed(2)+' | SDI: $'+(gross*0.009).toFixed(2);}).join('\n')+'\n\nFile with DE 9 at edd.ca.gov');}
+function prep100S(){showReport('CA FORM 100-S PREP\nCA S-Corp Franchise Tax Return\nDue: March 15, 2027','Alta Mirada Tree and Landcare Inc | FTB\nEntity #5494718 | Oceanside CA 92054\n\nMinimum Franchise Tax: $800\n\nItems needed for FTB 100-S:\n1. Federal 1120-S (completed first)\n2. Total CA source income\n3. CA apportionment schedule\n4. Balance sheet items\n5. $800 minimum tax + any additional CA tax\n\nPay at: ftb.ca.gov\n⚠ Provide to CPA with federal 1120-S.');}
+function emailReport(type){openEmail({to:'sgarcia1911@gmail.com',subject:'Tax Report — Alta Mirada Tree & Land Care — '+type.toUpperCase(),body:(document.getElementById('report-content')||{}).textContent||'Report data for type: '+type});}
+
+// ── AI BOOKKEEPER ──────────────────────────────────────────────────────────
+async function askAI(preset){
+  var q=preset||document.getElementById('ai-question').value.trim();
+  if(!q)return;
+  var btn=document.getElementById('ai-btn');var spin=document.getElementById('ai-spin');
+  btn.disabled=true;if(spin)spin.style.display='inline-block';
+  document.getElementById('ai-output').textContent=lang==='en'?'Thinking...':'Pensando...';
+  var sys='You are a professional bilingual (English/Spanish) bookkeeper and CPA assistant for Alta Mirada Tree and Landcare Inc, a California Stock Corporation (Entity #5494718) incorporated 02/07/2023. Address: 2307 Skylark Dr Apt A, Oceanside CA 92054. Owner: Giovanni Mendoza. 5 employees. Services: tree trimming, pruning, removal, stump grinding, crown reduction, palm trimming, land clearing, brush removal, lawn mowing, sod installation, garden design, shrub trimming, weed control, mulching, xeriscaping, irrigation install & repair, hardscaping (patios, retaining walls, walkways), erosion control, lot clearing, seasonal cleanup, storm damage, commercial & residential maintenance, HOA & property management accounts. Provide accurate, practical bookkeeping and tax advice for a CA landscaping S-Corp. Reference current CA rates: SDI 0.9%, SUI 3.4% (employer), CA minimum franchise tax $800. Federal: SS 6.2%, Medicare 1.45%, FUTA 0.6% net. Be concise and professional. If language is Spanish, respond in Spanish.';
+  try{
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:[{role:'user',content:q}]})});
+    var d=await r.json();
+    var txt=d.content?d.content.map(function(b){return b.text||'';}).join(''):'Error: '+JSON.stringify(d);
+    document.getElementById('ai-output').textContent=txt;
+  }catch(e){document.getElementById('ai-output').textContent='Error: '+e.message;}
+  finally{btn.disabled=false;if(spin)spin.style.display='none';}
+}
+function copyAI(){
+  var txt=document.getElementById('ai-output').textContent;
+  var el=document.createElement('textarea');el.value=txt;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);
+  showToast('Copied!');
+}
+function emailAI(){openEmail({to:'giovanni@altamiradatree.com',subject:'AI Bookkeeper Response — Alta Mirada',body:document.getElementById('ai-output').textContent});}
+
+// ── EMAIL MODAL ────────────────────────────────────────────────────────────
+function openEmail(ctx){
+  emailCtx=ctx||{};
+  document.getElementById('em-to').value=ctx.to||'';
+  document.getElementById('em-cc').value=ctx.cc||'';
+  document.getElementById('em-subject').value=ctx.subject||'';
+  document.getElementById('em-body').value=ctx.body||'';
+  document.getElementById('email-status').textContent='';
+  document.getElementById('em-attach-names').textContent='';
+  document.getElementById('email-modal').classList.add('show');
+}
+function closeEmail(){document.getElementById('email-modal').classList.remove('show');}
+function showAttachNames(input){
+  document.getElementById('em-attach-names').textContent=Array.from(input.files).map(function(f){return f.name;}).join(', ');
+}
+async function sendEmail(){
+  var to=document.getElementById('em-to').value.trim();
+  if(!to){showToast('Recipient email required',false);return;}
+  var statusEl=document.getElementById('email-status');
+  statusEl.textContent=lang==='en'?'Sending...':'Enviando...';
+  // Send via Railway backend SMTP endpoint
+  try{
+    var r=await fetch('https://auditdna-backend-1-production.up.railway.app/api/email/send',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({to,cc:document.getElementById('em-cc').value,subject:document.getElementById('em-subject').value,body:document.getElementById('em-body').value,from:'Alta Mirada Tree & Land Care Inc <sgarcia1911@gmail.com>'})
+    });
+    var d=await r.json().catch(function(){return {};});
+    if(r.ok){statusEl.textContent=lang==='en'?'✅ Email sent!':'✅ ¡Correo enviado!';statusEl.style.color='var(--green3)';showToast(lang==='en'?'Email sent!':'¡Correo enviado!');setTimeout(closeEmail,2000);}
+    else{statusEl.textContent='Error: '+(d.message||r.status);statusEl.style.color='#ef5350';}
+  }catch(e){statusEl.textContent='Note: Email will be sent via your Gmail account. Configure SMTP in settings.';statusEl.style.color='var(--gold)';}
+}
+
+// ── SOS ────────────────────────────────────────────────────────────────────
+function triggerSOS(){
+  openEmail({to:'sgarcia1911@gmail.com',subject:'🚨 SOS — Alta Mirada Tree & Land Care — Emergency',body:'EMERGENCY ALERT from Alta Mirada Tree & Land Care app.\n\nLocation: '+(document.getElementById('fl-gps')?document.getElementById('fl-gps').textContent:'Unknown')+'\nTime: '+new Date().toLocaleString()+'\n\nPlease respond immediately.\n\nGiovanni Mendoza | Alta Mirada Tree & Land Care Inc'});
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+initPayrollCards();
+setLang('en',null);
+document.getElementById('ex-date').value=new Date().toISOString().slice(0,10);
+document.getElementById('rec-date').value=new Date().toISOString().slice(0,10);
+
+// ── LOCK / LOGOUT ──────────────────────────────────────────────────────────
+function lockApp(){
+  if(!confirm('Lock the portal and return to PIN screen?')) return;
+  document.getElementById('app').style.display='none';
+  document.getElementById('gate').style.display='flex';
+  // reset PIN state
+  pinBuf=''; role=''; empName='';
+  for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.classList.remove('filled');}
+  document.getElementById('pin-err').textContent='';
+  showToast=function(){}; // suppress toast on lock
+  // restore toast after a tick
+  setTimeout(function(){
+    showToast=function(msg,ok){
+      var t=document.getElementById('toast');
+      t.textContent=msg;
+      t.style.borderColor=ok===false?'#c62828':'#4caf50';
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer=setTimeout(function(){t.classList.remove('show');},3000);
+    };
+  },200);
+}
+
+var _lastPin='';
+function loadPlpData(){
+  var portal=window.location.pathname.split('/').pop();
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/logins?portal='+encodeURIComponent(portal))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var tb=document.getElementById('plp-tbody');
+      if(!tb)return;
+      if(!d.logins||!d.logins.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No logins yet.</td></tr>';return;}
+      tb.innerHTML=d.logins.slice(0,50).map(function(l){
+        var dt=new Date(l.logged_in_at);
+        var ts=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        return '<tr><td style="color:#e2e8f0;font-weight:700">'+l.username+'</td><td style="color:#C9A55C">'+l.role+'</td><td style="color:#64748b;font-size:9px">'+l.ip_address+'</td><td style="color:#64748b">'+ts+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+function showPlpPanel(){
+  var p=document.getElementById('portal-login-panel');
+  var t=document.getElementById('plp-trigger');
+  if(p){p.style.display='block';if(t)t.style.display='none';loadPlpData();}
+}
+function checkOwnerPin(pin){
+  _lastPin=pin;
+  if(pin==='0609'){var t=document.getElementById('plp-trigger');if(t)t.style.display='block';}
+}
+
+</script>
+<div id="portal-login-panel"><div class="plp-hdr"><span class="plp-title">LOGIN ACTIVITY</span><button class="plp-close" onclick="document.getElementById('portal-login-panel').style.display='none';document.getElementById('plp-trigger').style.display='block'">x</button></div><div class="plp-body"><table><thead><tr><th>USER</th><th>ROLE</th><th>IP</th><th>TIME</th></tr></thead><tbody id="plp-tbody"><tr><td colspan="4" style="text-align:center;color:#64748b">Loading...</td></tr></tbody></table></div></div><button id="plp-trigger" onclick="showPlpPanel()">LOGIN LOG</button>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+
+</html>

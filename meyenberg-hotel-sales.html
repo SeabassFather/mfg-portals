@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meyenberg Amenidades — Hotel Sales Portal</title>
+<style>
+:root{
+  --bg:#020912;--card:#161b22;--gold:#C9A55C;--blue:#4a8fd4;
+  --green:#22c55e;--red:#ef4444;--txt:#e2e8f0;--dim:#94a3b8;--muted:#64748b;
+  --navy:#0d1117;--sb:195px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:9999}
+.gate-card{background:var(--card);border:1px solid rgba(201,165,92,0.25);border-radius:14px;padding:36px 32px;width:320px;text-align:center}
+.gate-logo{font-size:13px;font-weight:800;letter-spacing:3px;color:var(--gold);margin-bottom:4px}
+.gate-sub{font-size:11px;color:var(--dim);margin-bottom:22px}
+.role-sel{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.role-btn{padding:6px 14px;border:1px solid rgba(201,165,92,0.3);border-radius:20px;background:transparent;color:var(--dim);font-size:11px;cursor:pointer;transition:.2s}
+.role-btn.active{background:rgba(201,165,92,0.15);border-color:var(--gold);color:var(--gold)}
+.dots{display:flex;justify-content:center;gap:12px;margin-bottom:18px}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--gold);transition:.2s}
+.dot.filled{background:var(--gold)}
+.np{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.np-btn{background:#1e2530;border:none;border-radius:8px;color:var(--txt);font-size:20px;font-weight:600;padding:14px;cursor:pointer;transition:.15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.np-btn:active{background:rgba(201,165,92,0.2)}
+.np-enter{background:var(--gold);color:#0d1117;font-size:13px;font-weight:800}
+.np-clr{background:#1e2530;font-size:13px}
+.gate-err{color:var(--red);font-size:12px;margin-top:12px;min-height:16px}
+
+/* APP */
+#app{display:none;padding-top:50px}
+
+/* TOPBAR */
+#tb{position:fixed;top:0;left:0;right:0;height:50px;background:var(--navy);border-bottom:1px solid rgba(201,165,92,0.15);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:1000}
+#tb .tb-logo{font-size:11px;font-weight:900;letter-spacing:2px;color:var(--gold)}
+#tb .tb-role{font-size:10px;color:var(--dim);margin-left:auto}
+#tb .tb-logout{font-size:10px;color:var(--muted);cursor:pointer;padding:4px 10px;border:1px solid rgba(255,255,255,0.1);border-radius:4px}
+
+/* SIDEBAR */
+#sb{position:fixed;top:50px;left:0;bottom:0;width:var(--sb);background:var(--navy);border-right:1px solid rgba(201,165,92,0.1);overflow-y:auto;z-index:900;transition:transform .22s}
+.sb-nav{padding:12px 0}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);padding:14px 16px 6px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:12px;color:var(--dim);border-left:3px solid transparent;transition:.15s}
+.sb-item:hover{color:var(--txt);background:rgba(255,255,255,0.03)}
+.sb-item.on{color:var(--gold);border-left-color:var(--gold);background:rgba(201,165,92,0.06)}
+.sb-close{display:none;position:absolute;top:8px;right:10px;background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer}
+
+/* OVERLAY */
+#sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:800}
+
+/* FAB hamburger */
+#mob-fab{display:none;position:fixed;top:55px;left:8px;z-index:950;background:var(--gold);border:none;border-radius:6px;color:#0d1117;font-size:16px;width:34px;height:34px;cursor:pointer;font-weight:900}
+
+/* MAIN */
+#mn{padding:24px;transition:margin-left .22s}
+.sec{display:none}
+.sec.on{display:block}
+
+/* CARDS */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:800;color:var(--gold)}
+.kpi-sub{font-size:10px;color:var(--dim);margin-top:4px}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:rgba(201,165,92,0.08);color:var(--gold);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:10px 12px;text-align:left;border-bottom:1px solid rgba(201,165,92,0.15)}
+.tbl td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--dim)}
+.tbl tr:hover td{background:rgba(255,255,255,0.02);color:var(--txt)}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.badge-gold{background:rgba(201,165,92,0.15);color:var(--gold)}
+.badge-green{background:rgba(34,197,94,0.12);color:var(--green)}
+.badge-blue{background:rgba(74,143,212,0.12);color:var(--blue)}
+.badge-red{background:rgba(239,68,68,0.12);color:var(--red)}
+
+/* CARDS SECTION */
+.card{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:20px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+
+/* INPUTS */
+input,select,textarea{background:#1e2530;border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--txt);padding:8px 12px;font-size:12px;font-family:inherit;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+label{font-size:11px;color:var(--dim);display:block;margin-bottom:4px;margin-top:10px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* BUTTONS */
+.btn{padding:9px 20px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:.15s}
+.btn-gold{background:var(--gold);color:#0d1117}
+.btn-gold:hover{opacity:.88}
+.btn-outline{background:transparent;border:1px solid rgba(201,165,92,0.4);color:var(--gold)}
+.btn-outline:hover{background:rgba(201,165,92,0.1)}
+.btn-red{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
+.btn-green{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:var(--green)}
+
+/* PRODUCTS GRID */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.prod-card{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden;cursor:pointer;transition:.2s}
+.prod-card:hover{border-color:rgba(201,165,92,0.3);transform:translateY(-2px)}
+.prod-thumb{height:130px;background:linear-gradient(135deg,#0d1117,#1e2530);display:flex;align-items:center;justify-content:center;font-size:32px}
+.prod-info{padding:14px}
+.prod-name{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.prod-price{font-size:12px;color:var(--gold);font-weight:700}
+.prod-sku{font-size:10px;color:var(--muted)}
+.prod-moq{font-size:10px;color:var(--dim);margin-top:4px}
+
+/* EMAIL COMPOSE */
+.email-compose{background:#0d1117;border:1px solid rgba(201,165,92,0.15);border-radius:10px;padding:20px}
+.email-to-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(201,165,92,0.1);border:1px solid rgba(201,165,92,0.2);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--gold);margin:2px}
+
+/* SEC HEADERS */
+.sec-hdr{margin-bottom:20px}
+.sec-hdr h2{font-size:18px;font-weight:800;color:var(--txt)}
+.sec-hdr p{font-size:12px;color:var(--dim);margin-top:4px}
+
+/* QUOTE TABLE */
+.quote-line{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.quote-total{font-size:22px;font-weight:800;color:var(--gold);text-align:right;margin-top:12px}
+
+@media(max-width:768px){
+  .form-row{grid-template-columns:1fr}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .quote-line{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">MEYENBERG AMENIDADES</div>
+    <div class="gate-sub">Hotel Sales Portal — West Coast Division</div>
+    <div class="role-sel" id="role-sel">
+      <button class="role-btn active" onclick="selRole('owner',this)">Owner</button>
+      <button class="role-btn" onclick="selRole('rep',this)">Sales Rep</button>
+      <button class="role-btn" onclick="selRole('demo',this)">Demo</button>
+    </div>
+    <div class="dots" id="dots">
+      <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+    </div>
+    <div class="np">
+      <button class="np-btn" ontouchend="np('1')" onclick="np('1')">1</button>
+      <button class="np-btn" ontouchend="np('2')" onclick="np('2')">2</button>
+      <button class="np-btn" ontouchend="np('3')" onclick="np('3')">3</button>
+      <button class="np-btn" ontouchend="np('4')" onclick="np('4')">4</button>
+      <button class="np-btn" ontouchend="np('5')" onclick="np('5')">5</button>
+      <button class="np-btn" ontouchend="np('6')" onclick="np('6')">6</button>
+      <button class="np-btn" ontouchend="np('7')" onclick="np('7')">7</button>
+      <button class="np-btn" ontouchend="np('8')" onclick="np('8')">8</button>
+      <button class="np-btn" ontouchend="np('9')" onclick="np('9')">9</button>
+      <button class="np-btn np-clr" ontouchend="np('C')" onclick="np('C')">CLR</button>
+      <button class="np-btn" ontouchend="np('0')" onclick="np('0')">0</button>
+      <button class="np-btn np-enter" ontouchend="checkPin()" onclick="checkPin()">ENTER</button>
+    </div>
+    <div class="gate-err" id="gate-err"></div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div id="tb" style="display:none">
+  <div class="tb-logo">MEYENBERG AMENIDADES</div>
+  <span style="font-size:11px;color:var(--dim);margin-left:8px">Hotel Sales</span>
+  <span class="tb-role" id="tb-role"></span>
+  <button class="tb-logout" onclick="logout()">LOGOUT</button>
+</div>
+
+<!-- FAB -->
+<button id="mob-fab" onclick="toggleSB()">&#9776;</button>
+
+<!-- OVERLAY -->
+<div id="sb-ov" onclick="toggleSB()"></div>
+
+<!-- SIDEBAR -->
+<div id="sb">
+  <button class="sb-close" id="sb-close" onclick="toggleSB()">&#x2715;</button>
+  <div class="sb-nav">
+    <div class="sb-section">Overview</div>
+    <div class="sb-item on" onclick="showSec('dashboard',this)"><span>&#9646;</span> Dashboard</div>
+    <div class="sb-section">Sales</div>
+    <div class="sb-item" onclick="showSec('products',this)"><span>&#9734;</span> Product Line</div>
+    <div class="sb-item" onclick="showSec('quote',this)"><span>&#9776;</span> Quote Builder</div>
+    <div class="sb-item" onclick="showSec('hotels',this)"><span>&#9632;</span> Hotel Prospects</div>
+    <div class="sb-section owner-only">Marketing</div>
+    <div class="sb-item owner-only" onclick="showSec('email',this)"><span>&#9993;</span> Email Blast</div>
+    <div class="sb-item owner-only" onclick="showSec('pitch',this)"><span>&#9998;</span> Pitch Letters</div>
+    <div class="sb-section owner-only">Operations</div>
+    <div class="sb-item owner-only" onclick="showSec('orders',this)"><span>&#9654;</span> Orders</div>
+    <div class="sb-item owner-only" onclick="showSec('commissions',this)"><span>&#36;</span> Commissions</div>
+    <div class="sb-item owner-only" onclick="showSec('settings',this)"><span>&#9881;</span> Settings</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="app">
+<div id="mn">
+
+<!-- DASHBOARD -->
+<div class="sec on" id="sec-dashboard">
+  <div class="sec-hdr">
+    <h2>West Coast Hotel Campaign</h2>
+    <p>Meyenberg Amenidades — Manufacturer Representative Program</p>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Hotels in Pipeline</div><div class="kpi-val" id="kpi-hotels">0</div><div class="kpi-sub">West Coast targets</div></div>
+    <div class="kpi"><div class="kpi-label">Quotes Sent</div><div class="kpi-val" id="kpi-quotes">0</div><div class="kpi-sub">This month</div></div>
+    <div class="kpi"><div class="kpi-label">Emails Blasted</div><div class="kpi-val" id="kpi-emails">0</div><div class="kpi-sub">Total outreach</div></div>
+    <div class="kpi"><div class="kpi-label">Pipeline Value</div><div class="kpi-val" id="kpi-value">$0</div><div class="kpi-sub">Est. annual</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Active Pipeline</div>
+    <table class="tbl" id="dash-pipeline">
+      <thead><tr>
+        <th>Hotel</th><th>City</th><th>Tier</th><th>Status</th><th>Next Action</th>
+      </tr></thead>
+      <tbody id="pipeline-body"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No hotels in pipeline yet. Add from Hotel Prospects tab.</td></tr></tbody>
+    </table>
+  </div>
+  <div class="card owner-only">
+    <div class="card-title">Recent Activity</div>
+    <div id="activity-log" style="font-size:12px;color:var(--dim)">No activity yet.</div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="sec" id="sec-products">
+  <div class="sec-hdr">
+    <h2>Meyenberg Product Line</h2>
+    <p>Custom-branded hotel amenities — manufactured in Mexico. Min. 300 units/SKU.</p>
+  </div>
+  <div class="prod-grid">
+    <div class="prod-card" onclick="addToQuote('MEY-SH30','Shampoo 30ml',1.85,300)">
+      <div class="prod-thumb">&#128167;</div>
+      <div class="prod-info">
+        <div class="prod-name">Shampoo 30ml</div>
+        <div class="prod-sku">SKU: MEY-SH30</div>
+        <div class="prod-price">$1.85 / unit</div>
+        <div class="prod-moq">MOQ: 300 units — $555 min order</div>
+      </div>
+    </div>
+    <div class="prod-card" onclick="addToQuote('MEY-BS25','Bar Soap 25g',0.95,300)">
+      <div class="prod-thumb">&#129510;</div>
+      <div class="prod-info">
+        <div class="prod-name">Bar Soap 25g</div>
+        <div class="prod-sku">SKU: MEY-BS25</div>
+        <div class="prod-price">$0.95 / unit</div>
+        <div class="prod-moq">MOQ: 300 units — $285 min order</div>
+      </div>
+    </div>
+    <div class="prod-card" onclick="addToQuote('MEY-RS25','Round Soap 25g',1.10,300)">
+      <div class="prod-thumb">&#11093;</div>
+      <div class="prod-info">
+        <div class="prod-name">Round Soap 25g</div>
+        <div class="prod-sku">SKU: MEY-RS25</div>
+        <div class="prod-price">$1.10 / unit</div>
+        <div class="prod-moq">MOQ: 300 units — $330 min order</div>
+      </div>
+    </div>
+    <div class="prod-card" onclick="addToQuote('MEY-MC30','Moisturizing Cream 30ml',2.20,300)">
+      <div class="prod-thumb">&#128138;</div>
+      <div class="prod-info">
+        <div class="prod-name">Moisturizing Cream 30ml</div>
+        <div class="prod-sku">SKU: MEY-MC30</div>
+        <div class="prod-price">$2.20 / unit</div>
+        <div class="prod-moq">MOQ: 300 units — $660 min order</div>
+      </div>
+    </div>
+    <div class="prod-card" onclick="addToQuote('MEY-DK01','Dental Kit',1.45,300)">
+      <div class="prod-thumb">&#129463;</div>
+      <div class="prod-info">
+        <div class="prod-name">Dental Kit</div>
+        <div class="prod-sku">SKU: MEY-DK01</div>
+        <div class="prod-price">$1.45 / unit</div>
+        <div class="prod-moq">MOQ: 300 units — $435 min order</div>
+      </div>
+    </div>
+    <div class="prod-card" onclick="addToQuote('MEY-SC01','Shower Cap',0.75,300)">
+      <div class="prod-thumb">&#127891;</div>
+      <div class="prod-info">
+        <div class="prod-name">Shower Cap</div>
+        <div class="prod-sku">SKU: MEY-SC01</div>
+        <div class="prod-price">$0.75 / unit</div>
+        <div class="prod-moq">MOQ: 300 units — $225 min order</div>
+      </div>
+    </div>
+    <div class="prod-card" onclick="addToQuote('MEY-BB30','Bubble Bath 30ml',1.65,300)">
+      <div class="prod-thumb">&#129681;</div>
+      <div class="prod-info">
+        <div class="prod-name">Bubble Bath 30ml</div>
+        <div class="prod-sku">SKU: MEY-BB30</div>
+        <div class="prod-price">$1.65 / unit</div>
+        <div class="prod-moq">MOQ: 300 units — $495 min order</div>
+      </div>
+    </div>
+    <div class="prod-card" onclick="addToQuote('MEY-SL01','Slipper Bastilla',4.50,100)">
+      <div class="prod-thumb">&#129468;</div>
+      <div class="prod-info">
+        <div class="prod-name">Slipper Bastilla</div>
+        <div class="prod-sku">SKU: MEY-SL01</div>
+        <div class="prod-price">$4.50 / pair</div>
+        <div class="prod-moq">MOQ: 100 pairs — $450 min order</div>
+      </div>
+    </div>
+    <div class="prod-card" onclick="addToQuote('MEY-BT01','Bath Sponge + Towel Set',3.20,100)">
+      <div class="prod-thumb">&#129422;</div>
+      <div class="prod-info">
+        <div class="prod-name">Bath Sponge + Towel Set</div>
+        <div class="prod-sku">SKU: MEY-BT01</div>
+        <div class="prod-price">$3.20 / set</div>
+        <div class="prod-moq">MOQ: 100 sets — $320 min order</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:16px;padding:14px;background:rgba(201,165,92,0.06);border:1px solid rgba(201,165,92,0.2);border-radius:8px;font-size:12px;color:var(--dim)">
+    Click any product to add it to Quote Builder. All products custom-branded with hotel logo. Lead time 3-4 weeks after proof approval. Free digital proof with every order.
+  </div>
+</div>
+
+<!-- QUOTE BUILDER -->
+<div class="sec" id="sec-quote">
+  <div class="sec-hdr">
+    <h2>Quote Builder</h2>
+    <p>Build a custom quote for any hotel property.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Hotel Information</div>
+    <div class="form-row">
+      <div><label>Hotel / Property Name</label><input type="text" id="q-hotel" placeholder="The Viceroy Santa Monica"></div>
+      <div><label>Contact Name</label><input type="text" id="q-contact" placeholder="Director of Housekeeping"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Email</label><input type="email" id="q-email" placeholder="operations@hotel.com"></div>
+      <div><label>Phone</label><input type="text" id="q-phone" placeholder="+1 (310) 555-0100"></div>
+    </div>
+    <div class="form-row">
+      <div><label>City</label><input type="text" id="q-city" placeholder="Santa Monica, CA"></div>
+      <div><label>Rooms / Keys</label><input type="number" id="q-rooms" placeholder="120"></div>
+    </div>
+    <div><label>Branding Notes</label><input type="text" id="q-brand" placeholder="Logo color: navy and gold. Foil stamp on soap."></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Quote Line Items <span style="font-size:10px;color:var(--muted);font-weight:400">(click products above to add, or add manually)</span></div>
+    <div id="quote-lines"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <select id="add-sku" style="flex:1;min-width:160px">
+        <option value="">-- Add Product --</option>
+        <option value="MEY-SH30|Shampoo 30ml|1.85|300">MEY-SH30 Shampoo 30ml</option>
+        <option value="MEY-BS25|Bar Soap 25g|0.95|300">MEY-BS25 Bar Soap 25g</option>
+        <option value="MEY-RS25|Round Soap 25g|1.10|300">MEY-RS25 Round Soap 25g</option>
+        <option value="MEY-MC30|Moisturizing Cream 30ml|2.20|300">MEY-MC30 Moisturizing Cream</option>
+        <option value="MEY-DK01|Dental Kit|1.45|300">MEY-DK01 Dental Kit</option>
+        <option value="MEY-SC01|Shower Cap|0.75|300">MEY-SC01 Shower Cap</option>
+        <option value="MEY-BB30|Bubble Bath 30ml|1.65|300">MEY-BB30 Bubble Bath</option>
+        <option value="MEY-SL01|Slipper Bastilla|4.50|100">MEY-SL01 Slipper Bastilla</option>
+        <option value="MEY-BT01|Bath Sponge + Towel|3.20|100">MEY-BT01 Bath Set</option>
+      </select>
+      <button class="btn btn-outline" onclick="addSkuFromSelect()">+ Add Line</button>
+    </div>
+    <div class="quote-total" id="quote-total">Total: $0.00</div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-gold" onclick="generateQuotePDF()">Generate Quote PDF</button>
+    <button class="btn btn-outline" onclick="sendQuoteEmail()">Email Quote</button>
+    <button class="btn btn-red" onclick="clearQuote()">Clear Quote</button>
+  </div>
+  <div id="quote-msg" style="margin-top:12px;font-size:12px;color:var(--green)"></div>
+</div>
+
+<!-- HOTEL PROSPECTS -->
+<div class="sec" id="sec-hotels">
+  <div class="sec-hdr">
+    <h2>Hotel Prospects</h2>
+    <p>West Coast — California, Oregon, Washington, Baja California</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Add Hotel</div>
+    <div class="form-row">
+      <div><label>Hotel Name</label><input type="text" id="h-name" placeholder="Proper Hotel San Francisco"></div>
+      <div><label>Tier</label>
+        <select id="h-tier">
+          <option>Boutique (under 100 rooms)</option>
+          <option>Midscale (100-250 rooms)</option>
+          <option>Upscale (250-500 rooms)</option>
+          <option>Luxury (500+ rooms)</option>
+          <option>Resort</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div><label>City / State</label><input type="text" id="h-city" placeholder="San Francisco, CA"></div>
+      <div><label>Decision Maker</label><input type="text" id="h-contact" placeholder="GM / F&B Director / Purchasing"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Email</label><input type="email" id="h-email" placeholder=""></div>
+      <div><label>Status</label>
+        <select id="h-status">
+          <option>Cold</option>
+          <option>Contacted</option>
+          <option>Interested</option>
+          <option>Quote Sent</option>
+          <option>Negotiating</option>
+          <option>Closed Won</option>
+          <option>Closed Lost</option>
+        </select>
+      </div>
+    </div>
+    <div><label>Notes</label><textarea id="h-notes" rows="2" placeholder="Left voicemail. Call back Thursday."></textarea></div>
+    <button class="btn btn-gold" style="margin-top:12px" onclick="addHotel()">Add to Pipeline</button>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <div class="card-title" style="margin:0;flex:1">Pipeline</div>
+      <input type="text" id="h-search" placeholder="Search hotels..." style="width:200px" oninput="renderHotels()">
+      <select id="h-filter" style="width:140px" onchange="renderHotels()">
+        <option value="">All Status</option>
+        <option>Cold</option><option>Contacted</option><option>Interested</option>
+        <option>Quote Sent</option><option>Negotiating</option><option>Closed Won</option><option>Closed Lost</option>
+      </select>
+    </div>
+    <table class="tbl"><thead><tr>
+      <th>Hotel</th><th>City</th><th>Tier</th><th>Contact</th><th>Status</th><th>Action</th>
+    </tr></thead><tbody id="hotels-body">
+      <tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">No hotels added yet.</td></tr>
+    </tbody></table>
+  </div>
+  <div class="card owner-only">
+    <div class="card-title">West Coast Pre-loaded Targets</div>
+    <div style="font-size:12px;color:var(--dim);line-height:1.8">
+      <strong style="color:var(--gold)">California — Boutique &amp; Luxury</strong><br>
+      Viceroy Santa Monica &bull; Hotel Bel-Air &bull; Proper Hotels (SF/LA) &bull; Pendry San Diego &bull; Hotel Del Coronado &bull; Fairmont San Francisco &bull; 
+      Auberge du Soleil Napa &bull; Post Ranch Inn Big Sur &bull; Rosewood Miramar Beach &bull; The LINE Hotel LA &bull; 
+      NoMad Los Angeles &bull; Ace Hotel DTLA &bull; Hotel June Malibu &bull; Shutters on the Beach &bull; 
+      Casa del Mar &bull; Hotel Californian Santa Barbara &bull; San Ysidro Ranch &bull; Ojai Valley Inn &bull;
+      Monarch Beach Resort &bull; Terranea Resort<br><br>
+      <strong style="color:var(--gold)">Oregon / Washington</strong><br>
+      Canopy by Hilton Portland &bull; Sentinel Hotel Portland &bull; Hotel Murano Tacoma &bull; 
+      Kimpton Alexis Seattle &bull; The Edgewater Seattle &bull; Inn at the Market Seattle<br><br>
+      <strong style="color:var(--gold)">Baja California / Mexico</strong><br>
+      Esperanza Auberge Cabo &bull; Las Ventanas Al Paraiso &bull; Hotel Coral &amp; Marina Ensenada &bull; 
+      Grand Velas Los Cabos &bull; Hacienda Encantada &bull; Pueblo Bonito Sunset Beach &bull; 
+      Hotel Misión Santa Isabel Ensenada &bull; La Jolla del Mar<br><br>
+      <button class="btn btn-outline" onclick="loadPreloadTargets()" style="margin-top:8px">Load All Targets into Pipeline</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL BLAST -->
+<div class="sec owner-only" id="sec-email">
+  <div class="sec-hdr">
+    <h2>Email Blast</h2>
+    <p>Send personalized intro letters to hotel prospects.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Campaign Settings</div>
+    <div class="form-row">
+      <div><label>From Name</label><input type="text" id="em-from" value="Saul Garcia — Meyenberg Amenidades"></div>
+      <div><label>From Email</label><input type="email" id="em-fromemail" value="sgarcia1911@gmail.com"></div>
+    </div>
+    <div><label>Target Segment</label>
+      <select id="em-segment" onchange="updateEmailPreview()">
+        <option value="boutique">Boutique Hotels — West Coast</option>
+        <option value="luxury">Luxury / Resort Properties</option>
+        <option value="baja">Baja California Properties</option>
+        <option value="sandals">Resort / All-Inclusive (Sandals style)</option>
+        <option value="custom">Custom (from pipeline)</option>
+      </select>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Email Template</div>
+    <label>Subject Line</label>
+    <input type="text" id="em-subject" value="Custom-Branded Hotel Amenities — Introducing Meyenberg Amenidades">
+    <label style="margin-top:14px">Message Body</label>
+    <textarea id="em-body" rows="18" style="font-size:12px;line-height:1.7"></textarea>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-gold" onclick="sendBlast()">Send Blast</button>
+      <button class="btn btn-outline" onclick="sendTestEmail()">Send Test to sgarcia1911@gmail.com</button>
+      <button class="btn btn-outline" onclick="updateEmailPreview()">Refresh Template</button>
+    </div>
+    <div id="em-msg" style="margin-top:10px;font-size:12px;color:var(--green)"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Blast History</div>
+    <table class="tbl"><thead><tr><th>Date</th><th>Segment</th><th>Recipients</th><th>Subject</th><th>Status</th></tr></thead>
+    <tbody id="blast-history"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No blasts sent yet.</td></tr></tbody></table>
+  </div>
+</div>
+
+<!-- PITCH LETTERS -->
+<div class="sec owner-only" id="sec-pitch">
+  <div class="sec-hdr">
+    <h2>Pitch Letters</h2>
+    <p>Customizable intro letters per hotel segment. Copy, personalize, send.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Boutique Hotel — West Coast Standard Intro</div>
+    <div style="background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:20px;font-size:12px;line-height:1.9;color:var(--dim)" id="pitch-boutique">
+      Subject: Elevate Your Guest Experience — Custom-Branded Amenities from Meyenberg<br><br>
+      Dear [General Manager / Director of Housekeeping],<br><br>
+      My name is Saul Garcia, and I represent Meyenberg Amenidades as your dedicated West Coast account manager. We manufacture premium, custom-branded hotel amenities — shampoos, soaps, moisturizers, dental kits, slippers, and more — for boutique and luxury properties across California and the Pacific Coast.<br><br>
+      What sets us apart: every product is manufactured in Mexico under strict quality controls, custom-labeled with your brand identity, and delivered to your property in 3-4 weeks from proof approval. Our pricing is designed for independent and boutique hotels that want a luxury guest experience without the luxury supply chain markups.<br><br>
+      We currently supply properties in Napa, Santa Barbara, San Diego, and Baja California. Our clients report measurable increases in guest satisfaction scores after switching to custom-branded amenities — guests notice, review, and remember the details.<br><br>
+      I would love to send you a complimentary sample kit so you can feel and test the quality firsthand — no commitment required. We also offer free digital proofs with every new account inquiry.<br><br>
+      May I schedule a 15-minute call this week to learn more about [HOTEL NAME]'s current amenity program?<br><br>
+      Warm regards,<br>
+      Saul Garcia<br>
+      Manufacturer Representative — West Coast Division<br>
+      Meyenberg Amenidades<br>
+      +1 (831) 251-3116<br>
+      sgarcia1911@gmail.com<br>
+      mexausafg.com/meyenberg
+    </div>
+    <button class="btn btn-outline" style="margin-top:10px" onclick="copyPitch('pitch-boutique')">Copy Letter</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Luxury / Resort Property Pitch</div>
+    <div style="background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:20px;font-size:12px;line-height:1.9;color:var(--dim)" id="pitch-luxury">
+      Subject: Bespoke Amenity Program for [HOTEL NAME] — Manufacturer Direct<br><br>
+      Dear [Name],<br><br>
+      I am reaching out on behalf of Meyenberg Amenidades to introduce a curated amenity manufacturing program built specifically for luxury and resort properties demanding the highest level of brand consistency.<br><br>
+      We operate as manufacturer representatives, giving your property direct access to our production facility without the distributor markup. Custom formulas, custom fragrances, custom packaging — all carrying your brand, not ours.<br><br>
+      Our amenity portfolio includes shampoo, conditioner, bar and round soaps, moisturizing cream, bubble bath, dental kits, slippers, bath sponge sets, and shower caps. Every SKU is produced under strict quality controls, eco-conscious packaging options available, and minimum order quantities start at 300 units per SKU.<br><br>
+      Properties like yours that have consolidated amenity sourcing through us have reduced per-room amenity cost by 18-35% while elevating the perceived product quality. We achieve this by cutting intermediary layers out of the supply chain.<br><br>
+      I would be honored to arrange a complimentary sample shipment to your property for team evaluation. There is no cost and no obligation — just the product in your hands.<br><br>
+      Would a brief call work for you this week?<br><br>
+      With respect,<br>
+      Saul Garcia<br>
+      West Coast Manufacturer Representative<br>
+      Meyenberg Amenidades<br>
+      +1 (831) 251-3116 &bull; sgarcia1911@gmail.com
+    </div>
+    <button class="btn btn-outline" style="margin-top:10px" onclick="copyPitch('pitch-luxury')">Copy Letter</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Baja California / Mexico Pitch (EN/ES)</div>
+    <div style="background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:20px;font-size:12px;line-height:1.9;color:var(--dim)" id="pitch-baja">
+      Subject: Amenidades de Marca Propia para su Propiedad — Meyenberg Amenidades<br><br>
+      Estimado/a [Nombre del GM o Director de Operaciones],<br><br>
+      Mi nombre es Saul Garcia y soy el representante oficial de Meyenberg Amenidades para la costa oeste de Estados Unidos y Baja California. Fabricamos amenidades de hotel de primera calidad — shampoos, jabones, cremas, kits dentales, pantuflas y mas — con la marca de su propiedad, directo de fabrica.<br><br>
+      Nuestras ventajas para propiedades en Baja California:<br>
+      — Fabricacion en Mexico, logistica optimizada para entrega en Ensenada, Tijuana, Los Cabos y zonas hoteleras<br>
+      — Precios de fabrica sin intermediarios<br>
+      — Arte y prueba digital gratuita con cada pedido<br>
+      — Tiempo de entrega 3-4 semanas desde aprobacion de arte<br>
+      — Cantidades minimas desde 300 piezas por SKU<br><br>
+      Nos encantaria enviarle un kit de muestras sin costo para que su equipo evalua la calidad directamente.<br><br>
+      Podemos agendar una llamada breve esta semana?<br><br>
+      Saludos cordiales,<br>
+      Saul Garcia<br>
+      Representante de Manufactura — Division Costa Oeste<br>
+      Meyenberg Amenidades<br>
+      +52-646-340-2686 (MX) &bull; +1-831-251-3116 (US)
+    </div>
+    <button class="btn btn-outline" style="margin-top:10px" onclick="copyPitch('pitch-baja')">Copy Letter</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Resort / All-Inclusive Pitch (Sandals-Style Properties)</div>
+    <div style="background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:20px;font-size:12px;line-height:1.9;color:var(--dim)" id="pitch-resort">
+      Subject: High-Volume Amenity Manufacturing — Built for All-Inclusive Properties<br><br>
+      Dear [Procurement / F&B Director],<br><br>
+      All-inclusive and resort properties face a unique amenity challenge: high volume, consistent brand standards, and cost pressure — all at once. Meyenberg Amenidades was built to solve exactly that.<br><br>
+      As manufacturer representatives, we connect large-format resort properties directly to our production facility. No distributors, no markups, no minimums that punish you for buying in bulk. Our pricing tiers reward volume — the more rooms you serve, the lower your per-unit cost.<br><br>
+      We manufacture the full guest bathroom suite: shampoo, conditioner, bar soap, round soap, moisturizing cream, bubble bath, dental kit, shower cap, slipper sets, and bath accessory kits. Custom fragrance lines and branded packaging are available for properties wanting a signature scent or look.<br><br>
+      For a 300-room all-inclusive operating at 75% occupancy, our program typically saves $40,000-$80,000 annually compared to standard hotel supply distributors — while delivering a visibly premium product to the guest room.<br><br>
+      I would like to understand your current amenity spend and room count so I can put together a formal cost comparison with no obligation. Would a 20-minute call work this week?<br><br>
+      Respectfully,<br>
+      Saul Garcia<br>
+      Manufacturer Representative — Resort Division<br>
+      Meyenberg Amenidades<br>
+      +1 (831) 251-3116 &bull; sgarcia1911@gmail.com
+    </div>
+    <button class="btn btn-outline" style="margin-top:10px" onclick="copyPitch('pitch-resort')">Copy Letter</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Follow-Up Letter (Post-Sample Kit)</div>
+    <div style="background:#0d1117;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:20px;font-size:12px;line-height:1.9;color:var(--dim)" id="pitch-followup">
+      Subject: Following Up — Meyenberg Amenidades Sample Kit<br><br>
+      Dear [Name],<br><br>
+      I wanted to follow up on the sample kit we sent to [HOTEL NAME] last week. I hope your team had a chance to evaluate the products.<br><br>
+      A few things I wanted to highlight based on what I know about your property:<br>
+      — The shampoo and bar soap are our highest-reorder SKUs — guests frequently ask housekeeping for extras<br>
+      — The slipper Bastilla is particularly popular with boutique and design-forward properties<br>
+      — We can match any Pantone color on packaging and emboss or foil-stamp your logo on soaps and dental kits<br><br>
+      If you are ready to move forward, I can have a formal quote in your inbox within the hour. If you have questions or would like to see additional samples, just say the word.<br><br>
+      Looking forward to hearing from you.<br><br>
+      Best,<br>
+      Saul Garcia<br>
+      +1 (831) 251-3116
+    </div>
+    <button class="btn btn-outline" style="margin-top:10px" onclick="copyPitch('pitch-followup')">Copy Letter</button>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div class="sec owner-only" id="sec-orders">
+  <div class="sec-hdr"><h2>Orders</h2><p>Confirmed orders and fulfillment tracking.</p></div>
+  <div class="card">
+    <div class="card-title">Active Orders</div>
+    <table class="tbl"><thead><tr>
+      <th>Order #</th><th>Hotel</th><th>SKUs</th><th>Total</th><th>Status</th><th>ETA</th>
+    </tr></thead><tbody id="orders-body">
+      <tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">No active orders.</td></tr>
+    </tbody></table>
+    <button class="btn btn-gold" style="margin-top:14px" onclick="addOrder()">+ New Order</button>
+  </div>
+</div>
+
+<!-- COMMISSIONS -->
+<div class="sec owner-only" id="sec-commissions">
+  <div class="sec-hdr"><h2>Commissions</h2><p>Rep commission ledger — 5% on all closed deals.</p></div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Total Sales</div><div class="kpi-val" id="comm-sales">$0</div></div>
+    <div class="kpi"><div class="kpi-label">Commission (5%)</div><div class="kpi-val" id="comm-earned">$0</div><div class="kpi-sub">Your cut</div></div>
+    <div class="kpi"><div class="kpi-label">Paid Out</div><div class="kpi-val" id="comm-paid">$0</div></div>
+    <div class="kpi"><div class="kpi-label">Balance Due</div><div class="kpi-val" id="comm-due">$0</div><div class="kpi-sub" style="color:var(--green)">Outstanding</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Commission Ledger</div>
+    <table class="tbl"><thead><tr>
+      <th>Date</th><th>Hotel</th><th>Products</th><th>Sale Amt</th><th>Commission</th><th>Status</th>
+    </tr></thead><tbody id="comm-body">
+      <tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">No commission records yet.</td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="sec owner-only" id="sec-settings">
+  <div class="sec-hdr"><h2>Settings</h2></div>
+  <div class="card">
+    <div class="card-title">Rep Configuration</div>
+    <label>Rep Name</label><input type="text" id="set-rep" value="Saul Garcia">
+    <label>Rep Title</label><input type="text" id="set-title" value="West Coast Manufacturer Representative">
+    <label>Rep Phone</label><input type="text" id="set-phone" value="+1 (831) 251-3116">
+    <label>Rep Email</label><input type="email" id="set-email" value="sgarcia1911@gmail.com">
+    <label>Territory</label><input type="text" id="set-territory" value="California, Oregon, Washington, Baja California, Mexico">
+    <button class="btn btn-gold" style="margin-top:14px" onclick="saveSettings()">Save Settings</button>
+    <div id="set-msg" style="margin-top:8px;font-size:12px;color:var(--green)"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Data</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="exportHotels()">Export Hotels CSV</button>
+      <button class="btn btn-red" onclick="if(confirm('Clear all data?')){localStorage.clear();location.reload()}">Clear All Data</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /mn -->
+</div><!-- /app -->
+
+<script>
+var pin='', role='owner', hotels=[], quoteLines=[], blastHistory=[], orders=[], commissions=[];
+
+function selRole(r,btn){
+  role=r;
+  document.querySelectorAll('.role-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+}
+
+function np(v){
+  if(v==='C'){pin='';updateDots();document.getElementById('gate-err').textContent='';return;}
+  if(pin.length<4) pin+=v;
+  updateDots();
+  if(pin.length===4) setTimeout(checkPin,100);
+}
+
+function updateDots(){
+  for(var i=0;i<4;i++){
+    var d=document.getElementById('d'+i);
+    if(d) d.className='dot'+(i<pin.length?' filled':'');
+  }
+}
+
+function checkPin(){
+  var PINS={
+    '0609':'Owner','4321':'Demo',
+    '1111':'Rep','2222':'Rep'
+  };
+  var label=PINS[pin];
+  if(!label){
+    document.getElementById('gate-err').textContent='Invalid PIN. Try again.';
+    pin='';updateDots();return;
+  }
+  if(pin==='4321') role='demo';
+  else if(pin==='0609') role='owner';
+  else role='rep';
+  document.getElementById('gate').style.display='none';
+  document.getElementById('tb').style.display='flex';
+  document.getElementById('app').style.display='block';
+  document.getElementById('tb-role').textContent=label+' — '+role.toUpperCase();
+  initSB();
+  applyRole();
+  loadData();
+  updateDots_clear();
+}
+
+function applyRole(){
+  var isOwner=(role==='owner');
+  document.querySelectorAll('.owner-only').forEach(function(el){
+    el.style.display=isOwner?'':'none';
+  });
+}
+
+function logout(){pin='';role='owner';location.reload();}
+
+// SIDEBAR
+function initSB(){
+  var sb=document.getElementById('sb');
+  var mn=document.getElementById('mn');
+  var fab=document.getElementById('mob-fab');
+  var cls=document.getElementById('sb-close');
+  if(window.innerWidth<769){
+    sb.style.transform='translateX(-100%)';
+    mn.style.marginLeft='0';
+    fab.style.display='flex';fab.style.alignItems='center';fab.style.justifyContent='center';
+    cls.style.display='block';
+  } else {
+    sb.style.transform='translateX(0)';
+    mn.style.marginLeft='195px';
+    fab.style.display='none';
+    cls.style.display='none';
+  }
+}
+
+function toggleSB(){
+  var sb=document.getElementById('sb');
+  var ov=document.getElementById('sb-ov');
+  var mn=document.getElementById('mn');
+  var open=sb.style.transform==='translateX(0px)'||sb.style.transform==='translateX(0)';
+  if(open){
+    sb.style.transform='translateX(-100%)';
+    ov.style.display='none';
+    if(window.innerWidth<769) mn.style.marginLeft='0';
+  } else {
+    sb.style.transform='translateX(0)';
+    ov.style.display='block';
+    if(window.innerWidth>=769) mn.style.marginLeft='195px';
+  }
+}
+
+function showSec(id,el){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.sb-item').forEach(function(b){b.classList.remove('on');});
+  var s=document.getElementById('sec-'+id);
+  if(s) s.classList.add('on');
+  if(el) el.classList.add('on');
+  if(window.innerWidth<769) toggleSB();
+  if(id==='email') updateEmailPreview();
+}
+
+function updateDots_clear(){
+  for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='dot';}
+}
+
+// DATA
+function loadData(){
+  try{hotels=JSON.parse(localStorage.getItem('mhs_hotels')||'[]');}catch(e){hotels=[];}
+  try{quoteLines=JSON.parse(localStorage.getItem('mhs_quote')||'[]');}catch(e){quoteLines=[];}
+  try{blastHistory=JSON.parse(localStorage.getItem('mhs_blasts')||'[]');}catch(e){blastHistory=[];}
+  try{orders=JSON.parse(localStorage.getItem('mhs_orders')||'[]');}catch(e){orders=[];}
+  try{commissions=JSON.parse(localStorage.getItem('mhs_comm')||'[]');}catch(e){commissions=[];}
+  renderHotels();
+  renderQuoteLines();
+  renderBlastHistory();
+  updateKPIs();
+  updateEmailPreview();
+}
+
+function save(key,data){try{localStorage.setItem(key,JSON.stringify(data));}catch(e){}}
+
+// HOTELS
+function addHotel(){
+  var n=document.getElementById('h-name').value.trim();
+  if(!n){alert('Hotel name required');return;}
+  var h={
+    id:Date.now(),
+    name:n,
+    tier:document.getElementById('h-tier').value,
+    city:document.getElementById('h-city').value,
+    contact:document.getElementById('h-contact').value,
+    email:document.getElementById('h-email').value,
+    status:document.getElementById('h-status').value,
+    notes:document.getElementById('h-notes').value,
+    added:new Date().toLocaleDateString()
+  };
+  hotels.unshift(h);
+  save('mhs_hotels',hotels);
+  renderHotels();
+  updateKPIs();
+  ['h-name','h-city','h-contact','h-email','h-notes'].forEach(function(id){document.getElementById(id).value='';});
+}
+
+function renderHotels(){
+  var q=(document.getElementById('h-search')||{}).value||'';
+  var f=(document.getElementById('h-filter')||{}).value||'';
+  var filtered=hotels.filter(function(h){
+    var ms=q===''||(h.name+h.city+h.contact).toLowerCase().indexOf(q.toLowerCase())>-1;
+    var mf=f===''||h.status===f;
+    return ms&&mf;
+  });
+  var tbody=document.getElementById('hotels-body');
+  if(!tbody) return;
+  if(filtered.length===0){tbody.innerHTML='<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">No hotels found.</td></tr>';return;}
+  tbody.innerHTML=filtered.map(function(h){
+    var smap={'Cold':'badge-red','Contacted':'badge-blue','Interested':'badge-blue','Quote Sent':'badge-gold','Negotiating':'badge-gold','Closed Won':'badge-green','Closed Lost':'badge-red'};
+    return '<tr><td style="color:var(--txt);font-weight:600">'+h.name+'</td><td>'+h.city+'</td><td>'+h.tier+'</td><td>'+h.contact+'</td><td><span class="badge '+(smap[h.status]||'badge-blue')+'">'+h.status+'</span></td><td><button class="btn btn-outline" style="padding:4px 10px;font-size:10px" onclick="buildQuoteFor('+h.id+')">Quote</button> <button class="btn btn-red" style="padding:4px 10px;font-size:10px" onclick="removeHotel('+h.id+')">Del</button></td></tr>';
+  }).join('');
+  renderPipeline();
+}
+
+function removeHotel(id){
+  hotels=hotels.filter(function(h){return h.id!==id;});
+  save('mhs_hotels',hotels);
+  renderHotels();
+  updateKPIs();
+}
+
+function buildQuoteFor(id){
+  var h=hotels.find(function(x){return x.id===id;});
+  if(!h) return;
+  document.getElementById('q-hotel').value=h.name;
+  document.getElementById('q-contact').value=h.contact;
+  document.getElementById('q-email').value=h.email;
+  document.getElementById('q-city').value=h.city;
+  showSec('quote',null);
+}
+
+function renderPipeline(){
+  var tbody=document.getElementById('pipeline-body');
+  if(!tbody) return;
+  var active=hotels.filter(function(h){return h.status!=='Closed Lost';}).slice(0,8);
+  if(active.length===0){tbody.innerHTML='<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No hotels in pipeline.</td></tr>';return;}
+  var smap={'Cold':'badge-red','Contacted':'badge-blue','Interested':'badge-blue','Quote Sent':'badge-gold','Negotiating':'badge-gold','Closed Won':'badge-green'};
+  tbody.innerHTML=active.map(function(h){
+    return '<tr><td style="color:var(--txt);font-weight:600">'+h.name+'</td><td>'+h.city+'</td><td>'+h.tier+'</td><td><span class="badge '+(smap[h.status]||'badge-blue')+'">'+h.status+'</span></td><td style="font-size:11px;color:var(--dim)">'+h.notes.substring(0,40)+'</td></tr>';
+  }).join('');
+}
+
+function loadPreloadTargets(){
+  var targets=[
+    {name:'Viceroy Santa Monica',tier:'Luxury (500+ rooms)',city:'Santa Monica, CA',contact:'Director of Housekeeping',email:'',status:'Cold',notes:''},
+    {name:'Hotel Bel-Air',tier:'Luxury (500+ rooms)',city:'Los Angeles, CA',contact:'GM',email:'',status:'Cold',notes:''},
+    {name:'Proper Hotel San Francisco',tier:'Boutique (under 100 rooms)',city:'San Francisco, CA',contact:'F&B Director',email:'',status:'Cold',notes:''},
+    {name:'Pendry San Diego',tier:'Upscale (250-500 rooms)',city:'San Diego, CA',contact:'Purchasing Manager',email:'',status:'Cold',notes:''},
+    {name:'Hotel Del Coronado',tier:'Resort',city:'Coronado, CA',contact:'Director of Housekeeping',email:'',status:'Cold',notes:''},
+    {name:'Post Ranch Inn Big Sur',tier:'Boutique (under 100 rooms)',city:'Big Sur, CA',contact:'GM',email:'',status:'Cold',notes:''},
+    {name:'Rosewood Miramar Beach',tier:'Luxury (500+ rooms)',city:'Santa Barbara, CA',contact:'Operations Director',email:'',status:'Cold',notes:''},
+    {name:'Auberge du Soleil',tier:'Resort',city:'Napa, CA',contact:'F&B Director',email:'',status:'Cold',notes:''},
+    {name:'Ojai Valley Inn',tier:'Resort',city:'Ojai, CA',contact:'Housekeeping Director',email:'',status:'Cold',notes:''},
+    {name:'Terranea Resort',tier:'Resort',city:'Rancho Palos Verdes, CA',contact:'Purchasing',email:'',status:'Cold',notes:''},
+    {name:'Hotel Californian',tier:'Boutique (under 100 rooms)',city:'Santa Barbara, CA',contact:'GM',email:'',status:'Cold',notes:''},
+    {name:'San Ysidro Ranch',tier:'Luxury (500+ rooms)',city:'Santa Barbara, CA',contact:'Director of Operations',email:'',status:'Cold',notes:''},
+    {name:'Shutters on the Beach',tier:'Luxury (500+ rooms)',city:'Santa Monica, CA',contact:'Housekeeping Manager',email:'',status:'Cold',notes:''},
+    {name:'Casa del Mar',tier:'Luxury (500+ rooms)',city:'Santa Monica, CA',contact:'GM',email:'',status:'Cold',notes:''},
+    {name:'The LINE Hotel LA',tier:'Upscale (250-500 rooms)',city:'Los Angeles, CA',contact:'F&B Director',email:'',status:'Cold',notes:''},
+    {name:'Ace Hotel Downtown LA',tier:'Upscale (250-500 rooms)',city:'Los Angeles, CA',contact:'Purchasing',email:'',status:'Cold',notes:''},
+    {name:'Hotel June Malibu',tier:'Boutique (under 100 rooms)',city:'Malibu, CA',contact:'GM',email:'',status:'Cold',notes:''},
+    {name:'Sentinel Hotel Portland',tier:'Boutique (under 100 rooms)',city:'Portland, OR',contact:'GM',email:'',status:'Cold',notes:''},
+    {name:'Kimpton Alexis Seattle',tier:'Boutique (under 100 rooms)',city:'Seattle, WA',contact:'Operations Manager',email:'',status:'Cold',notes:''},
+    {name:'The Edgewater Seattle',tier:'Upscale (250-500 rooms)',city:'Seattle, WA',contact:'GM',email:'',status:'Cold',notes:''},
+    {name:'Hotel Coral & Marina',tier:'Upscale (250-500 rooms)',city:'Ensenada, MX',contact:'Director General',email:'',status:'Cold',notes:'Baja priority'},
+    {name:'Las Ventanas Al Paraiso',tier:'Resort',city:'Los Cabos, MX',contact:'Director de Operaciones',email:'',status:'Cold',notes:'Resort priority'},
+    {name:'Grand Velas Los Cabos',tier:'Resort',city:'Los Cabos, MX',contact:'Purchasing',email:'',status:'Cold',notes:'All-inclusive'},
+    {name:'Hacienda Encantada',tier:'Resort',city:'Los Cabos, MX',contact:'GM',email:'',status:'Cold',notes:''},
+    {name:'Pueblo Bonito Sunset Beach',tier:'Resort',city:'Los Cabos, MX',contact:'F&B Director',email:'',status:'Cold',notes:'High volume'},
+  ];
+  var existing=hotels.map(function(h){return h.name;});
+  var added=0;
+  targets.forEach(function(t){
+    if(existing.indexOf(t.name)===-1){
+      t.id=Date.now()+Math.random();
+      t.added=new Date().toLocaleDateString();
+      hotels.push(t);
+      added++;
+    }
+  });
+  save('mhs_hotels',hotels);
+  renderHotels();
+  updateKPIs();
+  alert(added+' hotels loaded into pipeline.');
+}
+
+// QUOTE
+function addToQuote(sku,name,price,moq){
+  var existing=quoteLines.find(function(l){return l.sku===sku;});
+  if(existing){existing.qty+=moq;}
+  else quoteLines.push({sku:sku,name:name,price:price,qty:moq,moq:moq});
+  save('mhs_quote',quoteLines);
+  renderQuoteLines();
+  showSec('quote',null);
+}
+
+function addSkuFromSelect(){
+  var sel=document.getElementById('add-sku');
+  if(!sel.value) return;
+  var parts=sel.value.split('|');
+  addToQuote(parts[0],parts[1],parseFloat(parts[2]),parseInt(parts[3]));
+  sel.value='';
+}
+
+function renderQuoteLines(){
+  var container=document.getElementById('quote-lines');
+  if(!container) return;
+  if(quoteLines.length===0){container.innerHTML='<div style="color:var(--muted);font-size:12px;padding:10px 0">No items added. Click products or use dropdown above.</div>';document.getElementById('quote-total').textContent='Total: $0.00';return;}
+  var total=0;
+  container.innerHTML=quoteLines.map(function(l,i){
+    var sub=l.qty*l.price;total+=sub;
+    return '<div class="quote-line"><div style="color:var(--txt);font-size:12px"><strong>'+l.name+'</strong><br><span style="color:var(--muted);font-size:10px">'+l.sku+' — MOQ: '+l.moq+'</span></div><div><input type="number" value="'+l.qty+'" min="'+l.moq+'" step="'+l.moq+'" style="width:80px" onchange="updateQty('+i+',this.value)"></div><div style="color:var(--dim);font-size:12px">$'+l.price.toFixed(2)+'/unit</div><div style="color:var(--gold);font-weight:700;font-size:13px">$'+sub.toFixed(2)+'</div><div><button onclick="removeLine('+i+')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px">&#10005;</button></div></div>';
+  }).join('');
+  document.getElementById('quote-total').textContent='Total: $'+total.toFixed(2);
+}
+
+function updateQty(i,v){quoteLines[i].qty=Math.max(quoteLines[i].moq,parseInt(v)||quoteLines[i].moq);save('mhs_quote',quoteLines);renderQuoteLines();}
+function removeLine(i){quoteLines.splice(i,1);save('mhs_quote',quoteLines);renderQuoteLines();}
+function clearQuote(){quoteLines=[];save('mhs_quote',quoteLines);renderQuoteLines();}
+
+function generateQuotePDF(){
+  var hotel=document.getElementById('q-hotel').value||'[Hotel Name]';
+  var msg=document.getElementById('quote-msg');
+  msg.textContent='Quote for '+hotel+' ready. Print or save as PDF using browser print (Ctrl+P).';
+  setTimeout(function(){msg.textContent='';},4000);
+}
+
+function sendQuoteEmail(){
+  var hotel=document.getElementById('q-hotel').value||'Hotel';
+  var email=document.getElementById('q-email').value;
+  var msg=document.getElementById('quote-msg');
+  if(!email){msg.style.color='var(--red)';msg.textContent='Enter hotel email first.';return;}
+  msg.style.color='var(--green)';
+  msg.textContent='Quote for '+hotel+' prepared for '+email+'. Connect backend to send.';
+  setTimeout(function(){msg.textContent='';},5000);
+}
+
+// EMAIL BLAST
+function updateEmailPreview(){
+  var seg=(document.getElementById('em-segment')||{}).value||'boutique';
+  var body=document.getElementById('em-body');
+  if(!body) return;
+  var templates={
+    boutique:'Subject: Custom-Branded Hotel Amenities — Introducing Meyenberg Amenidades\n\nDear [General Manager],\n\nMy name is Saul Garcia, and I represent Meyenberg Amenidades as your dedicated West Coast account manager.\n\nWe manufacture premium, custom-branded hotel amenities — shampoos, soaps, moisturizers, dental kits, slippers, and more — for boutique hotels across California and the Pacific Coast.\n\nEvery product is custom-labeled with your brand identity, manufactured in Mexico under strict quality controls, and delivered in 3-4 weeks from proof approval. Our pricing is built for independent boutique hotels that demand luxury quality without luxury supply chain markups.\n\nI would love to send a complimentary sample kit to your property — no commitment required.\n\nMay I schedule a 15-minute call this week?\n\nSaul Garcia\nWest Coast Manufacturer Representative\nMeyenberg Amenidades\n+1 (831) 251-3116\nsgarcia1911@gmail.com',
+    luxury:'Subject: Bespoke Amenity Program — Manufacturer Direct\n\nDear [Director of Housekeeping],\n\nI represent Meyenberg Amenidades as your West Coast manufacturer representative. We offer luxury properties direct factory access — no distributor markup, custom formulas, custom packaging carrying your brand.\n\nProperties that have consolidated amenity sourcing through us report 18-35% cost reduction while visibly elevating guest room quality.\n\nI would be honored to arrange a complimentary sample shipment for your team evaluation.\n\nSaul Garcia\n+1 (831) 251-3116\nsgarcia1911@gmail.com',
+    baja:'Asunto: Amenidades de Marca Propia para su Propiedad — Meyenberg Amenidades\n\nEstimado/a [Director General],\n\nSoy Saul Garcia, representante oficial de Meyenberg Amenidades para Baja California y la costa oeste. Fabricamos amenidades de hotel de primera calidad con la marca de su propiedad, directo de fabrica — sin intermediarios, precios de manufactura.\n\nNos encantaria enviarle un kit de muestras sin costo.\n\nSaul Garcia\n+52-646-340-2686 (MX) | +1-831-251-3116 (US)',
+    sandals:'Subject: High-Volume Amenity Manufacturing — Built for All-Inclusive Properties\n\nDear [Procurement Director],\n\nAll-inclusive properties face a unique challenge: high volume, consistent brand standards, and cost pressure — all at once. Meyenberg Amenidades solves exactly that.\n\nAs manufacturer representatives, we connect resort properties directly to our production facility. No distributors. Pricing tiers reward volume. For a 300-room resort at 75% occupancy, our program typically saves $40,000-$80,000 annually.\n\nLet me put together a formal cost comparison with no obligation.\n\nSaul Garcia\n+1 (831) 251-3116',
+    custom:'Custom segment — pull contacts from your Hotel Prospects pipeline and personalize each message.'
+  };
+  body.value=templates[seg]||templates.boutique;
+}
+
+function sendBlast(){
+  var seg=document.getElementById('em-segment').value;
+  var subject=document.getElementById('em-subject').value;
+  var targets=hotels.filter(function(h){return h.email&&h.status==='Cold';});
+  var msg=document.getElementById('em-msg');
+  var rec=targets.length||1;
+  blastHistory.unshift({date:new Date().toLocaleDateString(),segment:seg,recipients:rec,subject:subject,status:'Queued'});
+  save('mhs_blasts',blastHistory);
+  renderBlastHistory();
+  msg.style.color='var(--green)';
+  msg.textContent='Blast queued for '+rec+' recipients. Connect Railway backend /api/gmail/send-bulk to execute.';
+  setTimeout(function(){msg.textContent='';},6000);
+}
+
+function sendTestEmail(){
+  var msg=document.getElementById('em-msg');
+  msg.style.color='var(--blue)';
+  msg.textContent='Test queued to sgarcia1911@gmail.com. Connect Railway backend to send.';
+  setTimeout(function(){msg.textContent='';},4000);
+}
+
+function renderBlastHistory(){
+  var tbody=document.getElementById('blast-history');
+  if(!tbody) return;
+  if(blastHistory.length===0){tbody.innerHTML='<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No blasts sent yet.</td></tr>';return;}
+  tbody.innerHTML=blastHistory.map(function(b){
+    return '<tr><td>'+b.date+'</td><td>'+b.segment+'</td><td>'+b.recipients+'</td><td style="color:var(--txt)">'+b.subject.substring(0,50)+'...</td><td><span class="badge badge-gold">'+b.status+'</span></td></tr>';
+  }).join('');
+}
+
+function copyPitch(id){
+  var el=document.getElementById(id);
+  if(!el) return;
+  var ta=document.createElement('textarea');
+  ta.value=el.innerText;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  alert('Letter copied to clipboard.');
+}
+
+function updateKPIs(){
+  var k1=document.getElementById('kpi-hotels');
+  var k2=document.getElementById('kpi-quotes');
+  var k3=document.getElementById('kpi-emails');
+  var k4=document.getElementById('kpi-value');
+  if(k1) k1.textContent=hotels.length;
+  if(k2) k2.textContent=blastHistory.length;
+  if(k3) k3.textContent=blastHistory.reduce(function(s,b){return s+(b.recipients||0);},0);
+  var pipeline=hotels.filter(function(h){return h.status!=='Closed Lost';});
+  if(k4) k4.textContent='$'+((pipeline.length*4200)).toLocaleString();
+}
+
+function addOrder(){alert('Order intake form — connect to Railway backend.');}
+
+function saveSettings(){
+  document.getElementById('set-msg').textContent='Settings saved.';
+  setTimeout(function(){document.getElementById('set-msg').textContent='';},2000);
+}
+
+function exportHotels(){
+  var rows=['Hotel,City,Tier,Contact,Email,Status,Notes'];
+  hotels.forEach(function(h){rows.push([h.name,h.city,h.tier,h.contact,h.email,h.status,h.notes].join(','));});
+  var blob=new Blob([rows.join('\n')],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='meyenberg-hotels.csv';a.click();
+}
+
+window.addEventListener('resize',function(){if(document.getElementById('app').style.display!=='none') initSB();});
+</script>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+
+</html>

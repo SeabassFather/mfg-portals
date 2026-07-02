@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ArtHaus Wholesale — World Art Collection</title>
+<style>
+:root{--bg:#020912;--bg2:#0d1117;--card:#161b22;--gold:#C9A55C;--blue:#4a8fd4;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;--bord:rgba(255,255,255,0.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.nav{position:sticky;top:0;z-index:9999;background:rgba(2,9,18,0.98);backdrop-filter:blur(12px);border-bottom:1px solid var(--bord);padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:50px;box-sizing:border-box}
+.nav-logo{font-size:16px;font-weight:900;letter-spacing:1px;color:var(--gold);white-space:nowrap;flex-shrink:0}
+.nav-logo span{color:var(--txt2);font-weight:300}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-links-desktop{display:flex;align-items:center;gap:12px}
+.nav-link{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--txt2);cursor:pointer}
+.nav-link:hover{color:var(--gold)}
+.nav-cart{position:relative;cursor:pointer;font-size:19px;color:var(--txt2)}
+.nav-hamburger{display:none!important;background:none;border:1px solid rgba(201,165,92,.4);color:var(--gold);border-radius:6px;padding:5px 10px;font-size:17px;cursor:pointer;line-height:1}
+.mobile-menu{display:none;position:fixed;top:50px;left:0;right:0;background:rgba(2,9,18,0.99);border-bottom:1px solid var(--bord);z-index:9998;flex-direction:column}
+.mobile-menu.open{display:flex!important}
+.mm-role-row{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(201,165,92,.06)}
+.mm-lang-btns{display:flex;gap:6px}
+.mm-lb{background:none;border:1px solid rgba(201,165,92,.3);color:var(--txt2);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800;cursor:pointer;letter-spacing:1px}
+.mm-lb.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.mm-link{display:block;padding:14px 18px;font-size:14px;font-weight:600;color:var(--txt2);cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04)}
+.mm-link:hover,.mm-link:active{color:var(--gold);background:rgba(201,165,92,.05)}
+.mm-link:last-child{border-bottom:none}
+@media(max-width:680px){
+  .nav-links-desktop{display:none!important}
+  .nav-hamburger{display:block!important}
+  #mfg-role-badge{display:none!important}
+  #mfg-lang-toggle{display:none!important}
+}
+.nav-cart{position:relative;cursor:pointer;font-size:20px;color:var(--txt2)}
+.cart-badge{position:absolute;top:-6px;right:-8px;background:var(--gold);color:#000;font-size:9px;font-weight:900;border-radius:8px;padding:1px 5px;display:none}
+/* HERO */
+.hero{padding:60px 20px 48px;text-align:center;background:linear-gradient(180deg,rgba(201,165,92,0.06) 0%,transparent 100%);border-bottom:1px solid var(--bord)}
+.hero-tag{font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-bottom:14px}
+.hero h1{font-size:clamp(28px,5vw,52px);font-weight:900;line-height:1.1;margin-bottom:14px}
+.hero h1 span{color:var(--gold)}
+.hero p{font-size:14px;color:var(--txt2);max-width:540px;margin:0 auto 24px;line-height:1.7}
+.hero-stats{display:flex;gap:24px;justify-content:center;flex-wrap:wrap}
+.hstat{text-align:center}
+.hstat-n{font-size:24px;font-weight:900;color:var(--gold)}
+.hstat-l{font-size:10px;color:var(--txt3);letter-spacing:1px;font-weight:700}
+/* SEARCH ENGINE */
+.search-section{padding:32px 20px;background:var(--bg2);border-bottom:1px solid var(--bord);position:sticky;top:58px;z-index:90}
+.search-row{display:flex;gap:10px;max-width:1100px;margin:0 auto 14px;flex-wrap:wrap}
+.search-inp{flex:1;min-width:200px;background:var(--card);border:1px solid var(--bord);border-radius:8px;padding:12px 16px;color:var(--txt);font-size:14px}
+.search-inp:focus{outline:none;border-color:rgba(201,165,92,0.4)}
+.btn-search{background:var(--gold);color:#000;border:none;border-radius:8px;padding:12px 24px;font-size:13px;font-weight:900;cursor:pointer;letter-spacing:1px;white-space:nowrap}
+.btn-search:hover{background:#d4aa5f}
+.filter-row{display:flex;gap:8px;max-width:1100px;margin:0 auto;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:10px;color:var(--txt3);font-weight:700;letter-spacing:1px}
+.fb{background:var(--card);border:1px solid var(--bord);color:var(--txt2);font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:16px;cursor:pointer;white-space:nowrap}
+.fb.on,.fb:hover{background:var(--gold);color:#000;border-color:var(--gold)}
+select.fb{appearance:none;padding-right:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+/* GALLERY */
+.gallery-wrap{max-width:1100px;margin:0 auto;padding:28px 20px}
+.gallery-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+.gallery-count{font-size:12px;color:var(--txt2)}
+.gallery-count span{color:var(--gold);font-weight:700}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.art-card{background:var(--card);border:1px solid var(--bord);border-radius:10px;overflow:hidden;transition:transform .2s,border-color .2s;cursor:pointer;display:flex;flex-direction:column}
+.art-card:hover{transform:translateY(-3px);border-color:rgba(201,165,92,0.3)}
+.art-img-wrap{position:relative;height:190px;background:var(--bg2);overflow:hidden}
+.art-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.art-card:hover .art-img{transform:scale(1.04)}
+.art-src{position:absolute;top:8px;left:8px;background:rgba(2,9,18,0.8);font-size:9px;color:var(--txt3);padding:2px 6px;border-radius:4px;font-weight:700;letter-spacing:1px}
+.art-body{padding:14px;flex:1;display:flex;flex-direction:column}
+.art-title{font-size:13px;font-weight:800;margin-bottom:3px;line-height:1.3}
+.art-artist{font-size:11px;color:var(--txt3);margin-bottom:3px}
+.art-date{font-size:10px;color:var(--txt3);margin-bottom:10px}
+.art-price-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto}
+.art-ws{font-size:17px;font-weight:900;color:var(--gold)}
+.art-rt{font-size:10px;color:var(--txt3)}
+.btn-add{background:var(--gold);color:#000;border:none;border-radius:6px;padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer;letter-spacing:1px;margin-top:10px;width:100%}
+.btn-add:hover{background:#d4aa5f}
+/* LOADING / EMPTY */
+.loading{text-align:center;padding:60px 20px;color:var(--txt2)}
+.spinner{display:inline-block;width:36px;height:36px;border:3px solid var(--bord);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:60px 20px;color:var(--txt3)}
+.load-more-wrap{text-align:center;padding:28px 0}
+.btn-load-more{background:var(--card);border:1px solid var(--bord);color:var(--txt);border-radius:8px;padding:12px 32px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-load-more:hover{border-color:var(--gold);color:var(--gold)}
+/* TIERS */
+.tiers-section{background:var(--bg2);border-top:1px solid var(--bord);border-bottom:1px solid var(--bord);padding:48px 20px}
+.tiers-wrap{max-width:1100px;margin:0 auto}
+.sec-tag{font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-bottom:8px}
+.sec-h2{font-size:clamp(20px,3vw,30px);font-weight:900;margin-bottom:28px}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.tier{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:22px}
+.tier.feat{border-color:rgba(201,165,92,0.35);background:rgba(201,165,92,0.03)}
+.tier-icon{font-size:26px;margin-bottom:10px}
+.tier-name{font-size:12px;font-weight:900;letter-spacing:2px;color:var(--gold);margin-bottom:3px}
+.tier-type{font-size:11px;color:var(--txt3);margin-bottom:10px}
+.tier-disc{font-size:26px;font-weight:900;margin-bottom:3px}
+.tier-moq{font-size:11px;color:var(--txt2);margin-bottom:14px}
+.tier-feats{list-style:none;font-size:11px;color:var(--txt2);display:flex;flex-direction:column;gap:5px}
+.tier-feats li::before{content:"+ ";color:var(--green)}
+/* VIZ */
+.viz-section{padding:48px 20px}
+.viz-wrap{max-width:1100px;margin:0 auto}
+.rooms{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.room{background:var(--card);border:1px solid var(--bord);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.room.on,.room:hover{border-color:rgba(201,165,92,0.4)}
+.room-scene{height:120px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.room-label{padding:10px;font-size:11px;font-weight:700;color:var(--txt2);letter-spacing:1px}
+.room.on .room-label{color:var(--gold)}
+.viz-canvas{background:var(--card);border:1px solid var(--bord);border-radius:10px;min-height:200px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
+.viz-art{max-width:280px;max-height:200px;border:8px solid #6B5237;box-shadow:0 12px 40px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04);border-radius:2px}
+/* ORDER */
+.order-section{padding:48px 20px;background:var(--bg2);border-top:1px solid var(--bord)}
+.order-wrap{max-width:700px;margin:0 auto}
+.order-form{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:28px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row{display:flex;flex-direction:column;gap:5px}
+.lbl{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--txt3)}
+.inp{background:var(--bg);border:1px solid var(--bord);border-radius:6px;padding:10px 12px;color:var(--txt);font-size:13px;width:100%}
+.inp:focus{outline:none;border-color:rgba(201,165,92,0.4)}
+.btn-submit{background:var(--gold);color:#000;border:none;padding:13px 28px;font-size:13px;font-weight:900;border-radius:8px;cursor:pointer;letter-spacing:1px;margin-top:8px}
+/* HOW */
+.how-section{padding:48px 20px}
+.how-wrap{max-width:1100px;margin:0 auto}
+.how-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.step{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:20px;text-align:center}
+.step-num{font-size:30px;font-weight:900;color:var(--gold);margin-bottom:8px}
+.step-t{font-size:13px;font-weight:800;margin-bottom:5px}
+.step-d{font-size:11px;color:var(--txt2);line-height:1.6}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--bord);padding:40px 20px 20px}
+.foot-wrap{max-width:1100px;margin:0 auto}
+.foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px;margin-bottom:28px}
+.foot-brand{font-size:16px;font-weight:900;color:var(--gold);margin-bottom:8px}
+.foot-tagline{font-size:11px;color:var(--txt3);line-height:1.6}
+.foot-col-title{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--txt3);margin-bottom:10px}
+.foot-links{list-style:none;display:flex;flex-direction:column;gap:7px;font-size:11px;color:var(--txt2)}
+.foot-links a:hover{color:var(--gold)}
+.foot-bottom{border-top:1px solid var(--bord);padding-top:18px;font-size:11px;color:var(--txt3);text-align:center}
+/* CART */
+.cart-panel{position:fixed;right:-340px;top:0;width:320px;height:100vh;background:var(--bg2);border-left:1px solid var(--bord);z-index:200;transition:right .3s;display:flex;flex-direction:column}
+.cart-panel.open{right:0}
+.cart-hdr{padding:18px;border-bottom:1px solid var(--bord);display:flex;justify-content:space-between;align-items:center}
+.cart-hdr h3{font-size:13px;font-weight:900;letter-spacing:1px}
+.cart-close{background:none;border:none;color:var(--txt2);font-size:20px;cursor:pointer}
+.cart-items{flex:1;overflow-y:auto;padding:14px}
+.cart-item{background:var(--card);border-radius:8px;padding:11px;margin-bottom:10px;font-size:12px}
+.ci-title{font-weight:800;margin-bottom:3px}
+.ci-row{display:flex;justify-content:space-between;color:var(--txt2);margin-top:5px}
+.ci-remove{color:var(--red);cursor:pointer;font-size:11px}
+.cart-footer{padding:14px;border-top:1px solid var(--bord)}
+.cart-total{display:flex;justify-content:space-between;font-weight:900;font-size:14px;margin-bottom:12px}
+.btn-checkout{background:var(--gold);color:#000;border:none;width:100%;padding:13px;font-size:12px;font-weight:900;border-radius:8px;cursor:pointer;letter-spacing:1px}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bord);border-radius:12px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;padding:24px}
+.modal-close{float:right;background:none;border:none;color:var(--txt2);font-size:22px;cursor:pointer;line-height:1}
+.modal-img{width:100%;max-height:280px;object-fit:contain;border-radius:8px;margin-bottom:16px;background:var(--card)}
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid var(--gold);color:var(--txt);padding:11px 22px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:580px){.form-grid{grid-template-columns:1fr}.search-row{flex-direction:column}}
+</style>
+
+<style>
+#ah-gate{position:fixed;inset:0;background:#020912;display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:18px}
+.ahg-logo{font-size:22px;font-weight:900;letter-spacing:3px;color:#C9A55C;text-align:center}
+.ahg-logo span{display:block;font-size:10px;font-weight:400;color:#64748b;letter-spacing:2px;margin-top:4px}
+.ahg-dots{display:flex;gap:10px}
+.ahg-dot{width:13px;height:13px;border-radius:50%;border:2px solid #C9A55C;background:transparent;transition:background .15s}
+.ahg-dot.on{background:#C9A55C}
+.ahg-pad{display:grid;grid-template-columns:repeat(3,60px);gap:8px}
+.ahg-btn{width:60px;height:60px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:#161b22;color:#e2e8f0;font-size:17px;font-weight:600;cursor:pointer;transition:all .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.ahg-btn:hover{border-color:#C9A55C;color:#C9A55C}
+.ahg-err{color:#ef4444;font-size:11px;height:14px;letter-spacing:1px;text-align:center}
+.ahg-role{font-size:9px;color:#4a6741;letter-spacing:1px;text-align:center}
+</style>
+<style id="plp-css">
+#portal-login-panel{display:none;position:fixed;bottom:20px;right:20px;width:400px;max-height:300px;background:#0d1117;border:1px solid #C9A55C;border-radius:8px;z-index:9999;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+#portal-login-panel .plp-hdr{background:#161b22;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d}
+#portal-login-panel .plp-title{color:#C9A55C;font-size:9px;font-weight:700;letter-spacing:2px}
+#portal-login-panel .plp-close{color:#64748b;cursor:pointer;font-size:13px;background:none;border:none;padding:0}
+#portal-login-panel table{width:100%;border-collapse:collapse;font-size:10px}
+#portal-login-panel th{color:#64748b;padding:3px 6px;text-align:left;border-bottom:1px solid #21262d}
+#portal-login-panel td{color:#e2e8f0;padding:3px 6px;border-bottom:1px solid #21262d}
+#portal-login-panel .plp-body{overflow-y:auto;max-height:240px;padding:6px}
+#plp-trigger{display:none;position:fixed;bottom:20px;right:20px;background:#161b22;border:1px solid #C9A55C;color:#C9A55C;font-size:9px;padding:5px 10px;border-radius:4px;cursor:pointer;z-index:9998;letter-spacing:1px;font-weight:700}
+</style>
+</head>
+<body>
+<div id="ah-gate" style="position:fixed;inset:0;background:#020912;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:-apple-system,sans-serif">
+  <div style="background:#0d1117;border:1px solid rgba(201,165,92,.3);border-radius:16px;padding:38px 28px;width:320px;text-align:center">
+    <div style="font-size:22px;font-weight:900;color:#C9A55C;letter-spacing:2px;margin-bottom:4px">ARTHAUS</div>
+    <div style="font-size:11px;color:#64748b;letter-spacing:2px;margin-bottom:28px">WHOLESALE ART COLLECTION</div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-bottom:24px">
+      <div class="ahd" id="d0"></div>
+      <div class="ahd" id="d1"></div>
+      <div class="ahd" id="d2"></div>
+      <div class="ahd" id="d3"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:240px;margin:0 auto 10px">
+      <button class="ahb" ontouchstart="np('1');event.preventDefault()" onclick="np('1')">1</button>
+      <button class="ahb" ontouchstart="np('2');event.preventDefault()" onclick="np('2')">2</button>
+      <button class="ahb" ontouchstart="np('3');event.preventDefault()" onclick="np('3')">3</button>
+      <button class="ahb" ontouchstart="np('4');event.preventDefault()" onclick="np('4')">4</button>
+      <button class="ahb" ontouchstart="np('5');event.preventDefault()" onclick="np('5')">5</button>
+      <button class="ahb" ontouchstart="np('6');event.preventDefault()" onclick="np('6')">6</button>
+      <button class="ahb" ontouchstart="np('7');event.preventDefault()" onclick="np('7')">7</button>
+      <button class="ahb" ontouchstart="np('8');event.preventDefault()" onclick="np('8')">8</button>
+      <button class="ahb" ontouchstart="np('9');event.preventDefault()" onclick="np('9')">9</button>
+      <button class="ahb" style="font-size:12px" ontouchstart="np('C');event.preventDefault()" onclick="np('C')">CLR</button>
+      <button class="ahb" ontouchstart="np('0');event.preventDefault()" onclick="np('0')">0</button>
+      <button class="ahb" style="font-size:12px" ontouchstart="np('D');event.preventDefault()" onclick="np('D')">DEL</button>
+    </div>
+    <div id="gerr" style="color:#ef4444;font-size:12px;min-height:18px;margin-top:8px"></div>
+  </div>
+</div>
+<style>
+.ahd{width:13px;height:13px;border-radius:50%;border:2px solid rgba(201,165,92,.4);transition:.2s}
+.ahd.on{background:#C9A55C;border-color:#C9A55C}
+.ahb{background:#161b22;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#e2e8f0;font-size:20px;font-weight:600;padding:15px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:.15s}
+.ahb:active{background:rgba(201,165,92,.2);color:#C9A55C}
+</style>
+<script>
+var _p='';
+var _plock=false;
+function np(v){
+  if(_plock)return;
+  _plock=true;
+  setTimeout(function(){_plock=false;},80);
+  if(v==='C'){_p='';upd();document.getElementById('gerr').textContent='';return;}
+  if(v==='D'){_p=_p.slice(0,-1);upd();return;}
+  if(_p.length<4)_p+=v;
+  upd();
+  if(_p.length===4)setTimeout(ck,100);
+}
+function upd(){for(var i=0;i<4;i++){var d=document.getElementById('d'+i);if(d)d.className='ahd'+(_p.length>i?' on':'');}}
+function ck(){
+  var PINS={'0609':'OWNER / ADMIN','1111':'SALES REP','1122':'SALES REP','2222':'EMPLOYEE','4321':'DEMO'};
+  if(PINS[_p]){
+    var g=document.getElementById('ah-gate');
+    if(g)g.style.display='none';
+    var rg=document.getElementById('mfg-role-gate');
+    if(rg)rg.style.display='none';
+    document.body.setAttribute('data-role',_p==='0609'?'owner':_p==='1111'?'sales':_p==='2222'?'employee':'demo');
+    var badge=document.getElementById('mfg-role-badge');
+    if(badge){badge.textContent=PINS[_p];badge.style.display='block';}
+  } else {
+    document.getElementById('gerr').textContent='Invalid PIN';
+    _p='';upd();
+    setTimeout(function(){document.getElementById('gerr').textContent='';},1500);
+  }
+}
+</script>
+
+<nav class="nav">
+  <div class="nav-logo">ARTHAUS<span> WHOLESALE</span></div>
+  <div class="nav-right">
+    <div class="nav-links-desktop">
+      <span class="nav-link" onclick="scrollTo('search-section')">Search</span>
+      <span class="nav-link" onclick="scrollTo('tiers-section')">Programs</span>
+      <span class="nav-link" onclick="scrollTo('viz-section')">Visualizer</span>
+      <span class="nav-link" onclick="scrollTo('order-section')">Order</span>
+    </div>
+    <div class="nav-cart" onclick="openCart()">&#128722;<div class="cart-badge" id="cart-badge">0</div></div>
+    <button class="nav-hamburger" id="nav-hamburger-btn" onclick="toggleMobileMenu()" aria-label="Menu">&#9776;</button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mm-role-row" id="mm-role-row">
+    <span id="mm-role-label" style="font-size:11px;font-weight:800;color:var(--gold)">ARTHAUS</span>
+    <div class="mm-lang-btns">
+      <button onclick="setLangMob('en')" id="mm-en" class="mm-lb active">EN</button>
+      <button onclick="setLangMob('es')" id="mm-es" class="mm-lb">ES</button>
+    </div>
+  </div>
+  <span class="mm-link" onclick="scrollTo('search-section');closeMobileMenu()">&#128269; Search</span>
+  <span class="mm-link" onclick="scrollTo('tiers-section');closeMobileMenu()">&#127919; Programs</span>
+  <span class="mm-link" onclick="scrollTo('viz-section');closeMobileMenu()">&#127748; Visualizer</span>
+  <span class="mm-link" onclick="scrollTo('order-section');closeMobileMenu()">&#128230; Order</span>
+</div>
+
+<section class="hero">
+  <div class="hero-tag">MEXAUSA FOOD GROUP, INC. &mdash; ART DIVISION</div>
+  <h1>500,000+ Works.<br/><span>One Wholesale Source.</span></h1>
+  <p>The world's largest public domain art collection available for institutional wholesale. Hotels, residential complexes, schools, and corporate spaces. Giclée canvas reproductions, museum-grade quality.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">500K+</div><div class="hstat-l">Works Available</div></div>
+    <div class="hstat"><div class="hstat-n">1,000+</div><div class="hstat-l">Collections</div></div>
+    <div class="hstat"><div class="hstat-n">30-60%</div><div class="hstat-l">Off Retail</div></div>
+    <div class="hstat"><div class="hstat-n">Net-30</div><div class="hstat-l">Terms Available</div></div>
+  </div>
+</section>
+
+<!-- SEARCH ENGINE -->
+<section class="search-section" id="search-section">
+  <div class="search-row">
+    <input class="search-inp" id="search-inp" placeholder="Search by artist, title, style, period... (e.g. Monet, landscape, baroque, portrait)" onkeydown="if(event.key==='Enter')runSearch()"/>
+    <select class="search-inp" id="search-source" style="max-width:180px">
+      <option value="met">Collection A</option>
+      <option value="aic">Collection B</option>
+      <option value="both">All Collections</option>
+    </select>
+    <button class="btn-search" onclick="runSearch()">Search</button>
+    <button class="btn-search" style="background:var(--card);color:var(--txt);border:1px solid var(--bord)" onclick="loadFeatured()">Featured</button>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">STYLE:</span>
+    <div class="fb on" onclick="setStyle('',this)">All</div>
+    <div class="fb" onclick="setStyle('impressionism',this)">Impressionism</div>
+    <div class="fb" onclick="setStyle('painting',this)">Painting</div>
+    <div class="fb" onclick="setStyle('landscape',this)">Landscape</div>
+    <div class="fb" onclick="setStyle('portrait',this)">Portrait</div>
+    <div class="fb" onclick="setStyle('abstract',this)">Abstract</div>
+    <div class="fb" onclick="setStyle('still life',this)">Still Life</div>
+    <div class="fb" onclick="setStyle('mythology',this)">Mythology</div>
+    <div class="fb" onclick="setStyle('renaissance',this)">Renaissance</div>
+    <div class="fb" onclick="setStyle('baroque',this)">Baroque</div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<div class="gallery-wrap">
+  <div class="gallery-meta">
+    <div class="gallery-count" id="gallery-count"></div>
+    <select class="fb" id="sort-select" onchange="sortResults()" style="min-width:140px">
+      <option value="default">Sort: Default</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="title">Title A-Z</option>
+    </select>
+  </div>
+  <div class="gallery" id="gallery-grid">
+    <div class="loading" style="grid-column:1/-1"><div class="spinner"></div><div>Loading world collection...</div></div>
+  </div>
+  <div class="load-more-wrap" id="load-more-wrap" style="display:none">
+    <button class="btn-load-more" onclick="loadMore()">Load More Works</button>
+  </div>
+</div>
+
+<!-- TIERS -->
+<section class="tiers-section" id="tiers-section">
+  <div class="tiers-wrap">
+    <div class="sec-tag">WHOLESALE PROGRAMS</div>
+    <div class="sec-h2">Volume Pricing Tiers</div>
+    <div class="tiers">
+      <div class="tier">
+        <div class="tier-icon">&#127970;</div>
+        <div class="tier-name">BRONZE</div>
+        <div class="tier-type">Boutique / Small Residential</div>
+        <div class="tier-disc">30% <span style="font-size:13px;color:var(--txt3);font-weight:400">off retail</span></div>
+        <div class="tier-moq">MOQ: 5 units</div>
+        <ul class="tier-feats">
+          <li>Standard canvas giclée</li>
+          <li>Gallery wrap or framed</li>
+          <li>3 size options</li>
+          <li>Net-15 terms</li>
+        </ul>
+      </div>
+      <div class="tier feat">
+        <div class="tier-icon">&#127968;</div>
+        <div class="tier-name">SILVER</div>
+        <div class="tier-type">Hotels / Mid-Scale Residential</div>
+        <div class="tier-disc">45% <span style="font-size:13px;color:var(--txt3);font-weight:400">off retail</span></div>
+        <div class="tier-moq">MOQ: 20 units</div>
+        <ul class="tier-feats">
+          <li>Premium canvas giclée</li>
+          <li>Custom framing options</li>
+          <li>5 size options</li>
+          <li>Net-30 terms</li>
+          <li>Dedicated account rep</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="tier-icon">&#127963;</div>
+        <div class="tier-name">GOLD</div>
+        <div class="tier-type">Hotel Chains / Institutions</div>
+        <div class="tier-disc">60% <span style="font-size:13px;color:var(--txt3);font-weight:400">off retail</span></div>
+        <div class="tier-moq">MOQ: 50 units</div>
+        <ul class="tier-feats">
+          <li>Museum-grade canvas</li>
+          <li>Custom sizing available</li>
+          <li>Installation coordination</li>
+          <li>Net-30 / Net-60 terms</li>
+          <li>Volume rebate program</li>
+          <li>Curated collection service</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="tier-icon">&#127979;</div>
+        <div class="tier-name">EDUCATION</div>
+        <div class="tier-type">Schools / Universities</div>
+        <div class="tier-disc">50% <span style="font-size:13px;color:var(--txt3);font-weight:400">off retail</span></div>
+        <div class="tier-moq">MOQ: 10 units</div>
+        <ul class="tier-feats">
+          <li>Curriculum-aligned collections</li>
+          <li>Durable laminated finish</li>
+          <li>Historical info cards</li>
+          <li>Net-30 terms</li>
+          <li>Budget quote letters</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROOM VISUALIZER -->
+<section class="viz-section" id="viz-section">
+  <div class="viz-wrap">
+    <div class="sec-tag">ROOM VISUALIZER</div>
+    <div class="sec-h2">Preview In Your Space</div>
+    <div class="rooms" id="room-grid"></div>
+    <div class="viz-canvas" id="viz-canvas">
+      <div id="viz-empty" style="color:var(--txt3);font-size:13px">Select a room above, then click any artwork to preview it in that environment.</div>
+      <div id="viz-content" style="display:none;flex-direction:column;align-items:center;gap:14px">
+        <img class="viz-art" id="viz-img" src="" alt=""/>
+        <div id="viz-cap" style="font-size:12px;color:var(--txt2)"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER -->
+<section class="order-section" id="order-section">
+  <div class="order-wrap">
+    <div class="sec-tag">GET STARTED</div>
+    <div class="sec-h2">Request Wholesale Account</div>
+    <div class="order-form">
+      <div class="form-grid">
+        <div class="form-row"><label class="lbl">FIRST NAME *</label><input class="inp" id="f-fname" placeholder="First Name"/></div>
+        <div class="form-row"><label class="lbl">LAST NAME</label><input class="inp" id="f-lname" placeholder="Last Name"/></div>
+        <div class="form-row"><label class="lbl">PROPERTY / ORGANIZATION *</label><input class="inp" id="f-property" placeholder="Hilton San Diego"/></div>
+        <div class="form-row"><label class="lbl">PROGRAM TYPE *</label>
+          <select class="inp" id="f-type">
+            <option value="">Select...</option>
+            <option>Hotel Program</option>
+            <option>Residential Program</option>
+            <option>Education Program</option>
+            <option>Corporate Program</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="lbl">EMAIL *</label><input class="inp" id="f-email" type="email" placeholder="you@company.com"/></div>
+        <div class="form-row"><label class="lbl">PHONE</label><input class="inp" id="f-phone" type="tel" placeholder="+1 (831) 000-0000"/></div>
+        <div class="form-row"><label class="lbl">EST. UNIT QTY</label><input class="inp" id="f-qty" type="number" placeholder="20"/></div>
+        <div class="form-row"><label class="lbl">TIMELINE</label>
+          <select class="inp" id="f-timeline">
+            <option value="">Select...</option>
+            <option>Immediate (1-2 weeks)</option>
+            <option>30 Days</option>
+            <option>60-90 Days</option>
+            <option>Planning Stage</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:12px"><label class="lbl">NOTES / REQUIREMENTS</label><textarea class="inp" id="f-notes" rows="3" placeholder="Color palette, room dimensions, style preferences, special requirements..." style="resize:vertical"></textarea></div>
+      <button class="btn-submit" onclick="submitOrder()">Submit Request</button>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how-section" id="how-section">
+  <div class="how-wrap">
+    <div class="sec-tag">PROCESS</div>
+    <div class="sec-h2">How It Works</div>
+    <div class="how-steps">
+      <div class="step"><div class="step-num">01</div><div class="step-t">Search</div><div class="step-d">Browse 500,000+ public domain works. Filter by style, period, or artist.</div></div>
+      <div class="step"><div class="step-num">02</div><div class="step-t">Apply</div><div class="step-d">Submit your wholesale account request. Approval within 24 hours.</div></div>
+      <div class="step"><div class="step-num">03</div><div class="step-t">Curate</div><div class="step-d">Build your collection or let our team curate for your space and aesthetic.</div></div>
+      <div class="step"><div class="step-num">04</div><div class="step-t">Receive</div><div class="step-d">Insured shipping direct to your property. Installation coordination available.</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">ARTHAUS WHOLESALE</div>
+        <div class="foot-tagline">Museum-quality art at institutional pricing. Serving hotels, residential complexes, schools, and corporations across the US and Mexico.</div>
+      </div>
+      <div>
+        <div class="foot-col-title">Collection</div>
+        <ul class="foot-links">
+          <li><a href="#" onclick="quickSearch('impressionism')">Impressionism</a></li>
+          <li><a href="#" onclick="quickSearch('renaissance')">Renaissance</a></li>
+          <li><a href="#" onclick="quickSearch('landscape')">Landscapes</a></li>
+          <li><a href="#" onclick="quickSearch('portrait')">Portraits</a></li>
+          <li><a href="#" onclick="quickSearch('still life')">Still Life</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="foot-col-title">Programs</div>
+        <ul class="foot-links">
+          <li><a href="#tiers-section">Hotel Program</a></li>
+          <li><a href="#tiers-section">Residential Program</a></li>
+          <li><a href="#tiers-section">Education Program</a></li>
+          <li><a href="#tiers-section">Corporate Program</a></li>
+          <li><a href="#order-section">Net-30 Terms</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="foot-col-title">Contact</div>
+        <ul class="foot-links">
+          <li><a href="mailto:art@mexausafg.com">art@mexausafg.com</a></li>
+          <li><a href="tel:+18312513116">+1 (831) 251-3116</a></li>
+          <li><a href="#order-section">Request Account</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">&copy; 2026 ArtHaus Wholesale &mdash; Mexausa Food Group, Inc. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- CART -->
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-hdr"><h3>WHOLESALE CART</h3><button class="cart-close" onclick="closeCart()">&#10005;</button></div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>WHOLESALE TOTAL</span><span id="cart-total-val">$0</span></div>
+    <button class="btn-checkout" onclick="checkout()">Request Quote / Checkout</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="art-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    <img class="modal-img" id="modal-img" src="" alt=""/>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+var allResults = [];
+
+// ── ARTHAUS SEED DATASET — 30 guaranteed public domain masterworks ──────────
+// Loads instantly — API results append on top when available
+var SEED_ARTWORKS = [{"id":"met_435877","title":"Mont Sainte-Victoire and the Viaduct of the Arc River Valley","artist":"Paul C\u00e9zanne","date":"1882\u201385","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-20099-001.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-20099-001.jpg","src":"MET","ws":560,"size":""},{"id":"met_436880","title":"The Organ Rehearsal","artist":"Henry Lerolle","date":"1885","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP160223.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP160223.jpg","src":"MET","ws":480,"size":""},{"id":"met_437430","title":"By the Seashore","artist":"Auguste Renoir","date":"1883","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-14936-039.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-14936-039.jpg","src":"MET","ws":800,"size":""},{"id":"met_437344","title":"The Shepherd's Song","artist":"Pierre Puvis de Chavannes","date":"1891","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-14201-001.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-14201-001.jpg","src":"MET","ws":720,"size":""},{"id":"met_19523","title":"Low Tide, Riverside Yacht Club","artist":"Theodore Robinson","date":"1894","medium":"Oil on canvas","dept":"The American Wing","img":"https://images.metmuseum.org/CRDImages/ad/web-large/DP161239.jpg","thumb":"https://images.metmuseum.org/CRDImages/ad/web-large/DP161239.jpg","src":"MET","ws":720,"size":""},{"id":"met_441104","title":"Still Life with Flowers and Prickly Pears","artist":"Auguste Renoir","date":"ca. 1885","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP257756.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP257756.jpg","src":"MET","ws":640,"size":""},{"id":"met_437990","title":"Seated Peasant","artist":"Paul C\u00e9zanne","date":"ca. 1892\u201396","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1944.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1944.jpg","src":"MET","ws":560,"size":""},{"id":"met_437999","title":"Still Life with Teapot and Fruit","artist":"Paul Gauguin","date":"1896","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1027.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1027.jpg","src":"MET","ws":560,"size":""},{"id":"met_438002","title":"Madame Manet (Suzanne Leenhoff, 1829\u20131906) at Bellevue","artist":"Edouard Manet","date":"1880","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT4224.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT4224.jpg","src":"MET","ws":1100,"size":""},{"id":"met_438011","title":"Eug\u00e8ne Murer (Hyacinthe-Eug\u00e8ne Meunier, 1841\u20131906)","artist":"Auguste Renoir","date":"1877","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1882.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1882.jpg","src":"MET","ws":480,"size":""},{"id":"met_438009","title":"The Pink Dress (Albertie-Marguerite Carr\u00e9, later Madame Ferdinand-Henri Himmes, 1854\u20131935)","artist":"Berthe Morisot","date":"ca. 1870","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1927.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1927.jpg","src":"MET","ws":480,"size":""},{"id":"met_344210","title":"Dancer","artist":"Edgar Degas","date":"ca. 1880","medium":"Pastel and charcoal on blue-gray wove paper","dept":"Drawings and Prints","img":"https://images.metmuseum.org/CRDImages/dp/web-large/DT4963.jpg","thumb":"https://images.metmuseum.org/CRDImages/dp/web-large/DT4963.jpg","src":"MET","ws":560,"size":""},{"id":"met_437300","title":"A Cowherd at Valhermeil, Auvers-sur-Oise","artist":"Camille Pissarro","date":"1874","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1556.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1556.jpg","src":"MET","ws":720,"size":""},{"id":"met_437995","title":"Roses in a Bowl","artist":"Henri Fantin-Latour","date":"1883","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT10260.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT10260.jpg","src":"MET","ws":720,"size":""},{"id":"met_437988","title":"Princess Pauline Metternich (1836\u20131921) on the Beach","artist":"Eug\u00e8ne Boudin","date":"ca. 1865\u201367","medium":"Oil on cardboard, laid down on wood","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT4425.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT4425.jpg","src":"MET","ws":480,"size":""},{"id":"met_436449","title":"The Siesta","artist":"Paul Gauguin","date":"ca. 1892\u201394","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1952.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1952.jpg","src":"MET","ws":720,"size":""},{"id":"met_437984","title":"La Berceuse (Woman Rocking a Cradle; Augustine-Alix Pellicot Roulin, 1851\u20131930)","artist":"Vincent van Gogh","date":"1889","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-19279-001.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-19279-001.jpg","src":"MET","ws":1100,"size":""},{"id":"met_13177","title":"Boats","artist":"Julian Alden Weir","date":"","medium":"Pastel and graphite on paper","dept":"The American Wing","img":"https://images.metmuseum.org/CRDImages/ad/web-large/ap1980.512.1.jpg","thumb":"https://images.metmuseum.org/CRDImages/ad/web-large/ap1980.512.1.jpg","src":"MET","ws":720,"size":""},{"id":"met_671456","title":"Chrysanthemums in the Garden at Petit-Gennevilliers","artist":"Gustave Caillebotte","date":"1893","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP341200.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP341200.jpg","src":"MET","ws":1280,"size":""},{"id":"met_437432","title":"Tilla Durieux (Ottilie Godeffroy, 1880\u20131971)","artist":"Auguste Renoir","date":"1914","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-25036-001.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-25036-001.jpg","src":"MET","ws":800,"size":""},{"id":"met_437997","title":"Asters and Fruit on a Table","artist":"Henri Fantin-Latour","date":"1868","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT9199.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT9199.jpg","src":"MET","ws":480,"size":""},{"id":"met_459123","title":"Madame Roulin and Her Baby","artist":"Vincent van Gogh","date":"1888","medium":"Oil on canvas","dept":"Robert Lehman Collection","img":"https://images.metmuseum.org/CRDImages/rl/web-large/DT3154.jpg","thumb":"https://images.metmuseum.org/CRDImages/rl/web-large/DT3154.jpg","src":"MET","ws":640,"size":""},{"id":"met_436533","title":"Shoes","artist":"Vincent van Gogh","date":"1888","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1947.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1947.jpg","src":"MET","ws":1100,"size":""},{"id":"met_436535","title":"Wheat Field with Cypresses","artist":"Vincent van Gogh","date":"1889","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-42549-001.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP-42549-001.jpg","src":"MET","ws":960,"size":""},{"id":"met_436529","title":"L'Arl\u00e9sienne: Madame Joseph-Michel Ginoux (Marie Julien, 1848\u20131911)","artist":"Vincent van Gogh","date":"1888\u201389","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1396.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1396.jpg","src":"MET","ws":800,"size":""},{"id":"met_436528","title":"Irises","artist":"Vincent van Gogh","date":"1890","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DP346474.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DP346474.jpg","src":"MET","ws":640,"size":""},{"id":"met_436532","title":"Self-Portrait with a Straw Hat (obverse: The Potato Peeler)","artist":"Vincent van Gogh","date":"1887","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1502_cropped2.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1502_cropped2.jpg","src":"MET","ws":720,"size":""},{"id":"met_459193","title":"Road in Etten","artist":"Vincent van Gogh","date":"1881","medium":"Chalk, pencil, pastel, watercolor.  Underdrawing in pen and brown ink.","dept":"Robert Lehman Collection","img":"https://images.metmuseum.org/CRDImages/rl/web-large/DP359031.jpg","thumb":"https://images.metmuseum.org/CRDImages/rl/web-large/DP359031.jpg","src":"MET","ws":960,"size":""},{"id":"met_436530","title":"Oleanders","artist":"Vincent van Gogh","date":"1888","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1494.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT1494.jpg","src":"MET","ws":560,"size":""},{"id":"met_436531","title":"Peasant Woman Cooking by a Fireplace","artist":"Vincent van Gogh","date":"1885","medium":"Oil on canvas","dept":"European Paintings","img":"https://images.metmuseum.org/CRDImages/ep/web-large/DT2163.jpg","thumb":"https://images.metmuseum.org/CRDImages/ep/web-large/DT2163.jpg","src":"MET","ws":560,"size":""}];
+
+function loadSeedArt() {
+  if(allResults.length === 0) {
+    allResults = SEED_ARTWORKS.map(function(a) {
+      var ws = a.ws || 800;
+      return {
+        id: a.id,
+        title: a.title,
+        artist: a.artist,
+        date: a.date,
+        medium: a.medium,
+        department: a.dept,
+        primaryImageSmall: a.thumb,
+        primaryImage: a.img,
+        img: a.thumb,
+        imgFull: a.img,
+        source: a.src,
+        wholesalePrice: ws,
+        wholesale: ws,
+        retail: Math.round(ws * 2.2),
+        moq: ws > 3000 ? 1 : ws > 1500 ? 2 : 3,
+        dimensions: a.size,
+        objectURL: 'https://www.metmuseum.org/art/collection'
+      };
+    });
+    currentPage = 0;
+    renderPage(true);
+    document.getElementById('gallery-count').innerHTML = '<span style="color:var(--gold)">Showing ' + SEED_ARTWORKS.length + ' curated works</span> &mdash; Loading full collection...';
+  }
+}
+// Trigger seed immediately before API loads
+loadSeedArt();
+
+var displayedResults = [];
+var pageSize = 24;
+var currentPage = 0;
+var activeStyle = '';
+var activeRoom = null;
+var vizArtId = null;
+var cart = [];
+
+var ROOMS = [
+  {id:'hotel', label:'Hotel Lobby', bg:'linear-gradient(135deg,#1a0f00,#2d1a05,#1a0f00)', icon:'&#127970;'},
+  {id:'residential', label:'Apartment Common', bg:'linear-gradient(135deg,#0a1628,#0f2040,#0a1628)', icon:'&#127968;'},
+  {id:'school', label:'School / University', bg:'linear-gradient(135deg,#0a1a0a,#0f2a0f,#0a1a0a)', icon:'&#127979;'},
+  {id:'corporate', label:'Corporate Office', bg:'linear-gradient(135deg,#0d0d14,#15152a,#0d0d14)', icon:'&#127963;'}
+];
+
+// ── PRICING ──
+function wholesalePrice(dims, medium) {
+  var base = 320;
+  if (dims) {
+    var m = dims.match(/(\d+)/g);
+    if (m && m.length >= 2) {
+      var area = parseInt(m[0]) * parseInt(m[1]);
+      base = Math.max(180, Math.min(900, Math.round(area * 0.4)));
+    }
+  }
+  base += Math.floor(Math.random() * 80) - 40;
+  return Math.round(base / 10) * 10;
+}
+
+// ── MET API ──
+function searchMet(query, callback) {
+  var q = query || 'painting';
+  var url = 'https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&isPublicDomain=true&q=' + encodeURIComponent(q);
+  fetch(url)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var ids = (d.objectIDs || []).slice(0, 80);
+      var results = [];
+      var done = 0;
+      if (!ids.length) { callback([]); return; }
+      ids.forEach(function(id) {
+        fetch('https://collectionapi.metmuseum.org/public/collection/v1/objects/' + id)
+          .then(function(r){return r.json();})
+          .then(function(obj) {
+            if (obj.primaryImageSmall && obj.isPublicDomain) {
+              var ws = wholesalePrice(obj.objectDimensions, obj.medium);
+              results.push({
+                id: 'met_' + obj.objectID,
+                title: obj.title || 'Untitled',
+                artist: obj.artistDisplayName || 'Unknown Artist',
+                date: obj.objectDate || '',
+                medium: obj.medium || 'Oil on canvas',
+                department: obj.department || '',
+                img: obj.primaryImageSmall,
+                imgFull: obj.primaryImage || obj.primaryImageSmall,
+                wholesale: ws,
+                retail: Math.round(ws * 2.4),
+                moq: ws > 3000 ? 1 : ws > 1500 ? 2 : 3,
+                source: 'A'
+              });
+            }
+            done++;
+            if (done === ids.length) callback(results);
+          })
+          .catch(function(){ done++; if (done === ids.length) callback(results); });
+      });
+    })
+    .catch(function(){ callback([]); });
+}
+
+// ── AIC API ──
+function searchAIC(query, callback) {
+  var q = query || 'painting';
+  var url = 'https://api.artic.edu/api/v1/artworks/search?q=' + encodeURIComponent(q) +
+    '&fields=id,title,artist_display,date_display,medium_display,image_id,dimensions,classification_title&limit=60' +
+    '&query[term][is_public_domain]=true';
+  fetch(url)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var results = [];
+      (d.data || []).forEach(function(a) {
+        if (!a.image_id) return;
+        var img = 'https://www.artic.edu/iiif/2/' + a.image_id + '/full/400,/0/default.jpg';
+        var imgFull = 'https://www.artic.edu/iiif/2/' + a.image_id + '/full/843,/0/default.jpg';
+        var ws = wholesalePrice(a.dimensions, a.medium_display);
+        results.push({
+          id: 'aic_' + a.id,
+          title: a.title || 'Untitled',
+          artist: (a.artist_display || 'Unknown Artist').split('\n')[0],
+          date: a.date_display || '',
+          medium: a.medium_display || 'Oil on canvas',
+          department: a.classification_title || '',
+          img: img,
+          imgFull: imgFull,
+          wholesale: ws,
+          retail: Math.round(ws * 2.4),
+          moq: 5,
+          source: 'AIC'
+        });
+      });
+      callback(results);
+    })
+    .catch(function(){ callback([]); });
+}
+
+// ── SEARCH ──
+function runSearch() {
+  var q = document.getElementById('search-input').value.trim();
+  var src = document.getElementById('search-source').value;
+  var finalQ = activeStyle ? (q ? q + ' ' + activeStyle : activeStyle) : (q || 'painting');
+  showLoading();
+  allResults = [];
+  currentPage = 0;
+
+  if (src === 'met') {
+    searchMet(finalQ, function(r) {
+      allResults = r;
+      renderPage(true);
+    });
+  } else if (src === 'aic') {
+    searchAIC(finalQ, function(r) {
+      allResults = r;
+      renderPage(true);
+    });
+  } else {
+    var metDone = false, aicDone = false;
+    var metR = [], aicR = [];
+    searchMet(finalQ, function(r){ metR = r; metDone = true; if(aicDone) merge(); });
+    searchAIC(finalQ, function(r){ aicR = r; aicDone = true; if(metDone) merge(); });
+    function merge() {
+      // Interleave results from both sources
+      var i = 0, j = 0;
+      while (i < metR.length || j < aicR.length) {
+        if (i < metR.length) { allResults.push(metR[i++]); }
+        if (j < aicR.length) { allResults.push(aicR[j++]); }
+      }
+      renderPage(true);
+    }
+  }
+}
+
+function setStyle(s, el) {
+  activeStyle = s;
+  document.querySelectorAll('.fb').forEach(function(b){ b.classList.remove('on'); });
+  if (el) el.classList.add('on');
+  var q = document.getElementById('search-inp').value.trim();
+  document.getElementById('search-inp').value = q;
+  runSearch();
+}
+
+function quickSearch(term) {
+  document.getElementById('search-inp').value = term;
+  activeStyle = '';
+  document.querySelectorAll('.fb').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelector('.fb').classList.add('on');
+  document.getElementById('search-section').scrollIntoView({behavior:'smooth'});
+  runSearch();
+}
+
+function loadFeatured() {
+  document.getElementById('search-inp').value = '';
+  activeStyle = '';
+  document.querySelectorAll('.fb').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelector('.fb').classList.add('on');
+  document.getElementById('search-source').value = 'both';
+  showLoading();
+  allResults = [];
+  currentPage = 0;
+  var queries = ['impressionism', 'landscape painting', 'portrait masterpiece'];
+  var all = [];
+  var done = 0;
+  queries.forEach(function(q) {
+    searchMet(q, function(r) {
+      all = all.concat(r.slice(0, 15));
+      done++;
+      if (done === queries.length) {
+        allResults = all;
+        renderPage(true);
+      }
+    });
+  });
+}
+
+function loadMore() {
+  currentPage++;
+  renderPage(false);
+}
+
+function sortResults() {
+  var s = document.getElementById('sort-select').value;
+  if (s === 'price-asc') allResults.sort(function(a,b){return a.wholesale-b.wholesale;});
+  else if (s === 'price-desc') allResults.sort(function(a,b){return b.wholesale-a.wholesale;});
+  else if (s === 'title') allResults.sort(function(a,b){return a.title.localeCompare(b.title);});
+  currentPage = 0;
+  renderPage(true);
+}
+
+// ── RENDER ──
+function showLoading() {
+  document.getElementById('gallery-grid').innerHTML = '<div class="loading" style="grid-column:1/-1"><div class="spinner"></div><div>Searching world collection...</div></div>';
+  document.getElementById('load-more-wrap').style.display = 'none';
+  document.getElementById('gallery-count').textContent = '';
+}
+
+function renderPage(reset) {
+  var grid = document.getElementById('gallery-grid');
+  var start = currentPage * pageSize;
+  var end = start + pageSize;
+  var slice = allResults.slice(start, end);
+
+  if (reset) {
+    if (!allResults.length) {
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No results found. Try a different search term.</div>';
+      document.getElementById('load-more-wrap').style.display = 'none';
+      document.getElementById('gallery-count').innerHTML = '';
+      return;
+    }
+    grid.innerHTML = '';
+  }
+
+  if (!slice.length && reset) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No results found.</div>';
+    document.getElementById('load-more-wrap').style.display = 'none';
+    return;
+  }
+
+  slice.forEach(function(a) {
+    var card = document.createElement('div');
+    card.className = 'art-card';
+    card.innerHTML =
+      '<div class="art-img-wrap">' +
+        '<img class="art-img" src="' + (a.img || a.primaryImageSmall || '') + '" alt="' + (a.title||'Artwork').replace(/"/g,'') + '" loading="lazy" onerror="this.parentNode.style.background=\'#0d1117\';this.style.display=\'none\'"/>' +
+        '<div class="art-src">' + (a.source === 'MET' ? 'MET Museum' : a.source === 'AIC' ? 'Art Institute Chicago' : a.source === 'A' ? 'MET Museum' : (a.source || 'Museum Collection')) + '</div>' +
+      '</div>' +
+      '<div class="art-body">' +
+        '<div class="art-title">' + truncate(a.title, 50) + '</div>' +
+        '<div class="art-artist">' + truncate(a.artist, 40) + '</div>' +
+        '<div class="art-date">' + a.date + (a.medium ? ' &mdash; ' + truncate(a.medium, 30) : '') + '</div>' +
+        '<div class="art-price-row">' +
+          '<div><div class="art-ws">$' + (a.wholesale||a.wholesalePrice||0) + '</div><div class="art-rt">Retail $' + (a.retail||Math.round((a.wholesale||a.wholesalePrice||0)*2.2)) + '</div></div>' +
+        '</div>' +
+        '<div class="art-moq" style="font-size:10px;color:var(--txt3);margin-top:4px">MOQ: ' + (a.moq || 1) + ' unit(s)</div>' +
+        '<button class="btn-add" data-id="' + a.id + '">+ Add to Cart</button>' +
+      '</div>';
+    card.querySelector('.art-img-wrap').addEventListener('click', function(){ openArt(a); });
+    card.querySelector('.art-title').addEventListener('click', function(){ openArt(a); });
+    card.querySelector('.btn-add').addEventListener('click', function(e){ e.stopPropagation(); addToCart(a); });
+    grid.appendChild(card);
+  });
+
+  var total = allResults.length;
+  var shown = Math.min(end, total);
+  document.getElementById('gallery-count').innerHTML = 'Showing <span>' + shown + '</span> of <span>' + total + '</span> works';
+  document.getElementById('load-more-wrap').style.display = end < total ? 'block' : 'none';
+}
+
+function truncate(s, n) {
+  return s && s.length > n ? s.substring(0, n) + '...' : (s || '');
+}
+
+// ── MODAL ──
+function openArt(a) {
+  document.getElementById('modal-img').src = a.imgFull || a.img;
+  var h = '<div style="font-size:17px;font-weight:900;margin-bottom:4px">' + a.title + '</div>';
+  h += '<div style="font-size:12px;color:var(--txt3);margin-bottom:4px">' + a.artist + '</div>';
+  h += '<div style="font-size:11px;color:var(--txt3);margin-bottom:14px">' + a.date + (a.medium ? ' &mdash; ' + a.medium : '') + '</div>';
+  h += '<div style="display:flex;gap:20px;margin-bottom:14px">';
+  h += '<div><div style="font-size:22px;font-weight:900;color:var(--gold)">$' + a.wholesale + '</div><div style="font-size:10px;color:var(--txt3)">wholesale / unit</div></div>';
+  h += '<div><div style="font-size:22px;font-weight:900;color:var(--txt3)">$' + a.retail + '</div><div style="font-size:10px;color:var(--txt3)">retail value</div></div>';
+  h += '</div>';
+  h += '<div style="font-size:11px;color:var(--txt3);margin-bottom:14px">MOQ: ' + a.moq + ' units &mdash; Available in 3 standard sizes &mdash; Custom sizing on request</div>';
+  h += '<div style="display:flex;gap:10px;flex-wrap:wrap">';
+  h += '<button class="btn-submit" id="modal-add-btn">Add to Cart</button>';
+  if (activeRoom) {
+    h += '<button class="btn-submit" id="modal-viz-btn" style="background:var(--blue);color:#fff">Preview in Room</button>';
+  }
+  h += '</div>';
+  document.getElementById('modal-body').innerHTML = h;
+  document.getElementById('modal-add-btn').addEventListener('click', function(){ addToCart(a); closeModal(); });
+  var vb = document.getElementById('modal-viz-btn');
+  if (vb) vb.addEventListener('click', function(){ previewInRoom(a); closeModal(); });
+  document.getElementById('art-modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('art-modal').classList.remove('open'); }
+
+// ── ROOM VIZ ──
+function renderRooms() {
+  document.getElementById('room-grid').innerHTML = ROOMS.map(function(r) {
+    return '<div class="room" id="room-' + r.id + '" onclick="selectRoom(\'' + r.id + '\')">' +
+      '<div class="room-scene" style="background:' + r.bg + '">' + r.icon + '</div>' +
+      '<div class="room-label">' + r.label + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function selectRoom(id) {
+  activeRoom = id;
+  document.querySelectorAll('.room').forEach(function(r){ r.classList.remove('on'); });
+  var el = document.getElementById('room-' + id);
+  if (el) el.classList.add('on');
+  var canvas = document.getElementById('viz-canvas');
+  var room = ROOMS.find(function(r){ return r.id === id; });
+  if (room) canvas.style.background = room.bg;
+  if (vizArtId) previewInRoom(vizArtId);
+  else showToast('Room selected. Click any artwork to preview.');
+}
+
+function previewInRoom(a) {
+  vizArtId = a;
+  document.getElementById('viz-empty').style.display = 'none';
+  var content = document.getElementById('viz-content');
+  content.style.display = 'flex';
+  document.getElementById('viz-img').src = a.imgFull || a.img;
+  document.getElementById('viz-cap').innerHTML = truncate(a.title, 50) + ' &mdash; <span style="color:var(--gold)">$' + a.wholesale + ' wholesale</span>';
+}
+
+// ── CART ──
+function addToCart(a) {
+  var existing = cart.find(function(c){ return c.id === a.id; });
+  if (existing) { existing.qty += a.moq; }
+  else { cart.push({id:a.id, title:a.title, artist:a.artist, wholesale:a.wholesale, moq:a.moq, qty:a.moq}); }
+  renderCart();
+  showToast(truncate(a.title, 30) + ' added to cart');
+  openCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(function(c){ return c.id !== id; });
+  renderCart();
+}
+
+function changeQty(id, delta) {
+  var item = cart.find(function(c){ return c.id === id; });
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else renderCart();
+}
+
+function renderCart() {
+  var el = document.getElementById('cart-items');
+  var badge = document.getElementById('cart-badge');
+  var total = 0;
+  if (!cart.length) {
+    el.innerHTML = '<div style="color:var(--txt3);font-size:12px;text-align:center;padding:40px 0">Cart is empty</div>';
+    badge.style.display = 'none';
+    document.getElementById('cart-total-val').textContent = '$0';
+    return;
+  }
+  badge.style.display = 'block';
+  badge.textContent = cart.length;
+  var h = '';
+  cart.forEach(function(c) {
+    var sub = c.wholesale * c.qty;
+    total += sub;
+    h += '<div class="cart-item">';
+    h += '<div class="ci-title">' + truncate(c.title, 36) + '</div>';
+    h += '<div style="font-size:11px;color:var(--txt3)">' + truncate(c.artist, 36) + '</div>';
+    h += '<div class="ci-row"><span>$' + c.wholesale + ' x ' + c.qty + '</span><span style="color:var(--gold);font-weight:800">$' + sub + '</span></div>';
+    h += '<div style="margin-top:6px;display:flex;gap:6px;align-items:center">';
+    h += '<button onclick="changeQty(\'' + c.id + '\',-' + c.moq + ')" style="background:var(--bg);border:1px solid var(--bord);color:var(--txt);border-radius:4px;padding:2px 8px;cursor:pointer">-</button>';
+    h += '<span style="font-size:12px;color:var(--txt2)">' + c.qty + '</span>';
+    h += '<button onclick="changeQty(\'' + c.id + '\',' + c.moq + ')" style="background:var(--bg);border:1px solid var(--bord);color:var(--txt);border-radius:4px;padding:2px 8px;cursor:pointer">+</button>';
+    h += '<span class="ci-remove" onclick="removeFromCart(\'' + c.id + '\')">Remove</span>';
+    h += '</div></div>';
+  });
+  el.innerHTML = h;
+  document.getElementById('cart-total-val').textContent = '$' + total;
+}
+
+function openCart(){ document.getElementById('cart-panel').classList.add('open'); }
+function closeCart(){ document.getElementById('cart-panel').classList.remove('open'); }
+
+function checkout() {
+  if (!cart.length) { showToast('Add items to cart first'); return; }
+  var email = document.getElementById('f-email') ? document.getElementById('f-email').value.trim() : '';
+  if (!email) {
+    closeCart();
+    document.getElementById('order-section').scrollIntoView({behavior:'smooth'});
+    showToast('Enter your email below to proceed to checkout');
+    return;
+  }
+  doStripeCheckout(email);
+}
+
+function doStripeCheckout(email) {
+  var summary = cart.map(function(c){ return c.qty + 'x ' + truncate(c.title,30); }).join(', ');
+  var total = cart.reduce(function(s,c){ return s + c.wholesale * c.qty; }, 0);
+  var tier = total >= 10000 ? 'ENTERPRISE' : total >= 3000 ? 'PRO' : 'STARTER';
+  showToast('Opening secure checkout...');
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/stripe-mini-office/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      portal: 'ArtHaus Wholesale',
+      tier: tier,
+      company: document.getElementById('f-property') ? document.getElementById('f-property').value.trim() : 'ArtHaus Order',
+      customer_email: email,
+      customer_name: document.getElementById('f-fname') ? document.getElementById('f-fname').value.trim() : '',
+      metadata_note: summary
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.ok && d.url) {
+      window.location.href = d.url;
+    } else {
+      showToast('Checkout error: ' + (d.error || 'Please try again'));
+    }
+  })
+  .catch(function(){
+    showToast('Connection error — please try again');
+  });
+}
+
+// ── ORDER ──
+function submitOrder() {
+  var fname = document.getElementById('f-fname').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var property = document.getElementById('f-property').value.trim();
+  var type = document.getElementById('f-type').value;
+  if (!fname || !email || !property || !type) { showToast('Please complete all required fields'); return; }
+  if (cart.length) {
+    doStripeCheckout(email);
+  } else {
+    showToast('Request submitted. We will contact you within 24 hours.');
+    ['f-fname','f-lname','f-property','f-email','f-phone','f-notes','f-qty'].forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.getElementById('f-type').value = '';
+    document.getElementById('f-timeline').value = '';
+  }
+}
+
+// ── UTILS ──
+function scrollTo(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('cart-panel');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && !e.target.closest('.nav-cart')) closeCart();
+});
+
+// ── INIT ──
+renderRooms();
+renderCart();
+loadFeatured();
+
+// Auto-load on page start
+window.addEventListener('DOMContentLoaded', function(){
+  var q = document.getElementById('search-input');
+  if(q && !q.value) q.value = '';
+  loadSeedArt();
+  setTimeout(function(){ if(allResults.length===0) loadFeatured(); }, 800);
+});
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     AUDITDNA UNIVERSAL PATCH v1.0
+     - Multi-Role PIN System (Owner/Sales/Employee/Demo)
+     - EN/ES Bilingual Toggle
+     - Floating OCR Receipt Scanner
+     Injected by AuditDNA Platform Bot
+═══════════════════════════════════════════════════════════ -->
+<style>
+/* ROLE BADGE */
+#mfg-role-badge{position:fixed;top:60px;right:8px;z-index:8000;display:none;
+  background:rgba(10,22,40,0.95);border:1px solid rgba(201,165,92,0.4);
+  border-radius:99px;padding:4px 14px;font-size:9px;font-weight:800;
+  color:#C9A55C;letter-spacing:1.5px;text-transform:uppercase;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4);cursor:default;font-family:Arial,sans-serif}
+/* LANG TOGGLE */
+#mfg-lang-toggle{position:fixed;top:60px;right:8px;z-index:8000;display:none;
+  background:rgba(10,22,40,0.95);border:1px solid rgba(201,165,92,0.3);
+  border-radius:99px;padding:4px 0;font-size:9px;font-weight:800;
+  color:#94a3b8;letter-spacing:1px;font-family:Arial,sans-serif;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4);overflow:hidden;display:none;flex-direction:row}
+.mfg-lang-btn{padding:4px 14px;cursor:pointer;transition:.15s;border-radius:99px}
+.mfg-lang-btn.on{background:#C9A55C;color:#020912}
+/* ROLE GATE OVERLAY */
+#mfg-role-gate{position:fixed;inset:0;background:#020912;z-index:9500;
+  display:none;align-items:center;justify-content:center;font-family:Arial,sans-serif}
+.mrg-card{background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:16px;
+  padding:32px 28px;max-width:380px;width:calc(100% - 32px);text-align:center}
+.mrg-logo{font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:2px;margin-bottom:16px}
+.mrg-title{font-size:16px;font-weight:800;color:#e2e8f0;margin-bottom:4px}
+.mrg-sub{font-size:11px;color:#64748b;margin-bottom:20px}
+/* ROLE SELECTOR */
+.mrg-roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.mrg-role-btn{padding:12px 8px;border:1px solid rgba(201,165,92,0.2);border-radius:10px;
+  background:rgba(255,255,255,0.03);cursor:pointer;transition:.15s;
+  font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.5px;
+  font-family:Arial,sans-serif}
+.mrg-role-btn:hover,.mrg-role-btn.sel{background:rgba(201,165,92,0.12);
+  border-color:rgba(201,165,92,0.5);color:#C9A55C}
+.mrg-role-icon{font-size:18px;display:block;margin-bottom:4px}
+/* PIN PAD */
+#mrg-pin-area{display:none}
+.mrg-back{font-size:10px;color:#64748b;cursor:pointer;margin-bottom:12px;
+  text-decoration:underline;display:block}
+.mrg-dots{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
+.mrg-dot{width:12px;height:12px;border-radius:50%;
+  border:2px solid rgba(201,165,92,0.2);transition:.15s}
+.mrg-dot.on{background:#C9A55C;border-color:#C9A55C}
+.mrg-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.mrg-key{padding:14px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.07);border-radius:10px;
+  font-size:18px;font-weight:500;color:#e2e8f0;cursor:pointer;
+  transition:.1s;user-select:none;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;font-family:Arial,sans-serif}
+.mrg-key:active{background:rgba(201,165,92,0.15);color:#C9A55C}
+.mrg-key-del{background:rgba(239,68,68,0.06);color:rgba(239,68,68,0.5);font-size:13px}
+.mrg-key-ok{background:rgba(201,165,92,0.1);color:#C9A55C;font-size:11px;font-weight:800}
+.mrg-err{font-size:11px;color:#ef4444;min-height:16px;margin-top:6px}
+/* OCR FLOAT */
+#mfg-ocr-float{position:fixed;bottom:20px;right:20px;z-index:7500;display:none;flex-direction:column;align-items:flex-end;gap:8px}
+.mfg-ocr-fab{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#C9A55C,#8B5E1A);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(201,165,92,0.4);transition:.2s;font-family:Arial,sans-serif}
+.mfg-ocr-fab:hover{transform:scale(1.08)}
+.mfg-ocr-fab svg{width:22px;height:22px;fill:#020912}
+.mfg-ocr-label{background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:6px;
+  padding:4px 10px;font-size:9px;font-weight:700;color:#C9A55C;letter-spacing:1px;
+  white-space:nowrap;font-family:Arial,sans-serif}
+/* OCR MODAL */
+#mfg-ocr-modal{position:fixed;inset:0;background:rgba(2,9,18,0.92);z-index:9000;
+  display:none;align-items:center;justify-content:center;padding:16px;font-family:Arial,sans-serif}
+#mfg-ocr-modal.on{display:flex}
+.mfg-ocr-card{background:#0d1117;border:1px solid rgba(201,165,92,0.25);border-radius:16px;
+  padding:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto}
+.mfg-ocr-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.mfg-ocr-title{font-size:13px;font-weight:800;color:#e2e8f0}
+.mfg-ocr-close{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);
+  color:#ef4444;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700}
+.mfg-fg{margin-bottom:10px}
+.mfg-fg label{display:block;font-size:9px;font-weight:700;color:#64748b;
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.mfg-fg input,.mfg-fg select{width:100%;background:#161b22;border:1px solid rgba(201,165,92,0.15);
+  color:#e2e8f0;padding:9px 12px;border-radius:8px;font-size:12px;outline:none;box-sizing:border-box}
+.mfg-fg input:focus{border-color:#C9A55C}
+.mfg-upload-zone{border:2px dashed rgba(201,165,92,0.2);border-radius:10px;padding:20px;
+  text-align:center;cursor:pointer;margin-bottom:10px;transition:.2s}
+.mfg-upload-zone:hover{border-color:#C9A55C;background:rgba(201,165,92,0.03)}
+.mfg-upload-zone input{display:none}
+.mfg-btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.mfg-btn{padding:9px 18px;border-radius:8px;font-size:10px;font-weight:800;
+  cursor:pointer;border:none;letter-spacing:.5px;transition:.15s;font-family:Arial,sans-serif}
+.mfg-btn-gold{background:linear-gradient(135deg,#C9A55C,#8B5E1A);color:#020912}
+.mfg-btn-outline{background:transparent;border:1px solid rgba(201,165,92,0.25);color:#C9A55C}
+.mfg-btn-green{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#22c55e}
+.mfg-ocr-status{font-size:11px;color:#C9A55C;min-height:16px;margin:8px 0;font-weight:700}
+.mfg-ocr-result{background:#161b22;border:1px solid rgba(34,197,94,0.2);border-radius:8px;
+  padding:12px;font-size:10px;color:#22c55e;white-space:pre-wrap;margin-top:8px;display:none}
+.mfg-rec-table{width:100%;border-collapse:collapse;font-size:10px;margin-top:10px}
+.mfg-rec-table th{text-align:left;padding:6px 8px;font-size:9px;font-weight:700;
+  color:#64748b;letter-spacing:1px;border-bottom:1px solid rgba(201,165,92,0.1)}
+.mfg-rec-table td{padding:6px 8px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,0.04)}
+/* ROLE-BASED VISIBILITY */
+.owner-only{display:none !important}
+.sales-only{display:none !important}
+.emp-only{display:none !important}
+body.role-owner .owner-only{display:block !important}
+body.role-sales .sales-only{display:block !important}
+body.role-employee .emp-only{display:block !important}
+/* INTERNAL DATA HIDE for non-owners */
+body.role-sales .internal-data,
+body.role-employee .internal-data,
+body.role-demo .internal-data{display:none !important}
+/* Financial sections hidden from employee/demo */
+body.role-employee .financials-section,
+body.role-demo .financials-section{display:none !important;pointer-events:none}
+/* Bilingual */
+[data-es]{transition:opacity .2s}
+</style>
+
+<!-- ROLE BADGE -->
+<div id="mfg-role-badge"></div>
+
+<!-- LANG TOGGLE -->
+<div id="mfg-lang-toggle" style="display:none">
+  <div class="mfg-lang-btn on" id="mfg-en" onclick="mfgSetLang('en')">EN</div>
+  <div class="mfg-lang-btn" id="mfg-es" onclick="mfgSetLang('es')">ES</div>
+</div>
+
+<!-- ROLE GATE OVERLAY -->
+<div id="mfg-role-gate" style="display:none"></div></div>
+
+<script>
+(function(){
+'use strict';
+
+
+function setLangMob(l){
+  document.querySelectorAll('.mm-lb').forEach(function(b){b.classList.remove('active');});
+  var btn=document.getElementById('mm-'+l);
+  if(btn) btn.classList.add('active');
+  var lte=document.getElementById('mfg-lang-toggle');
+  if(lte){
+    var btns=lte.querySelectorAll('.mfg-lang-btn');
+    btns.forEach(function(b){b.classList.remove('on');});
+    var target=lte.querySelector('#mfg-'+l+'-btn');
+    if(target) target.classList.add('on');
+  }
+  if(window.setLang) window.setLang(l);
+}
+function updateMobileMenuRole(){
+  var badge=document.getElementById('mfg-role-badge');
+  var lbl=document.getElementById('mm-role-label');
+  if(badge&&lbl&&badge.textContent) lbl.textContent=badge.textContent;
+}
+
+function toggleMobileMenu(){
+  var m=document.getElementById('mobile-menu');
+  if(m) m.classList.toggle('open');
+}
+function closeMobileMenu(){
+  var m=document.getElementById('mobile-menu');
+  if(m) m.classList.remove('open');
+}
+
+
+// ── ROLE PINS ─────────────────────────────────────────────────────────────────
+var ROLE_PINS = {
+  'owner':    { pins:['0609'], label:'OWNER / ADMIN',     labelEs:'DUENO / ADMIN',    color:'#C9A55C', body:'role-owner'   },
+  'sales':    { pins:['1111'], label:'SALES REP',         labelEs:'VENDEDOR',         color:'#4a8fd4', body:'role-sales'   },
+  'employee': { pins:['2222'], label:'EMPLOYEE',          labelEs:'EMPLEADO',         color:'#22c55e', body:'role-employee'},
+  'demo':     { pins:['4321'], label:'DEMO / PREVIEW',    labelEs:'DEMO / VISTA',     color:'#94a3b8', body:'role-demo'   }
+};
+
+// Role-specific tab visibility (what tabs/sections each role sees)
+var ROLE_TABS = {
+  'owner':    null,             // sees everything
+  'sales':    ['clients','invoices','quotes','email','dashboard'],
+  'employee': ['workorders','clients','receipts','fieldlog','dashboard'],
+  'demo':     ['dashboard','clients','invoices','quotes']
+};
+
+var mrgRole = '';
+var mrgPin  = '';
+var mfgLang = 'en';
+var mfgReceipts = [];
+
+// ── ROLE GATE ─────────────────────────────────────────────────────────────────
+function mrgSelectRole(role) {
+  mrgRole = role;
+  mrgPin  = '';
+  document.querySelectorAll('.mrg-role-btn').forEach(function(b){ b.classList.remove('sel'); });
+  var btn = document.getElementById('mrg-btn-'+role);
+  if(btn) btn.classList.add('sel');
+  document.getElementById('mrg-role-selector').style.display = 'none';
+  document.getElementById('mrg-pin-area').style.display = 'block';
+  var lbl = document.getElementById('mrg-role-label');
+  if(lbl) lbl.textContent = (mfgLang==='es' ? ROLE_PINS[role].labelEs : ROLE_PINS[role].label) + ' — ' + (mfgLang==='es' ? 'Ingrese su PIN' : 'Enter PIN');
+  mrgUpdDots();
+}
+
+function mrgBack() {
+  mrgRole = ''; mrgPin = '';
+  document.getElementById('mrg-role-selector').style.display = 'grid';
+  document.getElementById('mrg-pin-area').style.display = 'none';
+  document.getElementById('mrg-err').textContent = '';
+  mrgUpdDots();
+}
+
+function mrk(k) {
+  if(k==='del'){ mrgPin=mrgPin.slice(0,-1); }
+  else if(k==='ok'){ mrgCheckPin(); return; }
+  else if(mrgPin.length<4){ mrgPin+=k; }
+  mrgUpdDots();
+  if(mrgPin.length===4){ setTimeout(mrgCheckPin,100); }
+}
+
+function mrgUpdDots() {
+  for(var i=0;i<4;i++){
+    var d=document.getElementById('mrd'+i);
+    if(d) d.className='mrg-dot'+(i<mrgPin.length?' on':'');
+  }
+}
+
+function mrgCheckPin() {
+  var cfg = ROLE_PINS[mrgRole];
+  if(!cfg){ mrgRole=''; return; }
+  if(cfg.pins.indexOf(mrgPin)>=0) {
+    // HIDE the existing gate too (legacy single-PIN gate)
+    var oldGate = document.getElementById('gate');
+    if(oldGate) oldGate.style.display='none';
+    var app = document.getElementById('app');
+    if(app) app.style.display='block';
+
+    // Hide this gate
+    document.getElementById('mfg-role-gate').style.display='none';
+
+    // Apply role to body
+    document.body.className = (document.body.className||'').replace(/role-w+/g,'').trim() + ' ' + cfg.body;
+
+    // Show role badge
+    var badge = document.getElementById('mfg-role-badge');
+    if(badge){ badge.textContent=cfg.label; badge.style.display='block'; badge.style.borderColor=cfg.color; badge.style.color=cfg.color; }
+
+    // Show lang toggle
+    var lt = document.getElementById('mfg-lang-toggle');
+    if(lt) lt.style.display='flex';
+
+    // Show OCR float (not for demo)
+    if(mrgRole!=='demo'){
+      var fl = document.getElementById('mfg-ocr-float');
+      if(fl) fl.style.display='flex';
+    }
+
+    // Apply role-based tab hiding
+    applyRoleTabs(mrgRole);
+
+    // Hide financial sections from employee/demo
+    if(mrgRole==='employee'||mrgRole==='demo'){
+      document.querySelectorAll('.financials-section,.internal-data').forEach(function(el){
+        el.style.display='none';
+      });
+    }
+
+    // Try to call original app launch functions if they exist
+    if(typeof startClock==='function') try{startClock();}catch(e){}
+    if(typeof initDashboard==='function') try{initDashboard();}catch(e){}
+    if(typeof launch==='function') try{launch(cfg.label);}catch(e){}
+
+  } else {
+    var err = document.getElementById('mrg-err');
+    if(err) err.textContent = mfgLang==='es' ? 'PIN incorrecto. Intente de nuevo.' : 'Incorrect PIN. Try again.';
+    mrgPin=''; mrgUpdDots();
+    setTimeout(function(){ if(err) err.textContent=''; }, 2000);
+  }
+}
+
+function applyRoleTabs(role) {
+  var allowed = ROLE_TABS[role];
+  if(!allowed) return; // owner sees all
+  // Hide nav tabs not in allowed list
+  document.querySelectorAll('.ntab,.nav-tab,.tab-btn,[onclick*="sw("]').forEach(function(el){
+    var onclick = el.getAttribute('onclick')||'';
+    var match = onclick.match(/sw(['"]([^'"]+)['"])/);
+    if(match && allowed.indexOf(match[1])<0){
+      el.style.display='none';
+    }
+  });
+  // Also hide the corresponding sections
+  document.querySelectorAll('.sec,.section,[id^="sec-"]').forEach(function(el){
+    var id = el.id.replace('sec-','');
+    if(id && allowed.indexOf(id)<0 && allowed.indexOf(el.id)<0){
+      // Only hide if it looks like a nav section
+      if(el.id.startsWith('sec-')){
+        el.style.display='none';
+      }
+    }
+  });
+}
+
+// ── BILINGUAL ─────────────────────────────────────────────────────────────────
+function mfgSetLang(lang) {
+  mfgLang = lang;
+  document.getElementById('mfg-en').className='mfg-lang-btn'+(lang==='en'?' on':'');
+  document.getElementById('mfg-es').className='mfg-lang-btn'+(lang==='es'?' on':'');
+
+  // Apply to all [data-en] / [data-es] elements
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(el.children.length===0){ // only text nodes
+      el.textContent = lang==='es' ? (el.getAttribute('data-es')||el.textContent) : el.getAttribute('data-en');
+    }
+  });
+
+  // Apply to existing platform bilingual system if present
+  if(typeof setLang==='function') try{setLang(lang);}catch(e){}
+  if(typeof changeLang==='function') try{changeLang(lang);}catch(e){}
+
+  // Update OCR modal label
+  var ocrLabel = document.getElementById('mfg-ocr-label');
+  if(ocrLabel) ocrLabel.textContent = lang==='es' ? 'RECIBO OCR' : 'OCR RECEIPT';
+}
+
+// ── OCR RECEIPT SCANNER ───────────────────────────────────────────────────────
+function mfgOcrOpen() {
+  document.getElementById('mfg-ocr-modal').className='on';
+}
+function mfgOcrClose() {
+  document.getElementById('mfg-ocr-modal').className='';
+}
+
+async function mfgOcrScan(input) {
+  var file = input.files[0]; if(!file) return;
+  var st = document.getElementById('mfg-ocr-status');
+  if(st) st.textContent = mfgLang==='es' ? 'Escaneando recibo...' : 'Scanning receipt with AI...';
+
+  // Read as base64
+  var b64 = await new Promise(function(res){
+    var r=new FileReader(); r.onload=function(e){res(e.target.result.split(',')[1]);}; r.readAsDataURL(file);
+  });
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:400,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:file.type,data:b64}},
+          {type:'text',text:'Extract from this receipt: vendor name, total amount, date, and best category from: Materials, Fuel, Labor, Equipment, Supplies, Food & Beverage, Insurance, Rent, Marketing, Other. Also any brief notes. Return ONLY valid JSON: {"vendor":"","amount":"","date":"YYYY-MM-DD","category":"","notes":""}'}
+        ]}]
+      })
+    });
+    var data = await resp.json();
+    var txt = (data.content&&data.content[0]&&data.content[0].text)||'{}';
+    // Strip any markdown
+    txt = txt.replace(/^[^{]*/,'').replace(/[^}]*$/,'').trim();
+    var d = {};
+    try{ d=JSON.parse(txt); }catch(e){}
+
+    if(d.vendor) document.getElementById('mfg-rec-vendor').value = d.vendor;
+    if(d.amount) document.getElementById('mfg-rec-amount').value = d.amount.toString().replace(/[^0-9.]/g,'');
+    if(d.date)   document.getElementById('mfg-rec-date').value   = d.date;
+    if(d.notes)  document.getElementById('mfg-rec-notes').value  = d.notes;
+    if(d.category){
+      var sel=document.getElementById('mfg-rec-cat');
+      for(var i=0;i<sel.options.length;i++){
+        if(sel.options[i].text.toLowerCase()===d.category.toLowerCase()){sel.selectedIndex=i;break;}
+      }
+    }
+
+    if(st) st.textContent = mfgLang==='es' ? 'Recibo escaneado exitosamente' : 'Receipt scanned successfully';
+    var res=document.getElementById('mfg-ocr-result');
+    if(res){ res.textContent=JSON.stringify(d,null,2); res.style.display='block'; }
+
+  } catch(e) {
+    if(st) st.textContent = mfgLang==='es' ? 'Error de escaneo — llene manualmente' : 'Scan failed — fill in manually';
+  }
+}
+
+function mfgRecSave() {
+  var rec = {
+    vendor:   document.getElementById('mfg-rec-vendor').value||'',
+    amount:   parseFloat(document.getElementById('mfg-rec-amount').value)||0,
+    date:     document.getElementById('mfg-rec-date').value||new Date().toLocaleDateString(),
+    category: document.getElementById('mfg-rec-cat').value||'',
+    notes:    document.getElementById('mfg-rec-notes').value||''
+  };
+  if(!rec.vendor&&!rec.amount){ return; }
+  mfgReceipts.push(rec);
+  mfgRenderRecLog();
+
+  // Clear fields
+  ['mfg-rec-vendor','mfg-rec-amount','mfg-rec-notes'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('mfg-ocr-result').style.display='none';
+  document.getElementById('mfg-ocr-status').textContent = mfgLang==='es' ? 'Recibo guardado' : 'Receipt saved';
+}
+
+function mfgRenderRecLog() {
+  var tbody = document.getElementById('mfg-rec-tbody');
+  if(!tbody) return;
+  if(!mfgReceipts.length){
+    tbody.innerHTML='<tr><td colspan="4" style="color:#64748b;font-style:italic;padding:12px 8px">'+(mfgLang==='es'?'Sin recibos aun':'No receipts yet')+'</td></tr>';
+    return;
+  }
+  tbody.innerHTML = mfgReceipts.map(function(r){
+    return '<tr><td style="color:#e2e8f0">'+r.vendor+'</td><td style="color:#22c55e;font-weight:700">$'+r.amount.toFixed(2)+'</td><td style="color:#94a3b8">'+r.date+'</td><td style="color:#94a3b8">'+r.category+'</td></tr>';
+  }).join('');
+  var total = mfgReceipts.reduce(function(s,r){return s+r.amount;},0);
+  var tot = document.getElementById('mfg-rec-total');
+  if(tot) tot.textContent=(mfgLang==='es'?'Total: ':'Total: ')+'$'+total.toFixed(2);
+}
+
+function mfgRecExport() {
+  if(!mfgReceipts.length) return;
+  var csv = 'Vendor,Amount,Date,Category,Notes\n' +
+    mfgReceipts.map(function(r){
+      return [r.vendor,r.amount,r.date,r.category,r.notes].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');
+    }).join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='receipts-'+Date.now()+'.csv';
+  a.click();
+}
+
+// ── EXPOSE GLOBALS ────────────────────────────────────────────────────────────
+window.mrgSelectRole=mrgSelectRole;
+window.mrgBack=mrgBack;
+window.mrk=mrk;
+window.mfgSetLang=mfgSetLang;
+window.mfgOcrOpen=mfgOcrOpen;
+window.mfgOcrClose=mfgOcrClose;
+window.mfgOcrScan=mfgOcrScan;
+window.mfgRecSave=mfgRecSave;
+window.mfgRecExport=mfgRecExport;
+
+// Auto-activation hook — called by arthaus gate on success
+window.mfgAutoActivate=function(role){if(typeof mfgActivateRole==='function')mfgActivateRole(role,true);};
+
+// ── INIT: hide original gate immediately, show our role gate ──────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  // Hide original gate
+  var og=document.getElementById('gate');
+  if(og) og.style.display='none';
+  // Hide app until role selected
+  // app hide suppressed — arthaus uses own layout
+  // Show our gate
+  // mfg-role-gate suppressed — arthaus gate handles auth
+});
+
+// Fallback if DOMContentLoaded already fired
+if(document.readyState!=='loading'){
+  var og=document.getElementById('gate');
+  if(og) og.style.display='none';
+  // app hide suppressed — arthaus uses own layout
+}
+
+})();
+
+var _lastPin='';
+function loadPlpData(){
+  var portal=window.location.pathname.split('/').pop();
+  fetch('https://auditdna-backend-1-production.up.railway.app/api/portal/logins?portal='+encodeURIComponent(portal))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var tb=document.getElementById('plp-tbody');
+      if(!tb)return;
+      if(!d.logins||!d.logins.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No logins yet.</td></tr>';return;}
+      tb.innerHTML=d.logins.slice(0,50).map(function(l){
+        var dt=new Date(l.logged_in_at);
+        var ts=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        return '<tr><td style="color:#e2e8f0;font-weight:700">'+l.username+'</td><td style="color:#C9A55C">'+l.role+'</td><td style="color:#64748b;font-size:9px">'+l.ip_address+'</td><td style="color:#64748b">'+ts+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+function showPlpPanel(){
+  var p=document.getElementById('portal-login-panel');
+  var t=document.getElementById('plp-trigger');
+  if(p){p.style.display='block';if(t)t.style.display='none';loadPlpData();}
+}
+function checkOwnerPin(pin){
+  _lastPin=pin;
+  if(pin==='0609'){var t=document.getElementById('plp-trigger');if(t)t.style.display='block';}
+}
+
+</script>
+<!-- ═══════════════════════ END AUDITDNA UNIVERSAL PATCH ═══════════════════ -->
+<div id="portal-login-panel"><div class="plp-hdr"><span class="plp-title">LOGIN ACTIVITY</span><button class="plp-close" onclick="document.getElementById('portal-login-panel').style.display='none';document.getElementById('plp-trigger').style.display='block'">x</button></div><div class="plp-body"><table><thead><tr><th>USER</th><th>ROLE</th><th>IP</th><th>TIME</th></tr></thead><tbody id="plp-tbody"><tr><td colspan="4" style="text-align:center;color:#64748b">Loading...</td></tr></tbody></table></div></div><button id="plp-trigger" onclick="showPlpPanel()">LOGIN LOG</button>
+
+<style>
+#mfg-bot-panel.mfg-bot-open{display:flex !important}
+</style>
+<div id="mfg-bot-panel" style="display:none;position:fixed;bottom:88px;right:20px;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 140px);background:#0d1117;border:1px solid rgba(201,165,92,0.3);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:99989;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="background:linear-gradient(135deg,#020912,#0d1a2e);padding:14px 16px;border-bottom:1px solid rgba(201,165,92,0.2);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#C9A55C;letter-spacing:1px" id="mfg-bot-title">MFG ASSISTANT</div>
+      <div style="font-size:9px;color:#64748b" id="mfg-bot-subtitle">Ask me anything about this portal</div>
+    </div>
+    <span onclick="mfgBotToggle()" style="cursor:pointer;color:#94a3b8;font-size:16px">&#10005;</span>
+  </div>
+  <div id="mfg-bot-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px">
+    <input type="text" id="mfg-bot-input" placeholder="Type your question..." onkeypress="if(event.key==='Enter')mfgBotSend()" style="flex:1;background:#161b22;border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:#e2e8f0;padding:9px 12px;font-size:12px;font-family:inherit">
+    <button onclick="mfgBotSend()" style="background:#C9A55C;border:none;border-radius:7px;color:#0d1117;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MFG_BOT_API = 'https://auditdna-backend-1-production.up.railway.app';
+  var MFG_PORTAL_NAME = document.title || window.location.pathname;
+  var mfgBotHistory = [];
+  var mfgBotLoggedThisSession = false;
+
+  window.mfgBotToggle = function(){
+    var panel = document.getElementById('mfg-bot-panel');
+    var isOpen = panel.classList.contains('mfg-bot-open');
+    if(isOpen){
+      panel.classList.remove('mfg-bot-open');
+      panel.style.display = 'none';
+    } else {
+      panel.classList.add('mfg-bot-open');
+      panel.style.display = 'flex';
+    }
+    if(!isOpen && mfgBotHistory.length === 0){
+      mfgBotAddMessage('assistant', 'Hi! I can help answer questions about ' + MFG_PORTAL_NAME + '. What do you need?');
+    }
+    if(!isOpen && !mfgBotLoggedThisSession){
+      mfgBotLoggedThisSession = true;
+      mfgBotLogActivity('chat-opened', 'Chat widget opened on ' + MFG_PORTAL_NAME);
+    }
+  };
+
+  function mfgBotAddMessage(role, text){
+    var container = document.getElementById('mfg-bot-messages');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = role === 'user'
+      ? 'align-self:flex-end;background:rgba(201,165,92,0.15);border:1px solid rgba(201,165,92,0.25);border-radius:10px 10px 2px 10px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#e2e8f0;line-height:1.5'
+      : 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 2px;padding:8px 12px;max-width:85%;font-size:11.5px;color:#cbd5e1;line-height:1.5';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    mfgBotHistory.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+  }
+
+  window.mfgBotSend = function(){
+    var input = document.getElementById('mfg-bot-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    mfgBotAddMessage('user', text);
+
+    var loadingBubble = document.createElement('div');
+    loadingBubble.id = 'mfg-bot-loading';
+    loadingBubble.style.cssText = 'align-self:flex-start;background:#161b22;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;font-size:11px;color:#64748b';
+    loadingBubble.textContent = 'Thinking...';
+    document.getElementById('mfg-bot-messages').appendChild(loadingBubble);
+    document.getElementById('mfg-bot-messages').scrollTop = 999999;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [
+          {role: 'user', content: 'You are a helpful assistant embedded on the "' + MFG_PORTAL_NAME + '" page of an AuditDNA Intelligence platform. Answer briefly and helpfully. User question: ' + text}
+        ]
+      })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      var textBlock = (data.content || []).find(function(b){ return b.type === 'text'; });
+      var reply = textBlock ? textBlock.text : 'Sorry, I could not process that right now.';
+      mfgBotAddMessage('assistant', reply);
+    }).catch(function(){
+      var loading = document.getElementById('mfg-bot-loading');
+      if(loading) loading.remove();
+      mfgBotAddMessage('assistant', 'Connection error. Please try again.');
+    });
+  };
+
+  function mfgBotLogActivity(eventType, message){
+    fetch(MFG_BOT_API + '/api/alerts/notify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        source: 'mfg-bot-widget',
+        portal: MFG_PORTAL_NAME,
+        event: eventType,
+        message: message
+      })
+    }).catch(function(){});
+  }
+})();
+</script>
+
+<!-- ═══ MFGINC AFFILIATE LENDER PANEL ═══ -->
+<style>
+#mfg-aff-fab{position:fixed;bottom:24px;right:24px;z-index:7000;background:linear-gradient(135deg,#C9A55C,#a87c30);border:none;border-radius:50px;padding:10px 16px;font-size:12px;font-weight:800;color:#0d1117;cursor:pointer;box-shadow:0 4px 18px rgba(201,165,92,.45);letter-spacing:.5px;touch-action:manipulation;display:none;align-items:center;gap:6px;font-family:-apple-system,sans-serif}
+#mfg-aff-fab.vis{display:flex}
+#mfg-aff-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:7001}
+#mfg-aff-panel{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:#0d1117;border-top:2px solid rgba(201,165,92,.35);border-radius:18px 18px 0 0;z-index:7002;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;font-family:-apple-system,sans-serif;padding:0 0 30px}
+#mfg-aff-panel.open{transform:translateY(0)}
+.aff-hdr{position:sticky;top:0;background:#0d1117;border-bottom:1px solid rgba(201,165,92,.18);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.aff-hdr-title{font-size:14px;font-weight:800;color:#C9A55C;letter-spacing:.5px}
+.aff-close{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+.aff-body{padding:14px 16px}
+.aff-rs-lbl{font-size:11px;font-weight:700;color:#C9A55C;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.aff-rs-wrap{background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.aff-id-row{display:flex;gap:8px;margin-bottom:14px}
+.aff-id-row input{flex:1;background:#161b22;border:1px solid rgba(201,165,92,.25);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
+.aff-id-row button{background:rgba(201,165,92,.15);border:1px solid rgba(201,165,92,.3);color:#C9A55C;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.aff-programs-lbl{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aff-card{background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.aff-card:active{background:rgba(201,165,92,.1)}
+.aff-card-name{font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.aff-card-comm{font-size:12px;font-weight:800;color:#C9A55C}
+.aff-card-type{font-size:9px;color:#64748b;margin-top:1px}
+</style>
+
+<button id="mfg-aff-fab" ontouchstart="mfgAffOpen();event.preventDefault()" onclick="mfgAffOpen()">💰 GET FUNDING</button>
+<div id="mfg-aff-overlay" onclick="mfgAffClose()"></div>
+<div id="mfg-aff-panel">
+  <div class="aff-hdr">
+    <div class="aff-hdr-title">💰 Business Funding &amp; Personal Loans</div>
+    <button class="aff-close" onclick="mfgAffClose()">✕ Close</button>
+  </div>
+  <div class="aff-body">
+    <div class="aff-rs-lbl">Apply Now — Matched to 50+ Lenders Instantly</div>
+    <div class="aff-rs-wrap">
+      <div style="background:#020912;border-radius:10px;overflow:hidden;min-height:280px;margin-bottom:10px;padding:4px">
+        <script src="https://www.rndframe.com/server/web/js/json.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        var srcURL='https://www.rndframe.com/server';
+        var inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+        document.write('<scr'+'ipt type="text/javascript" src="'+srcURL+'/web/js/form.min.js?v='+new Date().getTime()+'"></scr'+'ipt>');
+        </script>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border:none;border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">APPLY — HONESTLOANS.NET</a>
+          <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:#161b22;color:#C9A55C;border:1px solid rgba(201,165,92,.3);border-radius:9px;padding:11px;font-size:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$300/lead</div>
+            <div style="font-size:9px;color:#64748b">90% rev-share</div>
+          </div>
+          <div style="background:#161b22;border-radius:8px;padding:10px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div>
+            <div style="font-size:13px;font-weight:800;color:#C9A55C">$70/lead</div>
+            <div style="font-size:9px;color:#64748b">High volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="aff-id-row">
+      <input id="mfg-aff-id-input" placeholder="Paste your Round Sky Affiliate ID here..."/>
+      <button ontouchstart="mfgAffSetID();event.preventDefault()" onclick="mfgAffSetID()">SAVE ID</button>
+    </div>
+    <div class="aff-programs-lbl">More Programs — Apply Directly</div>
+    <div class="aff-grid">
+      <div class="aff-card" ontouchstart="window.open('https://www.leadstackmedia.com','_blank');event.preventDefault()" onclick="window.open('https://www.leadstackmedia.com','_blank')"><div class="aff-card-name">Lead Stack Media</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">90% rev-share</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.credible.com/affiliate-partner','_blank');event.preventDefault()" onclick="window.open('https://www.credible.com/affiliate-partner','_blank')"><div class="aff-card-name">Credible</div><div class="aff-card-comm">$240/sale</div><div class="aff-card-type">Personal + Student</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.sofi.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.sofi.com/affiliates','_blank')"><div class="aff-card-name">SoFi</div><div class="aff-card-comm">$300/loan</div><div class="aff-card-type">Personal + Student $500</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://partner.lendingtree.com','_blank');event.preventDefault()" onclick="window.open('https://partner.lendingtree.com','_blank')"><div class="aff-card-name">LendingTree</div><div class="aff-card-comm">$70/lead</div><div class="aff-card-type">High volume</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.upstart.com/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.upstart.com/affiliates','_blank')"><div class="aff-card-name">Upstart</div><div class="aff-card-comm">$120/sale</div><div class="aff-card-type">AI lending 580+ FICO</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.lendingclub.com/company/affiliates','_blank');event.preventDefault()" onclick="window.open('https://www.lendingclub.com/company/affiliates','_blank')"><div class="aff-card-name">LendingClub</div><div class="aff-card-comm">$100/referral</div><div class="aff-card-type">Personal + Business</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://www.badcreditloans.com/affiliate','_blank');event.preventDefault()" onclick="window.open('https://www.badcreditloans.com/affiliate','_blank')"><div class="aff-card-name">BadCreditLoans</div><div class="aff-card-comm">76% rev-share</div><div class="aff-card-type">All credit types</div></div>
+      <div class="aff-card" ontouchstart="window.open('https://bigbuckloans.com','_blank');event.preventDefault()" onclick="window.open('https://bigbuckloans.com','_blank')"><div class="aff-card-name">Big Buck Loans</div><div class="aff-card-comm">$300/lead</div><div class="aff-card-type">$500–$5K loans</div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var sid=localStorage.getItem('mfg_rs_aff_id');
+  if(sid){var f=document.getElementById('mfg-aff-frame');if(f)f.src='https://www.roundsky.com/lp/'+sid;}
+  // Show FAB after gate clears — watch for gate hide
+  function checkFab(){
+    var gate=document.getElementById('gate')||document.getElementById('ah-gate')||document.getElementById('mfg-role-gate');
+    var fab=document.getElementById('mfg-aff-fab');
+    if(!fab)return;
+    if(!gate||gate.style.display==='none'||getComputedStyle(gate).display==='none'){
+      fab.classList.add('vis');
+    } else {
+      setTimeout(checkFab,500);
+    }
+  }
+  setTimeout(checkFab,800);
+})();
+function mfgAffOpen(){
+  document.getElementById('mfg-aff-overlay').style.display='block';
+  document.getElementById('mfg-aff-panel').classList.add('open');
+}
+function mfgAffClose(){
+  document.getElementById('mfg-aff-overlay').style.display='none';
+  document.getElementById('mfg-aff-panel').classList.remove('open');
+}
+function mfgAffApply(){
+  var id=localStorage.getItem('mfg_rs_aff_id');
+  var url=id?'https://www.roundsky.com/lp/'+id:'https://www.roundsky.com';
+  window.open(url,'_blank');
+}
+function mfgAffSetID(){
+  var id=document.getElementById('mfg-aff-id-input').value.trim();
+  if(!id)return;
+  localStorage.setItem('mfg_rs_aff_id',id);
+  document.getElementById('mfg-aff-id-input').value='';
+  alert('Round Sky affiliate ID saved: '+id+'. All APPLY NOW buttons now use your tracking link.');
+}
+</script>
+<!-- ═══ END AFFILIATE PANEL ═══ -->
+
+<!-- ROUND SKY COMPLIANCE DISCLOSURE -->
+<div id="mfg-rs-disclosure" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid rgba(201,165,92,.2);padding:12px 16px;z-index:6999;font-size:9px;color:#555;line-height:1.6;font-family:-apple-system,sans-serif">
+  <strong style="color:#888">LENDING DISCLOSURE:</strong> This website does not constitute an offer or solicitation to lend. The operator of this website is NOT A LENDER, does not make loan or credit decisions, and does not broker loans. This website is not an agent or broker of any lender and does not endorse or charge for any service or product. Loan amounts can vary. Completion of this application in no way guarantees approval. Amounts and terms vary by state and lender. Loans are not available in all states. Short-term loans are not a long-term financial solution. No application fee is charged by this website. Users must be 18+ years old and US residents.
+  <button onclick="document.getElementById('mfg-rs-disclosure').style.display='none'" style="background:none;border:1px solid #333;color:#555;border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;margin-left:10px;float:right">✕</button>
+</div>
+<script>
+(function(){
+  setTimeout(function(){
+    var d=document.getElementById('mfg-rs-disclosure');
+    if(d&&localStorage.getItem('mfg_rs_disc_closed')!=='1'){d.style.display='block';}
+  },2000);
+  var oldClose=document.querySelector && document.querySelector('#mfg-rs-disclosure button');
+})();
+</script>
+
+<div id="mfg-funding-center" style="max-width:860px;margin:32px auto 0;padding:0 16px 60px;font-family:-apple-system,'Segoe UI',sans-serif">
+  <div style="border-top:1px solid rgba(201,165,92,.2);padding-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="font-size:22px">💰</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#C9A55C">Funding &amp; Personal Loans</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">Powered by Round Sky — 50+ Lenders — Up to $50,000</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:18px;line-height:1.7">Pre-Selected offers. Safe &amp; Secure. Easy Process. No application fee. Funds available as soon as next business day. &nbsp;|&nbsp; <strong style="color:#94a3b8">¿Hablas Español?</strong> Usa el botón verde.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <a href="https://www.honestloans.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#C9A55C,#a87c30);color:#0d1117;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇺🇸 APPLY NOW — ENGLISH</a>
+      <a href="https://www.dinerodinero.net?id=K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU." target="_blank" rel="noopener" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:11px;padding:14px;font-size:13px;font-weight:800;text-align:center;text-decoration:none;display:block">🇲🇽 SOLICITAR — ESPAÑOL</a>
+    </div>
+    <div style="background:#020912;border:1px solid rgba(201,165,92,.15);border-radius:14px;overflow:hidden;margin-bottom:16px;padding:6px;min-height:300px" id="mfg-fc-rs-wrap-{}{}{}{}{}{}" class="mfg-fc-rs-wrap">
+      <div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Loading loan matching form...</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px">
+      <a href="https://www.leadstackmedia.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Lead Stack Media</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">90% rev-share</div></a>
+      <a href="https://www.credible.com/affiliate-partner" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Credible</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$240/sale</div><div style="font-size:9px;color:#64748b">Personal + Student</div></a>
+      <a href="https://www.sofi.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">SoFi</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/loan</div><div style="font-size:9px;color:#64748b">$500 student</div></a>
+      <a href="https://partner.lendingtree.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingTree</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$70/lead</div><div style="font-size:9px;color:#64748b">High volume</div></a>
+      <a href="https://www.upstart.com/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Upstart</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$120/sale</div><div style="font-size:9px;color:#64748b">AI lending 580+ FICO</div></a>
+      <a href="https://www.lendingclub.com/company/affiliates" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">LendingClub</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$100/referral</div><div style="font-size:9px;color:#64748b">Personal + Business</div></a>
+      <a href="https://www.badcreditloans.com/affiliate" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">BadCreditLoans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">76% rev-share</div><div style="font-size:9px;color:#64748b">All credit — 45-day cookie</div></a>
+      <a href="https://bigbuckloans.com" target="_blank" rel="noopener" style="background:#161b22;border:1px solid rgba(201,165,92,.12);border-radius:10px;padding:12px;text-decoration:none;display:block"><div style="font-size:11px;font-weight:700;color:#e2e8f0">Big Buck Loans</div><div style="font-size:14px;font-weight:800;color:#C9A55C">$300/lead</div><div style="font-size:9px;color:#64748b">$500-$5K all scores</div></a>
+    </div>
+    <div style="font-size:9px;color:#374151;line-height:1.7;padding:14px;background:#0a0a0a;border-radius:10px;border:1px solid rgba(255,255,255,.04)">
+      <strong style="color:#4b5563">DISCLOSURE:</strong> NOT A LENDER. Does not make credit decisions. Loan approval not guaranteed. Amounts and terms vary by state and lender. Not available in all states. Short-term loans not a long-term solution. No application fee. Must be 18+ US resident. &nbsp;|&nbsp; <strong style="color:#4b5563">DIVULGACION:</strong> NO ES UN PRESTAMISTA. Montos y terminos varian. Para residentes de EE.UU. solamente.
+      <br/>Saul Garcia NMLS #337526 &nbsp;|&nbsp; American 1st Partners NMLS #1773303 &nbsp;|&nbsp; Round Sky Inc. 848 N. Rainbow Blvd #326 Las Vegas NV 89107
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function mfgLoadFC(){
+    var wraps=document.getElementsByClassName('mfg-fc-rs-wrap');
+    if(!wraps.length)return;
+    var wrap=wraps[0];
+    var s1=document.createElement('script');
+    s1.src='https://www.rndframe.com/server/web/js/json.min.js';
+    s1.onload=function(){
+      window.srcURL='https://www.rndframe.com/server';
+      window.inputOptions={UserID:'K8MZJUbRDGwf-aA_Zig1cVpOWvf3exiTIhi8A9RbfeU.',Style:'STYLE1',FormID:'INSTALLMENT_STEP',SubID:'',SubID2:'',SubID3:'',Domain:'',Height:'AUTO',StepAmountSelect:'buttons'};
+      var s2=document.createElement('script');
+      s2.src='https://www.rndframe.com/server/web/js/form.min.js?v='+Date.now();
+      wrap.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mfgLoadFC);
+  else mfgLoadFC();
+})();
+</script>
+</body>
+
+</html>

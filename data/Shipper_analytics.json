@@ -1,0 +1,172 @@
+{
+  "campaigns": [
+    {
+      "id": "importers",
+      "name": "📦 Importers",
+      "icon": "📦",
+      "contact_count": 1811,
+      "top_states": [
+        "Ciudad De Mexico",
+        "Jalisco",
+        "Estado De Mexico",
+        "Queretaro",
+        "Nuevo Leon"
+      ],
+      "state_breakdown": {
+        "Ciudad De Mexico": 520,
+        "Jalisco": 276,
+        "Estado De Mexico": 199,
+        "Queretaro": 133,
+        "Nuevo Leon": 105
+      },
+      "priority": 1
+    },
+    {
+      "id": "feed_manufacturers",
+      "name": "🌾 Feed Manufacturers",
+      "icon": "🌾",
+      "contact_count": 457,
+      "top_states": [
+        "Jalisco",
+        "Ciudad De Mexico",
+        "Estado De Mexico",
+        "Guanajuato",
+        "Queretaro"
+      ],
+      "state_breakdown": {
+        "Jalisco": 95,
+        "Ciudad De Mexico": 44,
+        "Estado De Mexico": 37,
+        "Guanajuato": 34,
+        "Queretaro": 33
+      },
+      "priority": 2
+    },
+    {
+      "id": "distributors",
+      "name": "🚛 Distributors",
+      "icon": "🚛",
+      "contact_count": 501,
+      "top_states": [
+        "Jalisco",
+        "Ciudad De Mexico",
+        "Estado De Mexico",
+        "Nuevo Leon",
+        "Queretaro"
+      ],
+      "state_breakdown": {
+        "Jalisco": 109,
+        "Ciudad De Mexico": 67,
+        "Estado De Mexico": 49,
+        "Nuevo Leon": 27,
+        "Queretaro": 27
+      },
+      "priority": 2
+    },
+    {
+      "id": "veterinary_pharma",
+      "name": "💊 Veterinary Pharma",
+      "icon": "💊",
+      "contact_count": 94,
+      "top_states": [
+        "Jalisco",
+        "Ciudad De Mexico",
+        "Queretaro",
+        "Estado De Mexico",
+        "Puebla"
+      ],
+      "state_breakdown": {
+        "Jalisco": 31,
+        "Ciudad De Mexico": 20,
+        "Queretaro": 12,
+        "Estado De Mexico": 11,
+        "Puebla": 4
+      },
+      "priority": 3
+    },
+    {
+      "id": "general_manufacturers",
+      "name": "🏭 General Manufacturers",
+      "icon": "🏭",
+      "contact_count": 1131,
+      "top_states": [
+        "Jalisco",
+        "Ciudad De Mexico",
+        "Estado De Mexico",
+        "Nuevo Leon",
+        "Guanajuato"
+      ],
+      "state_breakdown": {
+        "Jalisco": 262,
+        "Ciudad De Mexico": 162,
+        "Estado De Mexico": 139,
+        "Nuevo Leon": 74,
+        "Guanajuato": 59
+      },
+      "priority": 3
+    },
+    {
+      "id": "biologics_vaccines",
+      "name": "🧬 Biologics/Vaccines",
+      "icon": "🧬",
+      "contact_count": 8,
+      "top_states": [
+        "Puebla",
+        "Jalisco",
+        "Ciudad De Mexico",
+        "Queretaro",
+        "Guanajuato"
+      ],
+      "state_breakdown": {
+        "Puebla": 3,
+        "Jalisco": 1,
+        "Ciudad De Mexico": 1,
+        "Queretaro": 1,
+        "Guanajuato": 1
+      },
+      "priority": 4
+    },
+    {
+      "id": "exporters",
+      "name": "🚢 Exporters",
+      "icon": "🚢",
+      "contact_count": 66,
+      "top_states": [
+        "Ciudad De Mexico",
+        "Jalisco",
+        "Estado De Mexico",
+        "Guanajuato",
+        "Queretaro"
+      ],
+      "state_breakdown": {
+        "Ciudad De Mexico": 19,
+        "Jalisco": 12,
+        "Estado De Mexico": 7,
+        "Guanajuato": 7,
+        "Queretaro": 4
+      },
+      "priority": 5
+    },
+    {
+      "id": "other_mixed",
+      "name": "📋 Other/Mixed",
+      "icon": "📋",
+      "contact_count": 226,
+      "top_states": [
+        "Jalisco",
+        "Ciudad De Mexico",
+        "Estado De Mexico",
+        "Nuevo Leon",
+        "Guanajuato"
+      ],
+      "state_breakdown": {
+        "Jalisco": 57,
+        "Ciudad De Mexico": 34,
+        "Estado De Mexico": 28,
+        "Nuevo Leon": 14,
+        "Guanajuato": 14
+      },
+      "priority": 7
+    }
+  ]
+}
