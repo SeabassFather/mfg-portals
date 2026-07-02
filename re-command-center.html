@@ -1314,5 +1314,45 @@ function renderAffLog() {
 })();
 
 </script>
+
+<!-- LOAN-SEARCH-WIDGET v1 -->
+<style id="ls-css">
+#ls-fab{position:fixed;bottom:18px;left:14px;z-index:99990;background:#C9A55C;color:#020912;font-weight:800;font-family:Arial,sans-serif;font-size:13px;padding:12px 16px;border-radius:30px;border:none;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.5);letter-spacing:.5px}
+#ls-panel{display:none;position:fixed;bottom:70px;left:14px;z-index:99991;width:300px;max-width:92vw;background:#0d1117;border:1px solid #C9A55C;border-radius:14px;padding:16px;font-family:Arial,sans-serif;color:#e2e8f0;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+#ls-panel h4{margin:0 0 10px;color:#C9A55C;font-size:15px}
+.ls-row{display:flex;gap:6px;margin-bottom:8px}
+.ls-tg{flex:1;padding:8px 0;text-align:center;border:1px solid #64748b;border-radius:8px;cursor:pointer;font-size:12px;color:#94a3b8}
+.ls-tg.on{background:#C9A55C;color:#020912;border-color:#C9A55C;font-weight:700}
+#ls-panel select,#ls-panel input{width:100%;box-sizing:border-box;background:#161b22;color:#e2e8f0;border:1px solid #64748b;border-radius:8px;padding:9px;font-size:13px;margin-bottom:8px}
+#ls-go{width:100%;background:#22c55e;color:#020912;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:14px;cursor:pointer}
+#ls-lang{background:none;border:none;color:#4a8fd4;font-size:11px;cursor:pointer;float:right;padding:0}
+</style>
+<button id="ls-fab" ontouchend="lsToggle();event.preventDefault()" onclick="lsToggle()">$ LOANS</button>
+<div id="ls-panel">
+<button id="ls-lang" onclick="lsLang()">ES</button>
+<h4 id="ls-t">Mortgage &amp; Loan Search</h4>
+<div class="ls-row">
+<div class="ls-tg on" id="ls-p1" onclick="lsPick('purchase')">Purchase</div>
+<div class="ls-tg" id="ls-p2" onclick="lsPick('refinance')">Refinance</div>
+</div>
+<select id="ls-amt">
+<option>Under $100,000</option>
+<option>$100K&#8211;$250K</option>
+<option selected>$250K&#8211;$500K</option>
+<option>$500K&#8211;$750K</option>
+<option>$750K&#8211;$1M</option>
+<option>Over $1M</option>
+</select>
+<input id="ls-goal" placeholder="Goal: buy in Ensenada, lower payment, cash-out..."/>
+<button id="ls-go" onclick="lsGo()">SEARCH LENDERS</button>
+</div>
+<script id="ls-js">
+var lsMode='purchase';var lsEs=false;
+function lsToggle(){var p=document.getElementById('ls-panel');p.style.display=(p.style.display==='block')?'none':'block';}
+function lsPick(m){lsMode=m;document.getElementById('ls-p1').className='ls-tg'+(m==='purchase'?' on':'');document.getElementById('ls-p2').className='ls-tg'+(m==='refinance'?' on':'');}
+function lsLang(){lsEs=!lsEs;document.getElementById('ls-t').textContent=lsEs?'Buscador de Hipotecas y Prestamos':'Mortgage & Loan Search';document.getElementById('ls-p1').textContent=lsEs?'Compra':'Purchase';document.getElementById('ls-p2').textContent=lsEs?'Refinanciar':'Refinance';document.getElementById('ls-go').textContent=lsEs?'BUSCAR PRESTAMISTAS':'SEARCH LENDERS';document.getElementById('ls-goal').placeholder=lsEs?'Meta: comprar en Ensenada, bajar pago, cash-out...':'Goal: buy in Ensenada, lower payment, cash-out...';document.getElementById('ls-lang').textContent=lsEs?'EN':'ES';}
+function lsGo(){var a=encodeURIComponent(document.getElementById('ls-amt').value);var g=encodeURIComponent(document.getElementById('ls-goal').value);var u='https://financelend.me/lender-search.html?purpose='+lsMode+'&amount='+a+'&goal='+g+(lsEs?'&lang=es':'');window.open(u,'_blank');}
+</script>
+<!-- /LOAN-SEARCH-WIDGET -->
 </body>
 </html>
