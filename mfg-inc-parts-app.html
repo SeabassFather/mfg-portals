@@ -48,7 +48,7 @@ h1,h2,h3,.serif{font-family:"Fraunces",Georgia,serif;}
 .top .tt{font-family:"Fraunces",serif;font-size:18px;font-weight:600;flex:1;}
 .lang{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;}
 .lang button{font-family:inherit;font-size:13px;font-weight:600;color:var(--dim);background:transparent;border:none;padding:8px 13px;cursor:pointer;}
-.lang button.on{background:var(--red);color:var(--ink);}
+.lang button.on{background:var(--red);color:#fff;}
 .obtn{font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 15px;cursor:pointer;}
 .wrap{padding:24px 22px 90px;max-width:1180px;}
 .view{display:none;}
@@ -74,7 +74,7 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
 .b-new{background:rgba(19,41,74,.10);color:#1f4a86;}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
 .chip{font-family:inherit;font-size:13px;font-weight:600;color:var(--chip-ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 15px;cursor:pointer;}
-.chip.on{background:var(--red);color:var(--ink);border-color:var(--red);}
+.chip.on{background:var(--red);color:#fff;border-color:var(--red);}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
 .toolbar input,.toolbar select{font-family:inherit;font-size:13px;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 12px;}
 .toolbar input{flex:1;min-width:180px;}
@@ -274,12 +274,12 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
     en:{ sub:"Parts and Service - PHF supply to the Baja port fleet", search:"Search part, number, or brand",
       all:"All parts", order:"Order", orderTitle:"Order request", empty:"No parts added yet.",
       total:"Estimated total", copy:"Copy order", call:"Call MFG INC +1-831-251-3116",
-      activity:"Recent activity", pdfBtn:"Port brief PDF", unit:"ea", added:"Added", removed:"Removed",
+      activity:"Recent activity", pdfBtn:"Port brief PDF", unit:"ea", add:"Add", added:"Added", removed:"Removed",
       brandAll:"All brands", results:"parts", copied:"Order copied", viewCatalog:"Catalog", viewFleet:"Fleet service", fleetLead:"Units from the CTM Seccion 111 fleet (Ensenada) working the Baja port. Parts MFG INC supplies through PHF, grouped by unit class.", units:"units", serviceParts:"service parts", specialty:"Specialty-sourced", colPart:"Part", colBrand:"Brand", colPrice:"Price", fleetNote:"Part numbers are MFG order-desk references, confirmed by VIN and axle configuration at quote." },
     es:{ sub:"Partes y Servicio - suministro PHF a la flota del puerto en Baja", search:"Buscar parte, numero o marca",
       all:"Todas las partes", order:"Pedido", orderTitle:"Solicitud de pedido", empty:"No hay partes agregadas.",
       total:"Total estimado", copy:"Copiar pedido", call:"Llamar a MFG INC +1-831-251-3116",
-      activity:"Actividad reciente", pdfBtn:"PDF del puerto", unit:"c/u", added:"Agregado", removed:"Quitado",
+      activity:"Actividad reciente", pdfBtn:"PDF del puerto", unit:"c/u", add:"Agregar", added:"Agregado", removed:"Quitado",
       brandAll:"Todas las marcas", results:"partes", copied:"Pedido copiado", viewCatalog:"Catalogo", viewFleet:"Servicio de flota", fleetLead:"Unidades de la flota CTM Seccion 111 (Ensenada) que trabajan el puerto en Baja. Partes que MFG INC suministra por PHF, agrupadas por clase de unidad.", units:"unidades", serviceParts:"partes de servicio", specialty:"Suministro especializado", colPart:"Parte", colBrand:"Marca", colPrice:"Precio", fleetNote:"Los numeros de parte son referencias del area de pedidos de MFG, confirmados por VIN y configuracion de ejes al cotizar." }
   };
   var OPS = {
