@@ -1,44 +1,23 @@
 {
-  "name": "LOAF — Mexausa Food Group",
-  "short_name": "LOAF",
-  "description": "Live produce trading — post inventory, find US buyers, get paid fast.",
-  "start_url": "/",
+  "name": "MFG INC - Parts and Service",
+  "short_name": "MFG Parts",
+  "start_url": "mfg-inc-parts-app.html",
+  "scope": ".",
   "display": "standalone",
-  "background_color": "#020912",
-  "theme_color": "#0F7B41",
-  "orientation": "portrait-primary",
-  "categories": [
-    "business",
-    "food",
-    "productivity"
-  ],
-  "lang": "en",
+  "background_color": "#eceff4",
+  "theme_color": "#13294a",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "https://seabassfather.github.io/mfg-portals/AuditDNALOGO.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "https://seabassfather.github.io/mfg-portals/AuditDNALOGO.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Post Inventory",
-      "url": "/?action=post"
-    },
-    {
-      "name": "Buyer Needs",
-      "url": "/?action=buyers"
-    },
-    {
-      "name": "My Listings",
-      "url": "/?action=listings"
+      "purpose": "any"
     }
   ]
 }
