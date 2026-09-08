@@ -718,7 +718,7 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
   function submit(){ if(entry==="1005"){ document.getElementById("login").style.display="none"; document.getElementById("app").style.display="grid"; } else { entry=""; draw(); } }
 
   // ===== Zane File =====
-  var ZKEY = "mfg_zane_parts_v1";
+  var ZAPI = "https://auditdna-backend-1-production.up.railway.app/api/zane";
   var ZL = {
     en:{ h2:"Zane File", lead:"Snap the part a customer asks about, tag who it is for and the price you quoted, then find it by owner when it arrives.",
       form:"New part intake", photo:"Part photo (tap to use camera)", cust:"Customer / owner", phone:"Customer phone (optional)", part:"Part name / description", pn:"Part number (optional)", price:"Price quoted (USD)", ordered:"Date ordered", eta:"Scheduled arrival", notes:"Notes", save:"Save part", saved:"Saved",
@@ -726,20 +726,28 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
       fAll:"All", fQuoted:"Quoted", fOrdered:"Ordered", fArrived:"Arrived / in storage", fDelivered:"Delivered",
       sQuoted:"Quoted", sOrdered:"Ordered", sArrived:"Arrived", sDelivered:"Delivered",
       advance:"Advance status", loc:"Set storage location", del:"Delete", locPrompt:"Where is this part stored?", delPrompt:"Delete this part record?",
-      mOrdered:"Ordered", mEta:"ETA", mLoc:"Location", mPhone:"Phone", needCust:"Enter a customer name first." },
+      mOrdered:"Ordered", mEta:"ETA", mLoc:"Location", mPhone:"Phone", needCust:"Enter a customer name first.", saveErr:"Save failed. Check connection and retry." },
     es:{ h2:"Archivo Zane", lead:"Toma foto de la parte que pregunta el cliente, anota para quien es y el precio cotizado, y ubicala por dueno cuando llegue.",
       form:"Registro de parte", photo:"Foto de la parte (toca para usar camara)", cust:"Cliente / dueno", phone:"Telefono del cliente (opcional)", part:"Nombre / descripcion de la parte", pn:"Numero de parte (opcional)", price:"Precio cotizado (USD)", ordered:"Fecha de pedido", eta:"Llegada programada", notes:"Notas", save:"Guardar parte", saved:"Guardado",
       search:"Buscar cliente o parte", count:"partes en archivo", none:"Aun no hay partes.",
       fAll:"Todas", fQuoted:"Cotizada", fOrdered:"Pedida", fArrived:"Llego / en almacen", fDelivered:"Entregada",
       sQuoted:"Cotizada", sOrdered:"Pedida", sArrived:"Llego", sDelivered:"Entregada",
       advance:"Avanzar estado", loc:"Ubicacion de almacen", del:"Borrar", locPrompt:"Donde esta guardada esta parte?", delPrompt:"Borrar este registro?",
-      mOrdered:"Pedido", mEta:"Llega", mLoc:"Ubicacion", mPhone:"Tel", needCust:"Escribe el nombre del cliente primero." }
+      mOrdered:"Pedido", mEta:"Llega", mLoc:"Ubicacion", mPhone:"Tel", needCust:"Escribe el nombre del cliente primero.", saveErr:"Fallo al guardar. Revisa la conexion y reintenta." }
   };
   var zSteps = ["quoted","ordered","arrived","delivered"];
   var zData = [];
   var zPhotoData = "";
-  function zLoad(){ try { zData = JSON.parse(localStorage.getItem(ZKEY)) || []; } catch(e){ zData = []; } }
-  function zStore(){ try { localStorage.setItem(ZKEY, JSON.stringify(zData)); } catch(e){} }
+  function zFetchList(){
+    fetch(ZAPI + "/list").then(function(r){ return r.json(); }).then(function(j){
+      zData = (j && j.ok && j.items) ? j.items : [];
+      zList();
+    }).catch(function(){ zData = []; zList(); });
+  }
+  function zPost(path, payload, cb){
+    fetch(ZAPI + path, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload) })
+      .then(function(r){ return r.json(); }).then(function(j){ cb(j || {ok:false}); }).catch(function(){ cb({ok:false}); });
+  }
   function zl(k){ return ZL[lang][k]; }
   function zStatusLabel(s){ return zl("s" + s.charAt(0).toUpperCase() + s.slice(1)); }
   function zMoney(n){ n = parseFloat(n); if(isNaN(n)){ return "-"; } return "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -835,8 +843,9 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
     document.getElementById("zSave").addEventListener("click", function(){
       var cust = document.getElementById("zCust").value.trim();
       if(!cust){ alert(zl("needCust")); return; }
-      zData.unshift({
-        id: "z" + Date.now(),
+      var b = document.getElementById("zSave");
+      b.disabled = true;
+      zPost("/save", {
         photo: zPhotoData,
         cust: cust,
         phone: document.getElementById("zPhone").value.trim(),
@@ -845,27 +854,26 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
         price: document.getElementById("zPrice").value.trim(),
         ordered: document.getElementById("zOrdered").value,
         eta: document.getElementById("zEta").value,
-        location: "",
-        status: "quoted",
-        notes: document.getElementById("zNotes").value.trim(),
-        ts: Date.now()
+        notes: document.getElementById("zNotes").value.trim()
+      }, function(j){
+        b.disabled = false;
+        if(!j.ok){ alert(zl("saveErr")); return; }
+        zPhotoData = "";
+        ["zCust","zPhone","zPart","zPN","zPrice","zOrdered","zEta","zNotes"].forEach(function(id){ document.getElementById(id).value = ""; });
+        var pv = document.getElementById("zPrev"); pv.style.display = "none"; pv.src = "";
+        b.textContent = zl("saved"); setTimeout(function(){ b.textContent = zl("save"); }, 1200);
+        zFetchList();
       });
-      zStore();
-      zPhotoData = "";
-      ["zCust","zPhone","zPart","zPN","zPrice","zOrdered","zEta","zNotes"].forEach(function(id){ document.getElementById(id).value = ""; });
-      var pv = document.getElementById("zPrev"); pv.style.display = "none"; pv.src = "";
-      var b = document.getElementById("zSave"); b.textContent = zl("saved"); setTimeout(function(){ b.textContent = zl("save"); }, 1200);
-      zList();
     });
     document.getElementById("zSearch").addEventListener("input", zList);
     document.getElementById("zFilter").addEventListener("change", zList);
     document.getElementById("zList").addEventListener("click", function(e){
       var a = e.target.closest("[data-zadv]"); var l = e.target.closest("[data-zloc]"); var d = e.target.closest("[data-zdel]");
-      if(a){ var id = a.getAttribute("data-zadv"); zData.forEach(function(r){ if(r.id===id){ var i = zSteps.indexOf(r.status); r.status = zSteps[Math.min(i+1, zSteps.length-1)]; if(r.status==="arrived" && !r.arrived){ r.arrived = new Date().toISOString().slice(0,10); } } }); zStore(); zList(); return; }
-      if(l){ var id2 = l.getAttribute("data-zloc"); var cur = ""; zData.forEach(function(r){ if(r.id===id2){ cur = r.location||""; } }); var v = prompt(zl("locPrompt"), cur); if(v !== null){ zData.forEach(function(r){ if(r.id===id2){ r.location = v.trim(); } }); zStore(); zList(); } return; }
-      if(d){ var id3 = d.getAttribute("data-zdel"); if(confirm(zl("delPrompt"))){ zData = zData.filter(function(r){ return r.id !== id3; }); zStore(); zList(); } return; }
+      if(a){ zPost("/status", { id: a.getAttribute("data-zadv") }, function(){ zFetchList(); }); return; }
+      if(l){ var id2 = l.getAttribute("data-zloc"); var cur = ""; zData.forEach(function(r){ if(String(r.id)===String(id2)){ cur = r.location||""; } }); var v = prompt(zl("locPrompt"), cur); if(v !== null){ zPost("/location", { id: id2, location: v.trim() }, function(){ zFetchList(); }); } return; }
+      if(d){ var id3 = d.getAttribute("data-zdel"); if(confirm(zl("delPrompt"))){ zPost("/delete", { id: id3 }, function(){ zFetchList(); }); } return; }
     });
-    zLoad();
+    zFetchList();
   })();
 
   applyLang(); renderAll(); showView("dashboard");
