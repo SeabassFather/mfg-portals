@@ -178,6 +178,7 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
       <a data-nav="checks" data-i18n="navChecks"></a>
       <a data-nav="training" data-i18n="navTraining"></a>
       <a data-nav="company" data-i18n="navCompany"></a>
+      <a data-nav="zane" data-i18n="navZane"></a>
     </nav>
     <div class="scontact"><b>Saul Garcia</b>Mexausa Food Group, Inc.<br>+1-831-251-3116</div>
   </aside>
@@ -248,6 +249,71 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
           </div>
         </div>
       </section>
+<style>
+.zwrap{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start;}
+@media(max-width:820px){.zwrap{grid-template-columns:1fr;}}
+.zform{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+.zform label{font-size:12px;font-weight:600;color:var(--dim);margin-bottom:-4px;}
+.zform input,.zform select,.zform textarea{font-family:inherit;font-size:14px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:11px 12px;width:100%;box-sizing:border-box;}
+.zform textarea{min-height:64px;resize:vertical;}
+.zprev{width:100%;max-height:220px;object-fit:contain;border:1px solid var(--line);border-radius:10px;background:var(--card2);}
+.zbtn{font-family:inherit;font-size:15px;font-weight:700;color:#fff;background:var(--red);border:none;border-radius:10px;padding:13px;cursor:pointer;margin-top:4px;}
+.zbtn:active{opacity:.85;}
+.zsearchrow{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.zsearchrow input{flex:1;min-width:150px;font-family:inherit;font-size:14px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:11px 12px;}
+.zsearchrow select{font-family:inherit;font-size:14px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:11px 12px;}
+.zcard{display:flex;gap:12px;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:var(--card);}
+.zcard img{width:88px;height:88px;object-fit:cover;border-radius:9px;border:1px solid var(--line);background:var(--card2);flex:none;}
+.znoimg{width:88px;height:88px;border-radius:9px;border:1px dashed var(--line2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;flex:none;}
+.zinfo{flex:1;min-width:0;}
+.zcust{font-size:16px;font-weight:700;color:var(--text);word-break:break-word;}
+.zpart{font-size:13px;color:var(--dim);margin-top:2px;word-break:break-word;}
+.zmeta{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;}
+.zprice{font-size:15px;font-weight:700;color:var(--green);margin-top:4px;}
+.zpill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;margin-top:6px;}
+.zp-quoted{background:#eef2f7;color:#274063;}
+.zp-ordered{background:#fff2df;color:#8a5a1a;}
+.zp-arrived{background:#e6f5ee;color:#1d6b45;}
+.zp-delivered{background:#eae6f5;color:#4a3a7a;}
+.zactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.zactions button{font-family:inherit;font-size:12px;font-weight:600;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:7px 10px;cursor:pointer;}
+.zactions button.zdel{color:#b23;border-color:#e5c2c8;}
+.zempty{color:var(--muted);font-size:13px;padding:14px 2px;}
+.zcount{font-size:12px;color:var(--dim);margin-bottom:10px;}
+</style>
+      <section class="view" data-view="zane">
+        <div class="h2" id="zH2"></div>
+        <div class="lead" id="zLead"></div>
+        <div class="zwrap">
+          <div class="panel">
+            <h3 id="zFormTitle"></h3>
+            <div class="zform">
+              <label id="lzPhoto"></label>
+              <input type="file" id="zPhoto" accept="image/*" capture="environment">
+              <img id="zPrev" class="zprev" style="display:none" alt="">
+              <input type="text" id="zCust">
+              <input type="text" id="zPhone">
+              <input type="text" id="zPart">
+              <input type="text" id="zPN">
+              <input type="number" id="zPrice" step="0.01">
+              <label id="lzOrdered"></label>
+              <input type="date" id="zOrdered">
+              <label id="lzEta"></label>
+              <input type="date" id="zEta">
+              <textarea id="zNotes"></textarea>
+              <button class="zbtn" id="zSave"></button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="zsearchrow">
+              <input type="text" id="zSearch">
+              <select id="zFilter"></select>
+            </div>
+            <div class="zcount" id="zCount"></div>
+            <div id="zList"></div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </div>
@@ -283,7 +349,7 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
       brandAll:"Todas las marcas", results:"partes", copied:"Pedido copiado", viewCatalog:"Catalogo", viewFleet:"Servicio de flota", fleetLead:"Unidades de la flota CTM Seccion 111 (Ensenada) que trabajan el puerto en Baja. Partes que MFG INC suministra por PHF, agrupadas por clase de unidad.", units:"unidades", serviceParts:"partes de servicio", specialty:"Suministro especializado", colPart:"Parte", colBrand:"Marca", colPrice:"Precio", fleetNote:"Los numeros de parte son referencias del area de pedidos de MFG, confirmados por VIN y configuracion de ejes al cotizar." }
   };
   var OPS = {
-    en:{ order:"Order", navDash:"Dashboard", navCat:"Parts Catalog", navFleet:"Fleet Service", navClients:"Clients", navTickets:"Counter Tickets", navInvoices:"Invoices", navChecks:"Check History", navTraining:"Training", navCompany:"Company",
+    en:{ order:"Order", navDash:"Dashboard", navCat:"Parts Catalog", navFleet:"Fleet Service", navClients:"Clients", navTickets:"Counter Tickets", navInvoices:"Invoices", navChecks:"Check History", navTraining:"Training", navCompany:"Company", navZane:"Zane File",
       dashTitle:"Operations Dashboard", dashLead:"MFG INC parts and service - live snapshot of counter activity, receivables, and top accounts.",
       kCounter:"Counter sales (MTD)", kAR:"Accounts receivable", kOpen:"Open tickets", kLow:"Low-stock lines",
       topAccounts:"Top accounts", recentTickets:"Recent counter tickets",
@@ -299,7 +365,7 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
       cAccount:"Account", cType:"Type", cCity:"City", cBalance:"Balance", cStatus:"Status", cItem:"Item", cTotal:"Total", cQty:"Qty", cAmount:"Amount", cAge:"Age", cDate:"Date", cMethod:"Method",
       copyPhone:"Copy phone", copied2:"Copied",
       stCurrent:"Current", stPastDue:"Past due", stNew:"New", stOpen:"Open", stFilled:"Filled", stBack:"Backorder", stCleared:"Cleared", stPending:"Pending", stNsf:"NSF", days:"days" },
-    es:{ order:"Pedido", navDash:"Panel", navCat:"Catalogo", navFleet:"Servicio de flota", navClients:"Clientes", navTickets:"Tickets", navInvoices:"Facturas", navChecks:"Historial de pagos", navTraining:"Capacitacion", navCompany:"Empresa",
+    es:{ order:"Pedido", navDash:"Panel", navCat:"Catalogo", navFleet:"Servicio de flota", navClients:"Clientes", navTickets:"Tickets", navInvoices:"Facturas", navChecks:"Historial de pagos", navTraining:"Capacitacion", navCompany:"Empresa", navZane:"Archivo Zane",
       dashTitle:"Panel de operaciones", dashLead:"Partes y servicio MFG INC - vista en vivo de actividad de mostrador, cuentas por cobrar y cuentas principales.",
       kCounter:"Ventas de mostrador (mes)", kAR:"Cuentas por cobrar", kOpen:"Tickets abiertos", kLow:"Lineas bajas de inventario",
       topAccounts:"Cuentas principales", recentTickets:"Tickets recientes",
@@ -606,7 +672,7 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
   function dec(pn){ if(order[pn]){ order[pn]-=1; if(order[pn]<=0){ delete order[pn]; activity.unshift({ label: byPn[pn].en + " (" + pn + ")", action:"removed" }); } } renderOrder(); }
 
   // nav
-  var titleKey = { dashboard:"navDash", catalog:"navCat", fleet:"navFleet", clients:"navClients", tickets:"navTickets", invoices:"navInvoices", checks:"navChecks", training:"navTraining", company:"navCompany" };
+  var titleKey = { dashboard:"navDash", catalog:"navCat", fleet:"navFleet", clients:"navClients", tickets:"navTickets", invoices:"navInvoices", checks:"navChecks", training:"navTraining", company:"navCompany", zane:"navZane" };
   function showView(v){
     document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("on", s.getAttribute("data-view")===v); });
     document.querySelectorAll("#nav a").forEach(function(a){ a.classList.toggle("on", a.getAttribute("data-nav")===v); });
@@ -617,7 +683,7 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
   document.getElementById("nav").addEventListener("click", function(e){ var a = e.target.closest("[data-nav]"); if(a){ showView(a.getAttribute("data-nav")); } });
   document.getElementById("ham").addEventListener("click", function(){ document.getElementById("side").classList.toggle("open"); });
 
-  function renderAll(){ renderDashboard(); renderChips(); buildBrandSelect(); renderGrid(); renderFleet(); renderClients(); renderTickets(); renderInvoices(); renderChecks(); renderTraining(); renderOrder(); }
+  function renderAll(){ renderDashboard(); renderChips(); buildBrandSelect(); renderGrid(); renderFleet(); renderClients(); renderTickets(); renderInvoices(); renderChecks(); renderTraining(); renderOrder(); renderZane(); }
 
   // catalog events
   document.getElementById("grid").addEventListener("click", function(e){ var b = e.target.closest("[data-add]"); if(b){ addPart(b.getAttribute("data-add")); } });
@@ -650,6 +716,157 @@ td{font-size:13px;padding:10px 12px;border-top:1px solid var(--line);color:var(-
   function draw(){ dots.forEach(function(d,i){ if(i<entry.length){ d.classList.add("on"); } else { d.classList.remove("on"); } }); }
   document.querySelectorAll(".pad button").forEach(function(b){ b.addEventListener("click", function(){ var k = b.getAttribute("data-k"); if(k==="del"){ entry = entry.slice(0,-1); } else if(k==="ent"){ submit(); return; } else if(entry.length<4){ entry += k; } draw(); if(entry.length===4){ submit(); } }); });
   function submit(){ if(entry==="1005"){ document.getElementById("login").style.display="none"; document.getElementById("app").style.display="grid"; } else { entry=""; draw(); } }
+
+  // ===== Zane File =====
+  var ZKEY = "mfg_zane_parts_v1";
+  var ZL = {
+    en:{ h2:"Zane File", lead:"Snap the part a customer asks about, tag who it is for and the price you quoted, then find it by owner when it arrives.",
+      form:"New part intake", photo:"Part photo (tap to use camera)", cust:"Customer / owner", phone:"Customer phone (optional)", part:"Part name / description", pn:"Part number (optional)", price:"Price quoted (USD)", ordered:"Date ordered", eta:"Scheduled arrival", notes:"Notes", save:"Save part", saved:"Saved",
+      search:"Search customer or part", count:"parts on file", none:"No parts on file yet.",
+      fAll:"All", fQuoted:"Quoted", fOrdered:"Ordered", fArrived:"Arrived / in storage", fDelivered:"Delivered",
+      sQuoted:"Quoted", sOrdered:"Ordered", sArrived:"Arrived", sDelivered:"Delivered",
+      advance:"Advance status", loc:"Set storage location", del:"Delete", locPrompt:"Where is this part stored?", delPrompt:"Delete this part record?",
+      mOrdered:"Ordered", mEta:"ETA", mLoc:"Location", mPhone:"Phone", needCust:"Enter a customer name first." },
+    es:{ h2:"Archivo Zane", lead:"Toma foto de la parte que pregunta el cliente, anota para quien es y el precio cotizado, y ubicala por dueno cuando llegue.",
+      form:"Registro de parte", photo:"Foto de la parte (toca para usar camara)", cust:"Cliente / dueno", phone:"Telefono del cliente (opcional)", part:"Nombre / descripcion de la parte", pn:"Numero de parte (opcional)", price:"Precio cotizado (USD)", ordered:"Fecha de pedido", eta:"Llegada programada", notes:"Notas", save:"Guardar parte", saved:"Guardado",
+      search:"Buscar cliente o parte", count:"partes en archivo", none:"Aun no hay partes.",
+      fAll:"Todas", fQuoted:"Cotizada", fOrdered:"Pedida", fArrived:"Llego / en almacen", fDelivered:"Entregada",
+      sQuoted:"Cotizada", sOrdered:"Pedida", sArrived:"Llego", sDelivered:"Entregada",
+      advance:"Avanzar estado", loc:"Ubicacion de almacen", del:"Borrar", locPrompt:"Donde esta guardada esta parte?", delPrompt:"Borrar este registro?",
+      mOrdered:"Pedido", mEta:"Llega", mLoc:"Ubicacion", mPhone:"Tel", needCust:"Escribe el nombre del cliente primero." }
+  };
+  var zSteps = ["quoted","ordered","arrived","delivered"];
+  var zData = [];
+  var zPhotoData = "";
+  function zLoad(){ try { zData = JSON.parse(localStorage.getItem(ZKEY)) || []; } catch(e){ zData = []; } }
+  function zStore(){ try { localStorage.setItem(ZKEY, JSON.stringify(zData)); } catch(e){} }
+  function zl(k){ return ZL[lang][k]; }
+  function zStatusLabel(s){ return zl("s" + s.charAt(0).toUpperCase() + s.slice(1)); }
+  function zMoney(n){ n = parseFloat(n); if(isNaN(n)){ return "-"; } return "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function zEsc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function zShrink(file, cb){
+    var r = new FileReader();
+    r.onload = function(ev){
+      var img = new Image();
+      img.onload = function(){
+        var max = 900, w = img.width, h = img.height;
+        if(w > h && w > max){ h = Math.round(h * max / w); w = max; }
+        else if(h >= w && h > max){ w = Math.round(w * max / h); h = max; }
+        var c = document.createElement("canvas"); c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        cb(c.toDataURL("image/jpeg", 0.72));
+      };
+      img.onerror = function(){ cb(""); };
+      img.src = ev.target.result;
+    };
+    r.onerror = function(){ cb(""); };
+    r.readAsDataURL(file);
+  }
+  function zApplyLabels(){
+    document.getElementById("zH2").textContent = zl("h2");
+    document.getElementById("zLead").textContent = zl("lead");
+    document.getElementById("zFormTitle").textContent = zl("form");
+    document.getElementById("lzPhoto").textContent = zl("photo");
+    document.getElementById("lzOrdered").textContent = zl("ordered");
+    document.getElementById("lzEta").textContent = zl("eta");
+    document.getElementById("zCust").placeholder = zl("cust");
+    document.getElementById("zPhone").placeholder = zl("phone");
+    document.getElementById("zPart").placeholder = zl("part");
+    document.getElementById("zPN").placeholder = zl("pn");
+    document.getElementById("zPrice").placeholder = zl("price");
+    document.getElementById("zNotes").placeholder = zl("notes");
+    document.getElementById("zSave").textContent = zl("save");
+    document.getElementById("zSearch").placeholder = zl("search");
+    var f = document.getElementById("zFilter");
+    var cur = f.value || "all";
+    f.innerHTML = "";
+    [["all","fAll"],["quoted","fQuoted"],["ordered","fOrdered"],["arrived","fArrived"],["delivered","fDelivered"]].forEach(function(o){
+      var op = document.createElement("option"); op.value = o[0]; op.textContent = zl(o[1]); f.appendChild(op);
+    });
+    f.value = cur;
+  }
+  function zList(){
+    var box = document.getElementById("zList");
+    var q = (document.getElementById("zSearch").value || "").toLowerCase();
+    var flt = document.getElementById("zFilter").value || "all";
+    var rows = zData.filter(function(r){
+      if(flt !== "all" && r.status !== flt){ return false; }
+      if(!q){ return true; }
+      return ((r.cust||"") + " " + (r.part||"") + " " + (r.pn||"")).toLowerCase().indexOf(q) >= 0;
+    });
+    document.getElementById("zCount").textContent = rows.length + " " + zl("count");
+    if(rows.length === 0){ box.innerHTML = "<div class=\"zempty\">" + zl("none") + "</div>"; return; }
+    box.innerHTML = rows.map(function(r){
+      var img = r.photo ? "<img src=\"" + r.photo + "\" alt=\"\">" : "<div class=\"znoimg\">MFG</div>";
+      var meta = [];
+      if(r.ordered){ meta.push(zl("mOrdered") + ": " + r.ordered); }
+      if(r.eta){ meta.push(zl("mEta") + ": " + r.eta); }
+      if(r.location){ meta.push(zl("mLoc") + ": " + zEsc(r.location)); }
+      if(r.phone){ meta.push(zl("mPhone") + ": " + zEsc(r.phone)); }
+      var price = (r.price !== "" && r.price != null) ? "<div class=\"zprice\">" + zMoney(r.price) + "</div>" : "";
+      var pn = r.pn ? " [" + zEsc(r.pn) + "]" : "";
+      return "<div class=\"zcard\">" + img +
+        "<div class=\"zinfo\">" +
+          "<div class=\"zcust\">" + zEsc(r.cust) + "</div>" +
+          "<div class=\"zpart\">" + zEsc(r.part) + pn + "</div>" +
+          price +
+          "<span class=\"zpill zp-" + r.status + "\">" + zStatusLabel(r.status) + "</span>" +
+          "<div class=\"zmeta\">" + meta.join("<br>") + "</div>" +
+          "<div class=\"zactions\">" +
+            "<button data-zadv=\"" + r.id + "\">" + zl("advance") + "</button>" +
+            "<button data-zloc=\"" + r.id + "\">" + zl("loc") + "</button>" +
+            "<button class=\"zdel\" data-zdel=\"" + r.id + "\">" + zl("del") + "</button>" +
+          "</div>" +
+        "</div>" +
+      "</div>";
+    }).join("");
+  }
+  function renderZane(){ zApplyLabels(); zList(); }
+  (function zWire(){
+    document.getElementById("zPhoto").addEventListener("change", function(e){
+      var file = e.target.files && e.target.files[0];
+      if(!file){ return; }
+      zShrink(file, function(d){
+        zPhotoData = d;
+        var p = document.getElementById("zPrev");
+        if(d){ p.src = d; p.style.display = "block"; } else { p.style.display = "none"; }
+      });
+    });
+    document.getElementById("zSave").addEventListener("click", function(){
+      var cust = document.getElementById("zCust").value.trim();
+      if(!cust){ alert(zl("needCust")); return; }
+      zData.unshift({
+        id: "z" + Date.now(),
+        photo: zPhotoData,
+        cust: cust,
+        phone: document.getElementById("zPhone").value.trim(),
+        part: document.getElementById("zPart").value.trim(),
+        pn: document.getElementById("zPN").value.trim(),
+        price: document.getElementById("zPrice").value.trim(),
+        ordered: document.getElementById("zOrdered").value,
+        eta: document.getElementById("zEta").value,
+        location: "",
+        status: "quoted",
+        notes: document.getElementById("zNotes").value.trim(),
+        ts: Date.now()
+      });
+      zStore();
+      zPhotoData = "";
+      ["zCust","zPhone","zPart","zPN","zPrice","zOrdered","zEta","zNotes"].forEach(function(id){ document.getElementById(id).value = ""; });
+      var pv = document.getElementById("zPrev"); pv.style.display = "none"; pv.src = "";
+      var b = document.getElementById("zSave"); b.textContent = zl("saved"); setTimeout(function(){ b.textContent = zl("save"); }, 1200);
+      zList();
+    });
+    document.getElementById("zSearch").addEventListener("input", zList);
+    document.getElementById("zFilter").addEventListener("change", zList);
+    document.getElementById("zList").addEventListener("click", function(e){
+      var a = e.target.closest("[data-zadv]"); var l = e.target.closest("[data-zloc]"); var d = e.target.closest("[data-zdel]");
+      if(a){ var id = a.getAttribute("data-zadv"); zData.forEach(function(r){ if(r.id===id){ var i = zSteps.indexOf(r.status); r.status = zSteps[Math.min(i+1, zSteps.length-1)]; if(r.status==="arrived" && !r.arrived){ r.arrived = new Date().toISOString().slice(0,10); } } }); zStore(); zList(); return; }
+      if(l){ var id2 = l.getAttribute("data-zloc"); var cur = ""; zData.forEach(function(r){ if(r.id===id2){ cur = r.location||""; } }); var v = prompt(zl("locPrompt"), cur); if(v !== null){ zData.forEach(function(r){ if(r.id===id2){ r.location = v.trim(); } }); zStore(); zList(); } return; }
+      if(d){ var id3 = d.getAttribute("data-zdel"); if(confirm(zl("delPrompt"))){ zData = zData.filter(function(r){ return r.id !== id3; }); zStore(); zList(); } return; }
+    });
+    zLoad();
+  })();
 
   applyLang(); renderAll(); showView("dashboard");
 })();
