@@ -1,62 +1,42 @@
 {
- "MFG-0018": {
-  "title": "File:Spring brake air cylinder.jpg",
-  "license": "CC BY-SA 3.0",
-  "artist": "Panoha",
-  "page": "https://commons.wikimedia.org/wiki/File:Spring_brake_air_cylinder.jpg"
- },
  "MFG-0025": {
-  "title": "File:Truck air compressor.jpg",
+  "title": "Truck air compressor.jpg",
   "license": "CC BY-SA 3.0",
-  "artist": "Panoha",
-  "page": "https://commons.wikimedia.org/wiki/File:Truck_air_compressor.jpg"
- },
- "MFG-0029": {
-  "title": "File:Trailer brake relay valve.jpg",
-  "license": "CC BY-SA 3.0",
-  "artist": "Panoha",
-  "page": "https://commons.wikimedia.org/wiki/File:Trailer_brake_relay_valve.jpg"
+  "artist": "Panoha"
  },
  "MFG-0046": {
-  "title": "File:Fuel filter.jpg",
+  "title": "Fuel filter.jpg",
   "license": "CC BY 3.0",
-  "artist": "http://en.wikipedia.org/wiki/User:Phasmatisnox",
-  "page": "https://commons.wikimedia.org/wiki/File:Fuel_filter.jpg"
- },
- "MFG-0061": {
-  "title": "File:Volvo FH 380 Hub.jpg",
-  "license": "CC BY-SA 4.0",
-  "artist": "Photohelp13",
-  "page": "https://commons.wikimedia.org/wiki/File:Volvo_FH_380_Hub.jpg"
+  "artist": "Phasmatisnox"
  },
  "MFG-0062": {
-  "title": "File:Peterbilt Radkappe.jpg",
+  "title": "Volvo FH 380 Hub.jpg",
+  "license": "CC BY-SA 4.0",
+  "artist": "Photohelp13"
+ },
+ "MFG-0065": {
+  "title": "Peterbilt Radkappe.jpg",
   "license": "CC BY-SA 3.0",
-  "artist": "Sadarama",
-  "page": "https://commons.wikimedia.org/wiki/File:Peterbilt_Radkappe.jpg"
+  "artist": "Sadarama"
  },
  "MFG-0076": {
-  "title": "File:Saf Holland turntable, fifth wheel 02.jpg",
+  "title": "Saf Holland turntable, fifth wheel 02.jpg",
   "license": "CC BY-SA 4.0",
-  "artist": "Photohelp13",
-  "page": "https://commons.wikimedia.org/wiki/File:Saf_Holland_turntable,_fifth_wheel_02.jpg"
+  "artist": "Photohelp13"
  },
  "MFG-0085": {
-  "title": "File:Universal joints shaft.jpg",
+  "title": "Universal joints shaft.jpg",
   "license": "CC BY-SA 3.0",
-  "artist": "Panoha",
-  "page": "https://commons.wikimedia.org/wiki/File:Universal_joints_shaft.jpg"
+  "artist": "Panoha"
  },
  "MFG-0088": {
-  "title": "File:Replacement Thermostat.jpg",
+  "title": "Replacement Thermostat.jpg",
   "license": "CC BY-SA 3.0",
-  "artist": "Hoikka1",
-  "page": "https://commons.wikimedia.org/wiki/File:Replacement_Thermostat.jpg"
+  "artist": "Hoikka1"
  },
  "MFG-0091": {
-  "title": "File:Engine oil filter cutaway.JPG",
+  "title": "Engine oil filter cutaway.JPG",
   "license": "Public domain",
-  "artist": "Harrikkamies",
-  "page": "https://commons.wikimedia.org/wiki/File:Engine_oil_filter_cutaway.JPG"
+  "artist": "Harrikkamies"
  }
 }
